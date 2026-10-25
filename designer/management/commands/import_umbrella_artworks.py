@@ -119,6 +119,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             product=Product.objects.select_for_update().get(pk=options["product_id"])
             existing=DesignTemplate.objects.filter(product=product,is_active=True)
+            imported_ids=[]
             for i,item,name,url,photo_url,digest in uploads:
                 # Artwork is an editable image object. User can replace or move it.
                 objects=[{
@@ -175,9 +176,12 @@ class Command(BaseCommand):
                     "constrainToPrintArea":True,
                     "source":{"type":"curated-umbrella-artwork","sha256":digest},
                 }
-                DesignTemplate.objects.update_or_create(
+                template,_created=DesignTemplate.objects.update_or_create(
                     product=product,name=f"Umbrella Curated {i+1:03d} — {name}",
                     defaults={"json_data":payload,"is_active":True}
                 )
-            existing.exclude(json_data__generator=LIBRARY).update(is_active=False)
+                imported_ids.append(template.pk)
+            # Keep exactly the 100 imported templates visible. The previous
+            # exclusion by generator left stale designs from earlier imports active.
+            existing.exclude(pk__in=imported_ids).update(is_active=False)
         self.stdout.write(self.style.SUCCESS("Imported 100 curated umbrella designs"))
