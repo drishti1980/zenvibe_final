@@ -78,6 +78,34 @@ class Command(BaseCommand):
             raise CommandError("Manifest must contain exactly 100 artworks")
         if not Product.objects.filter(pk=options["product_id"]).exists():
             raise CommandError("Umbrella product not found")
+        # Reject rebranded copies of the same underlying composition.
+        # An SVG with the same geometric path structure is not a new design,
+        # even when its colours, title or customer branding differ.
+        from collections import Counter
+        import re
+        from xml.etree import ElementTree as ET
+
+        def svg_layout_signature(raw):
+            root=ET.fromstring(raw)
+            pieces=[]
+            for node in root.iter():
+                tag=node.tag.rsplit("}",1)[-1].lower()
+                if tag in ("svg","title","desc","metadata","defs"):
+                    continue
+                if tag in ("g",):
+                    continue
+                attrs=node.attrib
+                # Retain geometric data, but disregard purely cosmetic styling.
+                geometry=[]
+                for key in ("d","points","x","y","x1","y1","x2","y2",
+                            "cx","cy","r","rx","ry","width","height","transform"):
+                    if key in attrs:
+                        val=re.sub(r"[-+]?(?:\\d*\\.)?\\d+", "#", str(attrs[key]))
+                        geometry.append((key,val))
+                pieces.append((tag,tuple(geometry)))
+            return tuple(pieces)
+
+        layout_seen={}
         prepared=[]
         hashes=set()
         names=set()
@@ -92,6 +120,15 @@ class Command(BaseCommand):
             if digest in hashes:
                 raise CommandError(f"Entry {i+1}: duplicate artwork bytes: {file.name}")
             hashes.add(digest)
+            if file.suffix.lower()==".svg":
+                signature=svg_layout_signature(data)
+                if signature in layout_seen:
+                    raise CommandError(
+                        f"Repeated SVG composition: {file.name} duplicates "
+                        f"{layout_seen[signature]}. Recolouring or rebranding "
+                        "a layout does not count as a unique template."
+                    )
+                layout_seen[signature]=file.name
             photo=None
             if item.get("photo"):
                 photo=_read_image(base,item["photo"])
