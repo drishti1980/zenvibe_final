@@ -2092,21 +2092,42 @@
                 ctx.restore();ctx.restore();
                 return;
             }
-            // Umbrella gallery cards must read as umbrellas, not floating artwork.
-            // Draw the locked top-view canopy silhouette/ribs first, then overlay
-            // the editable template JSON exactly as the editor does.
+            // Umbrella: render artwork CLIPPED to the canopy, with the ribs and hub
+            // drawn on top. The previous implementation drew artwork outside the
+            // silhouette and hid the canopy under unbounded rectangular objects.
             if(canvas.dataset.productId==='205'){
+                const canopy=[[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]];
+                const traceCanopy=()=>{
+                    ctx.beginPath();
+                    canopy.forEach((p,n)=>n?ctx.lineTo(p[0]*scale,p[1]*scale):ctx.moveTo(p[0]*scale,p[1]*scale));
+                    ctx.closePath();
+                };
                 ctx.save();
-                ctx.scale(scale,scale);
-                ctx.beginPath();
-                [[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]].forEach(function(p,n){n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);});
-                ctx.closePath();ctx.fillStyle='#202020';ctx.fill();ctx.strokeStyle='#101010';ctx.lineWidth=5;ctx.stroke();
-                [[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]].forEach(function(p){
-                    ctx.beginPath();ctx.moveTo(525,500);ctx.lineTo(p[0],p[1]);ctx.strokeStyle='#0b0b0b';ctx.lineWidth=4;ctx.stroke();
-                });
-                ctx.beginPath();ctx.arc(525,500,23,0,Math.PI*2);ctx.fillStyle='#292929';ctx.fill();ctx.strokeStyle='#080808';ctx.stroke();
+                traceCanopy();
+                ctx.fillStyle='#f7f7f7';
+                ctx.fill();
+                ctx.clip();
+                objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
                 ctx.restore();
-            }
+                ctx.save();
+                traceCanopy();
+                ctx.strokeStyle='#202020';
+                ctx.lineWidth=Math.max(1,4*scale);
+                ctx.stroke();
+                canopy.forEach(p=>{
+                    ctx.beginPath();
+                    ctx.moveTo(525*scale,500*scale);
+                    ctx.lineTo(p[0]*scale,p[1]*scale);
+                    ctx.strokeStyle='rgba(0,0,0,.3)';
+                    ctx.lineWidth=Math.max(0.6,2*scale);
+                    ctx.stroke();
+                });
+                ctx.beginPath();
+                ctx.arc(525*scale,500*scale,18*scale,0,Math.PI*2);
+                ctx.fillStyle='#292929';
+                ctx.fill();
+                ctx.restore();
+            }else 
             // Coaster preview follows the selected product shape. The artwork
             // library stays identical; Circle simply clips the same editable design.
             if(canvas.dataset.productId==='415'){
