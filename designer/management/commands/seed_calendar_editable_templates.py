@@ -2,6 +2,7 @@
 import calendar
 import math
 import hashlib
+import colorsys
 from io import BytesIO
 from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -11,8 +12,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v13"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10","zenvibe-calendar-editable-v11","zenvibe-calendar-editable-v12")
+GENERATOR="zenvibe-calendar-editable-v14"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10","zenvibe-calendar-editable-v11","zenvibe-calendar-editable-v12","zenvibe-calendar-editable-v13")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -220,10 +221,28 @@ DESIGNS=[
  ("Office Planner","Plan Focus Achieve","#264C3B","#FAF8F1","#B7C7A7",10),
  ("Seasons Collection","Four Seasons One Amazing Year","#42517C","#F8F5F1","#C1A4D7",11),
 ]
+def _palette_for(index):
+ """Deterministic, nonrepeating colourways with accessible dark-on-light contrast.
+ Hue advances by the golden angle; saturation, value and complementary accents
+ also change. Each index therefore has its own coordinated colour combination.
+ """
+ hue=((index*137.507764+17)%360)/360.0
+ sat=(.52,.64,.73,.58,.80)[index%5]
+ light=(.22,.28,.19,.31)[(index//5)%4]
+ def rgb(h,s,l):
+  r,g,b=colorsys.hls_to_rgb(h%1,l,s)
+  return "#{:02X}{:02X}{:02X}".format(round(r*255),round(g*255),round(b*255))
+ dark=rgb(hue,sat,light)
+ # Warm and cool off-white papers alternate independently of the hue.
+ bg=rgb((hue+.075)%1,.36 if index%2 else .24,.94 if index%3 else .96)
+ accent=rgb((hue+(.42 if index%2 else .32))%1,.70,.39)
+ return dark,bg,accent
+
 def page(year,month,index,w,h,urls):
  family=index//10
  variant=index%10
- title,tag,dark,bg,accent,style=DESIGNS[family%len(DESIGNS)]
+ title,tag,_,_,_,style=DESIGNS[family%len(DESIGNS)]
+ dark,bg,accent=_palette_for(index)
  m=min(w,h)*.045
  # Twelve genuinely different compositions: split, full-bleed, triptych,
  # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
