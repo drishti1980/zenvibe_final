@@ -1822,11 +1822,21 @@
             <input id="zvTemplateSearch" type="search" placeholder="Search templates..." aria-label="Search templates">
         </div>
 
-        <div class="zv-generic-grid" id="zvTemplateGrid">
+        
+<style id="zv-calendar-photo-gallery-fix">
+{% if product.id == 222 %}
+#zvTemplateGrid .zv-generic-preview { display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f4f3f1;min-height:300px; }
+#zvTemplateGrid .zv-calendar-photo-preview { display:block;width:100%;height:100%;max-height:440px;object-fit:contain;object-position:center; }
+#zvTemplateGrid .zv-generic-card { overflow:hidden; }
+{% endif %}
+</style>
+<div class="zv-generic-grid" id="zvTemplateGrid">
             {% for card in templates %}
             <article class="zv-generic-card" data-search="{{ card.name|lower }}" {% if product.id == 415 %}data-coaster-shape="{{ selected_shape|default:'square' }}"{% endif %}>
                 <a class="zv-generic-preview" href="{% url 'designer:editor' product.id %}?template={{ card.id }}{% if product.id == 415 %}&shape={{ selected_shape|default:'square' }}{% endif %}">
-                    {% if card.json_data.templateType == "editable-master" or card.json_data.editorNative or card.json_data.generator == "zenvibe-promotional-luxury-v38" or card.json_data.generator == "zenvibe-promotional-editable-v2" %}
+                    {% if product.id == 222 and card.preview %}
+                    <img class="zv-calendar-photo-preview" src="{{ card.preview.url }}" alt="{{ card.name }}" loading="lazy">
+                    {% elif card.json_data.templateType == "editable-master" or card.json_data.editorNative or card.json_data.generator == "zenvibe-promotional-luxury-v38" or card.json_data.generator == "zenvibe-promotional-editable-v2" %}
                     <canvas class="zv-template-json-preview" width="420" height="300" data-product-id="{{ product.id }}"></canvas>
                     {{ card.json_data|json_script:card.id }}
                     {% elif card.preview %}
