@@ -75,7 +75,7 @@ class Command(BaseCommand):
                     continue
                 page = dict(pages[0])
                 # Replace the previous full-canvas artwork instead of stacking photos.
-                # A single photo and editable caption occupy the front-bottom
+                # A clipped full-panel photo and editable caption occupy the front-bottom
                 # canopy wedge in the 1050x1000 mockup coordinate system.
                 # This is a conservative mockup preset, not a supplier dieline.
                 existing = list(page.get("objects") or [])
@@ -87,14 +87,14 @@ class Command(BaseCommand):
                     "id": "zv_calendar_replaceable_photo",
                     "name": "Replace Photo — Umbrella Panel",
                     "type": "image", "src": urls[index % len(urls)],
-                    "left": 465, "top": 665, "width": 120, "height": 115,
+                    "left": 330, "top": 500, "width": 390, "height": 445,\n                    "clipPath": {\n                        "type": "polygon",\n                        "points": [{"x": 525, "y": 500}, {"x": 720, "y": 945}, {"x": 330, "y": 945}],\n                        "left": 330, "top": 500, "width": 390, "height": 445,\n                        "absolutePositioned": True, "fill": "#000000",\n                    },
                     "scaleX": 1, "scaleY": 1, "angle": 0, "opacity": 1,
                     "selectable": True, "evented": True,
                     "customerEditable": True, "replaceable": True,
                 }, {
                     "id": "zv_umbrella_panel_headline", "name": "Brand Text",
                     "type": "textbox", "text": old_headline,
-                    "left": 425, "top": 795, "width": 200,
+                    "left": 430, "top": 775, "width": 190,
                     "fontSize": 21, "fontFamily": "Poppins",
                     "fontWeight": "700", "textAlign": "center",
                     "fill": "#FFFFFF", "selectable": True,
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                     objects.append({
                         "id": "zv_umbrella_panel_subtitle", "name": "Tagline",
                         "type": "textbox", "text": old_subtitle,
-                        "left": 435, "top": 831, "width": 180,
+                        "left": 440, "top": 817, "width": 170,
                         "fontSize": 13, "fontFamily": "Poppins",
                         "fontWeight": "600", "textAlign": "center",
                         "fill": "#FFFFFF", "selectable": True,
