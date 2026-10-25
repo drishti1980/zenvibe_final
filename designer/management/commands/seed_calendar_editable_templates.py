@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v8"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7")
+GENERATOR="zenvibe-calendar-editable-v9"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -215,7 +215,9 @@ DESIGNS=[
  ("Seasons Collection","Four Seasons One Amazing Year","#42517C","#F8F5F1","#C1A4D7",11),
 ]
 def page(year,month,index,w,h,urls):
- title,tag,dark,bg,accent,style=DESIGNS[index]
+ family=index//10
+ variant=index%10
+ title,tag,dark,bg,accent,style=DESIGNS[family%len(DESIGNS)]
  m=min(w,h)*.035
  # Twelve genuinely different compositions: split, full-bleed, triptych,
  # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
@@ -224,13 +226,13 @@ def page(year,month,index,w,h,urls):
   patterns=[
    (.53,0),(.62,1),(.45,2),(.56,3),(.35,4),(.63,5),
    (.66,6),(.50,7),(.58,8),(.49,9),(.32,10),(.60,11)]
-  fraction,mode=patterns[style]
+  fraction,mode=patterns[(style+variant)%len(patterns)]
   photo=(m,m,w-2*m,h*fraction-m)
   cal=(m,h*fraction+m*.3,w-2*m,h*(1-fraction)-m*1.3)
  else:
   fractions=[.53,.58,.48,.62,.43,.65,.57,.50,.60,.52,.45,.63]
-  f=fractions[style]
-  if style in (3,7,10):
+  f=fractions[(style+variant)%len(fractions)]
+  if (style+variant)%4==0:
    photo=(w*(1-f)+m,m,w*f-2*m,h-2*m)
    cal=(m,m,w*(1-f)-m,h-2*m)
   else:
@@ -241,21 +243,21 @@ def page(year,month,index,w,h,urls):
  # Photography is layered, separately editable, and the collage is different
  # for each of the twelve design families.
  gap=min(pw,ph)*.018
- if style in (0,4,6,8):slots=[(px,py,pw,ph)]
- elif style in (1,10):slots=[(px,py,pw*.68-gap,ph),(px+pw*.68,py,pw*.32,ph)]
- elif style in (2,3):slots=[(px,py,pw,ph*.65-gap),(px,py+ph*.65,pw*.48-gap,ph*.35),(px+pw*.48,py+ph*.65,pw*.52,ph*.35)]
- elif style in (5,11):slots=[(px,py,pw*.49-gap,ph*.49-gap),(px+pw*.49,py,pw*.51,ph*.49-gap),(px,py+ph*.49,pw*.49-gap,ph*.51),(px+pw*.49,py+ph*.49,pw*.51,ph*.51)]
- elif style==7:slots=[(px,py,pw*.55-gap,ph),(px+pw*.55,py,pw*.45,ph*.48-gap),(px+pw*.55,py+ph*.48,pw*.45,ph*.52)]
+ if variant in (0,5):slots=[(px,py,pw,ph)]
+ elif variant in (1,6):slots=[(px,py,pw*.68-gap,ph),(px+pw*.68,py,pw*.32,ph)]
+ elif variant in (2,7):slots=[(px,py,pw,ph*.65-gap),(px,py+ph*.65,pw*.48-gap,ph*.35),(px+pw*.48,py+ph*.65,pw*.52,ph*.35)]
+ elif variant in (3,8):slots=[(px,py,pw*.49-gap,ph*.49-gap),(px+pw*.49,py,pw*.51,ph*.49-gap),(px,py+ph*.49,pw*.49-gap,ph*.51),(px+pw*.49,py+ph*.49,pw*.51,ph*.51)]
+ elif variant==4:slots=[(px,py,pw*.55-gap,ph),(px+pw*.55,py,pw*.45,ph*.48-gap),(px+pw*.55,py+ph*.48,pw*.45,ph*.52)]
  else:slots=[(px,py,pw,ph*.48-gap),(px,py+ph*.48,pw,ph*.52)]
  for j,(sx,sy,sw,sh) in enumerate(slots):
-  o.append(photo_object("photo-%02d"%j,sx,sy,sw,sh,urls[(style*5+month+j*2)%len(urls)]))
+  o.append(photo_object("photo-%02d"%j,sx,sy,sw,sh,urls[(index*5+month+j*2)%len(urls)]))
   o.append(rect("photo-frame-%02d"%j,sx,sy,sw,sh,"rgba(0,0,0,0)",accent,max(1,min(w,h)*.002)))
  # Title treatment differs by collection.
- if style in (0,3,5,7,9,11):
+ if variant in (0,3,5,7,9):
   bx=px+pw*.06;by=py+ph*.66;bw=pw*.88;bh=ph*.28
   o.append(rect("title-panel",bx,by,bw,bh,bg))
   title_color=dark
- elif style in (1,2,6,8):
+ elif variant in (1,2,6,8):
   bx=px+pw*.055;by=py+ph*.65;bw=pw*.89;bh=ph*.28
   o.append(rect("title-panel",bx,by,bw,bh,dark))
   title_color="#FFFFFF"
@@ -274,27 +276,70 @@ def page(year,month,index,w,h,urls):
  o.append(txt("month-title",cx+cw*.05,cy+ch*.025,cw*.90,
               calendar.month_name[month].upper()+"  "+str(year),
               max(11,min(cw*.065,ch*.085)),header_text,"center","700","Georgia"))
- gx=cx+cw*.045;gy=cy+ch*.235;gw=cw*.91;row=ch*.09;cell=gw/7
- fs=max(7,min(cell*.32,row*.36))
- for col,label in enumerate(("SUN","MON","TUE","WED","THU","FRI","SAT")):
-  o.append(txt("weekday-%d"%col,gx+col*cell,gy,cell,label,max(6,fs*.65),dark,"center","700","Arial"))
+ # Ten different date treatments: pastel chips, dark weekends, colour bands,
+ # rounded dots, minimal ruled, editorial, checker, outlined, highlighted, blocks.
+ gx=cx+cw*.045;gy=cy+ch*.235;gw=cw*.91
+ row=ch*.091;cell=gw/7
+ fs=max(7,min(cell*.33,row*.38))
+ date_style=variant
+ weekdays=("SUN","MON","TUE","WED","THU","FRI","SAT")
+ for col,label in enumerate(weekdays):
+  hx=gx+col*cell
+  if date_style in (0,3,6,9):
+   o.append(rect("weekday-band-%d"%col,hx,gy,cell*.97,row*.72,
+                 accent if col in (0,6) else dark))
+   label_color="#FFFFFF"
+  elif date_style in (1,4,7):
+   o.append(rect("weekday-band-%d"%col,hx,gy,cell*.97,row*.72,
+                 bg if col in (0,6) else "#F2F0EC"))
+   label_color=dark
+  else:
+   o.append(rect("weekday-band-%d"%col,hx,gy,cell*.97,row*.72,
+                 accent if col==0 else bg))
+   label_color=dark
+  o.append(txt("weekday-%d"%col,hx,gy+row*.10,cell,label,
+               max(6,fs*.65),label_color,"center","700","Arial"))
  weeks=calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)
  for ri in range(6):
   week=weeks[ri] if ri<len(weeks) else [0]*7
   for col,day in enumerate(week):
    x=gx+col*cell;y=gy+(ri+1)*row
-   o.append(rect("date-cell-%d-%d"%(ri,col),x,y,cell*.985,row*.96,
-                 "#FFF7F0" if col in (0,6) else "#FFFFFF","#E5E1DA",max(.5,min(w,h)*.0007)))
-   if day:
-    o.append(txt("day-%d"%day,x+cell*.07,y+row*.1,cell*.86,str(day),fs,
-                 accent if col==0 else dark,"left","500","Arial"))
+   weekend=col in (0,6)
+   if date_style==0:fill=bg if weekend else "#FFFFFF"
+   elif date_style==1:fill="#FFFFFF"
+   elif date_style==2:fill=bg if ri%2 else "#FFFFFF"
+   elif date_style==3:fill=dark if weekend else bg
+   elif date_style==4:fill="#FFFFFF"
+   elif date_style==5:fill=accent if weekend else "#FFFFFF"
+   elif date_style==6:fill=bg if (ri+col)%2 else "#FFFFFF"
+   elif date_style==7:fill="#FFFFFF"
+   elif date_style==8:fill=bg if weekend else "#FFFFFF"
+   else:fill=accent if weekend else bg
+   stroke=accent if date_style in (1,7,8) else "#E7E4E0"
+   o.append(rect("date-cell-%d-%d"%(ri,col),x,y,cell*.975,row*.94,
+                 fill,stroke,max(.5,min(w,h)*.0008)))
+   if not day:continue
+   if date_style in (1,5,8):
+    o.append(circle("date-dot-%d"%day,x+cell*.29,y+row*.16,
+                    min(cell,row)*.20,accent if date_style!=8 else dark))
+    ink="#FFFFFF"
+    dx=x+cell*.29
+    dy=y+row*.20
+    dw=cell*.40
+    align="center"
+   elif date_style in (3,9) and weekend:
+    ink="#FFFFFF";dx=x+cell*.08;dy=y+row*.11;dw=cell*.8;align="left"
+   else:
+    ink=accent if weekend else dark
+    dx=x+cell*.08;dy=y+row*.11;dw=cell*.8;align="left"
+   o.append(txt("day-%d"%day,dx,dy,dw,str(day),fs,ink,align,"700","Arial"))
  o.append(txt("footer",cx+cw*.07,cy+ch*.90,cw*.86,"YOUR MEMORIES • YOUR YEAR",
               max(7,min(cw*.023,ch*.028)),dark,"center","500","Arial"))
  return {"name":calendar.month_name[month],"background":bg,"objects":o}
 def payload(product,year,i,urls):
  w,h=product.width,product.height
  return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
-         "designName":"Photo Calendar %s %d - %03d"%(DESIGNS[i][0],year,i+1),
+         "designName":"Photo Calendar %s %d - %03d"%(DESIGNS[i//10][0],year,i+1),
          "document":{"width":w,"height":h,"unit":"in",
                      "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
                      "profile":"calendar"},
@@ -302,7 +347,7 @@ def payload(product,year,i,urls):
          "photoSlotsEditable":True,"requiresImageCors":True,
          "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
- help="Generate 12 distinct premium photo-calendar families with 12 months."
+ help="Generate 100 photo calendars with ten editable date-grid styles and 12 months."
  def add_arguments(self,p):
   p.add_argument("--product-id",type=int,required=True)
   p.add_argument("--year",type=int,default=2027)
@@ -315,13 +360,13 @@ class Command(BaseCommand):
   if not p.print_width_in or not p.print_height_in:raise CommandError("Configure print dimensions first")
   qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,*OLD])
   if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
-  self.stdout.write("Preparing 12 distinct photo-calendar designs, 12 pages each")
+  self.stdout.write("Preparing 100 photo-calendar designs with decorated date grids, 12 pages each")
   if o["dry_run"]:return
   urls=_download_photos()
   with transaction.atomic():
    if o["replace"]:qs.delete()
-   for i in range(len(DESIGNS)):
+   for i in range(100):
     data=payload(p,o["year"],i,urls)
     template=DesignTemplate.objects.create(product=p,name=data["designName"],json_data=data,is_active=True)
     template.preview.save("calendar_%d_%03d.jpg"%(o["year"],i+1),_preview(data,urls),save=True)
-  self.stdout.write(self.style.SUCCESS("Created 12 distinct editable photo-calendar designs"))
+  self.stdout.write(self.style.SUCCESS("Created 100 editable photo-calendar designs with decorated dates"))
