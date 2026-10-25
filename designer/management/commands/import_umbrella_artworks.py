@@ -22,7 +22,7 @@ from django.db import transaction
 from designer.models import Product, DesignTemplate
 
 LIBRARY="zenvibe-umbrella-curated-v1"
-IMAGE_EXTENSIONS={".png",".webp",".jpg",".jpeg"}
+IMAGE_EXTENSIONS={".png",".webp",".jpg",".jpeg",".svg"}
 MAX_BYTES=15*1024*1024
 
 def _read_image(base,relative):
@@ -38,6 +38,21 @@ def _read_image(base,relative):
     if target.stat().st_size > MAX_BYTES:
         raise CommandError(f"Artwork exceeds 15 MB: {target.name}")
     data=target.read_bytes()
+    if target.suffix.lower()==".svg":
+        from xml.etree import ElementTree
+        try:
+            root=ElementTree.fromstring(data)
+        except ElementTree.ParseError as exc:
+            raise CommandError(f"Invalid SVG: {target.name}: {exc}")
+        if not root.tag.endswith("svg"):
+            raise CommandError(f"Expected SVG root: {target.name}")
+        forbidden=("script","foreignObject","iframe")
+        for node in root.iter():
+            if any(node.tag.endswith(x) for x in forbidden):
+                raise CommandError(f"Unsafe SVG element in {target.name}")
+            for k,v in node.attrib.items():
+                if k.lower().startswith("on") or "javascript:" in v.lower() or ("href" in k.lower() and not v.startswith("#")):
+                    raise CommandError(f"Unsafe SVG attribute in {target.name}")
     if not data:
         raise CommandError(f"Empty image: {target.name}")
     return target,data,hashlib.sha256(data).hexdigest()
