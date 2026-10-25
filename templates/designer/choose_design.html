@@ -2231,6 +2231,26 @@
                 }else{
                     objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
                 }
+            }else if(canvas.dataset.productId==='205'){
+                // Clip artwork to the physical canopy silhouette in the gallery.
+                // This is a mockup mask, NOT a supplier-approved print dieline.
+                const canopy=[[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]];
+                ctx.save();
+                ctx.scale(scale,scale);
+                ctx.beginPath();
+                canopy.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+                ctx.closePath();ctx.clip();
+                ctx.scale(1/scale,1/scale);
+                objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
+                ctx.restore();
+                // Keep seams and centre hub visible above the artwork.
+                ctx.save();ctx.scale(scale,scale);
+                canopy.forEach(p=>{
+                    ctx.beginPath();ctx.moveTo(525,500);ctx.lineTo(p[0],p[1]);
+                    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=3;ctx.stroke();
+                });
+                ctx.beginPath();ctx.arc(525,500,23,0,Math.PI*2);
+                ctx.fillStyle='#292929';ctx.fill();ctx.restore();
             }else{
                 objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
             }
