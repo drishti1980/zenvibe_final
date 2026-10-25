@@ -2053,6 +2053,10 @@
             ctx.beginPath();ctx.moveTo((Number(obj.x1)||0)*sx-x,(Number(obj.y1)||0)*sy-y);
             ctx.lineTo((Number(obj.x2)||0)*sx-x,(Number(obj.y2)||0)*sy-y);
             ctx.strokeStyle=obj.stroke||'#111';ctx.lineWidth=(Number(obj.strokeWidth)||2)*Math.min(sx,sy);ctx.stroke();
+        } else if(obj.type==='image' && obj.__previewImage && obj.__previewImage.complete && obj.__previewImage.naturalWidth){
+            // Display the actual imported artwork rather than silently skipping it.
+            // The underlying image remains replaceable in the editor.
+            ctx.drawImage(obj.__previewImage,0,0,w,h);
         } else if(obj.type==='textbox' || obj.type==='text' || obj.type==='i-text'){
             // Respect Fabric's font and dimensions. Avoid the 7px minimum that
             // previously enlarged small text while squeezing it into a tiny width.
@@ -2070,13 +2074,21 @@
         }
         ctx.restore();
     }
-    document.querySelectorAll('.zv-template-json-preview').forEach(function(canvas){
+    document.querySelectorAll('.zv-template-json-preview').forEach(async function(canvas){
         try{
             const dataNode=canvas.nextElementSibling;
             const data=(dataNode && dataNode.type==='application/json')
                 ? JSON.parse(dataNode.textContent||'{}') : {};
             const page=(data.pages&&data.pages[0])||data;
             const objects=page.objects||data.objects||[];
+            // Resolve image layers before painting so each card shows its own SVG.
+            await Promise.all(objects.filter(o=>o.type==='image' && (o.src||o.url)).map(o=>new Promise(resolve=>{
+                const im=new Image();
+                im.onload=()=>{o.__previewImage=im;resolve();};
+                im.onerror=()=>resolve();
+                im.src=o.src||o.url;
+            })));
+
             const doc=data.document||{};
             const cw=Number(page.width||doc.width||data.width||data.canvasWidth||1000);
             const ch=Number(page.height||doc.height||data.height||data.canvasHeight||700);
