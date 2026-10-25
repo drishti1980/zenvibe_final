@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#111111" opacity="1"/>
+<rect x="42" y="42" width="666" height="966" rx="18" fill="transparent" opacity="1" stroke="#d3c49b" stroke-width="3"/>
+<polygon points="375,100 665,340 375,580 85,340" fill="#f1eee6" opacity="0.26" stroke="#d3c49b" stroke-width="2"/>
+<path d="M 95 150 C 155 220, 95 330, 160 430 C 220 530, 120 650, 185 800" fill="transparent" opacity="0.62" stroke="#d3c49b" stroke-width="3"/>
+<text x="110" y="285" text-anchor="start" fill="#d3c49b" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">CELEBRATING MIA &amp; DANIEL</tspan></text>
+<text x="110" y="370" text-anchor="start" fill="#fbf8ef" font-size="46" font-family="Cormorant Garamond" font-weight="700" opacity="1"><tspan x="110" dy="0">25 YEARS</tspan></text>
+<text x="110" y="493" text-anchor="start" fill="#fbf8ef" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">SATURDAY · 14 NOVEMBER 2026</tspan></text>
+<text x="110" y="533" text-anchor="start" fill="#fbf8ef" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">GRAND BALLROOM · 6:30 PM</tspan></text>
+<text x="110" y="607" text-anchor="start" fill="#d3c49b" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fbf8ef" opacity="0.018"/>
+</svg>

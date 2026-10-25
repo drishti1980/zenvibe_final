@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0B0D12" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#F5F7FA" stroke="none" stroke-width="0" opacity="1"/>
+<ellipse cx="518.4000000000001" cy="236.79999999999998" rx="110.39999999999999" ry="60.72" fill="none" stroke="#865CFF" stroke-width="2" opacity="0.8" transform="rotate(0 518.4000000000001 236.79999999999998)"/>
+<ellipse cx="518.4000000000001" cy="236.79999999999995" rx="184.0" ry="101.2" fill="none" stroke="#865CFF" stroke-width="2" opacity="0.8" transform="rotate(0 518.4000000000001 236.79999999999995)"/>
+<ellipse cx="518.4000000000001" cy="236.79999999999998" rx="266.79999999999995" ry="146.73999999999998" fill="none" stroke="#865CFF" stroke-width="2" opacity="0.8" transform="rotate(0 518.4000000000001 236.79999999999998)"/>
+<circle cx="766.8000000000001" cy="236.79999999999998" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="694.0453244467385" cy="280.28706704297264" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="518.4000000000001" cy="298.29999999999995" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="342.7546755532617" cy="280.28706704297264" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="270.0000000000001" cy="236.79999999999998" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="342.7546755532617" cy="193.31293295702733" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="518.4000000000001" cy="175.29999999999998" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="694.0453244467385" cy="193.3129329570273" r="7" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="518.4000000000001" cy="236.79999999999998" r="26" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="630" fill="#F5F7FA" font-family="DM Serif Display" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">LEARN FROM</tspan><tspan x="500.0" dy="65.8">ANYWHERE</tspan></text>
+<text x="500.0" y="768" fill="#F5F7FA" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Flexible â€¢ Practical â€¢ Career-ready</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#D6B35A" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#865CFF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F7FA" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0B0D12" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">ENROL TODAY</tspan></text>
+<text x="954" y="69" fill="#24D3EE" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">24</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#D6B35A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

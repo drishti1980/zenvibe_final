@@ -1,0 +1,13 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/utwsig55/public_html/zenvibe_demo"
+PassengerBaseURI "/"
+PassengerPython "/home/utwsig55/virtualenv/public_html/zenvibe_demo/3.10/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+RewriteEngine On
+
+# Static files
+RewriteRule ^static/(.*)$ zenvibe_site/staticfiles/$1 [L]
+
+# DO NOT rewrite media
+Options +FollowSymLinks

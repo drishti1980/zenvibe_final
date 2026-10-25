@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.16"/>
+<polygon points="500.0,86.29999999999998 531.4723958844666,148.0434195232493 589.6,110.30824764182859 585.9841845922842,179.51581540771582 655.1917523581715,175.9 617.4565804767507,234.02760411553348 679.2,265.5 617.4565804767507,296.97239588446655 655.1917523581715,355.1 585.9841845922842,351.4841845922842 589.6,420.6917523581714 531.4723958844666,382.9565804767507 500.0,444.70000000000005 468.52760411553345,382.9565804767507 410.40000000000003,420.69175235817147 414.0158154077158,351.4841845922842 344.80824764182853,355.1 382.5434195232493,296.97239588446655 320.79999999999995,265.5 382.5434195232493,234.02760411553348 344.8082476418286,175.89999999999998 414.0158154077158,179.51581540771582 410.3999999999999,110.30824764182861 468.5276041155335,148.0434195232493" fill="#7C967F" stroke="none" stroke-width="0" opacity="0.96"/>
+<circle cx="180.0" cy="90.0" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="327.2" cy="249.9" r="7" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="474.4" cy="409.8" r="9" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="621.6" cy="179.7" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="768.8" cy="339.6" r="7" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="276.0" cy="109.5" r="9" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="423.2" cy="269.4" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="570.4" cy="429.3" r="7" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="717.6" cy="199.2" r="9" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="224.8" cy="359.1" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.7"/>
+<text x="500.0" y="594" fill="#34463D" font-family="Cinzel" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">AN EVENING OF</tspan><tspan x="500.0" dy="68.82000000000001">CONNECTION</tspan></text>
+<text x="500.0" y="747" fill="#34463D" font-family="Montserrat" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Clients â€¢ Team â€¢ Partners</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#B89A62" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#C5CFBA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#34463D" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#7C967F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F1E8" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">RSVP</tspan></text>
+<text x="954" y="69" fill="#7C967F" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">70</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

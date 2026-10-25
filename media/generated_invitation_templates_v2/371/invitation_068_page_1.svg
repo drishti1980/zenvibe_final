@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#a91f6a" opacity="1"/>
+<line x1="80" y1="65" x2="670" y2="65" stroke="#e1be74" stroke-width="3" opacity="1"/>
+<line x1="80" y1="985" x2="670" y2="985" stroke="#e1be74" stroke-width="3" opacity="1"/>
+<line x1="55" y1="100" x2="55" y2="950" stroke="#fde0ee" stroke-width="2" opacity="1"/>
+<line x1="695" y1="100" x2="695" y2="950" stroke="#fde0ee" stroke-width="2" opacity="1"/>
+<rect x="270" y="0" width="210" height="1050" rx="0" fill="#fde0ee" opacity="0.22"/>
+<line x1="270" y1="0" x2="270" y2="1050" stroke="#e1be74" stroke-width="2" opacity="1"/>
+<line x1="480" y1="0" x2="480" y2="1050" stroke="#e1be74" stroke-width="2" opacity="1"/>
+<circle cx="115" cy="150" r="5" fill="#e1be74" opacity="0.95"/>
+<circle cx="630" cy="120" r="4" fill="#fde0ee" opacity="0.95"/>
+<circle cx="670" cy="260" r="6" fill="#e1be74" opacity="0.95"/>
+<circle cx="90" cy="840" r="5" fill="#fde0ee" opacity="0.95"/>
+<circle cx="625" cy="900" r="4" fill="#e1be74" opacity="0.95"/>
+<circle cx="560" cy="780" r="3" fill="#fde0ee" opacity="0.95"/>
+<text x="95" y="264" text-anchor="start" fill="#e1be74" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">CLIENT APPRECIATION RECEPTION</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#fffaf5" font-size="52" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="95" dy="0">AN EVENING WITH ZENVIBE</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#e1be74" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#fffaf5" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">THURSDAY · 29 OCTOBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#fffaf5" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">WATERFRONT PAVILION · 6:00 PM</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#e1be74" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fde0ee" opacity="0.025"/>
+</svg>

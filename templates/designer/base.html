@@ -1,0 +1,5296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="{% block meta_description %}ZenVibe Corporate Gifts Canada â€” custom promotional products, apparel, awards, drinkware, banners and branded gifts.{% endblock %}">
+<meta name="keywords" content="custom promotional products Canada, corporate gifts, custom apparel, banners, awards, drinkware, pens">
+<title>{% block title %}ZenVibe Corporate Gifts{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/font-awesome.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/remixicon.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/slick.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/animate.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/themify-icons.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/vendors/bootstrap.css' %}">
+<link rel="stylesheet" href="{% static 'designer/css/site.css' %}">
+<link rel="stylesheet" href="{% static 'designer/multikart_exact/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'designer/css/zenvibe-exact-multikart.css' %}?v=20260821-3">
+<style id="zv-admin-visibility-controls">
+{% if not site_settings.show_chatbot %}.zv-chat-widget,.zv-chat-launch,.zv-chat,[id^="zvChat"]{display:none!important}{% endif %}
+{% if not site_settings.show_customize_tab %}.zv-customize-tab,.zv-customize-overlay,.zv-customize-drawer{display:none!important}{% endif %}
+</style>
+{% block head %}{% endblock %}
+
+<style id="zv-cart-drawer-style">
+.mobile-setting{display:none!important}
+
+.zv-header-icon-btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:0;
+    background:transparent;
+    padding:0;
+    color:inherit;
+    cursor:pointer;
+}
+
+.zv-header-icon-btn i{
+    font-size:24px;
+}
+
+.zv-header-badge{
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    min-width:19px;
+    height:19px;
+    padding:0 5px;
+    border-radius:20px;
+    background:#f68b4a;
+    color:#fff;
+    display:grid;
+    place-items:center;
+    font:700 10px/1 Montserrat,sans-serif;
+}
+
+.zv-header-badge.bump{
+    animation:zvBadge .35s ease;
+}
+
+@keyframes zvBadge{
+    50%{transform:scale(1.45)}
+}
+
+
+/* =========================================================
+   MULTIKART CART OVERLAY
+========================================================= */
+
+.zv-side-overlay{
+    position:fixed;
+    inset:0;
+    z-index:12000;
+
+    background:rgba(0,0,0,.52);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:
+        opacity .28s ease,
+        visibility .28s ease;
+}
+
+.zv-side-overlay.open{
+    opacity:1;
+    visibility:visible;
+}
+
+
+/* =========================================================
+   MULTIKART CART DRAWER
+========================================================= */
+
+.zv-side-drawer{
+    position:fixed;
+
+    top:0;
+    right:-500px;
+    bottom:0;
+
+    width:min(460px,96vw);
+
+    z-index:12010;
+
+    display:flex;
+    flex-direction:column;
+
+    background:#fff;
+
+    box-shadow:-8px 0 28px rgba(0,0,0,.16);
+
+    transition:right .32s ease;
+}
+
+.zv-side-drawer.open{
+    right:0;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.zv-drawer-header{
+    min-height:72px;
+
+    padding:0 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid #e9e9e9;
+
+    background:#fff;
+}
+
+.zv-drawer-header h3{
+    margin:0;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:20px;
+    font-weight:600;
+    line-height:1.2;
+}
+
+.zv-drawer-close{
+    width:38px;
+    height:38px;
+
+    padding:0;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid #e7e7e7;
+
+    background:#fafafa;
+    color:#111;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.zv-drawer-close:hover{
+    border-color:#f68b4a;
+    color:#f68b4a;
+}
+
+
+/* =========================================================
+   FREE SHIPPING
+========================================================= */
+
+.zv-free-shipping{
+    padding:20px;
+
+    border-bottom:1px solid #e9e9e9;
+
+    background:#fff;
+}
+
+.zv-free-shipping p{
+    margin:0 0 14px;
+
+    color:#777;
+
+    font-family:"Lato",sans-serif;
+    font-size:14px;
+    font-weight:400;
+    line-height:1.45;
+}
+
+.zv-free-shipping p strong{
+    color:#666;
+    font-weight:400;
+}
+
+.zv-free-track{
+    position:relative;
+
+    height:8px;
+
+    background:#e6e6e8;
+}
+
+.zv-free-fill{
+    position:absolute;
+
+    top:0;
+    bottom:0;
+    left:0;
+
+    width:0;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #f68b4a,
+            #f68b4a 7px,
+            #ffa36e 7px,
+            #ffa36e 14px
+        );
+}
+
+.zv-free-truck{
+    position:absolute;
+
+    top:50%;
+    left:0;
+
+    width:34px;
+    height:34px;
+
+    transform:translate(-50%,-50%);
+
+    border-radius:50%;
+
+    display:grid;
+    place-items:center;
+
+    background:#f68b4a;
+    color:#fff;
+
+    font-size:17px;
+
+    box-shadow:0 2px 7px rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   CLEAR CART
+========================================================= */
+
+.zv-cart-clear-row{
+    min-height:58px;
+
+    padding:0 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+
+    background:#fff;
+}
+
+.zv-cart-manage-link{
+    padding:0;
+
+    border:0;
+
+    background:none;
+
+    color:#f68b4a !important;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:500;
+
+    text-decoration:none !important;
+
+    cursor:pointer;
+}
+
+.zv-cart-manage-link:hover{
+    color:#0758b8 !important;
+}
+
+
+/* =========================================================
+   CART ITEMS SCROLL AREA
+========================================================= */
+
+.zv-wishlist-list,
+.zv-cart-items{
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:0 20px;
+}
+
+.zv-cart-items::-webkit-scrollbar{
+    width:5px;
+}
+
+.zv-cart-items::-webkit-scrollbar-thumb{
+    background:#d9d9d9;
+}
+
+
+/* =========================================================
+   CART ITEM - SAME MULTIKART STRUCTURE
+========================================================= */
+
+.zv-server-cart-item{
+    position:relative;
+
+    display:grid;
+
+    grid-template-columns:
+        92px
+        minmax(0,1fr)
+        auto;
+
+    column-gap:15px;
+    row-gap:10px;
+
+    align-items:start;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #ededed;
+}
+
+.zv-server-cart-image-link{
+    grid-row:1 / span 2;
+
+    display:block;
+}
+
+.zv-server-cart-item img,
+.zv-server-cart-placeholder{
+    width:92px;
+    height:95px;
+
+    display:block;
+
+    object-fit:contain;
+
+    background:#f5f5f5;
+}
+
+.zv-server-cart-placeholder{
+    display:grid;
+    place-items:center;
+
+    color:#aaa;
+
+    font-size:26px;
+}
+
+
+/* NAME / PRICE */
+
+.zv-server-cart-main{
+    min-width:0;
+
+    padding-top:1px;
+}
+
+.zv-server-cart-main h4{
+    margin:0 0 6px;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:500;
+    line-height:1.35;
+}
+
+.zv-server-cart-main h4 a{
+    color:#111 !important;
+
+    text-decoration:none !important;
+}
+
+.zv-server-cart-main h4 a:hover{
+    color:#0758b8 !important;
+}
+
+.zv-server-cart-price{
+    color:#777;
+
+    font-family:"Lato",sans-serif;
+    font-size:14px;
+    line-height:1.4;
+}
+
+
+/* =========================================================
+   EDIT / DELETE BUTTONS
+========================================================= */
+
+.zv-server-cart-top-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.zv-cart-edit,
+.zv-cart-remove{
+    width:36px;
+    height:36px;
+
+    padding:0;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid #ededed;
+
+    background:#fff;
+    color:#111 !important;
+
+    text-decoration:none !important;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.zv-cart-edit:hover{
+    border-color:#0758b8;
+
+    color:#0758b8 !important;
+}
+
+.zv-cart-remove:hover{
+    border-color:#f68b4a;
+
+    color:#f68b4a !important;
+}
+
+
+/* =========================================================
+   QUANTITY - RIGHT ALIGNED LIKE MULTIKART
+========================================================= */
+
+.zv-server-cart-actions{
+    grid-column:2 / 4;
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+}
+
+.zv-cart-qty{
+    width:108px;
+    height:38px;
+
+    display:grid;
+
+    grid-template-columns:
+        34px
+        40px
+        34px;
+
+    border:1px solid #ededed;
+
+    background:#fff;
+}
+
+.zv-cart-qty button{
+    padding:0;
+
+    border:0;
+
+    background:#fafafa;
+    color:#777;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.zv-cart-qty button:hover{
+    background:#f68b4a;
+    color:#fff;
+}
+
+.zv-cart-qty span{
+    display:grid;
+    place-items:center;
+
+    border-left:1px solid #ededed;
+    border-right:1px solid #ededed;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:16px;
+    font-weight:500;
+}
+
+
+/* =========================================================
+   EMPTY CART
+========================================================= */
+
+.zv-drawer-empty{
+    display:none;
+
+    margin:auto;
+
+    padding:50px 25px;
+
+    text-align:center;
+
+    color:#777;
+}
+
+.zv-drawer-empty i{
+    font-size:58px;
+
+    color:#ddd;
+}
+
+.zv-drawer-empty h4{
+    margin:12px 0 8px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:17px;
+    font-weight:600;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.zv-cart-footer{
+    margin-top:auto;
+
+    background:#fff;
+
+    border-top:1px solid #ededed;
+}
+
+.zv-cart-subtotal{
+    min-height:65px;
+
+    padding:0 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:17px;
+    font-weight:500;
+}
+
+.zv-cart-subtotal strong{
+    color:#f68b4a;
+
+    font-size:21px;
+}
+
+.zv-cart-footer-buttons{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:14px;
+
+    padding:0 15px 18px;
+}
+
+.zv-cart-footer-buttons a{
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#f68b4a;
+
+    color:#fff !important;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:14px;
+    font-weight:600;
+
+    text-decoration:none !important;
+
+    transition:.22s ease;
+}
+
+.zv-cart-footer-buttons a:hover{
+    background:#0758b8;
+
+    color:#fff !important;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.zv-cart-loading{
+    padding:35px 20px;
+
+    text-align:center;
+
+    color:#777;
+}
+
+body.zv-side-lock{
+    overflow:hidden;
+}
+
+
+/* =========================================================
+   KEEP WISHLIST EXISTING FUNCTIONALITY/STYLING
+========================================================= */
+
+.zv-wishlist-item{
+    display:grid;
+    grid-template-columns:80px 1fr 32px;
+    gap:12px;
+    align-items:center;
+    padding:16px 0;
+    border-bottom:1px solid #eee;
+}
+
+.zv-wishlist-item img{
+    width:80px;
+    height:90px;
+    object-fit:contain;
+    background:#f7f7f7;
+}
+
+.zv-wishlist-item h4{
+    margin:0 0 6px;
+    font:500 13px Montserrat,sans-serif;
+}
+
+.zv-wishlist-item strong{
+    color:#f68b4a;
+    font-size:13px;
+}
+
+.zv-wishlist-remove{
+    width:30px;
+    height:30px;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:575px){
+
+    .zv-side-drawer{
+        width:100vw;
+
+        right:-100vw;
+    }
+
+    .zv-drawer-header{
+        min-height:70px;
+
+        padding:0 15px;
+    }
+
+    .zv-drawer-header h3{
+        font-size:15px;
+    }
+
+    .zv-free-shipping{
+        padding:17px 15px 24px;
+    }
+
+    .zv-free-shipping p{
+        font-size:15px;
+    }
+
+    .zv-cart-clear-row,
+    .zv-cart-items{
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    .zv-server-cart-item{
+        grid-template-columns:
+            82px
+            minmax(0,1fr)
+            auto;
+
+        column-gap:10px;
+    }
+
+    .zv-server-cart-item img,
+    .zv-server-cart-placeholder{
+        width:82px;
+        height:88px;
+    }
+
+    .zv-server-cart-main h4{
+        font-size:14px;
+    }
+
+    .zv-server-cart-price{
+        font-size:13px;
+    }
+
+    .zv-cart-edit,
+    .zv-cart-remove{
+        width:32px;
+        height:32px;
+    }
+
+    .zv-cart-qty{
+        width:108px;
+        height:40px;
+
+        grid-template-columns:
+            34px
+            40px
+            34px;
+    }
+
+    .zv-cart-subtotal{
+        padding:0 15px;
+
+        font-size:17px;
+    }
+
+    .zv-cart-footer-buttons{
+        gap:10px;
+
+        padding:0 10px 14px;
+    }
+
+    .zv-cart-footer-buttons a{
+        height:48px;
+
+        font-size:13px;
+    }
+
+}
+/* Hide the real ZenVibe chatbot when the side cart is open */
+body:has(#zvCartDrawer.open) .zv-chat-widget,
+body:has(#zvCartDrawer.open) .zv-chat-launch {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Make sure cart stays above everything */
+#zvCartBackdrop {
+    z-index: 12000 !important;
+}
+
+#zvCartDrawer {
+    z-index: 12010 !important;
+}
+</style>
+
+
+
+
+
+
+
+<style id="zv-customize-category-css">
+
+/* =========================================================
+   MULTIKART THEME-SETTING STYLE DRAWER
+========================================================= */
+
+.zv-customize-tab{
+    position:fixed;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:11800;
+
+    width:44px;
+    height:128px;
+
+    padding:0;
+    border:0;
+
+    background:#2b2b2b;
+    color:#fff;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    cursor:pointer;
+}
+
+.zv-customize-tab i{
+    font-size:17px;
+}
+
+.zv-customize-tab span{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+
+    font-family:"Montserrat",sans-serif;
+    font-size:12px;
+    font-weight:500;
+}
+
+
+/* OVERLAY */
+
+.zv-customize-overlay{
+    position:fixed;
+    inset:0;
+
+    z-index:12100;
+
+    background:rgba(0,0,0,.45);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.28s ease;
+}
+
+.zv-customize-overlay.is-open{
+    opacity:1;
+    visibility:visible;
+}
+
+
+/* DRAWER */
+
+.zv-customize-drawer{
+    position:fixed;
+
+    top:0;
+    right:-485px;
+    bottom:0;
+
+    width:min(480px,96vw);
+
+    z-index:12110;
+
+    background:#fff;
+
+    overflow-y:auto;
+
+    box-shadow:-5px 0 20px rgba(0,0,0,.12);
+
+    transition:right .3s ease;
+}
+
+.zv-customize-drawer.is-open{
+    right:0;
+}
+
+
+/* HEADER */
+
+.zv-customize-head{
+    height:72px;
+
+    padding:0 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid #e7e7e7;
+
+    background:#fff;
+}
+
+.zv-customize-head h3{
+    margin:0;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:600;
+}
+
+.zv-customize-close{
+    width:30px;
+    height:30px;
+
+    padding:0;
+
+    border:1px solid #ededed;
+
+    background:#fff;
+    color:#222;
+
+    display:grid;
+    place-items:center;
+
+    cursor:pointer;
+
+    font-size:17px;
+}
+
+
+/* SECTION HEADING */
+
+.zv-setting-section-head{
+    min-height:72px;
+
+    padding:16px 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid #eee;
+}
+
+.zv-setting-section-head h4{
+    margin:0 0 3px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:16px;
+    font-weight:500;
+}
+
+.zv-setting-section-head p{
+    margin:0;
+
+    color:#999;
+
+    font-size:12px;
+}
+
+
+/* 2-COLUMN CATEGORY GRID */
+
+.zv-setting-grid{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px 18px;
+
+    padding:20px;
+
+    border-bottom:1px solid #eee;
+}
+
+.zv-setting-card{
+    display:block;
+
+    text-align:center;
+
+    color:#222 !important;
+
+    text-decoration:none !important;
+}
+
+.zv-setting-card-image{
+    width:100%;
+    height:125px;
+
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#f7f7f7;
+
+    border:1px solid #eee;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
+
+.zv-setting-card:hover .zv-setting-card-image{
+    border-color:#f68b4a;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 5px 16px rgba(0,0,0,.08);
+}
+
+.zv-setting-card-image img{
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+}
+
+.zv-setting-card-placeholder,
+.zv-setting-fallback{
+    width:100%;
+    height:100%;
+
+    display:grid;
+    place-items:center;
+
+    color:#0758b8;
+
+    font-size:32px;
+}
+
+.zv-setting-card span{
+    display:block;
+
+    margin-top:9px;
+
+    color:#2f2f2f;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:13px;
+    font-weight:400;
+}
+
+
+/* SETTING ROWS */
+
+.zv-setting-row{
+    min-height:88px;
+
+    padding:15px 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid #eee;
+}
+
+.zv-setting-row h5{
+    margin:0 0 4px;
+
+    color:#333;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:400;
+}
+
+.zv-setting-row p{
+    margin:0;
+
+    color:#999;
+
+    font-size:12px;
+}
+
+.zv-setting-row-link{
+    width:42px;
+    height:30px;
+
+    border:0;
+
+    background:#f5f5f5;
+    color:#777 !important;
+
+    display:grid;
+    place-items:center;
+
+    cursor:pointer;
+
+    border-radius:18px;
+}
+
+.zv-setting-row-link:hover{
+    background:#f68b4a;
+    color:#fff !important;
+}
+
+.zv-setting-action{
+    border:0;
+}
+
+
+/* BODY LOCK */
+
+body.zv-customize-lock{
+    overflow:hidden;
+}
+
+
+/* MOBILE */
+
+@media(max-width:575px){
+
+    .zv-customize-drawer{
+        width:100vw;
+        right:-100vw;
+    }
+
+    .zv-setting-grid{
+        gap:15px 12px;
+        padding:16px;
+    }
+
+    .zv-setting-card-image{
+        height:105px;
+    }
+
+}
+
+</style>
+
+
+
+
+<style id="zv-category-toggle-fix-css">
+.zv-setting-section-head{
+    width:100%;
+    border-left:0;
+    border-right:0;
+    border-top:0;
+    background:#fff;
+    text-align:left;
+    cursor:pointer;
+}
+.zv-setting-section-head > i{
+    transition:transform .25s ease;
+}
+.zv-setting-grid{
+    max-height:1200px;
+    opacity:1;
+    overflow:hidden;
+    transition:max-height .35s ease, opacity .25s ease, padding .35s ease;
+}
+.zv-setting-grid.is-collapsed{
+    max-height:0;
+    opacity:0;
+    padding-top:0;
+    padding-bottom:0;
+    border-bottom:0;
+}
+</style>
+
+<style id="zv-multikart-search-style">
+/* =========================================================
+   MULTIKART SEARCH MODAL - SCREENSHOT STYLE
+========================================================= */
+
+.zv-search-overlay{
+    position:fixed !important;
+    inset:0 !important;
+    z-index:13000 !important;
+
+    background:rgba(0,0,0,.58) !important;
+
+    opacity:0;
+    visibility:hidden;
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+
+    padding:34px 20px;
+
+    overflow-y:auto;
+
+    transition:opacity .25s ease, visibility .25s ease;
+}
+
+.zv-search-overlay.open,
+.zv-search-overlay.is-open{
+    opacity:1;
+    visibility:visible;
+}
+
+
+/* Modal shell */
+.zv-search-modal{
+    width:min(1225px,92vw);
+
+    margin:auto;
+
+    background:#fff;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.18);
+
+    animation:zvSearchModalIn .25s ease;
+}
+
+@keyframes zvSearchModalIn{
+    from{
+        opacity:0;
+        transform:translateY(-12px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+
+/* Header */
+.zv-search-modal-head{
+    min-height:66px;
+
+    padding:0 18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:1px solid #e8e8e8;
+}
+
+.zv-search-modal-head h3{
+    margin:0;
+
+    color:#1f1f1f;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:22px;
+    font-weight:600;
+}
+
+.zv-search-close{
+    width:34px;
+    height:34px;
+
+    border:0;
+
+    background:#f68b4a;
+    color:#fff;
+
+    display:grid;
+    place-items:center;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+
+/* Body */
+.zv-search-modal-body{
+    padding:18px 18px 22px;
+}
+
+
+/* Search input */
+.zv-search-form-multikart{
+    display:grid !important;
+    grid-template-columns:1fr 48px !important;
+
+    border:1px solid #e5e5e5 !important;
+
+    background:#fff !important;
+}
+
+.zv-search-form-multikart input{
+    width:100% !important;
+    height:50px !important;
+
+    padding:0 16px !important;
+
+    border:0 !important;
+    outline:0 !important;
+
+    background:#fff !important;
+
+    color:#444 !important;
+
+    font-family:"Montserrat",sans-serif !important;
+    font-size:16px !important;
+    font-weight:400 !important;
+
+    box-shadow:none !important;
+}
+
+.zv-search-form-multikart input::placeholder{
+    color:#777 !important;
+}
+
+.zv-search-form-multikart button{
+    width:48px !important;
+    height:50px !important;
+
+    border:0 !important;
+    border-left:1px solid #efefef !important;
+
+    background:#fff !important;
+    color:#444 !important;
+
+    display:grid !important;
+    place-items:center !important;
+
+    font-size:20px !important;
+
+    cursor:pointer;
+}
+
+
+/* Top searches */
+.zv-top-search{
+    margin:12px 0 24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+
+    gap:10px;
+
+    color:#666;
+
+    font-size:13px;
+}
+
+.zv-top-search strong{
+    color:#666;
+    font-weight:500;
+}
+
+.zv-top-search a{
+    color:#f68b4a !important;
+    text-decoration:none;
+}
+
+.zv-top-search a:hover{
+    color:#0758b8 !important;
+}
+
+
+/* Most searched heading */
+.zv-most-searched-title{
+    margin:0 0 14px;
+
+    color:#2a2a2a;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:20px;
+    font-weight:500;
+}
+
+
+/* Product grid */
+.zv-most-searched-grid{
+    display:grid;
+
+    grid-template-columns:repeat(4, minmax(0,1fr));
+
+    gap:24px;
+}
+
+.zv-search-product-card{
+    border:1px solid #e8e8e8;
+
+    background:#fff;
+
+    padding:10px;
+
+    text-decoration:none !important;
+
+    transition:box-shadow .25s ease, transform .25s ease;
+}
+
+.zv-search-product-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 7px 20px rgba(0,0,0,.08);
+}
+
+.zv-search-product-image{
+    position:relative;
+
+    height:300px;
+
+    background:#f3f3f3;
+
+    overflow:hidden;
+}
+
+.zv-search-product-image img{
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+}
+
+.zv-search-product-rating{
+    position:absolute;
+
+    left:10px;
+    bottom:10px;
+
+    padding:6px 9px;
+
+    background:#fff;
+
+    color:#444;
+
+    font-size:12px;
+}
+
+.zv-search-product-rating i{
+    color:#f6a329;
+}
+
+.zv-search-product-info{
+    padding-top:12px;
+}
+
+.zv-search-product-info h4{
+    margin:0 0 8px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:16px;
+    font-weight:500;
+}
+
+.zv-search-product-info small{
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#888;
+
+    font-size:12px;
+}
+
+.zv-search-product-price{
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:17px;
+    font-weight:500;
+}
+
+.zv-search-product-price del{
+    margin-left:6px;
+
+    color:#aaa;
+
+    font-size:13px;
+}
+
+.zv-search-product-price span{
+    margin-left:6px;
+
+    color:#f68b4a;
+
+    font-size:12px;
+}
+
+
+/* dynamic result area */
+.zv-search-results{
+    margin-top:16px;
+}
+
+.zv-search-results:empty{
+    display:none;
+}
+
+
+body.zv-search-lock{
+    overflow:hidden;
+}
+
+
+/* Tablet */
+@media(max-width:991px){
+
+    .zv-most-searched-grid{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+    }
+
+    .zv-search-product-image{
+        height:260px;
+    }
+}
+
+
+/* Mobile */
+@media(max-width:575px){
+
+    .zv-search-overlay{
+        padding:15px 8px;
+    }
+
+    .zv-search-modal{
+        width:100%;
+    }
+
+    .zv-search-modal-head h3{
+        font-size:18px;
+    }
+
+    .zv-most-searched-grid{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .zv-search-product-image{
+        height:190px;
+    }
+
+    .zv-search-product-info h4{
+        font-size:13px;
+    }
+}
+</style>
+
+
+<style id="zv-instant-search-css">
+/* =========================================================
+   INSTANT SEARCH WHILE TYPING
+========================================================= */
+
+#zvTopSearchBlock.zv-search-hidden,
+#zvMostSearchedBlock.zv-search-hidden{
+    display:none !important;
+}
+
+.zv-search-results{
+    display:none;
+    margin-top:24px;
+}
+
+.zv-search-results.is-active{
+    display:block;
+}
+
+.zv-live-search-title{
+    margin:0 0 14px;
+    color:#2a2a2a;
+    font-family:"Montserrat",sans-serif;
+    font-size:20px;
+    font-weight:500;
+}
+
+.zv-live-search-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:24px;
+}
+
+.zv-live-search-card{
+    display:block;
+    padding:10px;
+    border:1px solid #e8e8e8;
+    background:#fff;
+    color:#222 !important;
+    text-decoration:none !important;
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.zv-live-search-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 7px 20px rgba(0,0,0,.08);
+}
+
+.zv-live-search-image{
+    height:260px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:#f3f3f3;
+}
+
+.zv-live-search-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.zv-live-search-info{
+    padding-top:11px;
+}
+
+.zv-live-search-info h4{
+    margin:0 0 6px;
+    color:#222;
+    font:500 15px/1.4 "Montserrat",sans-serif;
+}
+
+.zv-live-search-info small{
+    display:block;
+    margin-bottom:7px;
+    color:#888;
+    font-size:12px;
+}
+
+.zv-live-search-price{
+    color:#111;
+    font:500 16px "Montserrat",sans-serif;
+}
+
+.zv-live-search-price del{
+    margin-left:6px;
+    color:#aaa;
+    font-size:12px;
+}
+
+.zv-live-search-price em{
+    margin-left:6px;
+    color:#f68b4a;
+    font-style:normal;
+    font-size:12px;
+}
+
+.zv-live-search-empty{
+    padding:45px 15px;
+    border:1px solid #eee;
+    text-align:center;
+    color:#888;
+}
+
+.zv-live-search-empty i{
+    display:block;
+    margin-bottom:10px;
+    color:#d8d8d8;
+    font-size:42px;
+}
+
+.zv-live-search-empty h4{
+    margin:0 0 5px;
+    color:#333;
+    font:500 16px "Montserrat",sans-serif;
+}
+
+.zv-live-search-count{
+    margin-bottom:14px;
+    color:#888;
+    font-size:12px;
+}
+
+@media(max-width:991px){
+    .zv-live-search-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:575px){
+    .zv-live-search-grid{
+        gap:12px;
+    }
+
+    .zv-live-search-image{
+        height:185px;
+    }
+
+    .zv-live-search-info h4{
+        font-size:13px;
+    }
+}
+</style>
+
+
+<style id="zv-newsletter-multikart-coupon-css">
+/* =========================================================
+   ZENVIBE NEWSLETTER - MULTIKART COUPON STYLE
+========================================================= */
+
+.zv-newsletter-modal .modal-dialog{
+    max-width:860px;
+}
+
+.zv-newsletter-modal .modal-content{
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+.zv-newsletter-modal.show{
+    display:block;
+}
+
+.zv-newsletter-content{
+    padding:0;
+}
+
+
+/* striped outer border */
+.zv-newsletter-border{
+    position:relative;
+
+    padding:72px 64px 54px;
+
+    background:#fff;
+
+    border:14px solid transparent;
+
+    border-image:
+        repeating-linear-gradient(
+            135deg,
+            #0758b8 0 7px,
+            #ffffff 7px 14px,
+            #f6a329 14px 21px,
+            #ffffff 21px 28px
+        ) 14;
+
+    box-shadow:0 20px 55px rgba(0,0,0,.18);
+}
+
+
+/* close */
+.zv-newsletter-close{
+    position:absolute;
+
+    top:12px;
+    right:12px;
+
+    z-index:20;
+
+    width:32px;
+    height:32px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#777;
+
+    display:grid;
+    place-items:center;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+.zv-newsletter-close:hover{
+    color:#0758b8;
+}
+
+
+/* top coupon banner */
+.zv-newsletter-offer{
+    position:relative;
+
+    min-height:112px;
+
+    margin:0 auto 45px;
+
+    padding:18px 70px 18px 145px;
+
+    display:flex;
+    align-items:center;
+
+    background:#f6a329;
+
+    border:3px dashed #0758b8;
+
+    overflow:visible;
+}
+
+
+/* round gift icon */
+.zv-newsletter-gift{
+    position:absolute;
+
+    left:58px;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:118px;
+    height:118px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    border:7px solid #eef3fa;
+
+    display:grid;
+    place-items:center;
+
+    color:#0758b8;
+
+    font-size:58px;
+
+    box-shadow:0 7px 20px rgba(0,0,0,.08);
+}
+
+
+/* offer text */
+.zv-newsletter-offer-copy{
+    width:100%;
+}
+
+.zv-offer-small-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    margin-bottom:5px;
+
+    color:#fff;
+
+    font-family:"Montserrat",sans-serif;
+}
+
+.zv-offer-small-row > span{
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:.4px;
+}
+
+.zv-offer-small-row b{
+    padding:5px 9px;
+
+    background:#fff;
+
+    color:#555;
+
+    font-size:11px;
+    font-weight:500;
+}
+
+.zv-offer-small-row b strong{
+    color:#0758b8;
+}
+
+.zv-offer-main{
+    color:#fff;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:30px;
+    font-weight:500;
+
+    letter-spacing:.5px;
+}
+
+.zv-offer-main strong{
+    margin-left:6px;
+
+    color:#0758b8;
+
+    font-size:38px;
+    font-weight:800;
+}
+
+
+/* NEW ribbon */
+.zv-offer-new{
+    position:absolute;
+
+    top:-8px;
+    right:-9px;
+
+    width:73px;
+
+    padding:5px 0;
+
+    transform:rotate(45deg) translate(18px,-15px);
+
+    background:#0758b8;
+
+    color:#fff;
+
+    text-align:center;
+
+    font:700 11px "Montserrat",sans-serif;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+
+/* body */
+.zv-newsletter-main{
+    text-align:center;
+}
+
+.zv-newsletter-main h2{
+    margin:0 0 12px;
+
+    color:#172033;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:40px;
+    font-weight:800;
+
+    letter-spacing:1px;
+}
+
+.zv-newsletter-main p{
+    max-width:610px;
+
+    margin:0 auto 28px;
+
+    color:#7b7b7b;
+
+    font-size:13px;
+    line-height:1.65;
+}
+
+
+/* form */
+.zv-newsletter-form{
+    max-width:690px;
+
+    margin:0 auto;
+}
+
+.zv-newsletter-form input{
+    width:100%;
+
+    height:54px;
+
+    margin-bottom:16px;
+
+    border:1px solid #e1e1e1 !important;
+
+    border-radius:0 !important;
+
+    text-align:center;
+
+    font-size:13px;
+
+    box-shadow:none !important;
+}
+
+.zv-newsletter-form input:focus{
+    border-color:#0758b8 !important;
+}
+
+
+/* button */
+.zv-newsletter-submit{
+    min-width:160px;
+
+    height:52px;
+
+    padding:0 30px;
+
+    border:0;
+
+    background:#0758b8;
+
+    color:#fff;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s ease;
+}
+
+.zv-newsletter-submit:hover{
+    background:#f6a329;
+    color:#fff;
+}
+
+
+/* backdrop like Multikart */
+.modal-backdrop.show{
+    opacity:.58 !important;
+}
+
+
+/* tablet */
+@media(max-width:767px){
+
+    .zv-newsletter-border{
+        padding:62px 28px 40px;
+    }
+
+    .zv-newsletter-offer{
+        padding:70px 20px 20px;
+        text-align:center;
+    }
+
+    .zv-newsletter-gift{
+        left:50%;
+        top:0;
+        transform:translate(-50%,-50%);
+
+        width:92px;
+        height:92px;
+
+        font-size:44px;
+    }
+
+    .zv-offer-small-row{
+        justify-content:center;
+        flex-wrap:wrap;
+    }
+
+    .zv-offer-small-row > span{
+        font-size:17px;
+    }
+
+    .zv-offer-main{
+        font-size:22px;
+    }
+
+    .zv-offer-main strong{
+        display:block;
+        margin:5px 0 0;
+
+        font-size:31px;
+    }
+
+    .zv-newsletter-main h2{
+        font-size:31px;
+    }
+}
+
+
+/* phone */
+@media(max-width:480px){
+
+    .zv-newsletter-modal .modal-dialog{
+        margin:12px;
+    }
+
+    .zv-newsletter-border{
+        padding:55px 18px 30px;
+        border-width:9px;
+    }
+
+    .zv-newsletter-offer{
+        margin-bottom:32px;
+    }
+
+    .zv-newsletter-main h2{
+        font-size:26px;
+    }
+
+    .zv-newsletter-main p{
+        display:none;
+    }
+
+}
+</style>
+
+
+<style id="zv-newsletter-smaller-size">
+/* Smaller Multikart-style newsletter popup */
+.zv-newsletter-modal .modal-dialog{
+    max-width:720px !important;
+}
+
+.zv-newsletter-border{
+    padding:52px 48px 38px !important;
+    border-width:10px !important;
+}
+
+.zv-newsletter-offer{
+    min-height:88px !important;
+    margin-bottom:30px !important;
+    padding:14px 48px 14px 115px !important;
+}
+
+.zv-newsletter-gift{
+    left:46px !important;
+    width:90px !important;
+    height:90px !important;
+    border-width:5px !important;
+    font-size:43px !important;
+}
+
+.zv-offer-small-row > span{
+    font-size:17px !important;
+}
+
+.zv-offer-small-row b{
+    padding:4px 7px !important;
+    font-size:9px !important;
+}
+
+.zv-offer-main{
+    font-size:23px !important;
+}
+
+.zv-offer-main strong{
+    font-size:29px !important;
+}
+
+.zv-newsletter-main h2{
+    margin-bottom:9px !important;
+    font-size:31px !important;
+}
+
+.zv-newsletter-main p{
+    max-width:540px !important;
+    margin-bottom:20px !important;
+    font-size:12px !important;
+}
+
+.zv-newsletter-form{
+    max-width:560px !important;
+}
+
+.zv-newsletter-form input{
+    height:46px !important;
+    margin-bottom:12px !important;
+}
+
+.zv-newsletter-submit{
+    min-width:140px !important;
+    height:45px !important;
+    font-size:14px !important;
+}
+
+@media(max-width:767px){
+    .zv-newsletter-modal .modal-dialog{
+        max-width:94% !important;
+        margin-left:auto !important;
+        margin-right:auto !important;
+    }
+
+    .zv-newsletter-border{
+        padding:48px 22px 30px !important;
+    }
+
+    .zv-newsletter-offer{
+        padding:58px 15px 16px !important;
+    }
+
+    .zv-newsletter-gift{
+        left:50% !important;
+        width:76px !important;
+        height:76px !important;
+        font-size:36px !important;
+    }
+}
+</style>
+
+
+
+
+
+<style id="zv-storefront-cleanup-v1">
+/* Product ratings removed site-wide. */
+.rating-label,
+.product-rating,
+.rating,
+.star-rating { display:none !important; }
+
+/* Product/quick-view images should sit on a clean white canvas. */
+.basic-product .img-wrapper,
+.basic-product .img-wrapper > a,
+.quick-view-modal,
+.quick-view-modal .modal-body,
+.quick-view-modal .quick-view-img,
+.quick-view-modal .product-right,
+.product-box .img-wrapper,
+.product-wrapper-grid .img-wrapper {
+    background:#fff !important;
+    background-image:none !important;
+}
+.basic-product .img-wrapper::before,
+.basic-product .img-wrapper::after,
+.quick-view-modal::before,
+.quick-view-modal::after,
+.quick-view-modal .modal-body::before,
+.quick-view-modal .modal-body::after {
+    background:none !important;
+    background-image:none !important;
+}
+
+/* Mobile navigation links are shown only inside the hamburger menu. */
+.zv-mobile-menu-only { display:none !important; }
+
+@media screen and (max-width:991.98px) {
+    .zv-mobile-account-access,
+    header .icon-nav,
+    header .mobile-wishlist,
+    header #zvWishlistOpen,
+    header #zvWishlistCount,
+    .zv-header-cart-item {
+        display:none !important;
+        visibility:hidden !important;
+        opacity:0 !important;
+        pointer-events:none !important;
+    }
+
+    /* Remove any product-card wishlist/hover action from mobile/tablet. */
+    [data-wishlist],
+    .wishlist-icon,
+    .cart-info,
+    .product-box .cart-info,
+    .basic-product .cart-info,
+    .product-wrapper .cart-info,
+    .product-card .cart-info,
+    .product-detail + .cart-info {
+        display:none !important;
+        visibility:hidden !important;
+        opacity:0 !important;
+        pointer-events:none !important;
+    }
+
+    /* Prevent theme pseudo-elements from recreating a floating heart. */
+    #main-nav::after,
+    #main-menu::after {
+        content:none !important;
+        display:none !important;
+    }
+
+    /* Keep our account / wishlist / cart text links in hamburger menu. */
+    #main-menu > li.zv-mobile-menu-only {
+        display:block !important;
+        visibility:visible !important;
+        opacity:1 !important;
+        width:100% !important;
+        margin:0 !important;
+        padding:0 !important;
+    }
+
+    #main-menu > li.zv-mobile-menu-only > a,
+    #main-menu > li.zv-mobile-menu-only > button,
+    #zvMobileWishlistOpen,
+    #zvMobileCartOpen {
+        display:block !important;
+        visibility:visible !important;
+        opacity:1 !important;
+        pointer-events:auto !important;
+        position:relative !important;
+        width:100% !important;
+        margin:0 !important;
+        padding:10px 20px !important;
+        border:0 !important;
+        background:transparent !important;
+        color:#222 !important;
+        font:inherit !important;
+        text-align:left !important;
+        cursor:pointer !important;
+        box-sizing:border-box !important;
+    }
+
+    #main-menu > li.zv-mobile-menu-only > ul {
+        margin:0 !important;
+        padding-left:20px !important;
+    }
+}
+</style>
+<style id="zv-quick-view-fix-v3">
+
+/* =========================================================
+   ZENVIBE QUICK VIEW - COMPACT VERSION
+========================================================= */
+
+/* Modal overall size */
+#quickView .modal-dialog {
+    width: 900px !important;
+    max-width: calc(100vw - 40px) !important;
+    margin: 30px auto !important;
+}
+
+/* Main white popup */
+#quickView .quick-view-modal {
+    position: relative !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Modal content spacing */
+#quickView .modal-body {
+    position: relative !important;
+    padding: 35px 40px !important;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+#quickView .zv-quick-view-close {
+    position: absolute !important;
+
+    top: 10px !important;
+    right: 10px !important;
+
+    z-index: 100 !important;
+
+    width: 34px !important;
+    height: 34px !important;
+
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 0 !important;
+
+    background: #0758b8 !important;
+    background-image: none !important;
+
+    color: #fff !important;
+
+    opacity: 1 !important;
+
+    font-family: Arial, sans-serif !important;
+    font-size: 25px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+
+    cursor: pointer !important;
+}
+
+#quickView .zv-quick-view-close:hover {
+    background: #f68b4a !important;
+    color: #fff !important;
+}
+
+
+/* =========================================================
+   TWO COLUMNS
+========================================================= */
+
+#quickView .row {
+    align-items: center !important;
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+#quickView .quick-view-img {
+    width: 100% !important;
+
+    min-height: 300px !important;
+    height: 340px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 10px !important;
+
+    background: #fff !important;
+}
+
+#quickView #mkQuickImage {
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: 390px !important;
+    max-height: 320px !important;
+
+    object-fit: contain !important;
+
+    display: block !important;
+
+    margin: auto !important;
+}
+
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+#quickView .product-right {
+    padding: 10px 10px 10px 20px !important;
+
+    background: #fff !important;
+}
+
+
+/* =========================================================
+   PRODUCT TITLE
+========================================================= */
+
+#quickView #mkQuickName {
+    margin: 0 0 12px !important;
+
+    color: #111 !important;
+
+    font-family: "Montserrat", sans-serif !important;
+
+    font-size: 25px !important;
+    font-weight: 700 !important;
+
+    line-height: 1.3 !important;
+
+    text-transform: uppercase !important;
+
+    letter-spacing: 0 !important;
+
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+#quickView #mkQuickPrice {
+    margin: 0 0 18px !important;
+
+    color: #111 !important;
+
+    font-family: "Montserrat", sans-serif !important;
+
+    font-size: 27px !important;
+    font-weight: 400 !important;
+
+    line-height: 1.2 !important;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+#quickView #mkQuickDesc {
+    margin: 0 0 20px !important;
+
+    padding: 16px 0 !important;
+
+    border-top: 1px solid #eeeeee !important;
+    border-bottom: 0 !important;
+
+    color: #666 !important;
+
+    font-family: "Lato", sans-serif !important;
+
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+
+    max-height: 130px !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+
+
+/* Description headings shouldn't become another huge product title */
+#quickView #mkQuickDesc h1,
+#quickView #mkQuickDesc h2,
+#quickView #mkQuickDesc h3,
+#quickView #mkQuickDesc h4,
+#quickView #mkQuickDesc h5,
+#quickView #mkQuickDesc h6 {
+
+    margin: 0 0 7px !important;
+
+    color: #555 !important;
+
+    font-family: "Lato", sans-serif !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.5 !important;
+
+    text-transform: none !important;
+}
+
+#quickView #mkQuickDesc p {
+    margin: 0 0 7px !important;
+}
+
+#quickView #mkQuickDesc p:last-child {
+    margin-bottom: 0 !important;
+}
+
+#quickView #mkQuickDesc ul,
+#quickView #mkQuickDesc ol {
+    margin: 5px 0 8px 18px !important;
+    padding: 0 !important;
+}
+
+#quickView #mkQuickDesc img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+#quickView .product-buttons {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    margin-top: 5px !important;
+}
+
+#quickView .product-buttons .btn {
+
+    min-width: 145px !important;
+
+    margin: 0 !important;
+
+    padding: 11px 18px !important;
+
+    font-size: 14px !important;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    #quickView .modal-dialog {
+        width: 760px !important;
+        max-width: calc(100vw - 30px) !important;
+    }
+
+    #quickView .modal-body {
+        padding: 35px 25px 25px !important;
+    }
+
+    #quickView .quick-view-img {
+        height: 300px !important;
+        min-height: 300px !important;
+    }
+
+    #quickView #mkQuickImage {
+        max-height: 280px !important;
+    }
+
+    #quickView .product-right {
+        padding-left: 10px !important;
+    }
+
+    #quickView #mkQuickName {
+        font-size: 22px !important;
+    }
+
+    #quickView #mkQuickPrice {
+        font-size: 24px !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    #quickView .modal-dialog {
+
+        width: auto !important;
+
+        max-width: calc(100vw - 20px) !important;
+
+        margin: 10px auto !important;
+    }
+
+    #quickView .modal-body {
+        padding: 45px 18px 22px !important;
+    }
+
+    #quickView .quick-view-img {
+
+        height: 230px !important;
+        min-height: 230px !important;
+
+        margin-bottom: 12px !important;
+    }
+
+    #quickView #mkQuickImage {
+        max-height: 220px !important;
+    }
+
+    #quickView .product-right {
+        padding: 0 !important;
+    }
+
+    #quickView #mkQuickName {
+
+        margin-bottom: 8px !important;
+
+        font-size: 19px !important;
+
+        line-height: 1.3 !important;
+    }
+
+    #quickView #mkQuickPrice {
+
+        margin-bottom: 12px !important;
+
+        font-size: 22px !important;
+    }
+
+    #quickView #mkQuickDesc {
+
+        max-height: 105px !important;
+
+        padding: 12px 0 !important;
+
+        margin-bottom: 15px !important;
+
+        font-size: 13px !important;
+    }
+
+    #quickView .product-buttons {
+
+        display: grid !important;
+
+        grid-template-columns: 1fr 1fr !important;
+
+        gap: 8px !important;
+    }
+
+    #quickView .product-buttons .btn {
+
+        min-width: 0 !important;
+
+        width: 100% !important;
+
+        padding: 10px 5px !important;
+
+        font-size: 12px !important;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    #quickView .quick-view-img {
+        height: 190px !important;
+        min-height: 190px !important;
+    }
+
+    #quickView #mkQuickImage {
+        max-height: 180px !important;
+    }
+
+    #quickView #mkQuickName {
+        font-size: 17px !important;
+    }
+
+}
+/* =========================================================
+   QUICK VIEW CLOSE BUTTON
+========================================================= */
+
+#quickView .zv-quick-view-close {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+
+    width: 44px !important;
+    height: 44px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    background: #0d5db8 !important;
+    background-image: none !important;
+
+    color: #ffffff !important;
+    opacity: 1 !important;
+
+    font-size: 30px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+
+    cursor: pointer !important;
+    z-index: 999 !important;
+
+    transition:
+        background-color .2s ease,
+        transform .2s ease !important;
+}
+
+#quickView .zv-quick-view-close::before,
+#quickView .zv-quick-view-close::after {
+    display: none !important;
+    content: none !important;
+}
+
+#quickView .zv-quick-view-close span {
+    display: block !important;
+    color: #ffffff !important;
+    font-size: 31px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    transform: translateY(-1px);
+}
+
+#quickView .zv-quick-view-close:hover {
+    background: #084b95 !important;
+}
+
+#quickView .zv-quick-view-close:focus {
+    outline: 2px solid #ffffff !important;
+    outline-offset: -4px !important;
+    box-shadow: none !important;
+}
+
+</style>
+<style>
+
+/* Keep account icon aligned with existing header search, wishlist and cart. */
+header .zv-header-auth-item{display:inline-flex!important;align-items:center;justify-content:center;margin:0 0 0 12px;padding:0;vertical-align:middle}
+header .zv-header-auth-form{margin:0;display:flex;align-items:center}
+header .zv-header-auth-icon{display:inline-flex!important;align-items:center;justify-content:center;width:32px;height:36px;border:0;background:transparent;color:#666!important;text-decoration:none!important;padding:0}
+header .zv-header-auth-icon i{font-size:25px;line-height:1}
+header .zv-header-auth-icon:hover{color:#173e7c!important}
+@media(min-width:992px){.zv-footer-legal{white-space:nowrap;font-size:13px!important}.sub-footer .row>.col-xl-6:first-child{flex:0 0 68%;max-width:68%}.sub-footer .row>.col-xl-6:last-child{flex:0 0 32%;max-width:32%}}
+@media(max-width:991.98px){.zv-footer-legal{white-space:normal}header .zv-header-auth-item{margin-left:6px}}
+</style>
+</head>
+<body class="theme-color-1 zv-multikart-exact">
+
+<div class="top-header">
+ <div class="container"><div class="row">
+  <div class="col-lg-6"><div class="header-contact"><ul><li>Welcome to {{ site_settings.business_name|default:'ZenVibe Corporate Gifts' }}</li><li><i class="ri-phone-fill"></i>Call Us: {{ site_settings.phone|default:'(587) 340-2358' }}</li></ul></div></div>
+  <div class="col-lg-6 text-end"><ul class="header-dropdown">
+   <!-- <li class="onhover-dropdown mobile-account"><i class="ri-user-fill"></i> My Account
+    <ul class="onhover-show-div">
+    {% if request.user.is_authenticated %}<li><a href="{% url 'designer:customer_panel' %}">Profile</a></li><li><a href="{% url 'designer:my_orders' %}">My Orders</a></li><li><a href="{% url 'designer:my_orders' %}">Order Tracking</a></li><li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="zv-link-button">Logout</button></form></li>
+    {% else %}<li><a href="{% url 'login' %}">Login</a></li><li><a href="{% url 'designer:register' %}">Register</a></li><li><a href="{% url 'designer:my_orders' %}">Order Tracking</a></li>{% endif %}
+    </ul>
+   </li> -->
+  </ul></div>
+ </div></div>
+</div>
+
+<header>
+ <div class="container"><div class="row"><div class="col-sm-12"><div class="main-menu">
+  <div class="menu-left">
+   <div class="navbar"><a href="#!" onclick="openNav();return false;"><div class="bar-style"><i class="ri-bar-chart-horizontal-line sidebar-bar"></i></div></a>
+    <div id="mySidenav" class="sidenav"><a href="#!" class="sidebar-overlay" onclick="closeNav();return false;"></a><nav>
+     <div onclick="closeNav()"><div class="sidebar-back text-start"><i class="ri-arrow-left-s-line pe-2"></i>Back</div></div>
+     <ul id="sub-menu" class="sm pixelstrap sm-vertical">
+      <li><a href="{% url 'designer:start_designing' %}">All Products</a></li>
+      {% for c in storefront_categories %}<li><a href="{% url 'designer:category_detail' c.slug %}">{{ c.name }}</a>{% if c.children.all %}<ul>{% for child in c.children.all %}<li><a href="{% url 'designer:category_detail' child.slug %}">{{ child.name }}</a></li>{% endfor %}</ul>{% endif %}</li>{% endfor %}
+     </ul>
+    </nav></div>
+   </div>
+   <div class="brand-logo"><a href="{% url 'designer:home' %}"><img src="{% static 'designer/images/zenvibe-logo.webp' %}" class="img-fluid blur-up lazyload zv-main-logo" alt="ZenVibe Corporate Gifts"></a></div>
+  </div>
+  <div class="menu-right pull-right"><div><nav id="main-nav"><div class="toggle-nav"><i class="ri-bar-chart-horizontal-line sidebar-bar"></i></div>
+   <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+    <li class="mobile-box"><div class="mobile-back text-end">Menu<i class="ri-close-line"></i></div></li>
+    <li><a href="{% url 'designer:home' %}">Home</a></li>
+    <li class="mega hover-cls"><a href="#!">Feature<div class="lable-nav">new</div></a>
+     <ul class="mega-menu full-mega-menu"><li><div class="container"><div class="row g-xl-4 g-0">
+      <div class="col mega-box"><div class="link-section"><div class="menu-title"><h5>shop</h5></div><div class="menu-content"><ul><li><a href="{% url 'designer:start_designing' %}">All Products</a></li>{% for c in storefront_categories|slice:':5' %}<li><a href="{% url 'designer:category_detail' c.slug %}">{{ c.name }}</a></li>{% endfor %}</ul></div></div></div>
+      <div class="col mega-box"><div class="link-section"><div class="menu-title"><h5>popular</h5></div><div class="menu-content"><ul><li><a href="{% url 'designer:category_detail' 'banners-displays' %}">Banners & Displays</a></li><li><a href="{% url 'designer:category_detail' 'custom-apparel' %}">Custom Apparel</a></li><li><a href="{% url 'designer:category_detail' 'marketing-materials' %}">Marketing Materials</a></li><li><a href="{% url 'designer:category_detail' 'drinkware' %}">Drinkware</a></li><li><a href="{% url 'designer:category_detail' 'pens' %}">Pens</a></li></ul></div></div></div>
+      <div class="col mega-box"><div class="link-section"><div class="menu-title"><h5>account</h5></div><div class="menu-content"><ul><li><a href="{% url 'designer:start_designing' %}">Cart</a></li><li><a href="{% url 'designer:my_orders' %}">Order Tracking</a></li><li><a href="{% url 'login' %}">Login</a></li><li><a href="{% url 'designer:register' %}">Register</a></li></ul></div></div></div>
+      <div class="col mega-box"><div class="link-section"><div class="menu-title"><h5>company</h5></div><div class="menu-content"><ul><li><a href="{% url 'designer:about' %}">About Us</a></li><li><a href="{% url 'designer:our_work' %}">Our Works</a></li><li><a href="{% url 'designer:contact' %}">Contact Us</a></li></ul></div></div></div>
+     </div></div></li></ul>
+    </li>
+    <li><a href="{% url 'designer:start_designing' %}">Product</a><ul>{% for c in storefront_categories %}<li><a href="{% url 'designer:category_detail' c.slug %}">{{ c.name }}</a></li>{% endfor %}</ul></li>
+    <li><a href="{% url 'designer:blog' %}">Blog</a></li>
+    <li><a href="{% url 'designer:about' %}">About Us</a></li>
+    <li><a href="{% url 'designer:contact' %}">Contact Us</a></li>
+
+    <li class="zv-mobile-menu-only">
+      <a href="{% if request.user.is_authenticated and request.user.is_staff %}{% url 'admin:index' %}{% elif request.user.is_authenticated %}{% url 'designer:customer_panel' %}{% else %}{% url 'login' %}{% endif %}">My Account</a>
+    </li>
+    <li class="zv-mobile-menu-only"><a href="#!" id="zvMobileWishlistOpen">Wishlist</a></li>
+    <li class="zv-mobile-menu-only"><a href="#!" id="zvMobileCartOpen">Cart</a></li>
+   </ul>
+  </nav></div>
+  <div><div class="icon-nav d-none d-sm-block"><ul>
+   <li class="onhover-div mobile-search" id="zvSearchOpen"><div><i class="ri-search-line"></i></div></li>
+   <li class="onhover-div mobile-wishlist">
+      <div>
+        <button type="button" class="zv-header-icon-btn" id="zvWishlistOpen" title="Wishlist">
+          <i class="ri-heart-line"></i>
+          <span class="zv-header-badge" id="zvWishlistCount">0</span>
+        </button>
+      </div>
+    </li>
+   <li class="onhover-div zv-header-cart-item">
+      <div>
+        <button type="button" class="zv-header-icon-btn" id="zvCartOpen" title="Cart">
+          <i class="ri-shopping-cart-line"></i>
+          <span class="zv-header-badge" id="mkCartCount">{{ cart_item_count|default:0 }}</span>
+        </button>
+      </div>
+    </li>
+    <li class="onhover-div zv-header-auth-item" aria-label="Account">
+      {% if request.user.is_authenticated and request.user.is_staff %}
+      <a href="{% url 'admin:index' %}" class="zv-header-icon-btn zv-header-auth-icon" title="Admin Panel" aria-label="Admin Panel"><i class="ri-user-line" aria-hidden="true"></i></a>
+      {% elif request.user.is_authenticated %}
+      <a href="{% url 'designer:customer_panel' %}" class="zv-header-icon-btn zv-header-auth-icon" title="My Account" aria-label="My Account"><i class="ri-user-line" aria-hidden="true"></i></a>
+      {% else %}
+      <a href="{% url 'login' %}?next={% url 'designer:customer_panel' %}" class="zv-header-icon-btn zv-header-auth-icon" title="Customer Login" aria-label="Customer Login"><i class="ri-user-line" aria-hidden="true"></i></a>
+      {% endif %}
+    </li>
+    {% if request.user.is_authenticated %}
+    <li class="zv-header-auth-item">
+      <form class="zv-header-auth-form" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="zv-header-icon-btn zv-header-auth-icon" title="Log Out" aria-label="Log Out" style="cursor:pointer"><i class="ri-logout-box-r-line" aria-hidden="true"></i></button>
+      </form>
+    </li>
+    {% endif %}
+  </ul></div></div>
+  </div>
+ </div></div></div></div>
+</header>
+
+{% block content %}{% endblock %}
+
+<footer class="footer-style-1">
+<section class="section-b-space darken-layout"><div class="container"><div class="row footer-theme g-md-5 g-2">
+ <div class="col-xl-3 col-lg-5 col-md-6 sub-title"><div><div class="footer-logo"><a href="{% url 'designer:home' %}"><img alt="ZenVibe" class="img-fluid zv-footer-logo" src="{% static 'designer/images/zenvibe-logo.webp' %}"></a></div><p>{{ site_settings.footer_text|default:'Custom promotional products, branded apparel, awards, drinkware, displays and corporate gifts for Canadian businesses, teams and events.' }}</p><ul class="contact-list"><li><i class="ri-map-pin-line"></i>{{ site_settings.city|default:'Edmonton' }}, {{ site_settings.province|default:'Alberta' }}, {{ site_settings.country|default:'Canada' }}</li><li><i class="ri-phone-line"></i>Call Us: {{ site_settings.phone|default:'(587) 340-2358' }}</li><li><i class="ri-mail-line"></i>Email Us: {{ site_settings.email }}</li></ul></div></div>
+ <div class="col-xl-2 col-lg-3 col-md-4 col-md-6"><div class="sub-title"><div class="footer-title"><h4>Categories</h4></div><div class="footer-content"><ul>{% for c in storefront_categories|slice:':6' %}<li><a class="text-content" href="{% url 'designer:category_detail' c.slug %}">{{ c.name }}</a></li>{% endfor %}</ul></div></div></div>
+ <div class="col-xl col-lg-3 col-md-3"><div class="sub-title"><div class="footer-title"><h4>Useful Links</h4></div><div class="footer-content"><ul><li><a class="text-content" href="{% url 'designer:home' %}">Home</a></li><li><a class="text-content" href="{% url 'designer:start_designing' %}">Products</a></li><li><a class="text-content" href="{% url 'designer:about' %}">About Us</a></li><li><a class="text-content" href="{% url 'designer:blog' %}">Blogs</a></li><li><a class="text-content" href="{% url 'designer:our_work' %}">Our Works</a></li></ul></div></div></div>
+ <div class="col-xl-2 col-md-3"><div class="sub-title"><div class="footer-title"><h4>Help Center</h4></div><div class="footer-content"><ul><li><a class="text-content" href="{% if request.user.is_authenticated and request.user.is_staff %}{% url 'admin:index' %}{% elif request.user.is_authenticated %}{% url 'designer:customer_panel' %}{% else %}{% url 'login' %}{% endif %}">My Account</a></li><li><a class="text-content" href="{% url 'designer:my_orders' %}">My Orders</a></li><li><a class="text-content" href="#!" id="zvWishlistFooter">Wishlist</a></li><li><a class="text-content" href="{% url 'designer:about' %}#faq">Faq's</a></li><li><a class="text-content" href="{% url 'designer:contact' %}">Contact Us</a></li></ul></div></div></div>
+ <div class="col-xl-3 col-lg-4 col-md-6"><div class="sub-title"><div class="footer-title"><h4>Follow Us</h4></div><div class="footer-content"><p class="mb-cls-content">Never miss new ZenVibe products and custom branding ideas.</p><form class="form-inline" onsubmit="return false"><div class="form-group me-sm-3 mb-2"><input class="form-control" placeholder="Enter Email Address" type="email"></div><button class="btn btn-solid mb-2">Subscribe</button></form><div class="footer-social"><ul><li><a href="#!"><i class="ri-facebook-fill"></i></a></li><li><a href="#!"><i class="ri-instagram-fill"></i></a></li><li><a href="#!"><i class="ri-linkedin-fill"></i></a></li></ul></div></div></div></div>
+</div></div></section>
+<div class="sub-footer dark-subfooter"><div class="container"><div class="row"><div class="col-xl-6 col-md-6 col-sm-12"><div class="footer-end"><p class="zv-footer-legal"><i class="ri-copyright-line"></i> 2026 {{ site_settings.business_name|default:'ZenVibe Corporate Gifts Inc.' }} &nbsp;|&nbsp; <a href="{% url 'designer:privacy_policy' %}">Privacy Policy</a> &nbsp;|&nbsp; <a href="{% url 'designer:terms_conditions' %}">Terms &amp; Conditions</a> &nbsp;|&nbsp; <a href="{% url 'designer:refund_policy' %}">Refund Policy</a></p></div></div><div class="col-xl-6 col-md-6 col-sm-12"><div class="payment-card-bottom"><img alt="payment options" class="img-fluid" src="{% static 'designer/multikart_exact/images/payment.png' %}"></div></div></div></div></div>
+</footer>
+
+<!-- Multikart-style search modal -->
+<div class="zv-search-overlay" id="zvSearchOverlay">
+
+    <div class="zv-search-modal">
+
+        <!-- HEADER -->
+        <div class="zv-search-modal-head">
+
+            <h3>Search in store</h3>
+
+            <button class="zv-search-close"
+                    id="zvSearchClose"
+                    type="button"
+                    aria-label="Close search">
+                <i class="ri-close-line"></i>
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+        <div class="zv-search-modal-body">
+
+
+            <!-- SEARCH BAR -->
+            <div class="zv-search-form-multikart">
+
+                <input id="mkSearchInput"
+                       type="search"
+                       placeholder="Search with brands and categories..."
+                       autocomplete="off">
+
+                <button id="mkSearchSubmit"
+                        type="button"
+                        aria-label="Search">
+                    <i class="ri-search-line"></i>
+                </button>
+
+            </div>
+
+
+            <!-- TOP SEARCH -->
+            <div class="zv-top-search" id="zvTopSearchBlock">
+
+                <strong>Top search:</strong>
+
+                {% for c in storefront_categories|slice:':4' %}
+
+                <a href="{% url 'designer:category_detail' c.slug %}">
+                    {{ c.name }}
+                </a>
+
+                {% empty %}
+
+                <a href="{% url 'designer:category_detail' 'banners-displays' %}">
+                    Banners
+                </a>
+
+                <a href="{% url 'designer:category_detail' 'custom-apparel' %}">
+                    Apparel
+                </a>
+
+                <a href="{% url 'designer:category_detail' 'drinkware' %}">
+                    Drinkware
+                </a>
+
+                <a href="{% url 'designer:category_detail' 'pens' %}">
+                    Pens
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- MOST SEARCHED -->
+            <div id="zvMostSearchedBlock">
+            <h4 class="zv-most-searched-title">
+                Most Searched
+            </h4>
+
+
+            <div class="zv-most-searched-grid">
+
+                {% for product in products|slice:':4' %}
+
+                <a href="{% url 'designer:choose_design' product.id %}"
+                   class="zv-search-product-card">
+
+                    <div class="zv-search-product-image">
+
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                             alt="{{ product.name }}">
+                        {% endif %}
+
+                        <span class="zv-search-product-rating">
+                            <i class="ri-star-fill"></i>
+                            4.5
+                        </span>
+
+                    </div>
+
+
+                    <div class="zv-search-product-info">
+
+                        <h4>{{ product.name }}</h4>
+
+                        <small>
+                            {{ product.category.name }}
+                        </small>
+
+                        <div class="zv-search-product-price">
+
+                            {% if product.is_on_sale and product.sale_price %}
+
+                                ${{ product.sale_price }}
+
+                                <del>
+                                    ${{ product.price }}
+                                </del>
+
+                                <span>Sale</span>
+
+                            {% else %}
+
+                                ${{ product.price }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+                {% empty %}
+
+                <div class="zv-search-product-card">
+                    <div class="zv-search-product-image"></div>
+                    <div class="zv-search-product-info">
+                        <h4>No products available</h4>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+            </div>
+
+
+
+            <!-- Search index used for instant type-ahead -->
+            <div id="zvSearchProductIndex" hidden>
+                {% for product in products %}
+                <span
+                    data-search-product
+                    data-id="{{ product.id }}"
+                    data-name="{{ product.name|escape }}"
+                    data-category="{{ product.category.name|default:''|escape }}"
+                    data-description="{{ product.description|default:''|striptags|truncatechars:180|escape }}"
+                    data-price="{{ product.sale_price|default:product.price }}"
+                    data-original-price="{{ product.price }}"
+                    data-sale="{% if product.is_on_sale and product.sale_price %}1{% else %}0{% endif %}"
+                    data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                    data-url="{% url 'designer:choose_design' product.id %}">
+                </span>
+                {% endfor %}
+            </div>
+
+            <!-- AJAX / LIVE SEARCH RESULTS -->
+            <div id="mkSearchResults"
+                 class="zv-search-results">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- newsletter popup copied from Multikart structure -->
+<div class="modal fade theme-modal zv-newsletter-modal"
+     id="exampleModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content zv-newsletter-content">
+
+            <div class="zv-newsletter-border">
+
+                <button type="button"
+                        class="zv-newsletter-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <i class="ri-close-line"></i>
+                </button>
+
+
+                <!-- TOP OFFER -->
+                <div class="zv-newsletter-offer">
+
+                    <div class="zv-newsletter-gift">
+                        <i class="ri-gift-line"></i>
+                    </div>
+
+                    <div class="zv-newsletter-offer-copy">
+
+                        <div class="zv-offer-small-row">
+                            <span>ZenVibe SPECIAL</span>
+
+                            <b>
+                                USE CODE:
+                                <strong>WELCOME10</strong>
+                            </b>
+                        </div>
+
+                        <div class="zv-offer-main">
+                            SAVE UP TO
+                            <strong>10% OFF</strong>
+                        </div>
+
+                    </div>
+
+                    <span class="zv-offer-new">
+                        NEW
+                    </span>
+
+                </div>
+
+
+                <!-- NEWSLETTER -->
+                <!-- <div class="zv-newsletter-main">
+
+                    <h2>NEWSLETTER</h2>
+
+                    <p>
+                        Get ZenVibe product launches, custom branding ideas,
+                        special offers and promotions.
+                    </p>
+
+                    <form class="zv-newsletter-form"
+                          onsubmit="return false;">
+
+                        <input type="email"
+                               class="form-control"
+                               placeholder="Enter your email"
+                               required>
+
+                        <button type="submit"
+                                class="zv-newsletter-submit"
+                                data-bs-dismiss="modal">
+                            Subscribe
+                        </button>
+
+                    </form>
+
+                </div> -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- quick view: exact Multikart modal shell -->
+<div class="modal fade bd-example-modal-lg theme-modal" id="quickView" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content quick-view-modal"><div class="modal-body">
+    <button
+    type="button"
+    class="btn-close zv-quick-view-close"
+    data-bs-dismiss="modal"
+    aria-label="Close"
+>
+    <span aria-hidden="true">&times;</span>
+</button>
+    <div class="row"><div class="col-lg-6"><div class="quick-view-img"><img id="mkQuickImage" class="img-fluid" alt=""></div></div><div class="col-lg-6 rtl-text"><div class="product-right"><h2 id="mkQuickName"></h2><h3 id="mkQuickPrice"></h3><div id="mkQuickDesc" class="border-product"></div><div class="product-buttons"><button id="mkQuickCart" type="button" class="btn btn-solid" data-add-cart>Add to cart</button><a id="mkQuickLink" href="#" class="btn btn-solid">Customize</a></div></div></div></div></div></div></div></div>
+
+<!-- Wishlist drawer -->
+<div class="zv-side-overlay" id="zvWishlistBackdrop"></div>
+<aside class="zv-side-drawer" id="zvWishlistDrawer">
+  <div class="zv-drawer-header">
+    <h3>My Wishlist (<span id="zvWishlistTitleCount">0</span>)</h3>
+    <button type="button"
+        class="zv-drawer-close"
+        id="zvWishlistClose"
+        aria-label="Close wishlist">
+    <i class="ri-close-line"></i>
+</button>
+  </div>
+  <div id="zvWishlistItems" class="zv-wishlist-list"></div>
+  <div id="zvWishlistEmpty" class="zv-drawer-empty">
+    <i class="ri-heart-3-line"></i>
+    <h4>Your wishlist is empty</h4>
+    <p>Click a product heart to save it.</p>
+  </div>
+</aside>
+
+<!-- Multikart-style cart drawer -->
+<div
+    class="zv-side-overlay"
+    id="zvCartBackdrop"
+></div>
+
+<aside
+    class="zv-side-drawer zv-cart-drawer"
+    id="zvCartDrawer"
+>
+
+    <!-- HEADER -->
+    <div class="zv-drawer-header">
+
+        <h3>
+            My Cart
+            (<span id="zvCartTitleCount">{{ cart_item_count }}</span>)
+        </h3>
+
+        <button
+            type="button"
+            class="zv-drawer-close"
+            id="zvCartClose"
+            aria-label="Close cart"
+        >
+            <i class="ri-close-line"></i>
+        </button>
+
+    </div>
+
+
+    <!-- FREE SHIPPING -->
+    <div class="zv-free-shipping">
+
+        <p>
+            Spend
+            <strong id="zvFreeShipAmount">$100.00</strong>
+            More And Enjoy Free Shipping!
+        </p>
+
+        <div class="zv-free-track">
+
+            <span
+                class="zv-free-fill"
+                id="zvFreeFill"
+            ></span>
+
+            <span
+                class="zv-free-truck"
+                id="zvFreeTruck"
+            >
+                <i class="ri-truck-line"></i>
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- CLEAR CART -->
+    <div class="zv-cart-clear-row">
+
+        <button
+            type="button"
+            class="zv-cart-manage-link"
+            id="zvClearCart"
+        >
+            Clear Cart
+        </button>
+
+    </div>
+
+
+    <!-- REAL DJANGO CART ITEMS -->
+    <div
+        id="zvCartItems"
+        class="zv-cart-items"
+    ></div>
+
+
+    <!-- EMPTY CART -->
+    <div
+        id="zvCartEmpty"
+        class="zv-drawer-empty"
+    >
+
+        <i class="ri-shopping-cart-2-line"></i>
+
+        <h4>Your cart is empty</h4>
+
+        <p>Add a product to see it here.</p>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="zv-cart-footer">
+
+        <div class="zv-cart-subtotal">
+
+            <span>
+                Sub Total :
+            </span>
+
+            <strong id="zvCartSubtotal">
+                $0.00
+            </strong>
+
+        </div>
+
+
+        <div class="zv-cart-footer-buttons">
+
+            <a href="{% url 'designer:cart' %}">
+                View Cart
+            </a>
+
+            <a href="{% url 'designer:cart_checkout' %}">
+                Check Out
+            </a>
+
+        </div>
+
+    </div>
+
+</aside>
+
+<div
+    class="zv-toast"
+    id="zvToast"
+></div>
+
+<!-- RIGHT CUSTOMIZE / CATEGORY DRAWER -->
+<button type="button" class="zv-customize-tab" id="zvCustomizeOpen" aria-label="Open categories">
+    <i class="ri-equalizer-2-line"></i>
+    <span>Customize</span>
+</button>
+
+<div class="zv-customize-overlay" id="zvCustomizeOverlay"></div>
+
+<aside class="zv-customize-drawer" id="zvCustomizeDrawer" aria-hidden="true">
+
+    <!-- HEADER -->
+    <div class="zv-customize-head">
+        <h3>Shop Categories</h3>
+
+        <button type="button"
+                class="zv-customize-close"
+                id="zvCustomizeClose"
+                aria-label="Close categories">
+            <i class="ri-close-line"></i>
+        </button>
+    </div>
+
+
+    <!-- CATEGORY SECTION TITLE -->
+    <button type="button"
+            class="zv-setting-section-head"
+            id="zvCategorySectionToggle"
+            aria-expanded="true">
+        <div>
+            <h4>Our Categories</h4>
+            <p>Explore ZenVibe products</p>
+        </div>
+
+        <i class="ri-arrow-up-s-line" id="zvCategorySectionArrow"></i>
+    </button>
+
+
+    <!-- CATEGORY GRID -->
+    <div class="zv-setting-grid" id="zvCategorySettingGrid">
+
+        {% if storefront_categories %}
+
+            {% for c in storefront_categories|slice:':10' %}
+
+            <a href="{% url 'designer:category_detail' c.slug %}"
+               class="zv-setting-card">
+
+                <div class="zv-setting-card-image">
+
+                    {% if c.image %}
+                    <img src="{{ c.image.url }}"
+                         alt="{{ c.name }}">
+                    {% else %}
+                    <div class="zv-setting-card-placeholder">
+                        <i class="ri-image-line"></i>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <span>{{ c.name }}</span>
+
+            </a>
+
+            {% endfor %}
+
+        {% elif categories %}
+
+            {% for c in categories|slice:':10' %}
+
+            <a href="{% url 'designer:category_detail' c.slug %}"
+               class="zv-setting-card">
+
+                <div class="zv-setting-card-image">
+
+                    {% if c.image %}
+                    <img src="{{ c.image.url }}"
+                         alt="{{ c.name }}">
+                    {% else %}
+                    <div class="zv-setting-card-placeholder">
+                        <i class="ri-image-line"></i>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <span>{{ c.name }}</span>
+
+            </a>
+
+            {% endfor %}
+
+        {% else %}
+
+            <a href="{% url 'designer:category_detail' 'banners-displays' %}"
+               class="zv-setting-card">
+                <div class="zv-setting-card-image zv-setting-fallback">
+                    <i class="ri-layout-grid-line"></i>
+                </div>
+                <span>Banners &amp; Displays</span>
+            </a>
+
+            <a href="{% url 'designer:category_detail' 'custom-apparel' %}"
+               class="zv-setting-card">
+                <div class="zv-setting-card-image zv-setting-fallback">
+                    <i class="ri-t-shirt-line"></i>
+                </div>
+                <span>Custom Apparel</span>
+            </a>
+
+            <a href="{% url 'designer:category_detail' 'drinkware' %}"
+               class="zv-setting-card">
+                <div class="zv-setting-card-image zv-setting-fallback">
+                    <i class="ri-cup-line"></i>
+                </div>
+                <span>Drinkware</span>
+            </a>
+
+            <a href="{% url 'designer:category_detail' 'pens' %}"
+               class="zv-setting-card">
+                <div class="zv-setting-card-image zv-setting-fallback">
+                    <i class="ri-pen-nib-line"></i>
+                </div>
+                <span>Pens</span>
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+
+</aside>
+
+<div class="tap-top top-cls"><div><i class="ri-arrow-up-double-line"></i></div></div>
+
+<script src="{% static 'designer/multikart_exact/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/jquery.exitintent.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/exit.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/slick.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/menu.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/lazysizes.min.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/bootstrap-notify.min.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/fly-cart.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/theme-setting.js' %}"></script>
+
+<script id="zv-admin-banner-responsive">
+(function () {
+    if (window.innerWidth > 767) return;
+    document.querySelectorAll('.zv-home-slide img.bg-img[data-mobile-src]').forEach(function (img) {
+        var mobileSrc = img.getAttribute('data-mobile-src');
+        if (mobileSrc) img.setAttribute('src', mobileSrc);
+    });
+})();
+</script>
+
+<script src="{% static 'designer/multikart_exact/js/script.js' %}"></script>
+<script src="{% static 'designer/multikart_exact/js/sticky-menu.js' %}"></script>
+<script>function openNav(){document.getElementById('mySidenav').classList.add('open-side')}function closeNav(){document.getElementById('mySidenav').classList.remove('open-side')}</script>
+<script src="{% static 'designer/js/zenvibe-exact-multikart.js' %}?v=20260821-3"></script>
+
+<script id="zv-cart-drawer-js">
+(function(){
+  const WKEY="zv_wishlist_v5",CKEY="zv_cart_v5",FREE=100;
+  const read=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const money=v=>"$"+(parseFloat(v||0)||0).toFixed(2);
+  const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function bump(el){if(!el)return;el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump");setTimeout(()=>el.classList.remove("bump"),350)}
+  function closeAll(){["zvWishlistDrawer","zvCartDrawer"].forEach(id=>document.getElementById(id)?.classList.remove("open"));["zvWishlistBackdrop","zvCartBackdrop"].forEach(id=>document.getElementById(id)?.classList.remove("open"));document.body.classList.remove("zv-side-lock")}
+  function open(id,bg){closeAll();document.getElementById(id)?.classList.add("open");document.getElementById(bg)?.classList.add("open");document.body.classList.add("zv-side-lock")}
+  function close(id,bg){document.getElementById(id)?.classList.remove("open");document.getElementById(bg)?.classList.remove("open");document.body.classList.remove("zv-side-lock")}
+
+  function renderWish(){
+    const items=read(WKEY),count=document.getElementById("zvWishlistCount"),title=document.getElementById("zvWishlistTitleCount"),box=document.getElementById("zvWishlistItems"),empty=document.getElementById("zvWishlistEmpty");
+    if(count)count.textContent=items.length;if(title)title.textContent=items.length;
+    document.querySelectorAll("[data-wishlist]").forEach(b=>{const on=items.some(x=>String(x.id)===String(b.dataset.id)),i=b.querySelector("i");if(i){i.classList.toggle("ri-heart-fill",on);i.classList.toggle("ri-heart-line",!on)}});
+    if(!box||!empty)return;if(!items.length){box.innerHTML="";box.style.display="none";empty.style.display="block";return}
+    empty.style.display="none";box.style.display="block";
+    box.innerHTML=items.map(x=>`<div class="zv-wishlist-item">${x.image?`<img src="${esc(x.image)}" alt="${esc(x.name)}">`:`<div></div>`}<div><h4><a href="${esc(x.url||"#")}">${esc(x.name)}</a></h4><strong>${money(x.price)}</strong></div><button class="zv-wishlist-remove" data-wremove="${esc(x.id)}"><i class="ri-delete-bin-line"></i></button></div>`).join("");
+  }
+
+  function toggleWish(b){
+    let items=read(WKEY),id=String(b.dataset.id||""),ix=items.findIndex(x=>String(x.id)===id);
+    if(ix>=0)items.splice(ix,1);else items.unshift({id,name:b.dataset.name||"Product",price:b.dataset.price||0,image:b.dataset.image||"",url:b.dataset.url||"#"});
+    write(WKEY,items);renderWish();bump(document.getElementById("zvWishlistCount"));
+  }
+
+  const CART_PAGE_URL="{% url 'designer:cart' %}";
+
+  // CART DRAWER SYNC V2:
+  // Only the newest server-cart request is allowed to paint the drawer.
+  // This prevents an older/slower response from overwriting a newer cart.
+  let zvCartRequestSerial = 0;
+  let zvCartAbortController = null;
+
+  function serverMoneyText(value){
+    const t=String(value||"").trim();
+    return t || "$0.00";
+  }
+
+  function extractCartRows(doc){
+    let rows=[
+      ...doc.querySelectorAll(
+        ".mk-store-cart .mk-cart-row, .mk-cart-table .mk-cart-row"
+      )
+    ];
+
+    if(!rows.length){
+      rows=[
+        ...doc.querySelectorAll(
+          ".cart-table tbody tr, table.cart-table tbody tr"
+        )
+      ];
+    }
+
+    return rows.map((row,index)=>{
+      const img=row.querySelector("img");
+      const titleEl=
+        row.querySelector(".zv-product-name") ||
+        row.querySelector(".mk-cart-product h3") ||
+        row.querySelector("h3") ||
+        row.querySelector("h4") ||
+        row.querySelector("a");
+
+      const qtyInput=
+        row.querySelector(".mk-qty-form input") ||
+        row.querySelector('input[name*="quantity"]') ||
+        row.querySelector('input[type="number"]');
+
+      const cells=[...row.children];
+      const texts=cells.map(c=>c.textContent.trim()).filter(Boolean);
+
+      let quantity=qtyInput ? qtyInput.value : "";
+      if(!quantity){
+        const qText=texts.find(t=>/^\d+$/.test(t));
+        quantity=qText||"1";
+      }
+
+      let price="";
+      let total="";
+      const moneyTexts=texts.filter(t=>/\$\s*\d/.test(t));
+      if(moneyTexts.length){
+        price=moneyTexts[0];
+        total=moneyTexts[moneyTexts.length-1];
+      }
+
+      price=row.querySelector(".zv-price-cell h2")?.textContent.trim() || price;
+
+      const productLink =
+        row.querySelector("a[href]")?.getAttribute("href") || "#";
+
+      const forms =
+        [...row.querySelectorAll("form")];
+
+      const updateForm =
+        forms.find(
+          form => form.querySelector('input[name="quantity"]')
+        );
+
+      const removeForm =
+        forms.find(
+          form => !form.querySelector('input[name="quantity"]')
+        );
+
+      return {
+        name:
+          titleEl
+            ? titleEl.textContent.trim()
+            : `Cart item ${index+1}`,
+
+        image:
+          img
+            ? img.getAttribute("src")
+            : "",
+
+        quantity,
+        price,
+        total,
+
+        url:productLink,
+        editUrl:row.querySelector("[data-cart-edit]")?.getAttribute("href") || productLink,
+        preview:row.querySelector('[data-design-preview]')?.getAttribute('data-design-preview') ?? null,
+        previewUrl:row.querySelector('[data-design-preview-url]')?.getAttribute('data-design-preview-url') || '',
+
+        updateUrl:
+          updateForm
+            ? updateForm.getAttribute("action")
+            : "",
+
+        removeUrl:
+          removeForm
+            ? removeForm.getAttribute("action")
+            : "",
+        cartKey:
+          updateForm?.querySelector('input[name="cart_key"]')?.value || "",
+        sizeKey:
+          updateForm?.querySelector('input[name="size_key"]')?.value || "",
+        colorKey:
+          updateForm?.querySelector('input[name="color_key"]')?.value || "",
+        minimum:
+          qtyInput ? (parseInt(qtyInput.min || "1", 10) || 1) : 1,
+        maximum:
+          qtyInput ? (parseInt(qtyInput.max || "9999", 10) || 9999) : 9999
+      };
+    });
+  }
+
+  function extractServerSubtotal(doc){
+    const candidates=[
+      ".mk-cart-subtotal b",
+      ".mk-cart-summary .mk-cart-subtotal b",
+      ".mk-cart-summary strong",
+      ".cart-total .amount",
+      ".cart-total strong",
+      "[data-cart-subtotal]",
+      ".zv-grand-total h2",
+      ".zv-mk-cart-table tfoot h2",
+      "table.cart-table tfoot h2",
+      "table.cart-table tfoot .td-color"
+    ];
+
+    for(const selector of candidates){
+      const el=doc.querySelector(selector);
+      if(el && /\d/.test(el.textContent||"")){
+        const match=(el.textContent||"").match(/\$\s*[\d,.]+/);
+        if(match)return match[0];
+        return el.textContent.trim();
+      }
+    }
+
+    const totalRow=[...doc.querySelectorAll("tr,div,li")]
+      .find(el=>
+        /(sub\s*total|total\s*price)/i.test(el.textContent||"") &&
+        /\$\s*\d/.test(el.textContent||"")
+      );
+
+    if(totalRow){
+      const matches=(totalRow.textContent||"").match(/\$\s*[\d,.]+/g);
+      if(matches && matches.length){
+        return matches[matches.length-1];
+      }
+    }
+
+    return "$0.00";
+  }
+
+  function cartMoneyNumber(value){
+    return parseFloat(
+      String(value||"").replace(/[^0-9.-]/g,"")
+    )||0;
+  }
+
+  async function renderCart(){
+    const requestSerial=++zvCartRequestSerial;
+
+    if(zvCartAbortController){
+      try{ zvCartAbortController.abort(); }catch(_err){}
+    }
+    zvCartAbortController=new AbortController();
+
+    const box=document.getElementById("zvCartItems");
+    const empty=document.getElementById("zvCartEmpty");
+    const badge=document.getElementById("mkCartCount");
+    const title=document.getElementById("zvCartTitleCount");
+    const subtotal=document.getElementById("zvCartSubtotal");
+    const remain=document.getElementById("zvFreeShipAmount");
+    const fill=document.getElementById("zvFreeFill");
+
+    if(box){
+      box.style.display="block";
+      box.innerHTML='<div class="zv-cart-loading">Loading cart...</div>';
+    }
+    if(empty)empty.style.display="none";
+
+    try{
+      const separator=CART_PAGE_URL.includes("?") ? "&" : "?";
+      const freshCartUrl=CART_PAGE_URL+separator+"_zv_cart_sync="+Date.now();
+
+      const response=await fetch(freshCartUrl,{
+        method:"GET",
+        credentials:"same-origin",
+        cache:"no-store",
+        signal:zvCartAbortController.signal,
+        headers:{
+          "X-Requested-With":"XMLHttpRequest",
+          "Cache-Control":"no-cache, no-store, max-age=0",
+          "Pragma":"no-cache"
+        }
+      });
+
+      if(!response.ok)throw new Error("Cart request failed");
+
+      const html=await response.text();
+
+      // A newer renderCart() started while this request was in flight.
+      // Never let this stale response replace the latest drawer state.
+      if(requestSerial!==zvCartRequestSerial)return;
+
+      const doc=new DOMParser().parseFromString(html,"text/html");
+      const rows=extractCartRows(doc);
+
+      // Live total quantity count from the real Django cart rows.
+      const totalCount=rows.reduce(
+        (sum,x)=>sum+(parseInt(x.quantity,10)||0),
+        0
+      );
+
+      if(badge)badge.textContent=totalCount;
+      if(title)title.textContent=totalCount;
+
+      // Read the real Django subtotal.
+      let serverSubtotal=extractServerSubtotal(doc);
+      let numericSubtotal=cartMoneyNumber(serverSubtotal);
+
+      // Fallback to row totals if the subtotal markup changes.
+      if(numericSubtotal<=0 && rows.length){
+        numericSubtotal=rows.reduce((sum,x)=>{
+          const rowTotal=cartMoneyNumber(x.total);
+          if(rowTotal>0)return sum+rowTotal;
+
+          const unitPrice=cartMoneyNumber(x.price);
+          const qty=parseInt(x.quantity,10)||1;
+          return sum+(unitPrice*qty);
+        },0);
+
+        serverSubtotal=money(numericSubtotal);
+      }
+
+      if(subtotal){
+        subtotal.textContent=money(numericSubtotal);
+      }
+
+      const amountRemaining=Math.max(0,FREE-numericSubtotal);
+
+      if(remain){
+        remain.textContent=money(amountRemaining);
+      }
+
+      const progress=Math.max(
+        0,
+        Math.min(
+          100,
+          FREE>0 ? (numericSubtotal/FREE)*100 : 100
+        )
+      );
+
+      if(fill){
+        fill.style.width=
+          progress+"%";
+      }
+
+      const truck =
+        document.getElementById(
+          "zvFreeTruck"
+        );
+
+      if(truck){
+        truck.style.left=
+          progress+"%";
+      }
+
+      if(!box||!empty)return;
+
+      if(!rows.length){
+        if(badge)badge.textContent="0";
+        if(title)title.textContent="0";
+        if(subtotal)subtotal.textContent="$0.00";
+        if(remain)remain.textContent=money(FREE);
+        if(fill)fill.style.width="0%";
+
+        const emptyTruck=document.getElementById("zvFreeTruck");
+        if(emptyTruck)emptyTruck.style.left="0%";
+
+        box.innerHTML="";
+        box.style.display="none";
+        empty.style.display="block";
+        return;
+      }
+
+      empty.style.display="none";
+      box.style.display="block";
+
+      box.innerHTML=rows.map((x,index)=>`
+
+        <div
+          class="zv-server-cart-item"
+          data-cart-row="${index}"
+        >
+
+          ${
+            x.image
+              ? `
+                <a
+                  href="${esc(x.url||"#")}"
+                  class="zv-server-cart-image-link"
+                  ${x.preview!==null?`data-design-preview="${esc(x.preview)}" data-design-preview-url="${esc(x.previewUrl)}" data-preview-name="${esc(x.name)}" aria-label="Preview edited design"`:""}
+                >
+                  <img
+                    src="${esc(x.image)}"
+                    alt="${esc(x.name)}"
+                  >
+                </a>
+              `
+              : `
+                <div class="zv-server-cart-placeholder">
+                  <i class="ri-image-line"></i>
+                </div>
+              `
+          }
+
+
+          <div class="zv-server-cart-main">
+
+            <h4>
+              <a href="${esc(x.url||"#")}">
+                ${esc(x.name)}
+              </a>
+            </h4>
+
+            <div class="zv-server-cart-price">
+              ${esc(x.quantity)}
+              X
+              ${esc(x.price||"$0.00")}
+            </div>
+
+          </div>
+
+
+          <div class="zv-server-cart-top-actions">
+
+            <a
+              href="${esc(x.editUrl||x.url||"#")}"
+              class="zv-cart-edit"
+              title="Edit"
+              aria-label="Edit ${esc(x.name)}"
+            >
+              <i class="ri-pencil-line"></i>
+            </a>
+
+            ${
+              x.removeUrl
+                ? `
+                  <button
+                    type="button"
+                    class="zv-cart-remove"
+                    data-server-remove="${esc(x.removeUrl)}"
+                    title="Remove"
+                    aria-label="Remove ${esc(x.name)}"
+                  >
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                `
+                : ``
+            }
+
+          </div>
+
+
+          <div class="zv-server-cart-actions">
+
+            <div class="zv-cart-qty">
+
+              <button
+                type="button"
+                data-server-qty-minus="${index}"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+              <span>
+                ${esc(x.quantity)}
+              </span>
+
+              <button
+                type="button"
+                data-server-qty-plus="${index}"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+      box._zvRows=rows;
+
+    }catch(err){
+      if(err && err.name==="AbortError"){
+        return;
+      }
+
+      // Ignore failures belonging to an obsolete request. A newer request
+      // owns the drawer now.
+      if(requestSerial!==zvCartRequestSerial){
+        return;
+      }
+
+      console.error("Unable to sync cart drawer:",err);
+
+      // Fallback only if the CURRENT cart request genuinely cannot be loaded.
+      const items=read(CKEY);
+      const count=items.reduce((s,x)=>s+(parseInt(x.qty)||1),0);
+      const sub=items.reduce(
+        (s,x)=>s+(parseFloat(x.price)||0)*(parseInt(x.qty)||1),
+        0
+      );
+
+      if(badge)badge.textContent=count;
+      if(title)title.textContent=count;
+      if(subtotal)subtotal.textContent=money(sub);
+      if(remain){
+        remain.textContent=
+          money(
+            Math.max(
+              0,
+              FREE-sub
+            )
+          );
+      }
+
+      const fallbackProgress =
+        Math.min(
+          100,
+          (sub/FREE)*100
+        );
+
+      if(fill){
+        fill.style.width=
+          fallbackProgress+"%";
+      }
+
+      const fallbackTruck =
+        document.getElementById(
+          "zvFreeTruck"
+        );
+
+      if(fallbackTruck){
+        fallbackTruck.style.left=
+          fallbackProgress+"%";
+      }
+
+      if(!box||!empty)return;
+
+      if(!items.length){
+        box.innerHTML="";
+        box.style.display="none";
+        empty.style.display="block";
+        return;
+      }
+
+      empty.style.display="none";
+      box.style.display="block";
+      box.innerHTML=items.map(x=>{
+        const q=parseInt(x.qty)||1;
+        return `
+          <div class="zv-server-cart-item">
+            ${x.image?`<img src="${esc(x.image)}" alt="${esc(x.name)}">`:`<div></div>`}
+            <div>
+              <h4>${esc(x.name)}</h4>
+              <div class="zv-server-cart-meta">
+                <span>Qty: ${q}</span>
+                <span>${money(x.price)}</span>
+              </div>
+              <div class="zv-server-cart-total">
+                ${money((parseFloat(x.price)||0)*q)}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  function getCookie(name){
+
+    const cookies =
+      document.cookie
+        ? document.cookie.split(";")
+        : [];
+
+    for(const cookie of cookies){
+
+      const parts =
+        cookie.trim().split("=");
+
+      if(parts[0] === name){
+
+        return decodeURIComponent(
+          parts.slice(1).join("=")
+        );
+
+      }
+
+    }
+
+    return "";
+  }
+
+
+  async function postCartAction(url,data){
+
+    if(!url){
+      return false;
+    }
+
+    const body =
+      new URLSearchParams();
+
+    Object.entries(data||{}).forEach(
+      ([key,value])=>{
+        body.append(key,value);
+      }
+    );
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method:"POST",
+
+          credentials:"same-origin",
+
+          headers:{
+            "X-CSRFToken":
+              getCookie("csrftoken"),
+
+            "X-Requested-With":
+              "XMLHttpRequest",
+
+            "Content-Type":
+              "application/x-www-form-urlencoded;charset=UTF-8"
+          },
+
+          body:
+            body.toString()
+        }
+      );
+
+
+    if(!response.ok){
+      throw new Error(
+        "Cart action failed"
+      );
+    }
+
+
+    return true;
+  }
+
+
+  function addPreview(b){
+    // Keep local preview only as a temporary fallback.
+    // The next drawer open refreshes from the real Django cart page.
+    const id=String(b.dataset.productId||b.dataset.id||"");
+    if(!id)return;
+
+    let items=read(CKEY);
+    let x=items.find(i=>String(i.id)===id);
+
+    if(x){
+      x.qty=(parseInt(x.qty)||1)+1;
+    }else{
+      items.push({
+        id,
+        name:b.dataset.productName||b.dataset.name||"Product",
+        price:b.dataset.productPrice||b.dataset.price||0,
+        image:b.dataset.productImage||b.dataset.image||"",
+        url:b.dataset.productUrl||b.dataset.url||"#",
+        qty:1
+      });
+    }
+
+    write(CKEY,items);
+    bump(document.getElementById("mkCartCount"));
+  }
+
+  document.addEventListener("click",e=>{
+    const w=e.target.closest("[data-wishlist]");
+    if(w){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      toggleWish(w);
+    }
+  },true);
+
+  document.addEventListener("click",e=>{
+    if(e.target.closest("#zvWishlistOpen, #zvMobileWishlistOpen")){
+      e.preventDefault();
+      renderWish();
+      open("zvWishlistDrawer","zvWishlistBackdrop");
+      return;
+    }
+
+    if(e.target.closest("#zvWishlistClose")||e.target.closest("#zvWishlistBackdrop")){
+      close("zvWishlistDrawer","zvWishlistBackdrop");
+      return;
+    }
+
+    if(e.target.closest("#zvCartOpen, #zvMobileCartOpen")){
+      e.preventDefault();
+      open("zvCartDrawer","zvCartBackdrop");
+      renderCart();
+      return;
+    }
+
+    if(e.target.closest("#zvCartClose")||e.target.closest("#zvCartBackdrop")){
+      close("zvCartDrawer","zvCartBackdrop");
+      return;
+    }
+
+    const serverRemove =
+      e.target.closest(
+        "[data-server-remove]"
+      );
+
+    if(serverRemove){
+
+      e.preventDefault();
+
+      const removeIndex = parseInt(serverRemove.closest("[data-cart-row]")?.dataset.cartRow || "-1", 10);
+      const removeRow = document.getElementById("zvCartItems")?._zvRows?.[removeIndex];
+      postCartAction(
+        serverRemove.dataset.serverRemove,
+        {
+          cart_key: removeRow?.cartKey || "",
+          size_key: removeRow?.sizeKey || "",
+          color_key: removeRow?.colorKey || ""
+        }
+      )
+      .then(
+        ()=>renderCart()
+      )
+      .catch(
+        err=>
+          console.error(
+            "Unable to remove cart item:",
+            err
+          )
+      );
+
+      return;
+    }
+
+
+    const minusBtn =
+      e.target.closest(
+        "[data-server-qty-minus]"
+      );
+
+    const plusBtn =
+      e.target.closest(
+        "[data-server-qty-plus]"
+      );
+
+
+    if(minusBtn || plusBtn){
+
+      e.preventDefault();
+
+
+      const index =
+        parseInt(
+          minusBtn
+            ? minusBtn.dataset.serverQtyMinus
+            : plusBtn.dataset.serverQtyPlus,
+          10
+        );
+
+
+      const box =
+        document.getElementById(
+          "zvCartItems"
+        );
+
+
+      const row =
+        box?._zvRows?.[index];
+
+
+      if(
+        !row ||
+        !row.updateUrl
+      ){
+        return;
+      }
+
+
+      let qty =
+        parseInt(
+          row.quantity || "1",
+          10
+        ) || 1;
+
+
+      if(minusBtn){
+
+        qty =
+          Math.max(
+            parseInt(row.minimum || "1", 10) || 1,
+            qty - 1
+          );
+
+      }else{
+
+        qty =
+          Math.min(
+            parseInt(row.maximum || "9999", 10) || 9999,
+            qty + 1
+          );
+
+      }
+
+
+      postCartAction(
+        row.updateUrl,
+        {
+          quantity:qty,
+          cart_key:row.cartKey || "",
+          size_key:row.sizeKey || "",
+          color_key:row.colorKey || ""
+        }
+      )
+      .then(
+        ()=>renderCart()
+      )
+      .catch(
+        err=>
+          console.error(
+            "Unable to update cart quantity:",
+            err
+          )
+      );
+
+
+      return;
+    }
+
+
+    const clearCart =
+      e.target.closest(
+        "#zvClearCart"
+      );
+
+
+    if(clearCart){
+
+      e.preventDefault();
+
+
+      const box =
+        document.getElementById(
+          "zvCartItems"
+        );
+
+
+      const rows =
+        box?._zvRows || [];
+
+
+      if(!rows.length){
+        return;
+      }
+
+
+      Promise.all(
+        rows
+          .filter(
+            row=>row.removeUrl
+          )
+          .map(
+            row=>
+              postCartAction(
+                row.removeUrl,
+                {
+                  cart_key:row.cartKey || "",
+                  size_key:row.sizeKey || "",
+                  color_key:row.colorKey || ""
+                }
+              )
+          )
+      )
+      .then(
+        ()=>renderCart()
+      )
+      .catch(
+        err=>
+          console.error(
+            "Unable to clear cart:",
+            err
+          )
+      );
+
+
+      return;
+    }
+
+
+    const wr=e.target.closest("[data-wremove]");
+    if(wr){
+      write(
+        WKEY,
+        read(WKEY).filter(x=>String(x.id)!==String(wr.dataset.wremove))
+      );
+      renderWish();
+      return;
+    }
+
+    const add=e.target.closest("[data-add-cart]");
+    if(add){
+      // Local preview is visual only. Django remains the source of truth.
+      addPreview(add);
+
+      // Existing add-to-cart handlers may finish at different times.
+      // Refresh from Django after the submit has had time to complete.
+      setTimeout(renderCart,250);
+      setTimeout(renderCart,700);
+    }
+  });
+
+  // Refresh from Django when returning from Cart/Checkout or restoring a page
+  // from the browser back-forward cache. This prevents an old drawer snapshot.
+  window.addEventListener("pageshow",()=>{ renderCart(); });
+  window.addEventListener("focus",()=>{
+    const drawer=document.getElementById("zvCartDrawer");
+    if(drawer && drawer.classList.contains("open")) renderCart();
+  });
+  document.addEventListener("visibilitychange",()=>{
+    const drawer=document.getElementById("zvCartDrawer");
+    if(!document.hidden && drawer && drawer.classList.contains("open")) renderCart();
+  });
+
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
+  document.addEventListener("DOMContentLoaded",()=>{renderWish();renderCart();});
+})();
+</script>
+
+
+<script id="zv-multikart-search-js">
+document.addEventListener("DOMContentLoaded", function () {
+    const searchOpen = document.getElementById("zvSearchOpen");
+    const searchOverlay = document.getElementById("zvSearchOverlay");
+    const searchClose = document.getElementById("zvSearchClose") || document.querySelector(".zv-search-close");
+    const searchInput = document.getElementById("mkSearchInput");
+
+    function openSearch() {
+        if (!searchOverlay) return;
+        searchOverlay.classList.add("open");
+        document.body.classList.add("zv-search-lock");
+
+        setTimeout(function () {
+            if (searchInput) searchInput.focus();
+        }, 180);
+    }
+
+    function closeSearch() {
+        if (!searchOverlay) return;
+        searchOverlay.classList.remove("open", "is-open");
+        document.body.classList.remove("zv-search-lock");
+    }
+
+    if (searchOpen) {
+        searchOpen.addEventListener("click", function (e) {
+            e.preventDefault();
+            openSearch();
+        });
+    }
+
+    if (searchClose) {
+        searchClose.addEventListener("click", function (e) {
+            e.preventDefault();
+            closeSearch();
+        });
+    }
+
+    if (searchOverlay) {
+        searchOverlay.addEventListener("click", function (e) {
+            if (e.target === searchOverlay) closeSearch();
+        });
+    }
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSearch();
+    });
+});
+</script>
+
+
+<script id="zv-customize-category-js">
+document.addEventListener("DOMContentLoaded",function(){
+
+    const btn=document.getElementById("zvCustomizeOpen");
+    const drawer=document.getElementById("zvCustomizeDrawer");
+    const overlay=document.getElementById("zvCustomizeOverlay");
+    const closeBtn=document.getElementById("zvCustomizeClose");
+
+    const wishlistBtn=document.getElementById("zvCustomizeWishlist");
+    const cartBtn=document.getElementById("zvCustomizeCart");
+
+    function openDrawer(){
+        if(!drawer||!overlay)return;
+
+        drawer.classList.add("is-open");
+        drawer.setAttribute("aria-hidden","false");
+
+        overlay.classList.add("is-open");
+
+        document.body.classList.add("zv-customize-lock");
+    }
+
+    function closeDrawer(){
+        if(!drawer||!overlay)return;
+
+        drawer.classList.remove("is-open");
+        drawer.setAttribute("aria-hidden","true");
+
+        overlay.classList.remove("is-open");
+
+        document.body.classList.remove("zv-customize-lock");
+    }
+
+    btn?.addEventListener("click",function(e){
+        e.preventDefault();
+        openDrawer();
+    });
+
+    closeBtn?.addEventListener("click",function(e){
+        e.preventDefault();
+        closeDrawer();
+    });
+
+    overlay?.addEventListener("click",closeDrawer);
+
+    wishlistBtn?.addEventListener("click",function(e){
+        e.preventDefault();
+
+        closeDrawer();
+
+        setTimeout(function(){
+            document.getElementById("zvWishlistOpen")?.click();
+        },150);
+    });
+
+    cartBtn?.addEventListener("click",function(e){
+        e.preventDefault();
+
+        closeDrawer();
+
+        setTimeout(function(){
+            document.getElementById("zvCartOpen")?.click();
+        },150);
+    });
+
+    document.addEventListener("keydown",function(e){
+        if(e.key==="Escape"){
+            closeDrawer();
+        }
+    });
+
+
+
+    const categoryToggle = document.getElementById("zvCategorySectionToggle");
+    const categoryGrid = document.getElementById("zvCategorySettingGrid");
+    const categoryArrow = document.getElementById("zvCategorySectionArrow");
+
+    categoryToggle?.addEventListener("click", function () {
+        if (!categoryGrid) return;
+
+        const collapsed = categoryGrid.classList.toggle("is-collapsed");
+
+        categoryToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+
+        if (categoryArrow) {
+            categoryArrow.classList.toggle("ri-arrow-up-s-line", !collapsed);
+            categoryArrow.classList.toggle("ri-arrow-down-s-line", collapsed);
+        }
+    });
+
+});
+</script>
+
+
+<script id="zv-search-modal-click-fix">
+document.addEventListener("DOMContentLoaded", function () {
+
+    const overlay = document.getElementById("zvSearchOverlay");
+    const modal = document.querySelector(".zv-search-modal");
+
+    if (modal) {
+        modal.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+                document.getElementById("zvSearchClose")?.click();
+            }
+        });
+    }
+
+});
+</script>
+
+
+
+<script id="zv-instant-search-js">
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("mkSearchInput");
+    const submit = document.getElementById("mkSearchSubmit");
+    const results = document.getElementById("mkSearchResults");
+    const topSearch = document.getElementById("zvTopSearchBlock");
+    const mostSearched = document.getElementById("zvMostSearchedBlock");
+    const index = document.getElementById("zvSearchProductIndex");
+
+    if (!input || !results || !index) return;
+
+    const records = Array.from(index.querySelectorAll("[data-search-product]")).map(function (el) {
+        return {
+            id: el.dataset.id || "",
+            name: el.dataset.name || "",
+            category: el.dataset.category || "",
+            description: el.dataset.description || "",
+            price: el.dataset.price || "0",
+            originalPrice: el.dataset.originalPrice || "",
+            sale: el.dataset.sale === "1",
+            image: el.dataset.image || "",
+            url: el.dataset.url || "#"
+        };
+    });
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function money(value) {
+        const number = parseFloat(value || 0);
+        return "$" + (Number.isFinite(number) ? number.toFixed(2) : "0.00");
+    }
+
+    function normalize(value) {
+        return String(value || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function showDefaults() {
+        topSearch?.classList.remove("zv-search-hidden");
+        mostSearched?.classList.remove("zv-search-hidden");
+        results.innerHTML = "";
+        results.classList.remove("is-active");
+    }
+
+    function showSearchState() {
+        topSearch?.classList.add("zv-search-hidden");
+        mostSearched?.classList.add("zv-search-hidden");
+        results.classList.add("is-active");
+    }
+
+    function scoreRecord(item, query, words) {
+        const name = normalize(item.name);
+        const category = normalize(item.category);
+        const description = normalize(item.description);
+        const all = name + " " + category + " " + description;
+
+        const matchesAllWords = words.every(function (word) {
+            return all.includes(word);
+        });
+
+        if (!matchesAllWords) return 999;
+
+        if (name === query) return 0;
+        if (name.startsWith(query)) return 1;
+        if (name.includes(query)) return 2;
+        if (category.startsWith(query)) return 3;
+        if (category.includes(query)) return 4;
+        if (words.some(function (w) { return name.includes(w); })) return 5;
+        if (words.some(function (w) { return category.includes(w); })) return 6;
+        return 7;
+    }
+
+    function renderSearch() {
+        const query = normalize(input.value);
+
+        if (!query) {
+            showDefaults();
+            return;
+        }
+
+        showSearchState();
+
+        const words = query.split(" ").filter(Boolean);
+
+        let matches = records
+            .map(function (item) {
+                return { item: item, score: scoreRecord(item, query, words) };
+            })
+            .filter(function (x) { return x.score < 999; })
+            .sort(function (a, b) {
+                if (a.score !== b.score) return a.score - b.score;
+                return normalize(a.item.name).localeCompare(normalize(b.item.name));
+            })
+            .slice(0, 12)
+            .map(function (x) { return x.item; });
+
+        if (!matches.length) {
+            results.innerHTML =
+                '<div class="zv-live-search-empty">' +
+                    '<i class="ri-search-eye-line"></i>' +
+                    '<h4>No products found</h4>' +
+                    '<p>Try a product or category such as Pen, Water Bottle, Drinkware or Banner.</p>' +
+                '</div>';
+            return;
+        }
+
+        let html =
+            '<h4 class="zv-live-search-title">Search Results</h4>' +
+            '<div class="zv-live-search-count">' +
+                matches.length + (matches.length === 1 ? ' product found' : ' products found') +
+            '</div>' +
+            '<div class="zv-live-search-grid">';
+
+        matches.forEach(function (item) {
+            const image = item.image
+                ? '<img src="' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '">'
+                : '<div style="height:100%;display:grid;place-items:center;color:#bbb"><i class="ri-image-line" style="font-size:38px"></i></div>';
+
+            const salePrice = item.sale && item.originalPrice
+                ? '<span class="zv-live-search-price">' +
+                    money(item.price) +
+                    '<del>' + money(item.originalPrice) + '</del>' +
+                    '<em>Sale</em>' +
+                  '</span>'
+                : '<span class="zv-live-search-price">' + money(item.price) + '</span>';
+
+            html +=
+                '<a href="' + escapeHtml(item.url) + '" class="zv-live-search-card">' +
+                    '<div class="zv-live-search-image">' + image + '</div>' +
+                    '<div class="zv-live-search-info">' +
+                        '<h4>' + escapeHtml(item.name) + '</h4>' +
+                        '<small>' + escapeHtml(item.category) + '</small>' +
+                        salePrice +
+                    '</div>' +
+                '</a>';
+        });
+
+        html += '</div>';
+        results.innerHTML = html;
+    }
+
+    input.addEventListener("input", renderSearch);
+    input.addEventListener("search", renderSearch);
+    input.addEventListener("change", renderSearch);
+
+    submit?.addEventListener("click", function (event) {
+        event.preventDefault();
+        renderSearch();
+    });
+
+    input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            renderSearch();
+        }
+    });
+
+    showDefaults();
+});
+</script>
+
+
+{% if editor_profile %}{{ editor_profile|json_script:"zv-editor-profile" }}
+<link rel="stylesheet" href="{% static 'designer/css/universal-editor-profile.css' %}">
+<script src="{% static 'designer/js/universal-editor-profile.js' %}"></script>{% endif %}
+{% block scripts %}{% endblock %}
+
+
+<!-- ZenVibe chatbot removed -->
+
+<script id="zv-popup-once-per-session-v1">
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("exampleModal");
+    if (!modal) return;
+
+    const key = "zenvibe_welcome_offer_seen_session";
+
+    modal.addEventListener("show.bs.modal", function (event) {
+        if (sessionStorage.getItem(key) === "1") {
+            event.preventDefault();
+            return false;
+        }
+        sessionStorage.setItem(key, "1");
+    });
+
+    // If another script already displayed it before this handler ran,
+    // remember that display for the rest of this browser session.
+    modal.addEventListener("shown.bs.modal", function () {
+        sessionStorage.setItem(key, "1");
+    });
+});
+</script>
+<script id="zv-quick-view-content-fix-v2">
+(function () {
+
+    "use strict";
+
+    const quickView = document.getElementById("quickView");
+    const quickDesc = document.getElementById("mkQuickDesc");
+
+    if (!quickView || !quickDesc) {
+        return;
+    }
+
+
+    /* -----------------------------------------------------
+       Decode HTML entities.
+
+       Example:
+       &lt;h2&gt;Title&lt;/h2&gt;
+                 ↓
+       <h2>Title</h2>
+    ----------------------------------------------------- */
+    function decodeHtmlEntities(value) {
+
+        const textarea = document.createElement("textarea");
+
+        textarea.innerHTML = String(value || "");
+
+        return textarea.value;
+    }
+
+
+    /* -----------------------------------------------------
+       Remove unsafe/unwanted elements and attributes.
+
+       We still allow normal formatting:
+       h1-h6, p, strong, ul, li, br, etc.
+    ----------------------------------------------------- */
+    function sanitizeDescription(html) {
+
+        const template = document.createElement("template");
+
+        template.innerHTML = String(html || "").trim();
+
+
+        /* Remove executable / unwanted content */
+        template.content
+            .querySelectorAll(
+                "script, style, iframe, object, embed, form, input, button"
+            )
+            .forEach(function (element) {
+                element.remove();
+            });
+
+
+        /* Remove event handlers and imported editor metadata */
+        template.content
+            .querySelectorAll("*")
+            .forEach(function (element) {
+
+                Array.from(element.attributes).forEach(function (attribute) {
+
+                    const name = attribute.name.toLowerCase();
+
+                    if (
+                        name.startsWith("on") ||
+                        name === "data-start" ||
+                        name === "data-end" ||
+                        name === "data-section-id"
+                    ) {
+                        element.removeAttribute(attribute.name);
+                    }
+
+                });
+
+            });
+
+
+        return template.innerHTML;
+    }
+
+
+    /* -----------------------------------------------------
+       Fix description.
+
+       Handles:
+       1. Normal HTML
+       2. Escaped HTML
+       3. Double-escaped HTML
+    ----------------------------------------------------- */
+    function fixQuickDescription() {
+
+        let value = quickDesc.innerHTML || "";
+
+
+        /*
+         Sometimes the source has been HTML escaped.
+
+         Decode up to twice because imported content may contain:
+         &amp;lt;h2&amp;gt;
+        */
+        for (let i = 0; i < 2; i++) {
+
+            if (
+                /&lt;|&gt;|&#60;|&#62;|&amp;lt;|&amp;gt;/i.test(value)
+            ) {
+
+                const decoded = decodeHtmlEntities(value);
+
+                if (decoded === value) {
+                    break;
+                }
+
+                value = decoded;
+
+            }
+
+        }
+
+
+        /*
+         If actual markup now exists, render it.
+        */
+        if (/<[a-z][\s\S]*>/i.test(value)) {
+
+            quickDesc.innerHTML =
+                sanitizeDescription(value);
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       Observe changes because existing ZenVibe JS populates
+       mkQuickDesc after clicking Quick View.
+    ----------------------------------------------------- */
+
+    let scheduled = false;
+
+    const observer = new MutationObserver(function () {
+
+        if (scheduled) {
+            return;
+        }
+
+        scheduled = true;
+
+        requestAnimationFrame(function () {
+
+            scheduled = false;
+
+            observer.disconnect();
+
+            fixQuickDescription();
+
+            observer.observe(
+                quickDesc,
+                {
+                    childList: true,
+                    subtree: true,
+                    characterData: true
+                }
+            );
+
+        });
+
+    });
+
+
+    observer.observe(
+        quickDesc,
+        {
+            childList: true,
+            subtree: true,
+            characterData: true
+        }
+    );
+
+
+    /* Bootstrap modal event */
+    quickView.addEventListener(
+        "show.bs.modal",
+        function () {
+
+            setTimeout(
+                fixQuickDescription,
+                0
+            );
+
+            setTimeout(
+                fixQuickDescription,
+                50
+            );
+
+        }
+    );
+
+
+    quickView.addEventListener(
+        "shown.bs.modal",
+        function () {
+
+            fixQuickDescription();
+
+        }
+    );
+
+})();
+</script>
+
+<style id="zv-theme-type-shared">
+body.zv-multikart-exact{font-family:"Lato",Arial,sans-serif}
+body.zv-multikart-exact :is(p,label,input,select,textarea,button,td,th):not(.studio-app *){font-family:"Lato",Arial,sans-serif!important}
+body.zv-multikart-exact :is(h1,h2,h3,h4,h5,h6,button,.btn):not(.studio-app *){font-family:"Montserrat",Arial,sans-serif!important}
+.zv-design-preview{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);margin:0;padding:22px;width:min(960px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;border:1px solid #dce2e8;border-radius:12px;background:#fff;color:#222;z-index:2147483647;box-sizing:border-box}
+.zv-design-preview::backdrop{background:rgba(15,23,42,.7)}
+.zv-design-preview [hidden]{display:none!important}
+.zv-design-preview header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+.zv-design-preview h2{font-size:20px;margin:0}
+.zv-design-preview img{display:block;max-width:100%;max-height:70dvh;width:auto;height:auto;object-fit:contain;margin:auto}
+.zv-design-preview button{border:1px solid #dce2e8;border-radius:6px;padding:8px 14px;background:#fff;color:#222;cursor:pointer}
+#zvDesignPreviewPages{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px}
+#zvDesignPreviewPages button{flex:0 0 auto;display:grid;gap:4px;max-width:140px;font-size:12px}
+#zvDesignPreviewPages button[aria-pressed="true"]{border-color:#0758b8;background:#eaf2ff;color:#0758b8}
+#zvDesignPreviewPages img{width:96px;height:64px;object-fit:contain}
+.zv-cart-preview-button{border:0;background:transparent;padding:0;cursor:zoom-in}
+</style>
+<style id="zv-single-proof-layout">
+.zv-quantity-saving{display:block;font-size:12px;line-height:1.45;color:#166534;margin-top:6px}
+.zv-design-preview{height:min(820px,calc(100dvh - 28px));overflow:hidden;padding:18px;width:min(1100px,calc(100vw - 28px))}
+.zv-design-preview[open]{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:8px}
+.zv-design-preview header{position:static!important;width:auto!important;height:auto!important;min-height:0!important;padding:0!important;margin:0}.zv-design-preview h2{text-transform:none;font-size:18px}
+#zvDesignPreviewStatus{margin:0;font-size:13px;color:#475569;min-height:20px}
+.zv-proof-stage{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:12px;min-height:0;overflow:hidden}
+.zv-proof-stage #zvDesignPreviewImage{grid-column:2;grid-row:1;justify-self:center;max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain;min-height:0}
+#zvDesignPreviewPrevious{grid-column:1;grid-row:1}
+#zvDesignPreviewNext{grid-column:3;grid-row:1}
+.zv-proof-stage button{padding:0;width:40px;height:48px;font-size:32px;line-height:1;color:#0758b8}
+.zv-proof-stage button:disabled{opacity:.3;cursor:default}
+@media(max-width:575px){.zv-design-preview{padding:12px}.zv-design-preview h2{font-size:14px}.zv-proof-stage{grid-template-columns:28px minmax(0,1fr) 28px;gap:5px}.zv-proof-stage button{width:28px;height:40px}}
+</style>
+<dialog id="zvDesignPreview" class="zv-design-preview" aria-labelledby="zvDesignPreviewTitle">
+  <header><h2 id="zvDesignPreviewTitle">Design preview</h2><button type="button" id="zvDesignPreviewClose">Close</button></header>
+  <p id="zvDesignPreviewStatus" role="status" aria-live="polite"></p>
+  <div id="zvDesignPreviewPages" hidden></div>
+  <div class="zv-proof-stage">
+    <button type="button" id="zvDesignPreviewPrevious" aria-label="Previous design view">‹</button>
+    <img id="zvDesignPreviewImage" alt="" hidden>
+    <button type="button" id="zvDesignPreviewNext" aria-label="Next design view">›</button>
+  </div>
+  <p id="zvDesignPreviewEmpty" hidden>A preview is not available for this saved design yet. Open Edit Design and save it to generate a preview.</p>
+</dialog>
+<script>
+(function () {
+  const dialog=document.getElementById('zvDesignPreview');
+  const image=document.getElementById('zvDesignPreviewImage');
+  const status=document.getElementById('zvDesignPreviewStatus');
+  const pagesHost=document.getElementById('zvDesignPreviewPages');
+  let serial=0,engine,current=0,views=[];
+  const previous=document.getElementById('zvDesignPreviewPrevious'),next=document.getElementById('zvDesignPreviewNext');
+  function showView(index){
+    if(!views.length)return;
+    current=Math.max(0,Math.min(index,views.length-1));
+    const view=views[current];image.src=view.src;image.alt=view.label+' saved edited design';image.hidden=false;
+    status.textContent='View '+(current+1)+' of '+view.total+' · '+view.label;
+    previous.hidden=next.hidden=view.total===1;previous.disabled=current===0;next.disabled=current>=views.length-1;
+  }
+  previous.onclick=()=>showView(current-1);next.onclick=()=>showView(current+1);
+  document.addEventListener('keydown',event=>{if(dialog.open&&(event.key==='ArrowLeft'||event.key==='ArrowRight')){event.preventDefault();event.stopImmediatePropagation();showView(current+(event.key==='ArrowRight'?1:-1))}},true);
+  function fabricEngine(){
+    if(window.fabric)return Promise.resolve(window.fabric);
+    if(!engine)engine=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js';
+      script.onload=()=>window.fabric?resolve(window.fabric):reject(Error('Preview renderer unavailable.'));
+      script.onerror=()=>reject(Error('Preview renderer could not load.'));
+      document.head.appendChild(script);
+    }).catch(error=>{engine=null;throw error});
+    return engine;
+  }
+  const fontStyles=new Map();
+  async function fontsFor(pages){
+    const names=new Set(),specs=new Set();
+    function scan(objects){(objects||[]).forEach(o=>{if(o.font||o.fontFamily){const name=o.font||o.fontFamily;names.add(name);specs.add((o.fontStyle||'normal')+' '+(o.fontWeight||(o.bold?'bold':'normal'))+' 16px '+JSON.stringify(name));}if(o.objects)scan(o.objects)})}
+    pages.forEach(p=>scan(p.objects));
+    await Promise.all([...names].map(async name=>{
+      if(!/^(Arial|Verdana|Georgia|Times New Roman|Helvetica|sans-serif|serif)$/i.test(name)){
+        if(!fontStyles.has(name))fontStyles.set(name,new Promise(resolve=>{
+          const link=document.createElement('link');link.rel='stylesheet';
+          link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(name).replace(/%20/g,'+')+':ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap';
+          link.onload=resolve;link.onerror=resolve;document.head.appendChild(link);
+        }));
+        await fontStyles.get(name);
+      }
+      
+    }));
+    if(document.fonts){
+      await Promise.all([...specs].map(spec=>document.fonts.load(spec)));
+      await document.fonts.ready;
+    }
+  }
+  function objectData(object){
+    const o={...object};
+    o.left=o.left??o.x??60;o.top=o.top??o.y??60;
+    o.originX=o.originX||'left';o.originY=o.originY||'top';
+    if(['text','i-text','textbox'].includes(o.type)){
+      o.fontFamily=o.font||o.fontFamily||'Arial';
+      o.fontSize=o.fontSize||32;
+      if(!o.fontWeight)o.fontWeight=o.bold?'bold':'normal';
+      if(o.lineHeight==null)o.lineHeight=1;
+    }
+    if(o.type==='image'&&!o.src)o.src=o.baseSrc;
+    if(o.type==='line'&&Array.isArray(o.points)) [o.x1,o.y1,o.x2,o.y2]=o.points;
+    if(o.type==='rect'){o.width=o.width||o.w;o.height=o.height||o.h}
+    if(o.type==='circle')o.radius=o.radius||o.r;
+    if(o.objects)o.objects=o.objects.map(objectData);
+    return o;
+  }
+  // Use the existing editor's size resolver in an isolated preview scope.
+  function previewSize(data,index,page){
+    const P=data.product||{width:data.width,height:data.height},EP=P.editorProfile||{},OPT=data.options||{};
+    const window={ZV_ADMIN_PRINT_SURFACES:OPT.print_surfaces||[],INITIAL_TEMPLATE:data.design||{}};
+function zvSelectedSize(){const key=String(OPT.selected_size||OPT.selected_size_key||new URLSearchParams(location.search).get('size')||new URLSearchParams(location.search).get('size_key')||'');return (Array.isArray(OPT.sizes)?OPT.sizes:[]).find(x=>String(x.key||x.size_key||'')===key)||null;}
+function zvAdminSurfaces(){const direct=Array.isArray(window.ZV_ADMIN_PRINT_SURFACES)?window.ZV_ADMIN_PRINT_SURFACES:[];const a=Array.isArray(OPT.print_surfaces)?OPT.print_surfaces:[];const b=Array.isArray(OPT.printSurfaces)?OPT.printSurfaces:[];const c=Array.isArray(P.printSurfaces)?P.printSurfaces:[];return direct.length?direct:(a.length?a:(b.length?b:c));}
+function zvPhysicalForPage(pageIndex){
+  const page=Math.max(0,Number(pageIndex)||0);
+
+  // Product 427 follows the production Name Badge editor: a 10 x 10 inch
+  // workspace containing the centred physical badge and its own print face.
+  if(Number(P.id||P.productId||P.product_id)===427){
+    return {width:10,height:10,unit:'in',surface:(zvAdminSurfaces()[page]||zvAdminSurfaces()[0]||null),inheritedFromPage1:page>0};
+  }
+
+  // Product 428 matches the production Office Door Name Plate workspace:
+  // 10 inches wide by 2 inches high. The old 10 x 3 admin values were making
+  // the plate/ruler too tall and separating the guide from the artwork.
+  if(Number(P.id||P.productId||P.product_id)===428){
+    return {width:10,height:2,unit:'in',surface:(zvAdminSurfaces()[page]||zvAdminSurfaces()[0]||null),inheritedFromPage1:page>0};
+  }
+
+  // Product 420 (Custom Car Keychain) uses a 9 x 10 inch editor workspace on
+  // BOTH Front and Back, matching the production editor. The smaller 3.5 x 1.5
+  // value is the keychain/print-area size and must never drive the outer ruler.
+  // Keep this workspace rule separate from the editable print-area geometry.
+  if(Number(P.id||P.productId||P.product_id)===420){
+    return {
+      width:9,
+      height:10,
+      unit:'in',
+      surface:(zvAdminSurfaces()[page]||zvAdminSurfaces()[0]||null),
+      inheritedFromPage1:page>0
+    };
+  }
+
+  const surfaces=zvAdminSurfaces();
+  const cfg=OPT.editor_config||OPT.editorConfig||{};
+  const size=zvSelectedSize();
+  const sp=size?.editor_profile||size?.editorProfile||{};
+
+  const positive=v=>{
+    const n=Number(v);
+    return Number.isFinite(n)&&n>0?n:0;
+  };
+  const dims=s=>({
+    // New Admin-driven products use explicit WORKSPACE dimensions for the outer ruler.
+    // Legacy products keep the old printable-dimension ruler behaviour.
+    width:positive(cfg.enabled ? (s?.workspaceWidth ?? s?.workspace_width_in) : (s?.printWidth ?? s?.print_width_in ?? s?.width)),
+    height:positive(cfg.enabled ? (s?.workspaceHeight ?? s?.workspace_height_in) : (s?.printHeight ?? s?.print_height_in ?? s?.height))
+  });
+
+  // Admin surface for the requested page. Existing projects use array/display order.
+  const surface=surfaces[page]||null;
+  const page1Surface=surfaces[0]||null;
+  const current=dims(surface);
+  const page1=dims(page1Surface);
+
+  // Product/selected-size physical values are the fallback for page 1.
+  const productWidth=positive(
+    (cfg.enabled ? cfg.workspaceWidth : null) ??
+    sp.physicalWidth ?? sp.printWidth ??
+    sp.physical_width_in ?? sp.print_width_in ??
+    P.printWidth ?? P.physicalWidthIn ?? P.physical_width_in
+  );
+  const productHeight=positive(
+    (cfg.enabled ? cfg.workspaceHeight : null) ??
+    sp.physicalHeight ?? sp.printHeight ??
+    sp.physical_height_in ?? sp.print_height_in ??
+    P.printHeight ?? P.physicalHeightIn ?? P.physical_height_in
+  );
+
+  // Rule:
+  // page 1 -> its Admin ruler, otherwise product/size Admin ruler.
+  // page 2+ -> its own Admin ruler when BOTH values exist;
+  //            otherwise inherit page 1 completely.
+  const page1Width=page1.width||productWidth;
+  const page1Height=page1.height||productHeight;
+  const hasOwnPageRuler=page>0 && current.width>0 && current.height>0;
+
+  const width=page===0 ? page1Width : (hasOwnPageRuler?current.width:page1Width);
+  const height=page===0 ? page1Height : (hasOwnPageRuler?current.height:page1Height);
+
+  return {
+    width,
+    height,
+    unit:'in',
+    surface:hasOwnPageRuler?surface:(page1Surface||surface),
+    inheritedFromPage1:page>0&&!hasOwnPageRuler
+  };
+}
+const ZV_DOC=window.INITIAL_TEMPLATE?.document||{};
+const ZV_BASE_W=Number(ZV_DOC.width)||Number(EP.canvas_width)||Number(P.width)||1050;
+const ZV_BASE_H=Number(ZV_DOC.height)||Number(EP.canvas_height)||Number(P.height)||600;
+
+// Fabric keeps an internal pixel coordinate system. The white artboard aspect ratio,
+// however, must always match the ACTIVE Admin print surface measured in inches.
+function zvLogicalSizeForPage(pageIndex,pageData){
+  const saved=pageData;
+  if(saved?.editorCoordinates && Number(saved.editorWidth)>0 && Number(saved.editorHeight)>0){
+    return {width:Number(saved.editorWidth),height:Number(saved.editorHeight)};
+  }
+  const d=zvPhysicalForPage(pageIndex);
+  const bw=Math.max(1,Number(ZV_BASE_W)||1050);
+  const bh=Math.max(1,Number(ZV_BASE_H)||600);
+
+  if(!(d.width>0&&d.height>0)){
+    return {width:bw,height:bh};
+  }
+
+  // Admin inches define the artboard ratio. Fabric remains an internal pixel system.
+  const ratio=d.width/d.height;
+  const area=Math.max(1,bw*bh);
+  let w=Math.sqrt(area*ratio);
+  let h=w/ratio;
+
+  // Keep logical coordinates practical and deterministic; this does not represent inches.
+  const maxAxis=Math.max(w,h);
+  if(maxAxis>1600){
+    const k=1600/maxAxis; w*=k; h*=k;
+  }
+  const minAxis=Math.min(w,h);
+  if(minAxis<240){
+    const k=240/minAxis; w*=k; h*=k;
+  }
+  return {width:Math.round(w),height:Math.round(h)};
+}
+
+    return zvLogicalSizeForPage(index,page);
+  }
+  const savedData=new Map(),savedProofs=new Map();
+  function savedDocument(url){
+    if(!savedData.has(url))savedData.set(url,(async()=>{
+      const response=await fetch(url,{credentials:'same-origin',cache:'no-store'});
+      if(!response.ok)throw Error('Unable to load the saved design.');
+      const data=await response.json();
+      if(!Array.isArray(data.design?.pages)||!data.design.pages.length)throw Error('No saved design views are available.');
+      return data;
+    })().catch(error=>{savedData.delete(url);throw error}));
+    return savedData.get(url);
+  }
+  function visibleReference(object){
+    const copy=objectData(object);copy.excludeFromExport=false;
+    if(copy.objects)copy.objects=copy.objects.map(visibleReference);
+    return copy;
+  }
+  async function referenceObjects(data,page,width,height,fabric){
+    // New saves preserve exact reference positions without making them printable.
+    if(Array.isArray(page.previewReferenceObjects))return page.previewReferenceObjects.map(visibleReference);
+    const opt=data.options||{},cfg=opt.editor_config||{},root=data.design||{};
+    const enabled=cfg.showProductReference===true||root.showProductMockup===true||root.show_product_mockup===true||page.showProductMockup===true||page.show_product_mockup===true;
+    if(!enabled)return [];
+    const promo=cfg.referenceLayout==='single-page-front-back';
+    const url=(promo?cfg.referenceImages?.[0]?.url:'')||opt.base_image_url;
+    if(!url)return [];
+    const image=await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(Error('Product reference could not load.')),15000);
+      fabric.Image.fromURL(url,img=>{clearTimeout(timer);if(img?.width&&img?.height)resolve(img);else reject(Error('Product reference could not load.'))},{crossOrigin:'anonymous'});
+    });
+    try{
+      const fit=cfg.enabled&&cfg.mode==='print_area',category=String(data.product?.category||'').toLowerCase(),mode=data.product?.customizer_mode;
+      const fill=fit&&(mode==='pen'||category==='pens'||category==='pen')?1.18:fit&&(mode==='drinkware'||category==='drinkware')?1.34:1;
+      const sx=promo?.94:(fit?.94:.88),sy=promo?.90:sx;
+      const scale=Math.min(width*sx/image.width,height*sy/image.height)*(promo?1:fill);
+      image.set({left:width/2,top:height/2,originX:'center',originY:'center',scaleX:scale,scaleY:scale});
+      return [image.toObject()];
+    }finally{image.dispose()}
+  }
+  async function savedProof(url,index){
+    const key=url+'#'+index;
+    if(!savedProofs.has(key))savedProofs.set(key,(async()=>{
+      const data=await savedDocument(url),page=data.design.pages[index];
+      const fabric=await fabricEngine();await fontsFor([page]);
+      const size=previewSize(data,index,page),width=size.width,height=size.height;
+      if(!(width>0&&height>0&&Number.isFinite(width)&&Number.isFinite(height)))throw Error('Saved view dimensions are unavailable.');
+      const references=await referenceObjects(data,page,width,height,fabric);
+      const scale=Math.min(1,1200/Math.max(width,height));
+      const canvas=new fabric.StaticCanvas(document.createElement('canvas'),{width:Math.round(width*scale),height:Math.round(height*scale),enableRetinaScaling:false});
+      try{
+        await new Promise((resolve,reject)=>{
+          const timer=setTimeout(()=>reject(Error('Saved artwork could not load.')),20000);
+          canvas.loadFromJSON({background:page.background||'#fff',objects:[...references,...(page.objects||[]).map(objectData)]},()=>{clearTimeout(timer);resolve()});
+        });
+        canvas.setZoom(scale);canvas.renderAll();
+        // Keep the product fallback if an older saved snapshot is fully transparent.
+        const pixels=canvas.getContext().getImageData(0,0,canvas.getWidth(),canvas.getHeight()).data;
+        let visible=false;for(let i=3;i<pixels.length;i+=4){if(pixels[i]){visible=true;break}}
+        let thumbnail=null;
+        if(references.length&&visible){
+          // Thumbnail framing only: retain every visible artwork/reference pixel.
+          const cw=canvas.getWidth(),ch=canvas.getHeight();
+          let left=cw,top=ch,right=-1,bottom=-1;
+          for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(pixels[(y*cw+x)*4+3]){
+            left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);
+          }
+          if(right>=left&&bottom>=top){
+            const padding=Math.max(2,Math.round(Math.max(right-left+1,bottom-top+1)*.035));
+            const cropped=document.createElement('canvas');cropped.width=right-left+1+padding*2;cropped.height=bottom-top+1+padding*2;
+            cropped.getContext('2d').drawImage(canvas.lowerCanvasEl,left,top,right-left+1,bottom-top+1,padding,padding,right-left+1,bottom-top+1);
+            thumbnail=cropped.toDataURL('image/png');
+          }
+        }
+        return {src:canvas.toDataURL({format:'png',enableRetinaScaling:false}),thumbnail,visible,label:page.name||'View '+(index+1),total:data.design.pages.length};
+      }finally{canvas.dispose()}
+    })().catch(error=>{savedProofs.delete(key);throw error}));
+    return savedProofs.get(key);
+  }
+  async function loadViews(url,token){
+    const data=await savedDocument(url);
+    let first=true;
+    for(let index=0;index<data.design.pages.length;index++){
+      if(token!==serial||!dialog.open)return;
+      const proof=await savedProof(url,index);
+      if(token!==serial||!dialog.open)return;
+      views.push(proof);showView(first?0:current);
+      if(first){first=false;document.getElementById('zvDesignPreviewEmpty').hidden=true}
+    }
+  }
+  function hydrateThumbnails(){
+    const nodes=document.querySelectorAll('img[data-saved-design-thumb]');
+    async function update(node){
+      const url=node.getAttribute('data-saved-design-thumb');
+      try{const proof=await savedProof(url,0);if(proof.visible){node.src=proof.thumbnail||proof.src;node.dataset.designProofReady='1'}}
+      catch(error){console.warn('Saved design thumbnail unavailable:',error.message)}
+    }
+    if('IntersectionObserver' in window){
+      const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){observer.unobserve(entry.target);update(entry.target)}}),{rootMargin:'150px'});
+      nodes.forEach(node=>observer.observe(node));
+    }else nodes.forEach(update);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hydrateThumbnails);
+  else hydrateThumbnails();
+  document.addEventListener('click',async function(event){
+    const trigger=event.target.closest('[data-design-preview]');if(!trigger)return;
+    event.preventDefault();const token=++serial,src=trigger.getAttribute('data-design-preview')||'';
+    const name=trigger.getAttribute('data-preview-name')||'Custom design';
+    document.getElementById('zvDesignPreviewTitle').textContent=name+' — Design preview';
+    pagesHost.replaceChildren();views=[];current=0;previous.disabled=next.disabled=true;previous.hidden=next.hidden=false;status.textContent='';image.hidden=!src;image.alt=name+' saved snapshot';
+    if(src)image.src=src;else image.removeAttribute('src');
+    document.getElementById('zvDesignPreviewEmpty').hidden=!!src;dialog.showModal();
+    const url=trigger.getAttribute('data-design-preview-url');
+    if(!url)return;
+    status.textContent='Loading all saved design views…';
+    try{await loadViews(url,token)}catch(error){if(token===serial&&dialog.open)status.textContent='Could not render every saved view. '+error.message+' Reopen the preview to retry.'}
+  });
+  dialog.addEventListener('close',()=>{serial++;views=[];pagesHost.replaceChildren();image.removeAttribute('src')});
+  document.getElementById('zvDesignPreviewClose').addEventListener('click',()=>dialog.close());
+})();
+</script>
+
+</body></html>

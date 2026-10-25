@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0B0D12" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#F5F7FA" stroke="none" stroke-width="0" opacity="1"/>
+<line x1="550.0" y1="54.400000000000006" x2="840.0" y2="106.6" stroke="#0B0D12" stroke-width="3" opacity="0.85"/>
+<ellipse cx="582.2222222222222" cy="42.2" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 582.2222222222222 42.2)"/>
+<ellipse cx="614.4444444444445" cy="84.0" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 614.4444444444445 84.0)"/>
+<ellipse cx="646.6666666666666" cy="53.80000000000001" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 646.6666666666666 53.80000000000001)"/>
+<ellipse cx="678.8888888888889" cy="95.6" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 678.8888888888889 95.6)"/>
+<ellipse cx="711.1111111111111" cy="65.4" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 711.1111111111111 65.4)"/>
+<ellipse cx="743.3333333333333" cy="107.2" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 743.3333333333333 107.2)"/>
+<ellipse cx="775.5555555555555" cy="77.0" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 775.5555555555555 77.0)"/>
+<ellipse cx="807.7777777777778" cy="118.8" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 807.7777777777778 118.8)"/>
+<line x1="950.0" y1="380.79999999999995" x2="700.0" y2="425.79999999999995" stroke="#24D3EE" stroke-width="3" opacity="0.85"/>
+<ellipse cx="918.75" cy="368.42499999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 918.75 368.42499999999995)"/>
+<ellipse cx="887.5" cy="410.04999999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 887.5 410.04999999999995)"/>
+<ellipse cx="856.25" cy="379.67499999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 856.25 379.67499999999995)"/>
+<ellipse cx="825.0" cy="421.29999999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 825.0 421.29999999999995)"/>
+<ellipse cx="793.75" cy="390.92499999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 793.75 390.92499999999995)"/>
+<ellipse cx="762.5" cy="432.54999999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 762.5 432.54999999999995)"/>
+<ellipse cx="731.25" cy="402.17499999999995" rx="18" ry="8" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 731.25 402.17499999999995)"/>
+<circle cx="600.0" cy="391.68" r="55.0" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.12"/>
+<text x="55" y="226" fill="#F5F7FA" font-family="Oswald" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">YOUR WELLNESS</tspan><tspan x="55" dy="62.699999999999996">MATTERS</tspan></text>
+<text x="58" y="387" fill="#F5F7FA" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Holistic care for modern life</tspan></text>
+<text x="770.0" y="837" fill="#D6B35A" font-family="Oswald" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#0B0D12" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#865CFF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F7FA" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0B0D12" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">LEARN MORE</tspan></text>
+<text x="954" y="69" fill="#24D3EE" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">13</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#D6B35A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

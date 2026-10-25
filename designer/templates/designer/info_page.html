@@ -1,0 +1,1067 @@
+{% extends 'designer/base.html' %}
+
+{% block title %}
+    {% if kind == 'about' %}
+        About Us | ZenVibe Corporate Gifts
+    {% elif kind == 'work' %}
+        Our Work | ZenVibe Corporate Gifts
+    {% elif kind == 'contact' %}
+
+<!-- contact section start -->
+<section class="contact-page">
+    <div class="container">
+        <div class="row g-sm-4 g-3">
+
+            <div class="col-lg-5">
+                <div class="contact-title">
+                    <h2>Get In Touch</h2>
+                    <p>
+                        We're here to help! Reach out to us with any questions,
+                        feedback, product enquiries, artwork requests or bulk-order
+                        questions, and we'll get back to you as soon as possible.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <form class="theme-form contact-form" method="post">
+                    {% csrf_token %}
+
+                    <div class="row g-4">
+
+                        <div class="col-12">
+                            <div class="form-box">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text"
+                                       id="name"
+                                       name="name"
+                                       class="form-control"
+                                       placeholder="Full Name"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-box">
+                                <label for="email">Email</label>
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       class="form-control"
+                                       placeholder="Email"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-box">
+                                <label for="review">Phone</label>
+                                <input type="text"
+                                       id="review"
+                                       name="phone"
+                                       class="form-control"
+                                       placeholder="Enter Your Phone Number">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-box">
+                                <label for="last-name">Subject</label>
+                                <input type="text"
+                                       id="last-name"
+                                       name="subject"
+                                       class="form-control"
+                                       placeholder="Subject">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-box">
+                                <label for="message">Write Your Message</label>
+                                <textarea id="message"
+                                          name="message"
+                                          rows="6"
+                                          class="form-control"
+                                          placeholder="Write Your Message"
+                                          required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-box">
+                                <button class="btn btn-solid" type="submit">
+                                    Send Your Message
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-12">
+                <div class="contact-right">
+                    <ul>
+
+                        <li>
+                            <div class="contact-icon">
+                                <i class="ri-phone-fill"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6>Contact Us</h6>
+                                <p>
+                                    <a href="tel:+15873402358">
+                                        +1 (587) 340-2358
+                                    </a>
+                                </p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="contact-icon">
+                                <i class="ri-map-pin-fill"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6>Address</h6>
+                                <p>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=4003+98+St+NW+Unit+72+Edmonton+AB+T6E+6M8"
+                                       target="_blank"
+                                       rel="noopener noreferrer">
+                                        4003 98 St NW Unit 72, Edmonton, AB T6E 6M8
+                                    </a>
+                                </p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="contact-icon">
+                                <i class="ri-mail-fill"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6>Email</h6>
+                                <p>
+                                    <a href="mailto:info@zenvibe.ca">
+                                        info@zenvibe.ca
+                                    </a>
+                                </p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="contact-icon">
+                                <i class="ri-cellphone-fill"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6>Support</h6>
+                                <p>ZenVibe Customer Support</p>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- contact section ends -->
+
+
+<!-- map section start -->
+<section class="map-section">
+    <iframe frameborder="0"
+            class="w-100 h-100"
+            loading="lazy"
+            title="ZenVibe Edmonton Location"
+            src="https://www.google.com/maps?q=4003+98+St+NW+Unit+72,+Edmonton,+AB+T6E+6M8&output=embed"></iframe>
+</section>
+<!-- map section End -->
+
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     MULTIKART BREADCRUMB
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>
+            {% if kind == 'about' %}
+                About Us
+            {% elif kind == 'work' %}
+                Our Work
+            {% elif kind == 'contact' %}
+                Contact Us
+            {% else %}
+                {{ title }}
+            {% endif %}
+        </h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    {% if kind == 'about' %}
+                        About Us
+                    {% elif kind == 'work' %}
+                        Our Work
+                    {% elif kind == 'contact' %}
+                        Contact Us
+                    {% else %}
+                        {{ title }}
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+{% if kind == 'about' %}
+
+<!-- =========================================================
+     MULTIKART ABOUT PAGE
+========================================================= -->
+<section class="about-page section-b-space">
+    <div class="container">
+        <div class="row">
+
+            <!-- Main banner exactly in Multikart location -->
+            <div class="col-lg-12">
+                <div class="banner-section zv-about-banner">
+                    {% for product in products|slice:":1" %}
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                             class="img-fluid blur-up lazyload"
+                             alt="ZenVibe Corporate Gifts">
+                        {% else %}
+                        <div class="zv-about-placeholder">ZenVibe</div>
+                        {% endif %}
+                    {% empty %}
+                    <div class="zv-about-placeholder">ZenVibe</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <h4>
+                    Your trusted Canadian partner for custom promotional products,
+                    corporate gifts, apparel, awards and event branding.
+                </h4>
+
+                <p>
+                    ZenVibe Corporate Gifts Inc. helps businesses, organizations,
+                    schools, sports teams and event planners create memorable brand
+                    experiences through high-quality custom promotional products
+                    and corporate gifts.
+                </p>
+
+                <p>
+                    Based in Edmonton, Alberta, we proudly serve customers across
+                    Canada with custom apparel, awards and trophies, drinkware,
+                    banners and displays, marketing materials, corporate gift sets
+                    and promotional merchandise designed to increase brand
+                    visibility and leave a lasting impression.
+                </p>
+
+                <p>
+                    Whether you need branded products for a trade show, employee
+                    recognition program, corporate event, sports tournament or
+                    marketing campaign, our team provides personalized service,
+                    quality products, competitive pricing and reliable nationwide
+                    delivery.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- WHY CHOOSE ZENVIBE -->
+<section class="section-b-space pt-0">
+    <div class="container">
+
+        <div class="title1">
+            <h4>Why Choose ZenVibe?</h4>
+            <h2 class="title-inner1">Everything Your Brand Needs</h2>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-xl-3 col-md-6">
+                <div class="zv-mk-feature-box">
+                    <div class="zv-mk-feature-media">
+                        {% for product in products|slice:"0:1" %}
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid"
+                                 alt="Free mockups">
+                            {% else %}
+                            <div class="zv-feature-placeholder">✓</div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="zv-feature-placeholder">✓</div>
+                        {% endfor %}
+                    </div>
+                    <div class="zv-mk-feature-content">
+                        <h4>Free Mockups</h4>
+                        <p>Preview your design before production on eligible custom orders.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="zv-mk-feature-box">
+                    <div class="zv-mk-feature-media">
+                        {% for product in products|slice:"1:2" %}
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid"
+                                 alt="Bulk discounts">
+                            {% else %}
+                            <div class="zv-feature-placeholder">%</div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="zv-feature-placeholder">%</div>
+                        {% endfor %}
+                    </div>
+                    <div class="zv-mk-feature-content">
+                        <h4>Bulk Discounts</h4>
+                        <p>Competitive volume pricing for companies, teams and events.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="zv-mk-feature-box">
+                    <div class="zv-mk-feature-media">
+                        {% for product in products|slice:"2:3" %}
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid"
+                                 alt="Canada delivery">
+                            {% else %}
+                            <div class="zv-feature-placeholder">CA</div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="zv-feature-placeholder">CA</div>
+                        {% endfor %}
+                    </div>
+                    <div class="zv-mk-feature-content">
+                        <h4>Canada-Wide Delivery</h4>
+                        <p>Reliable shipping for businesses and organizations across Canada.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="zv-mk-feature-box">
+                    <div class="zv-mk-feature-media">
+                        {% for product in products|slice:"3:4" %}
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid"
+                                 alt="Quality products">
+                            {% else %}
+                            <div class="zv-feature-placeholder">★</div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="zv-feature-placeholder">★</div>
+                        {% endfor %}
+                    </div>
+                    <div class="zv-mk-feature-content">
+                        <h4>Quality Products</h4>
+                        <p>Professional printing, engraving, embroidery and customization.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- CATEGORIES -->
+<section class="section-b-space">
+    <div class="container">
+
+        <div class="title1">
+            <h4>What We Offer</h4>
+            <h2 class="title-inner1">Custom Products For Every Brand</h2>
+        </div>
+
+        <div class="row g-4">
+
+            {% for c in categories|slice:":9" %}
+            <div class="col-lg-4 col-md-6">
+                <div class="collection-banner p-left text-start zv-mk-category-card">
+
+                    <a 
+                       class="zv-mk-category-media">
+
+                        {% if c.image %}
+                        <img src="{{ c.image.url }}"
+                             class="img-fluid blur-up lazyload"
+                             alt="{{ c.name }}">
+                        {% else %}
+                            {% with p=c.products.first %}
+                                {% if p and p.image %}
+                                <img src="{{ p.image.url }}"
+                                     class="img-fluid blur-up lazyload"
+                                     alt="{{ c.name }}">
+                                {% else %}
+                                <div class="zv-category-placeholder">Z</div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+
+                    </a>
+
+                    <div class="zv-mk-category-copy">
+                        <h4>{{ c.name }}</h4>
+                        
+                        <a href="{% url 'designer:category_detail' c.slug %}">
+                            Explore Products
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-4">
+                <p>Product categories are being updated.</p>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Multikart-style service strip -->
+<div class="container about-cls section-b-space">
+    <section class="service border-section small-section">
+        <div class="row">
+
+            <div class="col-md-4 service-block">
+                <div class="media">
+                    <i class="ri-truck-line zv-service-icon"></i>
+                    <div class="media-body">
+                        <h4>Canada-Wide Delivery</h4>
+                        <p>Reliable shipping across Canada</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 service-block">
+                <div class="media">
+                    <i class="ri-palette-line zv-service-icon"></i>
+                    <div class="media-body">
+                        <h4>Free Digital Proof</h4>
+                        <p>Preview eligible custom orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 service-block">
+                <div class="media">
+                    <i class="ri-price-tag-3-line zv-service-icon"></i>
+                    <div class="media-body">
+                        <h4>Bulk Pricing</h4>
+                        <p>Volume pricing for larger orders</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+
+{% elif kind == 'work' %}
+
+<!-- =========================================================
+     OUR WORK - MULTIKART COLLECTION STYLE
+========================================================= -->
+<section class="section-b-space">
+    <div class="container">
+
+        <div class="title1">
+            <h4>Our Work</h4>
+            <h2 class="title-inner1">Branding In The Real World</h2>
+            <p>
+                Explore products ZenVibe creates for businesses,
+                events, teams, schools and corporate gifting.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            {% for c in categories %}
+            <div class="col-lg-4 col-md-6">
+
+                <div class="zv-mk-work-card">
+
+                    <a 
+                       class="zv-mk-work-media">
+
+                        {% if c.image %}
+                        <img src="{{ c.image.url }}"
+                             class="img-fluid blur-up lazyload"
+                             alt="{{ c.name }}"
+                             loading="lazy">
+                        {% else %}
+                            {% with p=c.products.first %}
+                                {% if p and p.image %}
+                                <img src="{{ p.image.url }}"
+                                     class="img-fluid blur-up lazyload"
+                                     alt="{{ c.name }}"
+                                     loading="lazy">
+                                {% else %}
+                                <div class="zv-category-placeholder">Z</div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+
+                    </a>
+
+                    <div class="zv-mk-work-copy">
+                        <h3>
+                            <a href="{% url 'designer:category_detail' c.slug %}">
+                                {{ c.name }}
+                            </a>
+                        </h3>
+                       
+                        <a href="{% url 'designer:our_work' %}"
+                           class="btn btn-solid">
+                            View Collection
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <h3>Our work is being updated.</h3>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+
+{% elif kind == 'contact' %}
+
+<!-- =========================================================
+     CONTACT - MULTIKART CONTACT STYLE
+========================================================= -->
+
+<section class="contact-page">
+    <div class="container">
+
+        <div class="row g-sm-4 g-3">
+
+            <!-- LEFT INTRO -->
+            <div class="col-lg-5">
+
+                <div class="contact-title">
+                    <h2>Get In Touch</h2>
+
+                    <p>
+                        We're here to help! Reach out to us with any questions,
+                        feedback, product enquiries, artwork requests or bulk-order
+                        questions, and we'll get back to you as soon as possible.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT CONTACT FORM -->
+            <div class="col-lg-7">
+
+                <form class="theme-form contact-form" method="post">
+
+                    {% csrf_token %}
+
+                    <div class="row g-4">
+
+                        <!-- FULL NAME -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="name" class="form-label">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Full Name"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- EMAIL -->
+                        <div class="col-md-6">
+                            <div class="form-box">
+
+                                <label for="email">
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="Email"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- PHONE -->
+                        <div class="col-md-6">
+                            <div class="form-box">
+
+                                <label for="phone">
+                                    Phone
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    class="form-control"
+                                    placeholder="Enter Your Phone Number"
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- SUBJECT -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="subject">
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    name="subject"
+                                    class="form-control"
+                                    placeholder="Subject"
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- MESSAGE -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="message">
+                                    Write Your Message
+                                </label>
+
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    rows="6"
+                                    class="form-control"
+                                    placeholder="Write Your Message"
+                                    required
+                                ></textarea>
+
+                            </div>
+                        </div>
+
+
+                        <!-- BUTTON -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <button
+                                    class="btn btn-solid"
+                                    type="submit"
+                                >
+                                    Send Your Message
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- CONTACT INFORMATION -->
+            <div class="col-12">
+
+                <div class="contact-right">
+
+                    <ul>
+
+                        <!-- PHONE -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-phone-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Contact Us</h6>
+
+                                <p>
+                                    <a href="tel:+15873402358">
+                                        +1 (587) 340-2358
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- ADDRESS -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-map-pin-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Address</h6>
+
+                                <p>
+                                    <a
+                                        href="https://www.google.com/maps/search/?api=1&query=4003+98+St+NW+Unit+72+Edmonton+AB+T6E+6M8"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        4003 98 St NW Unit 72, Edmonton, AB T6E 6M8
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- EMAIL -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-mail-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Email</h6>
+
+                                <p>
+                                    <a href="mailto:info@zenvibe.ca">
+                                        info@zenvibe.ca
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- SUPPORT -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-customer-service-2-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Support</h6>
+
+                                <p>
+                                    ZenVibe Customer Support
+                                </p>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================================================
+     MAP - SAME MULTIKART POSITION
+========================================================= -->
+
+<section class="map-section">
+
+    <iframe
+        frameborder="0"
+        class="w-100 h-100"
+        loading="lazy"
+        title="ZenVibe Edmonton Location"
+        src="https://www.google.com/maps?q=4003+98+St+NW+Unit+72,+Edmonton,+AB+T6E+6M8&output=embed"
+    ></iframe>
+
+</section>
+
+{% endif %}
+
+
+<style>
+/* =========================================================
+   SMALL ZENVIBE OVERRIDES
+   Main structure uses Multikart classes from base CSS.
+========================================================= */
+
+.zv-about-banner{
+    margin-bottom:30px;
+    background:#f5f5f5;
+    overflow:hidden;
+}
+
+.zv-about-banner img{
+    width:100%;
+    max-height:520px;
+    object-fit:contain;
+}
+
+.zv-about-placeholder,
+.zv-feature-placeholder,
+.zv-category-placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:260px;
+    background:#f4f5f7;
+    color:#0758b8;
+    font-size:48px;
+    font-weight:700;
+}
+
+.about-page h4{
+    margin-bottom:15px;
+    color:#222;
+    font-size:18px;
+    font-weight:600;
+}
+
+.about-page p{
+    color:#777;
+    line-height:1.8;
+}
+
+.zv-mk-feature-box{
+    height:100%;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+.zv-mk-feature-media{
+    height:190px;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-mk-feature-media img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.zv-mk-feature-content{
+    padding:20px;
+    text-align:center;
+}
+
+.zv-mk-feature-content h4{
+    margin-bottom:8px;
+    color:#222;
+}
+
+.zv-mk-feature-content p{
+    margin:0;
+    color:#777;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.zv-mk-category-card,
+.zv-mk-work-card{
+    height:100%;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+.zv-mk-category-media,
+.zv-mk-work-media{
+    display:block;
+    width:100%;
+    height:260px;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-mk-category-media img,
+.zv-mk-work-media img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.zv-mk-category-copy,
+.zv-mk-work-copy{
+    padding:20px;
+}
+
+.zv-mk-category-copy h4,
+.zv-mk-work-copy h3{
+    margin-bottom:8px;
+    color:#222;
+}
+
+.zv-mk-category-copy p,
+.zv-mk-work-copy p{
+    color:#777;
+    font-size:13px;
+    line-height:1.65;
+}
+
+.zv-mk-category-copy > a,
+.zv-mk-work-copy h3 a{
+    color:#0758b8;
+    text-decoration:none;
+}
+
+.zv-service-icon{
+    font-size:38px;
+    margin-right:16px;
+    color:#0758b8;
+}
+
+.zv-contact-title{
+    margin-bottom:20px;
+}
+
+.zv-contact-intro{
+    color:#777;
+    line-height:1.75;
+    margin-bottom:28px;
+}
+
+.zv-contact-list{
+    border-top:1px solid #eee;
+}
+
+.zv-contact-item{
+    display:flex;
+    gap:15px;
+    align-items:flex-start;
+    padding:18px 0;
+    border-bottom:1px solid #eee;
+}
+
+.zv-contact-item > i{
+    font-size:24px;
+    color:#0758b8;
+}
+
+.zv-contact-item h5{
+    margin:0 0 5px;
+    color:#222;
+}
+
+.zv-contact-item a{
+    color:#777;
+    text-decoration:none;
+}
+
+.zv-contact-item a:hover{
+    color:#0758b8;
+}
+
+.zv-contact-card-mk{
+    height:100%;
+    padding:35px;
+    border:1px solid #eee;
+}
+
+.zv-contact-card-mk h3{
+    margin-bottom:15px;
+}
+
+.zv-contact-card-mk p{
+    margin-bottom:22px;
+    color:#777;
+    line-height:1.7;
+}
+
+@media(max-width:767px){
+    .zv-mk-category-media,
+    .zv-mk-work-media{
+        height:220px;
+    }
+
+    .zv-contact-card-mk{
+        padding:25px 20px;
+    }
+}
+.zv-mk-work-copy{
+    padding:20px;
+    text-align:center;
+}
+
+.zv-mk-work-copy .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin:15px auto 0;
+}
+</style>
+
+
+
+
+
+
+
+{% endblock %}

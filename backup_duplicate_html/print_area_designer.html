@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print Area Designer</title>
+
+<style>
+:root{
+    --navy:#0b294d;
+    --orange:#ff6835;
+    --line:#dde4ed;
+    --muted:#718096;
+    --bg:#f4f7fb;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:#12243c;
+    font-family:Arial,sans-serif;
+}
+
+header{
+    height:76px;
+    padding:0 22px;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+}
+
+header a{
+    color:var(--navy);
+    text-decoration:none;
+    font-weight:700;
+}
+
+header h1{
+    text-align:center;
+    font-size:18px;
+    margin:0;
+}
+
+.shell{
+    max-width:1450px;
+    margin:26px auto;
+    padding:0 20px 36px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 350px;
+    gap:22px;
+}
+
+.card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:0 3px 14px rgba(12,47,87,.05);
+}
+
+.stage-card{padding:18px}
+
+.stage-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+}
+
+.stage-head h2{
+    font-size:16px;
+    margin:0;
+}
+
+.thumbs{
+    display:flex;
+    gap:9px;
+    overflow:auto;
+    padding:2px 1px 12px;
+}
+
+.thumb{
+    width:82px;
+    flex:0 0 82px;
+    border:2px solid transparent;
+    border-radius:10px;
+    background:#fff;
+    padding:5px;
+    cursor:pointer;
+}
+
+.thumb.active{
+    border-color:var(--orange);
+    background:#fff8f4;
+}
+
+.thumb img{
+    width:68px;
+    height:62px;
+    object-fit:contain;
+    display:block;
+    background:#f7f9fc;
+    border-radius:6px;
+}
+
+.thumb small{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-top:4px;
+    color:#4b5870;
+    font-size:10px;
+    text-align:center;
+}
+
+.stage{
+    min-height:560px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        linear-gradient(
+            45deg,
+            #f7f9fc 25%,
+            #fff 25%,
+            #fff 75%,
+            #f7f9fc 75%
+        );
+    background-size:28px 28px;
+    border:1px solid #edf0f5;
+    border-radius:12px;
+    overflow:auto;
+    padding:20px;
+}
+
+.imgbox{
+    position:relative;
+    max-width:100%;
+    user-select:none;
+}
+
+.imgbox img{
+    display:block;
+    max-width:100%;
+    max-height:650px;
+    width:auto;
+    height:auto;
+}
+
+.area{
+    position:absolute;
+    border:2px dashed var(--orange);
+    background:rgba(255,107,53,.12);
+    cursor:move;
+    min-width:20px;
+    min-height:20px;
+}
+
+.area:not(.active){
+    border-color:#718096;
+    background:rgba(113,128,150,.10);
+}
+
+.area.active{
+    z-index:10;
+}
+
+.handle{
+    position:absolute;
+    width:15px;
+    height:15px;
+    border-radius:3px;
+    background:var(--orange);
+    right:-8px;
+    bottom:-8px;
+    cursor:nwse-resize;
+}
+
+.area:not(.active) .handle{
+    display:none;
+}
+
+.area-label{
+    position:absolute;
+    left:5px;
+    top:5px;
+    background:#fff;
+    color:#c54f24;
+    border-radius:5px;
+    padding:3px 6px;
+    font-size:10px;
+    font-weight:800;
+    pointer-events:none;
+    white-space:nowrap;
+}
+
+.panel{
+    padding:20px;
+    height:max-content;
+    position:sticky;
+    top:20px;
+}
+
+.panel h2{
+    margin:0;
+    font-size:18px;
+}
+
+.selected-label{
+    color:var(--muted);
+    font-size:12px;
+    margin:5px 0 16px;
+}
+
+.area-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-bottom:14px;
+}
+
+.area-tab{
+    border:1px solid #dce2eb;
+    background:#fff;
+    color:#40506a;
+    border-radius:7px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:11px;
+}
+
+.area-tab.active{
+    border-color:var(--orange);
+    color:var(--orange);
+    background:#fff7f3;
+}
+
+.add-area{
+    border:0;
+    background:var(--navy);
+    color:#fff;
+    border-radius:7px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:11px;
+}
+
+.field{
+    margin-bottom:10px;
+}
+
+.field label{
+    display:block;
+    font-size:11px;
+    font-weight:800;
+    color:#526078;
+    margin-bottom:5px;
+}
+
+.field input{
+    width:100%;
+    height:39px;
+    border:1px solid #dce2eb;
+    border-radius:8px;
+    padding:0 9px;
+    font:inherit;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:16px;
+}
+
+.actions button{
+    height:42px;
+    border-radius:8px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.delete{
+    border:1px solid #e5b7b7;
+    background:#fff;
+    color:#bd3333;
+}
+
+.save{
+    border:0;
+    background:var(--orange);
+    color:#fff;
+}
+
+.status{
+    font-size:12px;
+    min-height:18px;
+    margin-top:10px;
+}
+
+.status.ok{color:#17834f}
+.status.err{color:#c63f3f}
+
+.note{
+    font-size:11px;
+    color:#7f8999;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid #eef1f5;
+}
+
+@media(max-width:900px){
+    .shell{grid-template-columns:1fr}
+    .panel{position:static}
+}
+
+@media(max-width:520px){
+    header{padding:0 12px}
+    .shell{padding:0 10px 24px}
+    .grid{grid-template-columns:1fr}
+    .actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="/admin/designer/product/{{ product.id }}/change/">
+        ← Back to product
+    </a>
+
+    <h1>Print Area Designer</h1>
+
+    <span></span>
+</header>
+
+<div class="shell">
+
+<section class="card stage-card">
+
+    <div class="stage-head">
+        <h2>{{ product.name }}</h2>
+    </div>
+
+    <div id="thumbs" class="thumbs"></div>
+
+    <div class="stage">
+
+        <div
+            id="noImages"
+            style="display:none;color:#718096"
+        >
+            No product images available.
+        </div>
+
+        <div
+            class="imgbox"
+            id="imgBox"
+            style="display:none"
+        >
+            <img id="productPhoto" alt="">
+            <div id="areasLayer"></div>
+        </div>
+
+    </div>
+
+</section>
+
+<aside class="card panel">
+
+    <h2>Selected image</h2>
+
+    <div
+        class="selected-label"
+        id="selectedLabel"
+    >
+        —
+    </div>
+
+    <div
+        class="area-toolbar"
+        id="areaToolbar"
+    ></div>
+
+    <div class="field">
+        <label>Print area name</label>
+
+        <input
+            id="areaName"
+            type="text"
+            maxlength="100"
+        >
+    </div>
+
+    <div class="grid">
+
+        <div class="field">
+            <label>Left (%)</label>
+            <input
+                id="valLeft"
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+            >
+        </div>
+
+        <div class="field">
+            <label>Top (%)</label>
+            <input
+                id="valTop"
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+            >
+        </div>
+
+        <div class="field">
+            <label>Width (%)</label>
+            <input
+                id="valWidth"
+                type="number"
+                step="0.1"
+                min="1"
+                max="100"
+            >
+        </div>
+
+        <div class="field">
+            <label>Height (%)</label>
+            <input
+                id="valHeight"
+                type="number"
+                step="0.1"
+                min="1"
+                max="100"
+            >
+        </div>
+
+    </div>
+
+    <div class="actions">
+
+        <button
+            class="delete"
+            id="deleteBtn"
+            type="button"
+        >
+            Delete area
+        </button>
+
+        <button
+            class="save"
+            id="saveBtn"
+            type="button"
+        >
+            Save area
+        </button>
+
+    </div>
+
+    <div
+        class="status"
+        id="statusMsg"
+    ></div>
+
+    <div class="note">
+        You can add multiple print areas to every product
+        image. Click an area to select, move or resize it.
+    </div>
+
+</aside>
+
+</div>
+
+<script>
+
+const productId = {{ product.id }};
+const images = {{ print_images_json|safe }};
+
+const thumbs = document.getElementById('thumbs');
+const imgBox = document.getElementById('imgBox');
+const photo = document.getElementById('productPhoto');
+const layer = document.getElementById('areasLayer');
+
+const toolbar = document.getElementById('areaToolbar');
+
+const selectedLabel =
+    document.getElementById('selectedLabel');
+
+const areaName =
+    document.getElementById('areaName');
+
+const valLeft =
+    document.getElementById('valLeft');
+
+const valTop =
+    document.getElementById('valTop');
+
+const valWidth =
+    document.getElementById('valWidth');
+
+const valHeight =
+    document.getElementById('valHeight');
+
+const saveBtn =
+    document.getElementById('saveBtn');
+
+const deleteBtn =
+    document.getElementById('deleteBtn');
+
+const statusMsg =
+    document.getElementById('statusMsg');
+
+let currentImage = null;
+let selectedArea = null;
+
+let dragging = null;
+let startX = 0;
+let startY = 0;
+let startState = null;
+
+function csrf(){
+
+    return document.cookie
+        .split('; ')
+        .find(x => x.startsWith('csrftoken='))
+        ?.split('=')[1] || '';
+}
+
+
+function clamp(area){
+
+    area.width =
+        Math.max(1, Math.min(100, area.width));
+
+    area.height =
+        Math.max(1, Math.min(100, area.height));
+
+    area.left =
+        Math.max(
+            0,
+            Math.min(
+                100 - area.width,
+                area.left
+            )
+        );
+
+    area.top =
+        Math.max(
+            0,
+            Math.min(
+                100 - area.height,
+                area.top
+            )
+        );
+}
+
+
+function render(){
+
+    layer.innerHTML = '';
+    toolbar.innerHTML = '';
+
+    if(!currentImage)
+        return;
+
+    currentImage.areas.forEach((area, index) => {
+
+        clamp(area);
+
+        const el =
+            document.createElement('div');
+
+        el.className =
+            'area' +
+            (area === selectedArea ? ' active' : '');
+
+        el.style.left = area.left + '%';
+        el.style.top = area.top + '%';
+        el.style.width = area.width + '%';
+        el.style.height = area.height + '%';
+
+        el.innerHTML = `
+            <span class="area-label">
+                ${area.name || 'Print Area'}
+            </span>
+
+            <div class="handle"></div>
+        `;
+
+        el.addEventListener(
+            'pointerdown',
+            e => {
+
+                selectArea(area);
+
+                if(
+                    e.target.classList.contains('handle')
+                ){
+                    dragging = 'resize';
+                }else{
+                    dragging = 'move';
+                }
+
+                startX = e.clientX;
+                startY = e.clientY;
+
+                startState = {
+                    left:area.left,
+                    top:area.top,
+                    width:area.width,
+                    height:area.height
+                };
+
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        );
+
+        layer.appendChild(el);
+
+        const tab =
+            document.createElement('button');
+
+        tab.type = 'button';
+
+        tab.className =
+            'area-tab' +
+            (area === selectedArea ? ' active' : '');
+
+        tab.textContent =
+            area.name || `Area ${index + 1}`;
+
+        tab.onclick = () =>
+            selectArea(area);
+
+        toolbar.appendChild(tab);
+    });
+
+
+    const add =
+        document.createElement('button');
+
+    add.type = 'button';
+    add.className = 'add-area';
+    add.textContent = '+ Add Print Area';
+
+    add.onclick = addArea;
+
+    toolbar.appendChild(add);
+
+    updateInputs();
+}
+
+
+function selectArea(area){
+
+    selectedArea = area;
+
+    statusMsg.textContent = '';
+
+    render();
+}
+
+
+function updateInputs(){
+
+    if(!selectedArea)
+        return;
+
+    areaName.value =
+        selectedArea.name || '';
+
+    valLeft.value =
+        selectedArea.left.toFixed(1);
+
+    valTop.value =
+        selectedArea.top.toFixed(1);
+
+    valWidth.value =
+        selectedArea.width.toFixed(1);
+
+    valHeight.value =
+        selectedArea.height.toFixed(1);
+
+    deleteBtn.disabled =
+        !selectedArea.id;
+}
+
+
+function addArea(){
+
+    if(!currentImage)
+        return;
+
+    const number =
+        currentImage.areas.length + 1;
+
+    const area = {
+        id:null,
+        name:`Print Area ${number}`,
+        left:30,
+        top:40,
+        width:30,
+        height:20
+    };
+
+    currentImage.areas.push(area);
+
+    selectedArea = area;
+
+    render();
+}
+
+
+function selectImage(item){
+
+    currentImage = item;
+
+    if(!Array.isArray(currentImage.areas))
+        currentImage.areas = [];
+
+    photo.src = item.url;
+    photo.alt = item.label;
+
+    selectedLabel.textContent =
+        item.label;
+
+    imgBox.style.display = 'block';
+
+    document.getElementById(
+        'noImages'
+    ).style.display = 'none';
+
+    selectedArea =
+        currentImage.areas[0] || null;
+
+    [...thumbs.children]
+        .forEach(
+            (button, index) =>
+                button.classList.toggle(
+                    'active',
+                    images[index] === item
+                )
+        );
+
+    render();
+}
+
+
+function renderThumbs(){
+
+    if(!images.length){
+
+        document.getElementById(
+            'noImages'
+        ).style.display = 'block';
+
+        return;
+    }
+
+    images.forEach(item => {
+
+        const button =
+            document.createElement('button');
+
+        button.type = 'button';
+        button.className = 'thumb';
+
+        button.innerHTML = `
+            <img src="${item.url}" alt="">
+            <small>${item.label}</small>
+        `;
+
+        button.onclick =
+            () => selectImage(item);
+
+        thumbs.appendChild(button);
+    });
+
+    selectImage(images[0]);
+}
+
+
+[
+    valLeft,
+    valTop,
+    valWidth,
+    valHeight
+].forEach(input => {
+
+    input.addEventListener(
+        'input',
+        () => {
+
+            if(!selectedArea)
+                return;
+
+            selectedArea.left =
+                parseFloat(valLeft.value) || 0;
+
+            selectedArea.top =
+                parseFloat(valTop.value) || 0;
+
+            selectedArea.width =
+                parseFloat(valWidth.value) || 1;
+
+            selectedArea.height =
+                parseFloat(valHeight.value) || 1;
+
+            clamp(selectedArea);
+
+            render();
+        }
+    );
+});
+
+
+areaName.addEventListener(
+    'input',
+    () => {
+
+        if(!selectedArea)
+            return;
+
+        selectedArea.name =
+            areaName.value ||
+            'Print Area';
+
+        render();
+    }
+);
+
+
+document.addEventListener(
+    'pointermove',
+    e => {
+
+        if(
+            !dragging ||
+            !selectedArea
+        )
+            return;
+
+        const rect =
+            imgBox.getBoundingClientRect();
+
+        const dx =
+            (e.clientX - startX)
+            / rect.width * 100;
+
+        const dy =
+            (e.clientY - startY)
+            / rect.height * 100;
+
+        if(dragging === 'move'){
+
+            selectedArea.left =
+                startState.left + dx;
+
+            selectedArea.top =
+                startState.top + dy;
+
+        }else{
+
+            selectedArea.width =
+                startState.width + dx;
+
+            selectedArea.height =
+                startState.height + dy;
+        }
+
+        clamp(selectedArea);
+
+        render();
+    }
+);
+
+
+document.addEventListener(
+    'pointerup',
+    () => {
+        dragging = null;
+    }
+);
+
+
+saveBtn.onclick = async () => {
+
+    if(
+        !currentImage ||
+        !selectedArea
+    )
+        return;
+
+    saveBtn.disabled = true;
+
+    statusMsg.textContent =
+        'Saving…';
+
+    statusMsg.className =
+        'status';
+
+    try{
+
+        const response = await fetch(
+            `/api/product/${productId}/print-area/`,
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':
+                        'application/json',
+
+                    'X-CSRFToken':
+                        csrf(),
+
+                    'X-Requested-With':
+                        'XMLHttpRequest'
+                },
+
+                credentials:'same-origin',
+
+                body:JSON.stringify({
+                    action:'save',
+
+                    area_id:
+                        selectedArea.id,
+
+                    image_id:
+                        currentImage.image_id,
+
+                    name:
+                        selectedArea.name,
+
+                    left:
+                        selectedArea.left,
+
+                    top:
+                        selectedArea.top,
+
+                    width:
+                        selectedArea.width,
+
+                    height:
+                        selectedArea.height
+                })
+            }
+        );
+
+        const contentType =
+            response.headers.get(
+                'content-type'
+            ) || '';
+
+        if(
+            !contentType.includes(
+                'application/json'
+            )
+        ){
+            throw new Error(
+                `Server returned an invalid response (${response.status}).`
+            );
+        }
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.ok
+        ){
+            throw new Error(
+                data.error ||
+                'Could not save print area.'
+            );
+        }
+
+        selectedArea.id =
+            data.area.id;
+
+        selectedArea.name =
+            data.area.name;
+
+        statusMsg.textContent =
+            'Saved successfully.';
+
+        statusMsg.className =
+            'status ok';
+
+        render();
+
+    }catch(error){
+
+        console.error(error);
+
+        statusMsg.textContent =
+            error.message ||
+            'Could not save print area.';
+
+        statusMsg.className =
+            'status err';
+
+    }finally{
+
+        saveBtn.disabled = false;
+    }
+};
+
+
+deleteBtn.onclick = async () => {
+
+    if(
+        !selectedArea ||
+        !selectedArea.id
+    )
+        return;
+
+    if(
+        !confirm(
+            `Delete "${selectedArea.name}"?`
+        )
+    )
+        return;
+
+    deleteBtn.disabled = true;
+
+    try{
+
+        const response = await fetch(
+            `/api/product/${productId}/print-area/`,
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':
+                        'application/json',
+
+                    'X-CSRFToken':
+                        csrf(),
+
+                    'X-Requested-With':
+                        'XMLHttpRequest'
+                },
+
+                credentials:'same-origin',
+
+                body:JSON.stringify({
+                    action:'delete',
+
+                    area_id:
+                        selectedArea.id,
+
+                    image_id:
+                        currentImage.image_id
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.ok
+        ){
+            throw new Error(
+                data.error ||
+                'Could not delete area.'
+            );
+        }
+
+        currentImage.areas =
+            currentImage.areas.filter(
+                area =>
+                    area !== selectedArea
+            );
+
+        selectedArea =
+            currentImage.areas[0] ||
+            null;
+
+        statusMsg.textContent =
+            'Print area deleted.';
+
+        statusMsg.className =
+            'status ok';
+
+        render();
+
+    }catch(error){
+
+        statusMsg.textContent =
+            error.message ||
+            'Could not delete area.';
+
+        statusMsg.className =
+            'status err';
+
+    }finally{
+
+        deleteBtn.disabled = false;
+    }
+};
+
+
+renderThumbs();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#1e5037" opacity="1"/>
+<rect x="85" y="100" width="580" height="850" rx="26" fill="#ffffff" opacity="0.7"/>
+<rect x="505" y="110" width="190" height="72" rx="2" fill="#b9954f" opacity="0.95" transform="rotate(-6 505 110)"/>
+<rect x="533.5" y="110" width="24.7" height="72" rx="2" fill="#ffffff" opacity="0.14" transform="rotate(-6 533.5 110)"/>
+<polygon points="660.8,182 695,164.72 695,197.84 641.8,182" fill="#e4f1e7" opacity="0.9"/>
+<text x="390.0" y="315" text-anchor="middle" fill="#b9954f" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="390.0" dy="0">AN INTIMATE DINNER CELEBRATION</tspan></text>
+<text x="390.0" y="406" text-anchor="middle" fill="#fffaf0" font-size="52" font-family="Libre Baskerville" font-weight="700" opacity="1"><tspan x="390.0" dy="0">YOU&#x27;RE INVITED</tspan></text>
+<text x="390.0" y="523" text-anchor="middle" fill="#fffaf0" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="390.0" dy="0">SATURDAY · 07 NOVEMBER 2026</tspan></text>
+<text x="390.0" y="563" text-anchor="middle" fill="#fffaf0" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="390.0" dy="0">ATELIER DINING · 7:30 PM</tspan></text>
+<text x="390.0" y="637" text-anchor="middle" fill="#b9954f" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="390.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<line x1="65" y1="70" x2="685" y2="70" stroke="#b9954f" stroke-width="2.5" opacity="0.95"/>
+<line x1="65" y1="980" x2="685" y2="980" stroke="#b9954f" stroke-width="2.5" opacity="0.95"/>
+</svg>

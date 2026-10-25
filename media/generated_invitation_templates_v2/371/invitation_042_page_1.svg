@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#0d3b33" opacity="1"/>
+<rect x="38" y="38" width="674" height="974" rx="14" fill="transparent" opacity="1" stroke="#d1ae62" stroke-width="2"/>
+<rect x="54" y="54" width="642" height="942" rx="10" fill="transparent" opacity="1" stroke="#f9f2df" stroke-width="1"/>
+<circle cx="55" cy="90" r="160" fill="#f9f2df" opacity="0.7"/>
+<circle cx="700" cy="950" r="195" fill="#d1ae62" opacity="0.18"/>
+<circle cx="375" cy="180" r="72" fill="transparent" opacity="1" stroke="#d1ae62" stroke-width="3"/>
+<circle cx="375" cy="180" r="56" fill="#f9f2df" opacity="0.22" stroke="#d1ae62" stroke-width="1"/>
+<text x="375.0" y="194" text-anchor="middle" fill="#fffaf2" font-size="42" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="375.0" dy="0">O E</tspan></text>
+<text x="110" y="301" text-anchor="start" fill="#d1ae62" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">CLIENT APPRECIATION RECEPTION</tspan></text>
+<text x="110" y="392" text-anchor="start" fill="#fffaf2" font-size="52" font-family="Playfair Display" font-weight="700" opacity="1"><tspan x="110" dy="0">AN EVENING WITH ZENVIBE</tspan></text>
+<text x="110" y="509" text-anchor="start" fill="#fffaf2" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">THURSDAY · 29 OCTOBER 2026</tspan></text>
+<text x="110" y="549" text-anchor="start" fill="#fffaf2" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">WATERFRONT PAVILION · 6:00 PM</tspan></text>
+<text x="110" y="623" text-anchor="start" fill="#d1ae62" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="492" y="-100" width="130" height="1250" rx="0" fill="#ffffff" opacity="0.045" transform="rotate(19 492 -100)"/>
+</svg>

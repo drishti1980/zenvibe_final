@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="40.0,368.0 288.4,130.2 444.8,277.79999999999995 610.4,89.19999999999999 960.0,368.0" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.68"/>
+<polygon points="113.60000000000001,368.0 371.2,204.0 500.0,335.2 757.6,163.0 960.0,368.0" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="776.0" cy="113.8" r="34" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.88"/>
+<text x="500.0" y="630" fill="#4A2B22" font-family="Playfair Display" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">LIVE IN</tspan><tspan x="500.0" dy="65.8">CONCERT</tspan></text>
+<text x="500.0" y="768" fill="#4A2B22" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">One stage. One unforgettable night.</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#B98A4C" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET TICKETS</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">27</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

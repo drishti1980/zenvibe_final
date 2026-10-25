@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+  <div class="module aligned">
+    <h2>Import product catalog</h2>
+    <p>Upload CSV or JSON. Keep Preview only checked first.</p>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="submit-row">
+        <input type="submit" value="Run import" class="default">
+        <a href="{{ product_changelist_url }}" class="button">Back to products</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="module" style="margin-top:20px;">
+    <h2>Supported columns</h2>
+    <p>
+      Product: name, slug, category, subcategory, description, price, min_price,
+      max_price, minimum_quantity, orientation, customizer_mode, width, height,
+      print_width_in, print_height_in, bleed_in, safe_margin_in, min_dpi,
+      is_active, is_out_of_stock, is_on_sale, sale_price, sale_badge.
+    </p>
+    <p>
+      Size: size_name, size_key, editor_profile, size_print_width_in,
+      size_print_height_in, size_canvas_width, size_canvas_height,
+      size_sort_order, size_is_active.
+    </p>
+    <p>
+      Color: color_name, color_key, hex_value, color_slug_suffix,
+      color_sort_order, color_is_active.
+    </p>
+    <p>
+      Price tier: tier_size_key, tier_min_quantity, tier_unit_price, tier_is_active.
+      Repeat the same product slug on multiple rows for multiple variants or tiers.
+    </p>
+  </div>
+
+  {% if preview_rows %}
+  <div class="module" style="margin-top:20px;">
+    <h2>Results</h2>
+    <table style="width:100%">
+      <thead><tr><th>Row</th><th>Status</th><th>Details</th></tr></thead>
+      <tbody>
+      {% for row in preview_rows %}
+        <tr><td>{{ row.row }}</td><td>{{ row.status }}</td><td>{{ row.detail }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

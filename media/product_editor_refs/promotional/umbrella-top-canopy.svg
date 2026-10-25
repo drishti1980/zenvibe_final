@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="1000" viewBox="0 0 1050 1000">
+<defs>
+ <radialGradient id="g" cx="50%" cy="46%" r="62%"><stop offset="0" stop-color="#343434"/><stop offset=".72" stop-color="#202020"/><stop offset="1" stop-color="#111"/></radialGradient>
+ <filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".22"/></filter>
+</defs>
+<g filter="url(#s)">
+ <path d="M525 55 L842 178 L1000 445 L946 742 L720 945 L330 945 L104 742 L50 445 L208 178 Z" fill="url(#g)" stroke="#111" stroke-width="5"/>
+ <g stroke="#0b0b0b" stroke-width="4" opacity=".72">
+  <path d="M525 500 L525 55"/><path d="M525 500 L842 178"/><path d="M525 500 L1000 445"/><path d="M525 500 L946 742"/>
+  <path d="M525 500 L720 945"/><path d="M525 500 L330 945"/><path d="M525 500 L104 742"/><path d="M525 500 L50 445"/><path d="M525 500 L208 178"/>
+ </g>
+ <g fill="none" stroke="#3d3d3d" stroke-width="3" opacity=".65">
+  <path d="M50 445 Q245 380 525 500 Q805 380 1000 445"/>
+  <path d="M104 742 Q310 625 525 500 Q740 625 946 742"/>
+ </g>
+ <circle cx="525" cy="500" r="23" fill="#292929" stroke="#080808" stroke-width="4"/>
+</g>
+</svg>

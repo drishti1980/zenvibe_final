@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#111111" opacity="1"/>
+<polygon points="375,100 665,340 375,580 85,340" fill="#f1eee6" opacity="0.26" stroke="#d3c49b" stroke-width="2"/>
+<polygon points="0,0 230,0 0,230" fill="#d3c49b" opacity="0.14"/>
+<polygon points="750,1050 520,1050 750,820" fill="#333333" opacity="0.18"/>
+<text x="375.0" y="351" text-anchor="middle" fill="#d3c49b" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="375.0" dy="0">COME CELEBRATE WITH US</tspan></text>
+<text x="375.0" y="442" text-anchor="middle" fill="#fbf8ef" font-size="52" font-family="Cormorant Garamond" font-weight="700" opacity="1"><tspan x="375.0" dy="0">NEW HOME · NEW MEMORIES</tspan></text>
+<text x="375.0" y="559" text-anchor="middle" fill="#fbf8ef" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="375.0" dy="0">SUNDAY · 15 NOVEMBER 2026</tspan></text>
+<text x="375.0" y="599" text-anchor="middle" fill="#fbf8ef" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">18 GARDEN AVENUE · 3:00 PM</tspan></text>
+<text x="375.0" y="673" text-anchor="middle" fill="#d3c49b" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="375.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fbf8ef" opacity="0.018"/>
+</svg>

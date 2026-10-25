@@ -1,0 +1,90 @@
+﻿{% extends 'designer/base.html' %}{% load static %}
+{% block title %}Design {{ product.name }} | Zenvibe{% endblock %}
+{% block head %}
+<script>document.documentElement.classList.add('editor-document');window.REAL_GARMENTS={{ real_garments_json|safe }};</script>
+<link rel="stylesheet" href="{% static 'designer/css/category-editor-exact.css' %}">
+<link rel="stylesheet" href="{% static 'designer/css/image-tools.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+<script src="{% static 'designer/js/image-tools.js' %}"></script>
+<script src="{% static 'designer/js/vector-upload.js' %}"></script>
+<script src="{% static 'designer/js/arrange-tools.js' %}"></script>
+<style>
+.zv-garment-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 18px}
+.zv-garment-card{border:1px solid #e0e4ec;border-radius:12px;background:#fff;padding:8px;text-align:left;cursor:pointer}
+.zv-garment-card.active{border:2px solid #5d3fd3;padding:7px;box-shadow:0 0 0 3px rgba(93,63,211,.1)}
+.zv-garment-card img{width:100%;height:105px;object-fit:contain;background:#f8fafc;border-radius:8px;display:block}
+.zv-garment-card b{display:block;font-size:12px;margin-top:7px}
+</style>
+{% endblock %}
+{% block content %}
+<div class="zv-editor studio-app editor-shell category-studio" data-product-id="{{ product.id }}" data-product-name="{{ product.name|escape }}" data-product-price="{{ product.price }}" data-design-id="{% if existing_design %}{{ existing_design.id }}{% endif %}">
+<header class="zv-head studio-topbar">
+  <div class="studio-brand-group">
+    <a class="studio-back close-editor" href="{% url 'designer:choose_design' product.id %}">â†</a>
+    <a class="studio-logo" href="/">Z<span>ENVIBE</span></a>
+    <div class="studio-file-menu"><button data-menu="file">File</button><button data-menu="edit">Resize</button><button data-menu="view">View</button></div>
+    <div class="studio-file-meta"><strong>My Zenvibe Design</strong><small>{{ product.name }} Â· T-shirt</small></div>
+  </div>
+  <div class="studio-history-actions history"><button id="undoBtn" class="icon-command">â†¶</button><button id="redoBtn" class="icon-command" disabled>â†·</button><span class="autosave-status">Ready</span></div>
+  <div class="studio-primary-actions"><button id="unifiedPrintBtn" class="studio-secondary">Print check</button><button id="unifiedDownloadBtn" class="studio-secondary">Download</button><button id="saveDraft" class="studio-secondary">Save</button><button id="processBtn" class="studio-share">Continue to cart</button></div>
+  <button id="sideTopBtn" hidden>Side 1</button><button id="shareBtn" hidden></button><button id="helpBtn" hidden></button>
+</header>
+
+<aside class="rail studio-rail">
+  <button class="rail-btn rail-tab active" data-panel="product"><span>ðŸ‘•</span><b>Product</b></button>
+  <button class="rail-btn rail-tab" data-panel="templates"><span>â–¦</span><b>Templates</b></button>
+  <button class="rail-btn rail-tab" data-panel="elements"><span>â—ˆ</span><b>Elements</b></button>
+  <button class="rail-btn rail-tab" data-panel="text"><span>T</span><b>Text</b></button>
+  <button class="rail-btn rail-tab" data-panel="photos"><span>â‡§</span><b>Uploads</b></button>
+  <button class="rail-btn rail-tab" data-panel="cliparts"><span>âœ¦</span><b>Icons</b></button>
+  <button class="rail-btn rail-tab" data-panel="layers"><span>â˜·</span><b>Layers</b></button>
+  <button class="rail-btn rail-tab info" data-panel="info"><span>i</span><b>Info</b></button>
+</aside>
+
+<aside class="panel studio-panel editor-sidebar">
+  <div class="panel-heading"><div><small>DESIGN STUDIO</small><h2 id="panelTitle">Templates</h2></div></div>
+  <section class="pane studio-panel-section active" id="pane-product">
+    <div class="product-config-card"><h3>T-shirt configuration</h3>
+      <div class="config-grid">
+      <label>Size<select id="shirtSizeMain"><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select></label>
+      <label>Design side<div class="side-switch"><button id="frontSideBtn" class="active">Front</button><button id="backSideBtn">Back</button></div></label>
+    </div></div>
+    <div class="panel-search"><span>âŒ•</span><input id="garmentSearch" placeholder="Search garment photos"></div>
+    <h3>Real garment photos</h3>
+    <p class="panel-help">Choose a real product photo as your canvas background instead of a colour template. Your logo and text stay editable on top.</p>
+    <div id="garmentPhotoGrid" class="zv-garment-grid"></div>
+  </section>
+  <section class="pane studio-panel-section" id="pane-templates">
+    <div class="panel-search"><span>âŒ•</span><input id="templateSearch" placeholder="Search templates"></div>
+    <h3>T-shirt templates</h3><div id="templateGrid" class="template-grid"></div>
+  </section>
+  <section class="pane studio-panel-section" id="pane-elements"><div class="panel-search"><span>âŒ•</span><input placeholder="Search elements"></div><h3>Lines & shapes</h3><div class="asset-grid"><button id="drawBtn">âœŽ<br>Draw</button><button data-element="shapes">â–¡ â—‹ â–³</button><button data-element="icons">â™¢ Icons</button><button id="qrBtn">â–¦ QR</button><button id="gridFrameBtn">â–¥ Grid</button><button id="photoFrameBtn">â–¢ Frame</button></div><div id="elementSubgrid" class="asset-grid"></div><button id="vcardBtn" hidden></button></section>
+  <section class="pane studio-panel-section" id="pane-text"><button class="click-add big-text-command" data-text="Add your text">ï¼‹ Add a text box</button><button class="text-preset" data-text="Add heading"><strong>Add a heading</strong></button><button class="text-preset" data-text="Add subheading">Add a subheading</button><button class="text-preset" data-text="Add a little bit of body text">Add body text</button><button id="curvedText" class="text-preset">Add curved text</button><div id="textStyles" class="text-styles"></div></section>
+  <section class="pane studio-panel-section" id="pane-photos"><label class="upload-card"><input id="imageUpload" type="file" accept="image/png,image/jpeg,image/svg+xml" hidden><strong>â‡§ Upload files</strong><span>PNG, JPG or SVG</span></label></section>
+  <section class="pane studio-panel-section" id="pane-cliparts"><div class="panel-search"><span>âŒ•</span><input id="clipSearch" placeholder="Search icons"></div><select id="clipCategory"><option>All</option><option>Sports</option><option>Badges</option><option>Arrows</option></select><div id="clipGrid" class="asset-grid"></div></section>
+  <section class="pane studio-panel-section" id="pane-layers"><div id="layersList" class="layer-list"></div></section>
+  <section class="pane studio-panel-section" id="pane-info"><h3>Design quality</h3><p>Keep important artwork inside the green safe zone.</p><div><b id="qualityScore">100%</b> Print readiness</div></section>
+</aside>
+
+<main class="workspace studio-workspace canvas-area">
+  <div class="object-toolbar context-toolbar" id="contextToolbar">
+    <div class="context-controls">
+      <select id="fontFamily"><option>Roboto</option><option>Arial</option><option>Georgia</option><option>Montserrat</option><option>Oswald</option><option>Times New Roman</option></select>
+      <input id="fontSize" type="number" value="48"><input id="fillColor" type="color" value="#ffffff">
+      <button id="alignBtn">â‰¡</button><button id="caseBtn">aA</button><button id="boldBtn"><b>B</b></button><button id="italicBtn"><i>I</i></button><button id="spacingBtn">â†•</button><button id="numberBtn">123</button><button id="opacityBtn">â—’</button><button id="rotateBtn">â†»</button><button id="shadowBtn">â—‰</button><button id="strokeBtn">â–¡</button><button id="deleteBtn" class="danger">Delete</button>
+    </div>
+    <div class="zv-arrange arrange-dropdown" id="tshirtArrange"><button type="button" id="tshirtArrangeBtn">ArrangeâŒ„</button><div class="zv-arrange-menu"><small>ALIGN</small><div class="zv-arrange-grid three"><button data-zv-arrange="left">Left</button><button data-zv-arrange="center">Centre</button><button data-zv-arrange="right">Right</button><button data-zv-arrange="top">Top</button><button data-zv-arrange="middle">Middle</button><button data-zv-arrange="bottom">Bottom</button></div><small>LAYER</small><div class="zv-arrange-grid two"><button data-zv-arrange="forward">Forward</button><button data-zv-arrange="backward">Backward</button></div><small>TRANSFORM</small><div class="zv-arrange-grid two"><button data-zv-arrange="flipH">Flip H</button><button data-zv-arrange="flipV">Flip V</button></div><button data-zv-arrange="group" class="wide">Group / Ungroup</button></div></div>
+  </div>
+  <div class="canvas-scroll studio-canvas-scroll" id="canvasScroll"><div class="design-stage canvas-stage" id="designStage"><div class="ruler ruler-x" id="rulerX"></div><div class="ruler ruler-y" id="rulerY"></div><div class="canvas-wrap" id="canvasWrap"><canvas id="tshirtCanvas" width="600" height="560"></canvas><div class="cut-line"></div><div class="safe-line"></div></div></div></div>
+  <footer class="studio-bottom-bar"><div class="page-status"><strong id="pageCount">1/2</strong><span>Front and back artwork are saved separately</span></div><div class="zoom-controls"><button id="fitBtn">Fit</button><button id="zoomOut">âˆ’</button><span id="zoomLabel">100%</span><button id="zoomIn">ï¼‹</button></div></footer>
+  <div class="studio-hidden-legacy"><button id="cutGuide"></button><button id="safeGuide"></button><button id="upLayer"></button><button id="downLayer"></button><button id="resetView"></button></div>
+</main>
+
+<div id="tip" hidden></div><div id="menuPopup" class="menu-popup"></div>
+<div id="processModal" class="modal"><div class="modal-card"><button class="modal-x">Ã—</button><h2>Review your design</h2><div class="proof-grid"><div><h3>Front</h3><img id="proofFront"></div><div><h3>Back</h3><img id="proofBack"></div></div><div class="order-row"><label>Size<select id="shirtSize"><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select></label><label>Quantity<input id="quantity" type="number" value="1" min="1"></label></div><div class="total"><span>Estimated total</span><b id="totalPrice">${{ product.price }}</b></div><div class="modal-actions"><button id="addCart" class="studio-share">Save & add to cart â†’</button></div></div></div>
+<script id="initialDesign" type="application/json">{{ initial_json|safe }}</script>{% csrf_token %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'designer/js/tshirt-customizer.js' %}"></script><script src="{% static 'designer/js/unified-category-editor.js' %}"></script>{% endblock %}
+
+

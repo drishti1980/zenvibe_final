@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<text x="55" y="133" fill="#4A2B22" font-family="Playfair Display" font-size="68" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">HELLO 2027</tspan></text>
+<text x="58" y="267" fill="#4A2B22" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Celebrate â€¢ Connect â€¢ Begin again</tspan></text>
+<polygon points="400.0,72.5 621.0,35.0 740.0,115.0 529.2,185.0" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="451.0,285.0 563.2,110.0 740.0,165.0 648.2,285.0" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="427.2" y1="250.0" x2="706.0" y2="72.5" stroke="#B98A4C" stroke-width="3" opacity="0.85"/>
+<rect x="55" y="370" width="205" height="270" rx="18" ry="18" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="75" y="413" fill="#B75C3F" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">01</tspan></text>
+<text x="75" y="533" fill="#4A2B22" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">PLAN</tspan></text>
+<rect x="290" y="370" width="205" height="270" rx="18" ry="18" fill="#4A2B22" stroke="none" stroke-width="0" opacity="0.96"/>
+<text x="310" y="413" fill="#B98A4C" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">02</tspan></text>
+<text x="310" y="533" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">CREATE</tspan></text>
+<rect x="525" y="370" width="205" height="270" rx="18" ry="18" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="545" y="413" fill="#B75C3F" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">03</tspan></text>
+<text x="545" y="533" fill="#4A2B22" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">GROW</tspan></text>
+<text x="500.0" y="725" fill="#4A2B22" font-family="Inter" font-size="25" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A clean, modern framework built around your next move.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">JOIN US</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">72</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

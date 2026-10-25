@@ -1,0 +1,55 @@
+/* Exact Business Card studio shell for Pen and T-shirt editors. */
+.category-studio.studio-app{grid-template-columns:76px 344px minmax(0,1fr)!important;grid-template-rows:64px minmax(0,1fr)!important}
+.category-studio .studio-file-meta strong{width:min(280px,25vw);padding:4px 7px;color:#fff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.category-studio .studio-panel{display:block!important}
+.category-studio .studio-panel-section{display:none!important}
+.category-studio .studio-panel-section.active{display:block!important}
+.category-studio .studio-workspace{position:relative!important}
+.category-studio .context-toolbar{grid-row:1;min-width:0}
+.category-studio .context-toolbar select{width:145px}
+.category-studio .context-toolbar input[type=number]{width:68px}
+.category-studio .context-toolbar input[type=color]{width:34px;height:34px;padding:2px;border:1px solid #dfe2e8;border-radius:8px;background:#fff}
+.category-studio .context-toolbar button{height:34px;border:1px solid #dfe2e8;border-radius:8px;background:#fff;padding:0 10px;cursor:pointer}
+.category-studio .context-toolbar button:hover{border-color:#6c4cf1;background:#f6f3ff}
+.category-studio .studio-canvas-scroll{grid-row:2;overflow:auto;display:grid;place-items:center;min-width:0;min-height:0}
+.category-studio .canvas-stage{position:relative!important}
+.category-studio .canvas-wrap,.category-studio .pen-canvas-wrap{position:relative;background:#fff;box-shadow:0 3px 18px rgba(15,23,42,.16);transform-origin:center center}
+.category-studio .canvas-container{margin:0!important}
+.category-studio .ruler,.category-studio .pe-ruler{position:absolute;z-index:3;pointer-events:none}
+.category-studio .ruler-x,.category-studio .pe-ruler.ruler-x{left:36px;right:0;top:0;height:30px}
+.category-studio .ruler-y,.category-studio .pe-ruler.ruler-y{left:0;top:30px;bottom:0;width:36px}
+.category-studio .canvas-wrap,.category-studio .pen-canvas-wrap{margin-left:36px;margin-top:30px}
+.category-studio .cut-line,.category-studio .safe-line{pointer-events:none}
+.category-studio .studio-bottom-bar{grid-row:3}
+.category-studio .page-control,.category-studio .guides,.category-studio .guide-buttons,.category-studio>.tip{display:none!important}
+.category-studio .product-config-card{margin:0 0 14px;padding:13px;border:1px solid #e3e7ef;border-radius:12px;background:#f8f7ff}
+.category-studio .product-config-card h3{margin:0 0 10px}
+.category-studio .product-config-card h4{margin:12px 0 7px;font-size:11px}
+.category-studio .config-grid{display:grid;gap:11px}
+.category-studio .config-grid label{display:grid;gap:6px;font-size:11px;font-weight:800;color:#667085}
+.category-studio .config-grid select{height:40px;border:1px solid #d9dde6;border-radius:9px;background:#fff;padding:0 10px}
+.category-studio .side-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.category-studio .side-switch button.active{border-color:#6c4cf1!important;background:#f1edff!important;color:#5238c9}
+.category-studio .variant-swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.category-studio .variant-swatches button{display:flex;align-items:center;gap:6px;justify-content:center;padding:8px 5px!important;font-size:10px}
+.category-studio .variant-swatches button span{width:15px;height:15px;border-radius:50%;background:var(--sw);border:1px solid rgba(0,0,0,.15)}
+.category-studio .variant-swatches button.active{border-color:#6c4cf1!important;background:#f1edff!important}
+.category-studio .template-grid,.category-studio .pen-templates{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.category-studio .template-grid button,.category-studio .pen-templates button{min-height:92px;border:1px solid #dfe2e8;border-radius:10px;background:#fff;padding:8px;cursor:pointer}
+.category-studio .asset-grid,.category-studio .element-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.category-studio .asset-grid button,.category-studio .element-grid button{min-height:70px}
+.category-studio .upload-card,.category-studio .upload-dropzone{display:grid;place-items:center;gap:7px;min-height:160px;border:1.5px dashed #b9bfd0;border-radius:12px;background:#fafbfc;cursor:pointer;text-align:center}
+.category-studio .layers-list,.category-studio .layer-list{display:grid;gap:7px}
+.category-studio .layer-row{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:8px;border:1px solid #e2e5ec;border-radius:9px;background:#fff}
+.category-studio .arrange-dropdown{position:relative;margin-left:auto}
+.category-studio .zv-arrange-menu,.category-studio .pe-arrange-menu{display:none;position:absolute;right:0;top:40px;width:260px;padding:12px;border:1px solid #dde1e8;border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);z-index:100}
+.category-studio .zv-arrange.open .zv-arrange-menu,.category-studio .pe-arrange.open .pe-arrange-menu{display:block}
+.category-studio .zv-arrange-grid,.category-studio .pe-arrange-grid{display:grid;gap:6px;margin:7px 0 10px}.category-studio .zv-arrange-grid.three,.category-studio .pe-arrange-grid.three{grid-template-columns:repeat(3,1fr)}.category-studio .zv-arrange-grid.two,.category-studio .pe-arrange-grid.two{grid-template-columns:repeat(2,1fr)}
+.category-studio .wide{width:100%}
+.category-studio .menu-popup{position:fixed;z-index:9999}
+.category-studio .modal,.category-studio .pe-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(15,23,42,.55);z-index:10000}.category-studio .modal.open,.category-studio .pe-modal.open{display:grid}
+.category-studio .modal-card,.category-studio .pe-modal-card{width:min(760px,92vw);max-height:88vh;overflow:auto;border-radius:18px;background:#fff;padding:22px;position:relative}
+.category-studio .proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.category-studio .proof-grid img,.category-studio #proofImage{max-width:100%;background:#f2f3f7}
+.category-studio .studio-hidden-legacy{display:none!important}
+@media(max-width:1100px){.category-studio.studio-app{grid-template-columns:68px 300px minmax(0,1fr)!important}}
+.category-studio .modal.show,.category-studio .pe-modal.show{display:grid}

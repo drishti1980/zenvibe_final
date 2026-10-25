@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#152B45" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="410.0,882.0 501.8,655.8 559.6,796.2 620.8,616.8 750.0,882.0" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.68"/>
+<polygon points="437.2,882.0 532.4,726.0 580.0,850.8 675.2,687.0 750.0,882.0" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="682.0" cy="640.2" r="34" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.88"/>
+<text x="45" y="203" fill="#2D7DD2" font-family="Playfair Display" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">STORIES</tspan></text>
+<text x="50" y="302" fill="#F6F8FB" font-family="Playfair Display" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">IN EVERY FRAME</tspan></text>
+<text x="55" y="493" fill="#F6F8FB" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Portrait â€¢ Event â€¢ Commercial</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#C8A463" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#152B45" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">BOOK A SHOOT</tspan></text>
+<text x="730" y="684" fill="#F6F8FB" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">87</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

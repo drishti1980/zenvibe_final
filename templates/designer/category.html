@@ -1,0 +1,2125 @@
+﻿{% extends 'designer/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} | Custom Promotional Products | ZenVibe Canada{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     MULTIKART BREADCRUMB
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{{ category.name }}</h2>
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     MULTIKART CATEGORY LIST VIEW
+========================================================= -->
+<section class="section-b-space ratio_asos">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+
+                <!-- =================================================
+                     LEFT SIDEBAR - SAME MULTIKART STRUCTURE
+                ================================================== -->
+                <div class="col-xl-3 col-lg-4 collection-filter">
+
+                    <div class="collection-filter-block">
+
+                        <div class="collection-mobile-back">
+                            <span class="filter-back">
+                                <i class="ri-arrow-left-s-line"></i> back
+                            </span>
+                        </div>
+
+                        <div class="collection-collapse-block open">
+                            <div class="accordion collection-accordion"
+                                 id="zvCategoryFilterAccordion">
+
+                                <!-- CATEGORIES -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button pt-0"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-categories"
+                                                aria-expanded="true">
+                                            Categories
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-categories"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body">
+
+                                            <ul class="collection-listing">
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-all"
+                                                               checked>
+                                                        <label class="form-check-label"
+                                                               for="zv-cat-all">
+                                                            All Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                {% for c in storefront_categories %}
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input zv-category-filter"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-{{ c.id }}"
+                                                               data-category="{{ c.name|lower }}">
+                                                        <label class="form-check-label"
+                                                               for="zv-cat-{{ c.id }}">
+                                                            {{ c.name }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                                {% empty %}
+                                                    {% for c in categories %}
+                                                    <li>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input zv-category-filter"
+                                                                   type="radio"
+                                                                   name="zv-category-filter"
+                                                                   id="zv-cat-{{ c.id }}"
+                                                                   data-category="{{ c.name|lower }}">
+                                                            <label class="form-check-label"
+                                                                   for="zv-cat-{{ c.id }}">
+                                                                {{ c.name }}
+                                                            </label>
+                                                        </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                {% endfor %}
+
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- COLLECTION -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-collection"
+                                                aria-expanded="true">
+                                            Collection
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-collection"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body">
+
+                                            <ul class="collection-listing">
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input zv-sale-filter"
+                                                               type="checkbox"
+                                                               id="zv-on-sale">
+                                                        <label class="form-check-label"
+                                                               for="zv-on-sale">
+                                                            On Sale
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-custom-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-custom-products">
+                                                            Custom Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-corporate-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-corporate-products">
+                                                            Corporate Gifts
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-event-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-event-products">
+                                                            Event Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- PRICE -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-price"
+                                                aria-expanded="true">
+                                            Price
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-price"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body price-body">
+
+                                            <div class="zv-price-fields">
+                                                <input type="number"
+                                                       id="zvMinPrice"
+                                                       placeholder="Min">
+                                                <span>-</span>
+                                                <input type="number"
+                                                       id="zvMaxPrice"
+                                                       placeholder="Max">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- VIEW -->
+                                <div class="accordion-item zv-view-filter">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-view"
+                                                aria-expanded="true">
+                                            View
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-view"
+                                         class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <div class="zv-view-options">
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           name="zv-view-mode"
+                                                           id="zv-grid-view"
+                                                           value="grid"
+                                                           checked>
+                                                    <label class="form-check-label"
+                                                           for="zv-grid-view">
+                                                        Grid View
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           name="zv-view-mode"
+                                                           id="zv-list-view"
+                                                           value="list">
+                                                    <label class="form-check-label"
+                                                           for="zv-list-view">
+                                                        List View
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- =================================================
+                     MAIN CONTENT
+                ================================================== -->
+                <div class="collection-content col-xl-9 col-lg-8">
+
+                    <div class="page-main-content">
+
+                        <div class="row">
+
+                            <div class="col-sm-12">
+
+
+                                <!-- =========================================
+                                     MULTIKART TOP BANNER
+                                ========================================== -->
+                                <div class="top-banner-wrapper zv-multikart-category-banner">
+
+                                    {% if category.image %}
+                                    <div class="zv-category-banner-image">
+                                        <img src="{{ category.image.url }}"
+                                             class="img-fluid blur-up lazyload"
+                                             alt="{{ category.name }}">
+                                    </div>
+                                    {% else %}
+                                    {% with first_product=products.first %}
+                                        {% if first_product.image %}
+                                        <div class="zv-category-banner-image">
+                                            <img src="{{ first_product.image.url }}"
+                                                 class="img-fluid blur-up lazyload"
+                                                 alt="{{ category.name }}">
+                                        </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                    {% endif %}
+
+                                    <div class="zv-category-banner-copy">
+                                        <span>ZEN VIBE COLLECTION</span>
+                                        <h3>{{ category.name }}</h3>
+                                        <p>
+                                            Explore custom {{ category.name|lower }} designed for
+                                            businesses, events, teams and special occasions.
+                                        </p>
+                                        <a href="#zvProductList" class="btn btn-solid">
+                                            Shop Collection
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+                                <button class="filter-btn btn">
+                                    <i class="ri-arrow-left-s-line"></i>
+                                    Filter
+                                </button>
+
+
+                                <div class="collection-product-wrapper">
+
+
+                                    <!-- =========================================
+                                         EXACT MULTIKART TOOLBAR STRUCTURE
+                                    ========================================== -->
+                                    <div class="product-top-filter">
+
+                                        <div class="product-filter-content w-100">
+
+                                            <div class="d-flex align-items-center gap-sm-3 gap-2">
+
+                                                <select class="form-select"
+                                                        id="mkSort">
+
+                                                    <option value="default" selected>
+                                                        Ascending Order
+                                                    </option>
+
+                                                    <option value="name-desc">
+                                                        Descending Order
+                                                    </option>
+
+                                                    <option value="price-asc">
+                                                        Low - High Price
+                                                    </option>
+
+                                                    <option value="price-desc">
+                                                        High - Low Price
+                                                    </option>
+
+                                                </select>
+
+
+                                                <select class="form-select"
+                                                        id="zvProductLimit">
+
+                                                    <option value="10" selected>
+                                                        10 Products
+                                                    </option>
+
+                                                    <option value="25">
+                                                        25 Products
+                                                    </option>
+
+                                                    <option value="50">
+                                                        50 Products
+                                                    </option>
+
+                                                    <option value="100">
+                                                        100 Products
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <div class="collection-grid-view">
+
+                                                <ul>
+
+                                                    <li class="product-2-layout-view grid-icon active"
+                                                        data-layout="2"
+                                                        title="2 Columns">
+                                                        <span class="zv-layout-icon zv-layout-2">
+                                                            <i></i><i></i>
+                                                        </span>
+                                                    </li>
+
+                                                    <li class="product-3-layout-view grid-icon"
+                                                        data-layout="3"
+                                                        title="3 Columns">
+                                                        <span class="zv-layout-icon zv-layout-3">
+                                                            <i></i><i></i><i></i>
+                                                        </span>
+                                                    </li>
+
+                                                    <li class="product-4-layout-view grid-icon"
+                                                        data-layout="4"
+                                                        title="4 Columns">
+                                                        <span class="zv-layout-icon zv-layout-4">
+                                                            <i></i><i></i><i></i><i></i>
+                                                        </span>
+                                                    </li>
+
+                                                    <li class="list-layout-view list-icon"
+                                                        data-layout="list"
+                                                        title="List View">
+                                                        <i class="ri-list-check-2"></i>
+                                                    </li>
+
+                                                </ul>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- =========================================
+                                         MULTIKART LIST VIEW PRODUCT WRAPPER
+                                    ========================================== -->
+                                    <div id="zvProductList"
+                                         class="product-wrapper-grid" data-zv-layout="2">
+
+                                        <div class="row g-3 g-sm-4"
+                                             id="mkProductGrid">
+
+
+                                            {% for product in products %}
+
+                                            <div class="col-lg-6 col-md-6 col-6 col-grid-box"
+                                                 data-product-card
+                                                 data-category="{{ product.category.name|lower }}"
+                                                 data-name="{{ product.name|lower }}"
+                                                 data-price="{{ product.sale_price|default:product.price }}"
+                                                 data-sale="{% if product.is_on_sale %}1{% else %}0{% endif %}">
+
+
+                                                <!-- EXACT MULTIKART PRODUCT CARD -->
+                                                <div class="basic-product theme-product-1">
+
+                                                    <div class="overflow-hidden">
+
+                                                        <div class="img-wrapper">
+
+                                                            <a href="{% url 'designer:choose_design' product.id %}">
+
+                                                                {% if product.image %}
+                                                                <img src="{{ product.image.url }}"
+                                                                     class="w-100 img-fluid blur-up lazyload"
+                                                                     alt="{{ product.name }}">
+                                                                {% endif %}
+
+                                                            </a>
+
+
+                                                            {% if product.is_on_sale %}
+                                                            <div class="ribbon">
+                                                                <span>Sale</span>
+                                                            </div>
+                                                            {% endif %}
+
+
+                                                            <div class="cart-info">
+
+                                                                <!-- WISHLIST -->
+                                                                <a href="#!"
+                                                                   title="Add to Wishlist"
+                                                                   class="wishlist-icon"
+                                                                   data-wishlist
+                                                                   data-id="{{ product.id }}"
+                                                                   data-name="{{ product.name|escape }}"
+                                                                   data-price="{{ product.sale_price|default:product.price }}"
+                                                                   data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                                                   data-url="{% url 'designer:choose_design' product.id %}">
+
+                                                                    <i class="ri-heart-line"></i>
+
+                                                                </a>
+
+
+                                                                <!-- CART -->
+                                                                <button type="button"
+                                                                        title="Add to cart"
+                                                                        data-add-cart
+                                                                        data-product-id="{{ product.id }}"
+                                                                        data-product-name="{{ product.name|escape }}"
+                                                                        data-product-price="{{ product.sale_price|default:product.price }}"
+                                                                        data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                                                        data-product-url="{% url 'designer:choose_design' product.id %}"
+                                                                        data-cart-url="{% url 'designer:choose_design' product.id %}">
+
+                                                                    <i class="ri-shopping-cart-line"></i>
+
+                                                                </button>
+
+
+                                                                <!-- QUICK VIEW -->
+                                                                <a href="#!"
+                                                                   title="Quick View"
+                                                                   data-quick-view
+                                                                   data-id="{{ product.id }}"
+                                                                   data-name="{{ product.name|escape }}"
+                                                                   data-category="{{ product.category.name|escape }}"
+                                                                   data-description="{{ product.short_description|striptags|escape }}"
+                                                                   data-price="{{ product.sale_price|default:product.price }}"
+                                                                   data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                                                   data-url="{% url 'designer:choose_design' product.id %}"
+                                                                   data-cart-url="{% url 'designer:choose_design' product.id %}">
+
+                                                                    <i class="ri-eye-line"></i>
+
+                                                                </a>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <div class="product-detail">
+
+                                                            <div>
+
+                                                                <div class="brand-w-color">
+
+                                                                    <a class="product-title"
+                                                                       href="{% url 'designer:choose_design' product.id %}">
+
+                                                                        {{ product.name }}
+
+                                                                    </a>
+
+
+                                                                    <!-- ZENVIBE COLOR DOTS, SAME MULTIKART LOCATION -->
+                                                                    <div class="color-panel">
+                                                                        <ul>
+                                                                            <li style="background-color:#0758b8;"></li>
+                                                                            <li style="background-color:#f6a329;"></li>
+                                                                            <li style="background-color:#f1f1f1;"></li>
+                                                                        </ul>
+                                                                        <span>+2</span>
+                                                                    </div>
+
+                                                                </div>
+
+
+                                                                <h6>{{ product.category.name }}</h6>
+
+
+                                                              <p>
+    {{ product.short_description|default:product.description|default:'Customize this product with your logo, text or artwork for your business, event or promotion.'|striptags|truncatechars:220 }}
+</p>
+
+
+                                                                <h4 class="price">
+
+                                                                    {% if product.is_on_sale and product.sale_price %}
+
+                                                                    ${{ product.sale_price }}
+
+                                                                    <del>
+                                                                        ${{ product.price }}
+                                                                    </del>
+
+                                                                    <span class="discounted-price">
+                                                                        Sale
+                                                                    </span>
+
+                                                                    {% else %}
+
+                                                                    ${{ product.price }}
+
+                                                                    {% endif %}
+
+                                                                </h4>
+
+                                                            </div>
+
+
+                                                            <!-- SAME MULTIKART OFFER PANEL -->
+                                                            <ul class="offer-panel">
+
+                                                                <li>
+                                                                    <span class="offer-icon">
+                                                                        <i class="ri-palette-line"></i>
+                                                                    </span>
+                                                                    Customize with your logo or artwork
+                                                                </li>
+
+                                                                <li>
+                                                                    <span class="offer-icon">
+                                                                        <i class="ri-shield-check-line"></i>
+                                                                    </span>
+                                                                    Free digital proof before production
+                                                                </li>
+
+                                                                <li>
+                                                                    <span class="offer-icon">
+                                                                        <i class="ri-truck-line"></i>
+                                                                    </span>
+                                                                    Canada-wide delivery available
+                                                                </li>
+
+                                                            </ul>
+
+
+                                                            <div class="zv-multikart-product-action">
+
+                                                                <a href="{% url 'designer:choose_design' product.id %}"
+                                                                   class="btn btn-solid">
+
+                                                                    Customize &amp; Add to Cart
+
+                                                                </a>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {% empty %}
+
+                                            <div class="col-12">
+
+                                                <div class="text-center py-5">
+
+                                                    <h3>No products found</h3>
+
+                                                    <p>
+                                                        Please check another category.
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+                                            {% endfor %}
+
+
+                                        </div>
+
+
+                                        
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+             <!-- DYNAMIC PAGINATION -->
+                                        <nav id="zvPaginationWrap"
+                                             class="zv-pagination-wrap"
+                                             aria-label="Product pagination"
+                                             style="display:none;">
+
+                                            <ul class="zv-page-list"
+                                                id="zvPagination"></ul>
+
+                                        </nav>                      
+        </div>
+    </div>
+</section>
+
+
+
+<!-- =========================================================
+     CATEGORY SEO CONTENT + FAQ
+========================================================= -->
+<section class="zv-category-info-section">
+    <div class="container">
+        <div class="zv-category-info-inner">
+
+            <div class="zv-category-seo-copy">
+                <p>
+                    Shop premium <strong>custom {{ category.name|lower }} in Canada</strong>
+                    designed for businesses, organizations, schools, teams, corporate events
+                    and promotional campaigns. Personalize your {{ category.name|lower }}
+                    with your company logo, custom text, artwork or branding to create
+                    professional products that help your brand stand out.
+                </p>
+
+                <p>
+                    Our custom {{ category.name|lower }} are ideal for employee recognition,
+                    client gifts, trade shows, conferences, sports events, schools,
+                    appreciation programs and special occasions. Pair them with
+                    <a href="{% url 'designer:start_designing' %}">corporate gifts</a>,
+                    custom drinkware, branded apparel and promotional accessories
+                    for a complete branding solution across Canada.
+                </p>
+            </div>
+
+            <div class="zv-category-faq">
+
+                <h2>Frequently Asked Questions</h2>
+
+                <div class="accordion zv-category-faq-accordion"
+                     id="zvCategoryFaqAccordion">
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingOne">
+                            <button class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqOne"
+                                    aria-expanded="true"
+                                    aria-controls="zvFaqOne">
+                                1. What types of {{ category.name|lower }} do you offer?
+                            </button>
+                        </h3>
+                        <div id="zvFaqOne"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="zvFaqHeadingOne"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                We offer a wide range of custom {{ category.name|lower }}
+                                for corporate, promotional, event, school and team needs.
+                                Available options depend on the products currently listed
+                                in this category.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingTwo">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqTwo"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqTwo">
+                                2. Can I customize {{ category.name|lower }} with my logo or artwork?
+                            </button>
+                        </h3>
+                        <div id="zvFaqTwo"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingTwo"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. You can personalize eligible products with your
+                                logo, text or artwork using ZenVibe's customization
+                                options. A digital proof can be reviewed before production
+                                where applicable.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingThree">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqThree"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqThree">
+                                3. Are bulk discounts available for {{ category.name|lower }}?
+                            </button>
+                        </h3>
+                        <div id="zvFaqThree"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingThree"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Bulk pricing may be available for larger quantities.
+                                Pricing can vary by product, customization method and
+                                order volume.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingFour">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqFour"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqFour">
+                                4. Do you ship {{ category.name|lower }} across Canada?
+                            </button>
+                        </h3>
+                        <div id="zvFaqFour"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingFour"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. ZenVibe offers Canada-wide delivery for eligible
+                                custom and promotional product orders.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingFive">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqFive"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqFive">
+                                5. Are {{ category.name|lower }} suitable for corporate and promotional events?
+                            </button>
+                        </h3>
+                        <div id="zvFaqFive"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingFive"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. Custom {{ category.name|lower }} can be used for
+                                corporate events, recognition programs, trade shows,
+                                client gifts, employee appreciation, schools, teams
+                                and promotional campaigns.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     SMALL ZENVIBE OVERRIDES ONLY
+     Multikart's own CSS still controls the main design.
+========================================================= -->
+
+
+<style>
+
+/* =========================================================
+   CATEGORY SEO + FAQ
+========================================================= */
+
+.zv-category-info-section{
+    padding:15px 0 70px;
+    background:#fff;
+}
+
+.zv-category-seo-copy{
+    padding-top:28px;
+    border-top:1px solid #ededed;
+}
+
+.zv-category-seo-copy p{
+    margin:0 0 8px;
+    color:#555;
+    font-family:"Lato",sans-serif;
+    font-size:16px;
+    line-height:1.95;
+}
+
+.zv-category-seo-copy strong{
+    color:#444;
+    font-weight:700;
+}
+
+.zv-category-seo-copy a{
+    color:#0758b8;
+    text-decoration:none;
+}
+
+.zv-category-seo-copy a:hover{
+    color:#f6a329;
+}
+
+.zv-category-faq{
+    margin-top:26px;
+}
+
+.zv-category-faq > h2{
+    margin:0 0 12px;
+    color:#555;
+    font-family:"Montserrat",sans-serif;
+    font-size:25px;
+    line-height:1.3;
+    font-weight:600;
+}
+
+.zv-category-faq-accordion .accordion-item{
+    border:0 !important;
+    background:transparent !important;
+}
+
+.zv-category-faq-accordion .accordion-header{
+    margin:0;
+}
+
+.zv-category-faq-accordion .accordion-button{
+    padding:10px 0 6px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    color:#555 !important;
+    font-family:"Lato",sans-serif;
+    font-size:17px;
+    line-height:1.4;
+    font-weight:700;
+    text-decoration:underline;
+}
+
+.zv-category-faq-accordion .accordion-button:not(.collapsed),
+.zv-category-faq-accordion .accordion-button:hover{
+    color:#0758b8 !important;
+}
+
+.zv-category-faq-accordion .accordion-button::after{
+    margin-left:auto;
+    transform:scale(.8);
+}
+
+.zv-category-faq-accordion .accordion-body{
+    max-width:900px;
+    padding:2px 0 10px !important;
+    color:#555;
+    font-family:"Lato",sans-serif;
+    font-size:16px;
+    line-height:1.85;
+}
+
+@media(max-width:767px){
+    .zv-category-info-section{
+        padding:10px 0 48px;
+    }
+
+    .zv-category-seo-copy p{
+        font-size:14px;
+        line-height:1.8;
+    }
+
+    .zv-category-faq{
+        margin-top:22px;
+    }
+
+    .zv-category-faq > h2{
+        font-size:22px;
+    }
+
+    .zv-category-faq-accordion .accordion-button{
+        font-size:15px;
+        line-height:1.5;
+    }
+
+    .zv-category-faq-accordion .accordion-body{
+        font-size:14px;
+        line-height:1.75;
+    }
+}
+
+
+/* existing styles */
+
+.product-top-filter .collection-grid-view ul li.active {
+    background-color: #dbdfe5 !important;
+    border-radius: 3px;
+    padding: 4px;
+}
+/* Working Grid/List View selector */
+.zv-view-options{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.zv-view-options .form-check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0;
+    min-height:28px;
+}
+
+.zv-view-options .form-check-input{
+    width:22px;
+    height:22px;
+    margin:0;
+    cursor:pointer;
+}
+
+.zv-view-options .form-check-label{
+    margin:0;
+    color:#666;
+    font-size:16px;
+    line-height:1.3;
+    cursor:pointer;
+}
+
+.zv-view-options .form-check-input:checked + .form-check-label{
+    color:#0758b8;
+}
+
+/* ZenVibe brand accents */
+.collection-accordion .accordion-button:not(.collapsed),
+.collection-accordion .accordion-button:hover,
+.collection-listing .form-check-label:hover {
+    color:#0758b8;
+}
+
+.collection-listing .form-check-input:checked {
+    background-color:#0758b8;
+    border-color:#0758b8;
+}
+
+.star-rating {
+    color:#f6a329;
+}
+
+.product-detail .price,
+.basic-product .product-detail .price {
+    color:#0758b8;
+}
+
+.product-detail .discounted-price {
+    color:#f6a329;
+}
+
+.offer-panel .offer-icon {
+    color:#f6a329;
+}
+
+.basic-product .cart-info a:hover,
+.basic-product .cart-info button:hover {
+    color:#0758b8;
+}
+
+
+/* =========================================================
+   BANNER - Multikart proportions
+========================================================= */
+.zv-multikart-category-banner {
+    position:relative;
+    min-height:355px;
+    overflow:hidden;
+    background:#f5f7fa;
+    margin-bottom:25px;
+}
+
+.zv-category-banner-image {
+    position:absolute;
+    inset:0;
+}
+
+.zv-category-banner-image img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    opacity:.58;
+}
+
+.zv-multikart-category-banner::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.98) 0%,
+        rgba(255,255,255,.88) 35%,
+        rgba(255,255,255,.20) 72%,
+        rgba(255,255,255,.05) 100%
+    );
+}
+
+.zv-category-banner-copy {
+    position:relative;
+    z-index:2;
+    width:min(480px,72%);
+    min-height:355px;
+    padding:55px 0 45px 48px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.zv-category-banner-copy > span {
+    color:#f6a329;
+    font:700 11px Montserrat,sans-serif;
+    letter-spacing:1.5px;
+}
+
+.zv-category-banner-copy h3 {
+    margin:8px 0 10px;
+    color:#222;
+    font:600 34px/1.15 Montserrat,sans-serif;
+}
+
+.zv-category-banner-copy p {
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+    margin:0 0 20px;
+}
+
+.zv-category-banner-copy .btn {
+    width:max-content;
+}
+
+
+/* =========================================================
+   EXACT LIST VIEW SIZE TUNING
+========================================================= */
+.product-wrapper-grid.list-view .basic-product .overflow-hidden {
+    display:grid;
+    grid-template-columns:310px minmax(0,1fr);
+    align-items:stretch;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper {
+    height:340px;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper > a {
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid.list-view .basic-product .product-detail {
+    padding:30px 25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.product-wrapper-grid.list-view .basic-product .product-detail p {
+    display:block;
+    max-width:680px;
+}
+
+.zv-multikart-product-action {
+    margin-top:18px;
+}
+
+.zv-multikart-product-action .btn {
+    min-width:220px;
+    padding:11px 18px;
+}
+
+
+/* =========================================================
+   GRID VIEW SIZES
+========================================================= */
+.product-wrapper-grid:not(.list-view) .basic-product .img-wrapper {
+    height:300px;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid:not(.list-view) .basic-product .img-wrapper img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+}
+
+.product-wrapper-grid:not(.list-view) .basic-product .product-detail p,
+.product-wrapper-grid:not(.list-view) .basic-product .offer-panel {
+    display:none !important;
+}
+
+.product-wrapper-grid:not(.list-view) .zv-multikart-product-action .btn {
+    width:100%;
+    min-width:0;
+    font-size:11px;
+}
+
+
+/* layout icons */
+.collection-grid-view ul {
+    align-items:center;
+}
+
+.collection-grid-view li {
+    cursor:pointer;
+}
+
+.zv-layout-icon {
+    width:26px;
+    height:22px;
+    display:grid;
+    gap:2px;
+    padding:3px;
+    border:1px solid #ddd;
+}
+
+.zv-layout-icon i {
+    display:block;
+    background:#999;
+}
+
+.zv-layout-2 { grid-template-columns:repeat(2,1fr); }
+.zv-layout-3 { grid-template-columns:repeat(3,1fr); }
+.zv-layout-4 { grid-template-columns:repeat(4,1fr); }
+
+.collection-grid-view li.active .zv-layout-icon,
+.collection-grid-view li:hover .zv-layout-icon {
+    border-color:#0758b8;
+}
+
+.collection-grid-view li.active .zv-layout-icon i,
+.collection-grid-view li:hover .zv-layout-icon i {
+    background:#0758b8;
+}
+
+.collection-grid-view .list-icon {
+    width:30px;
+    height:26px;
+    display:grid;
+    place-items:center;
+    border:1px solid #ddd;
+    color:#999;
+}
+
+.collection-grid-view .list-icon.active,
+.collection-grid-view .list-icon:hover {
+    border-color:#0758b8;
+    color:#0758b8;
+}
+
+
+/* price fields */
+.zv-price-fields {
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:7px;
+}
+
+.zv-price-fields input {
+    width:100%;
+    height:38px;
+    padding:0 8px;
+    border:1px solid #ddd;
+    outline:none;
+}
+
+.zv-price-fields input:focus {
+    border-color:#0758b8;
+}
+
+
+/* responsive */
+@media(max-width:991px) {
+
+    .product-wrapper-grid.list-view .basic-product .overflow-hidden {
+        grid-template-columns:250px minmax(0,1fr);
+    }
+
+    .product-wrapper-grid.list-view .basic-product .img-wrapper {
+        height:300px;
+    }
+
+}
+
+@media(max-width:767px) {
+
+    .zv-multikart-category-banner {
+        min-height:285px;
+    }
+
+    .zv-category-banner-copy {
+        min-height:285px;
+        width:88%;
+        padding:35px 24px;
+    }
+
+    .zv-category-banner-copy h3 {
+        font-size:27px;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .overflow-hidden {
+        display:block;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .img-wrapper {
+        height:310px;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .product-detail {
+        padding:20px 14px;
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     SORT + LAYOUT + FILTER FUNCTIONALITY
+========================================================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const wrapper = document.querySelector(".product-wrapper-grid");
+    const grid = document.getElementById("mkProductGrid");
+    const sort = document.getElementById("mkSort");
+    const limit = document.getElementById("zvProductLimit");
+    const layoutButtons = document.querySelectorAll("[data-layout]");
+    const gridViewControl = document.getElementById("zv-grid-view");
+    const listViewControl = document.getElementById("zv-list-view");
+
+    const categoryFilters = document.querySelectorAll(".zv-category-filter");
+    const allCategory = document.getElementById("zv-cat-all");
+    const saleFilter = document.getElementById("zv-on-sale");
+    const minPrice = document.getElementById("zvMinPrice");
+    const maxPrice = document.getElementById("zvMaxPrice");
+
+    const paginationWrap = document.getElementById("zvPaginationWrap");
+    const pagination = document.getElementById("zvPagination");
+
+    if (!wrapper || !grid) return;
+
+    let currentPage = 1;
+
+
+    function allCards() {
+        return Array.from(
+            grid.querySelectorAll("[data-product-card]")
+        );
+    }
+
+
+    function pageSize() {
+
+        const value = limit
+            ? parseInt(limit.value || "10", 10)
+            : 10;
+
+        return Number.isFinite(value) && value > 0
+            ? value
+            : 10;
+    }
+
+
+    function filteredCards() {
+
+        const selectedCategory =
+            document.querySelector(".zv-category-filter:checked");
+
+        const categoryValue =
+            selectedCategory
+                ? (selectedCategory.dataset.category || "").toLowerCase()
+                : "";
+
+        const saleOnly =
+            !!(saleFilter && saleFilter.checked);
+
+        const min =
+            minPrice && minPrice.value !== ""
+                ? parseFloat(minPrice.value)
+                : null;
+
+        const max =
+            maxPrice && maxPrice.value !== ""
+                ? parseFloat(maxPrice.value)
+                : null;
+
+
+        return allCards().filter(function(card) {
+
+            const cardCategory =
+                (card.dataset.category || "").toLowerCase();
+
+            const cardPrice =
+                parseFloat(card.dataset.price || "0");
+
+            const isSale =
+                card.dataset.sale === "1";
+
+
+            if (
+                categoryValue &&
+                !cardCategory.includes(categoryValue)
+            ) {
+                return false;
+            }
+
+
+            if (saleOnly && !isSale) {
+                return false;
+            }
+
+
+            if (min !== null && cardPrice < min) {
+                return false;
+            }
+
+
+            if (max !== null && cardPrice > max) {
+                return false;
+            }
+
+
+            return true;
+        });
+    }
+
+
+    function createPageButton(label, page, active) {
+
+        const li = document.createElement("li");
+        li.className = "zv-page-item";
+
+        if (active) {
+            li.classList.add("is-active");
+        }
+
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "zv-page-link";
+        button.textContent = label;
+
+
+        button.addEventListener("click", function () {
+
+            currentPage = page;
+
+            applyFilters(false);
+
+            const toolbar =
+                document.querySelector(".product-top-filter");
+
+            if (toolbar) {
+                toolbar.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            }
+
+        });
+
+
+        li.appendChild(button);
+
+        pagination.appendChild(li);
+    }
+
+
+    function renderPagination(totalItems) {
+
+        if (!pagination || !paginationWrap) return;
+
+
+        const size = pageSize();
+
+        const totalPages =
+            Math.ceil(totalItems / size);
+
+
+        pagination.innerHTML = "";
+
+
+        if (totalPages <= 1) {
+
+            paginationWrap.style.display = "none";
+
+            return;
+        }
+
+
+        paginationWrap.style.display = "flex";
+
+
+        /* Previous only after page 1 */
+        if (currentPage > 1) {
+
+            createPageButton(
+                "Previous",
+                currentPage - 1,
+                false
+            );
+
+        }
+
+
+        /*
+           Show maximum 5 page numbers.
+           Example:
+           1 2 3 4 5
+           3 4 5 6 7
+        */
+        let startPage =
+            Math.max(
+                1,
+                currentPage - 2
+            );
+
+        let endPage =
+            Math.min(
+                totalPages,
+                startPage + 4
+            );
+
+
+        if (endPage - startPage < 4) {
+
+            startPage =
+                Math.max(
+                    1,
+                    endPage - 4
+                );
+
+        }
+
+
+        for (
+            let page = startPage;
+            page <= endPage;
+            page++
+        ) {
+
+            createPageButton(
+                String(page),
+                page,
+                page === currentPage
+            );
+
+        }
+
+
+        /* Next only before last page */
+        if (currentPage < totalPages) {
+
+            createPageButton(
+                "Next",
+                currentPage + 1,
+                false
+            );
+
+        }
+
+    }
+
+
+    function applyFilters(resetPage) {
+
+        if (resetPage !== false) {
+            currentPage = 1;
+        }
+
+
+        const matched = filteredCards();
+
+        const size = pageSize();
+
+        const totalPages =
+            Math.max(
+                1,
+                Math.ceil(
+                    matched.length / size
+                )
+            );
+
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+
+        const start =
+            (currentPage - 1) * size;
+
+        const end =
+            start + size;
+
+
+        /*
+           Hide every product first.
+           This ensures the selected product limit is respected
+           in List, 2-column, 3-column and 4-column layouts.
+        */
+        allCards().forEach(function(card) {
+
+            card.style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
+
+        });
+
+
+        matched.forEach(function(card, index) {
+
+            if (
+                index >= start &&
+                index < end
+            ) {
+
+                card.style.removeProperty("display");
+
+            }
+
+        });
+
+
+        renderPagination(
+            matched.length
+        );
+
+    }
+
+
+    /* =====================================================
+       SORT
+    ===================================================== */
+    sort?.addEventListener("change", function () {
+
+        const cards = allCards();
+
+        const value = sort.value;
+
+
+        if (value === "default") {
+
+            cards.sort(function(a,b) {
+
+                return (a.dataset.name || "")
+                    .localeCompare(
+                        b.dataset.name || ""
+                    );
+
+            });
+
+        }
+
+
+        if (value === "name-desc") {
+
+            cards.sort(function(a,b) {
+
+                return (b.dataset.name || "")
+                    .localeCompare(
+                        a.dataset.name || ""
+                    );
+
+            });
+
+        }
+
+
+        if (value === "price-asc") {
+
+            cards.sort(function(a,b) {
+
+                return parseFloat(a.dataset.price || 0)
+                    - parseFloat(b.dataset.price || 0);
+
+            });
+
+        }
+
+
+        if (value === "price-desc") {
+
+            cards.sort(function(a,b) {
+
+                return parseFloat(b.dataset.price || 0)
+                    - parseFloat(a.dataset.price || 0);
+
+            });
+
+        }
+
+
+        cards.forEach(function(card) {
+            grid.appendChild(card);
+        });
+
+
+        applyFilters(true);
+
+    });
+
+
+    /* =====================================================
+       PRODUCT LIMIT
+    ===================================================== */
+    limit?.addEventListener("change", function () {
+
+        currentPage = 1;
+
+        applyFilters(false);
+
+    });
+
+
+    /* =====================================================
+       CATEGORY
+    ===================================================== */
+    categoryFilters.forEach(function(input) {
+
+        input.addEventListener("change", function () {
+
+            if (input.checked && allCategory) {
+                allCategory.checked = false;
+            }
+
+            applyFilters(true);
+
+        });
+
+    });
+
+
+    allCategory?.addEventListener("change", function () {
+
+        if (allCategory.checked) {
+
+            categoryFilters.forEach(function(input) {
+                input.checked = false;
+            });
+
+        }
+
+        applyFilters(true);
+
+    });
+
+
+    /* =====================================================
+       SALE
+    ===================================================== */
+    saleFilter?.addEventListener(
+        "change",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    /* =====================================================
+       PRICE
+    ===================================================== */
+    minPrice?.addEventListener(
+        "input",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+    maxPrice?.addEventListener(
+        "input",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    /* =====================================================
+       GRID / LIST VIEW
+       Sidebar View controls + toolbar icons use one function.
+    ===================================================== */
+    function setLayout(layout, remember = true) {
+        if (!["2", "3", "4", "list"].includes(layout)) {
+            layout = "2";
+        }
+
+        layoutButtons.forEach(function(item) {
+            item.classList.toggle("active", item.dataset.layout === layout);
+        });
+
+        if (layout === "list") {
+            wrapper.classList.add("list-view");
+            wrapper.removeAttribute("data-zv-layout");
+
+            allCards().forEach(function(card) {
+                card.className = "col-12 col-grid-box";
+            });
+
+            if (gridViewControl) gridViewControl.checked = false;
+            if (listViewControl) listViewControl.checked = true;
+        } else {
+            wrapper.classList.remove("list-view");
+            wrapper.setAttribute("data-zv-layout", layout);
+
+            allCards().forEach(function(card) {
+                if (layout === "2") {
+                    card.className = "col-lg-6 col-md-6 col-6 col-grid-box";
+                } else if (layout === "3") {
+                    card.className = "col-xl-4 col-md-6 col-6 col-grid-box";
+                } else {
+                    card.className = "col-xl-3 col-lg-4 col-md-6 col-6 col-grid-box";
+                }
+            });
+
+            if (gridViewControl) gridViewControl.checked = true;
+            if (listViewControl) listViewControl.checked = false;
+        }
+
+        if (remember) {
+            try {
+                localStorage.setItem("zv-product-layout", layout);
+            } catch (e) {}
+        }
+
+        applyFilters(false);
+    }
+
+    layoutButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            setLayout(button.dataset.layout || "2");
+        });
+    });
+
+    gridViewControl?.addEventListener("change", function() {
+        if (!gridViewControl.checked) return;
+
+        let gridLayout = "2";
+        try {
+            const saved = localStorage.getItem("zv-product-layout");
+            if (["2", "3", "4"].includes(saved)) gridLayout = saved;
+        } catch (e) {}
+
+        setLayout(gridLayout);
+    });
+
+    listViewControl?.addEventListener("change", function() {
+        if (listViewControl.checked) {
+            setLayout("list");
+        }
+    });
+
+    /* Restore the last selected view on refresh. */
+    let initialLayout = "2";
+    try {
+        const savedLayout = localStorage.getItem("zv-product-layout");
+        if (["2", "3", "4", "list"].includes(savedLayout)) {
+            initialLayout = savedLayout;
+        }
+    } catch (e) {}
+
+    setLayout(initialLayout, false);
+
+
+    /* FIRST LOAD */
+    applyFilters(true);
+
+});
+</script>
+
+
+<style id="zv-category-pagination-proper-final">
+
+/* =========================================================
+   PROPER PAGINATION
+========================================================= */
+
+#zvPaginationWrap{
+    display:flex;
+    width:100% !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    clear:both !important;
+
+    margin:36px 0 10px !important;
+    padding:0 !important;
+
+    position:relative !important;
+
+    float:none !important;
+}
+
+
+#zvPagination.zv-page-list{
+    display:flex !important;
+
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    gap:6px !important;
+
+    width:auto !important;
+
+    margin:0 auto !important;
+    padding:0 !important;
+
+    list-style:none !important;
+}
+
+
+#zvPagination .zv-page-item{
+    display:block !important;
+
+    flex:0 0 auto !important;
+
+    width:auto !important;
+    height:auto !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    float:none !important;
+    clear:none !important;
+
+    list-style:none !important;
+
+    background:transparent !important;
+    border:0 !important;
+}
+
+
+#zvPagination .zv-page-link{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+
+    display:flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    min-width:42px !important;
+    height:42px !important;
+
+    margin:0 !important;
+    padding:0 13px !important;
+
+    border:1px solid #e2e2e2 !important;
+    border-radius:0 !important;
+
+    background:#fff !important;
+    background-image:none !important;
+
+    color:#555 !important;
+
+    font-family:"Montserrat",sans-serif !important;
+    font-size:13px !important;
+    font-weight:500 !important;
+
+    line-height:1 !important;
+
+    box-shadow:none !important;
+
+    cursor:pointer !important;
+}
+
+
+#zvPagination .zv-page-item.is-active .zv-page-link{
+    background:#0758b8 !important;
+    border-color:#0758b8 !important;
+
+    color:#fff !important;
+}
+
+
+#zvPagination .zv-page-link:hover{
+    background:#f6a329 !important;
+    border-color:#f6a329 !important;
+
+    color:#fff !important;
+}
+
+
+/* Remove any Multikart generated arrows/X icons */
+#zvPagination li::before,
+#zvPagination li::after,
+#zvPagination button::before,
+#zvPagination button::after{
+    content:none !important;
+
+    display:none !important;
+
+    background:none !important;
+    background-image:none !important;
+
+    border:0 !important;
+
+    mask:none !important;
+    -webkit-mask:none !important;
+}
+
+
+/* =========================================================
+   GRID WRAPPING
+========================================================= */
+
+#mkProductGrid{
+    display:flex !important;
+    flex-wrap:wrap !important;
+
+    width:100% !important;
+}
+
+
+/* Hidden pagination/filter products remain hidden */
+#mkProductGrid > [data-product-card][style*="display: none"]{
+    display:none !important;
+}
+
+
+/* List */
+.product-wrapper-grid.list-view
+#mkProductGrid > [data-product-card]{
+    flex:0 0 100% !important;
+    max-width:100% !important;
+}
+
+
+/* 2 columns */
+.product-wrapper-grid[data-zv-layout="2"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 50% !important;
+    max-width:50% !important;
+}
+
+
+/* 3 columns */
+.product-wrapper-grid[data-zv-layout="3"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 33.333333% !important;
+    max-width:33.333333% !important;
+}
+
+
+/* 4 columns */
+.product-wrapper-grid[data-zv-layout="4"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 25% !important;
+    max-width:25% !important;
+}
+
+
+/* Tablet */
+@media(max-width:991px){
+
+    .product-wrapper-grid[data-zv-layout="3"]
+    #mkProductGrid > [data-product-card],
+
+    .product-wrapper-grid[data-zv-layout="4"]
+    #mkProductGrid > [data-product-card]{
+
+        flex:0 0 50% !important;
+        max-width:50% !important;
+
+    }
+
+}
+
+
+/* Mobile */
+@media(max-width:575px){
+
+    #zvPagination.zv-page-list{
+        gap:4px !important;
+    }
+
+    #zvPagination .zv-page-link{
+        min-width:36px !important;
+        height:36px !important;
+
+        padding:0 9px !important;
+
+        font-size:12px !important;
+    }
+
+    .product-wrapper-grid:not(.list-view)
+    #mkProductGrid > [data-product-card]{
+
+        flex:0 0 50% !important;
+        max-width:50% !important;
+
+    }
+
+}
+
+</style>
+
+
+<style id="zv-category-cleanup-v1">
+#zvCategoryFilterAccordion > .accordion-item:first-child{display:none !important}
+.product-wrapper-grid:not(.list-view) .rating-label{display:none !important}
+</style>
+
+{% endblock %}
+
+

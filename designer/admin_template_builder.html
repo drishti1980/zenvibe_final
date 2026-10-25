@@ -1,0 +1,2575 @@
+﻿<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Template Builder - {{ template.name }}</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="{% static 'designer/js/image-tools.js' %}"></script>
+<script src="{% static 'designer/js/raster-edit-tools.js' %}"></script>
+<script src="{% static 'designer/js/arrange-tools.js' %}"></script>
+<link rel="stylesheet" href="{% static 'designer/css/image-tools.css' %}">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Arial,sans-serif;color:#172033;background:#eef1f7}
+body{overflow:hidden}
+.app{display:flex;height:100vh}
+.side{width:390px;flex:none;background:#fff;border-right:1px solid #dde3ec;padding:16px;overflow:auto}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:62px;background:#fff;border-bottom:1px solid #dde3ec;display:flex;align-items:center;justify-content:space-between;padding:10px 18px}
+.area{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:26px}
+.board{background:#fff;padding:16px;border-radius:16px;box-shadow:0 18px 45px #17203322}
+.box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:13px;padding:13px;margin:12px 0}
+.box h3{margin:0 0 10px;font-size:15px}
+.back{color:#6d28d9;font-weight:700;text-decoration:none}
+.muted{color:#667085;font-size:12px;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+button,.upload{display:flex;align-items:center;justify-content:center;width:100%;min-height:39px;border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer;background:#e9edf3;color:#172033;text-align:center}
+button:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:#7c3aed;color:#fff}
+.success{background:#059669;color:#fff}
+.danger{background:#dc2626;color:#fff}
+.upload{background:#ede9fe;color:#5b21b6}
+.upload input{display:none}
+input,select{width:100%;padding:9px;border:1px solid #cfd6e2;border-radius:8px;background:#fff}
+label{display:block;font-size:12px;font-weight:700;margin:8px 0 5px}
+.pages{display:flex;gap:7px;flex-wrap:wrap}
+.pages button{width:auto;min-width:88px}
+.pages button.active{background:#7c3aed;color:#fff}
+.status{font-size:13px;font-weight:700;min-height:18px;margin-top:8px}
+.ok{color:#059669}.err{color:#dc2626}
+.object{font-size:12px;padding:9px;background:#fff;border:1px solid #e2e8f0;border-radius:8px}
+.top-actions{display:flex;gap:7px}
+.top-actions button{width:auto;min-width:75px}
+.hint{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:10px;padding:10px;font-size:12px;line-height:1.45}
+.canvas-container{border:1px solid #cbd5e1}
+.field-chip{background:#fff;border:1px solid #cbd5e1}
+.colour-palette{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin:8px 0 12px}.colour-palette button{min-height:30px!important;aspect-ratio:1;border-radius:50%!important;border:2px solid #fff!important;box-shadow:0 0 0 1px #cbd5e1;padding:0!important}.colour-palette button:hover{transform:scale(1.08)}
+.adjust-row{display:grid;grid-template-columns:100px 1fr 52px;gap:8px;align-items:center;margin:8px 0}.adjust-row label{margin:0;font-size:12px}.adjust-row input[type=range]{width:100%}.adjust-value{font-size:11px;color:#64748b;text-align:right}.image-colour-panel{display:none}.image-colour-panel.visible{display:block}
+.font-search{margin:7px 0}.font-library-admin{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:190px;overflow:auto;padding:5px 1px}.font-library-admin button{justify-content:flex-start;background:#fff;border:1px solid #d8dee9;font-weight:500;min-height:34px}.colour-advanced{display:grid;grid-template-columns:58px 1fr;gap:8px;align-items:center}.colour-advanced input[type=color]{height:44px;padding:3px}.colour-advanced input[type=text]{font-family:monospace;text-transform:uppercase}
+@media(max-width:900px){body{overflow:auto}.app{display:block;height:auto}.side{width:100%}.main{min-height:700px}}
+.manual-settings{
+    display:none;
+}
+
+/* V24 compact controls */
+.font-library-admin[hidden],.colour-palette[hidden]{display:none!important}
+.font-search{margin-bottom:6px!important}
+.colour-advanced{margin-bottom:4px}
+.box{padding:14px!important;margin-bottom:12px!important}
+.box label{margin-top:7px!important}
+</style>
+</head>
+<body>
+{{ template_json|json_script:"template-json-data" }}
+
+<div class="app">
+<aside class="side">
+<a class="back" href="/admin/designer/designtemplate/">â† Back to templates</a>
+
+<h2 style="margin:12px 0 4px">Template Builder</h2>
+<div class="muted"><b>{{ template.name }}</b> Â· {{ product.name }} Â· {{ product.width }} Ã— {{ product.height }}</div>
+
+<div class="hint" style="margin-top:12px">
+<b>Layered editable workflow V51:</b> upload a PNG/JPG or a camera photo. ZenVibe keeps the original design untouched, uses OCR only as an optional helper, and provides <b>Remove / Replace printed text</b> for any wording OCR misses. The replacement becomes a normal editable Fabric.js text layer and is saved exactly to the customer editor.
+</div>
+
+<section class="box">
+<h3>1. Upload front and back</h3>
+<div class="grid">
+<label class="upload">ðŸ“· Upload / take front photo<input id="frontUpload" type="file" accept="image/*"></label>
+<label class="upload">ðŸ“· Upload / take back photo<input id="backUpload" type="file" accept="image/*"></label>
+</div>
+<p style="font-size:11px;color:#667085;margin:8px 0 0">One control per side: on a phone/tablet the image chooser can use the camera or photo library; on desktop it opens your files. Camera photos and normal image uploads use the same workflow.</p>
+<button type="button" id="convertToEditableBtn" class="wide" style="margin-top:10px">Rebuild editable text & artwork</button>
+<button type="button" id="editBackgroundBtn" class="wide" style="margin-top:8px">Edit image: crop / blur</button>
+<p style="font-size:11px;color:#667085;margin-top:6px">ZenVibe now runs automatic multi-pass text/artwork reconstruction after every image upload. If a decorative word is missed, <b>Remove / Replace printed text</b> remains the guaranteed manual fallback.</p>
+<div id="conversionProgress" class="status"></div>
+<div id="pageButtons" class="pages" style="margin-top:10px"></div>
+</section>
+
+
+<section class="box">
+<h3>2. Remove / Replace printed text</h3>
+
+<button id="markTextAreaBtn" class="primary">
+Remove / Replace printed text
+</button>
+
+<div class="muted" style="margin-top:8px">
+Click <b>Remove / Replace printed text</b>, drag a tight box over the wording you want to change, then enter the new wording. ZenVibe reconstructs the local background and immediately creates a normal editable Fabric.js text object. This works even when OCR cannot read a decorative/script font.
+</div>
+
+<div class="grid" style="margin-top:8px;display:none;">
+  <div>
+    <label>Cover padding</label>
+    <input id="manualCoverPadding" type="number" min="0" max="40" value="8">
+  </div>
+  <div>
+    <label>Default font size</label>
+    <input id="manualFontSize" type="number" min="6" max="200" value="28">
+  </div>
+</div>
+
+<button id="cancelMarkingBtn" style="margin-top:8px">
+Cancel marking
+</button>
+
+<div id="manualMappingStatus" class="status"></div>
+</section>
+
+
+<section class="box">
+<h3>3. Add missing content</h3>
+<div class="grid3">
+<button class="field-chip" data-field="name" data-text="JOHN BUTLER">Name</button>
+<button class="field-chip" data-field="company" data-text="COMPANY NAME">Company</button>
+<button class="field-chip" data-field="role" data-text="GENERAL MANAGER">Position</button>
+<button class="field-chip" data-field="phone" data-text="+00 123 456 789 01">Phone</button>
+<button class="field-chip" data-field="email" data-text="COMPANY@GMAIL.COM">Email</button>
+<button class="field-chip" data-field="website" data-text="WWW.WEBNAME.COM">Website</button>
+<button class="field-chip" data-field="address" data-text="CITY 123 STREET / 10-23">Address</button>
+<button class="field-chip" data-field="tagline" data-text="SLOGAN GOES HERE">Tagline</button>
+<button class="field-chip" data-field="custom" data-text="Editable Text">Custom</button>
+</div>
+<div id="placementStatus" class="status"></div>
+
+<label class="upload" style="margin-top:8px">
+Upload replaceable logo
+<input id="logoUpload" type="file" accept="image/png,image/jpeg,image/svg+xml">
+</label>
+</section>
+
+<section class="box">
+<h3>4. Add shapes</h3>
+<div class="grid3">
+<button id="addRectangle">Rectangle</button>
+<button id="addRounded">Rounded</button>
+<button id="addCircle">Circle</button>
+<button id="addTriangle">Triangle</button>
+<button id="addLine">Line</button>
+<button id="addArrow">Arrow</button>
+</div>
+</section>
+
+<section class="box">
+<h3>Edit selected object</h3>
+<div id="objectInfo" class="object">No object selected</div>
+
+<label>Text</label>
+<input id="textInput" placeholder="Select editable text">
+
+<input id="fillColor" type="color" value="#111827" hidden>
+<label>Font size</label><input id="fontSize" type="number" min="6" max="300" value="32">
+
+<label>Font family</label>
+<input id="adminFontSearch" class="font-search" placeholder="Search 80+ fonts...">
+<select id="fontFamily"></select>
+<div id="adminFontLibrary" class="font-library-admin" hidden></div>
+
+<div class="grid">
+<div><label>Alignment</label>
+<select id="textAlign"><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select>
+</div>
+<div><label>Letter spacing</label><input id="charSpacing" type="number" min="-200" max="1000" value="0"></div>
+</div>
+
+<div class="grid3">
+<button id="boldBtn">Bold</button><button id="italicBtn">Italic</button><button id="underlineBtn">Underline</button>
+</div>
+<label style="margin-top:10px">Colour</label>
+<div class="colour-advanced"><input id="fillColorAny" type="color" value="#111827" title="Choose any colour"><input id="fillHex" type="text" value="#111827" maxlength="7" placeholder="#RRGGBB"></div>
+
+<div id="adminColourPalette" class="colour-palette" hidden></div>
+
+<div id="adminImageColourPanel" class="image-colour-panel box" style="margin:10px 0 0;padding:10px">
+  <strong style="display:block;margin-bottom:7px">Artwork colour adjustments</strong>
+  <small style="display:block;color:#64748b;margin-bottom:8px">For PNG/JPG artwork. These controls target colourful pixels while leaving the light paper/background and dark text largely unchanged.</small>
+  <div class="adjust-row"><label>Hue</label><input id="adminHue" type="range" min="-180" max="180" value="0"><span id="adminHueVal" class="adjust-value">0Â°</span></div>
+  <div class="adjust-row"><label>Saturation</label><input id="adminSaturation" type="range" min="0" max="200" value="100"><span id="adminSaturationVal" class="adjust-value">100%</span></div>
+  <div class="adjust-row"><label>Brightness</label><input id="adminBrightness" type="range" min="50" max="150" value="100"><span id="adminBrightnessVal" class="adjust-value">100%</span></div>
+  <div class="adjust-row"><label>Contrast</label><input id="adminContrast" type="range" min="50" max="150" value="100"><span id="adminContrastVal" class="adjust-value">100%</span></div>
+  <div class="grid"><div><label>Tint</label><input id="adminTint" type="color" value="#8b5cf6"></div><div><label>Tint strength</label><input id="adminTintStrength" type="range" min="0" max="100" value="0"></div></div>
+  <div class="grid" style="margin-top:8px"><button id="applyArtworkColourBtn" type="button" class="primary">Apply artwork colour</button><button id="resetArtworkColourBtn" type="button">Reset artwork</button></div>
+</div>
+
+<label>Opacity</label>
+<input id="opacityInput" type="range" min="0" max="1" step="0.05" value="1">
+
+<div class="grid">
+<div><label>Border colour</label><input id="strokeColor" type="color" value="#000000"></div>
+<div><label>Border width</label><input id="strokeWidth" type="number" min="0" max="30" value="0"></div>
+</div>
+
+<button id="applyBtn" class="primary" style="margin-top:8px">Apply changes</button>
+</section>
+
+<section class="box">
+<h3>Arrange</h3>
+<div class="grid">
+<button id="duplicateBtn">Duplicate</button><button id="deleteBtn" class="danger">Delete</button>
+<button id="frontBtn">Bring front</button><button id="backBtn">Send back</button>
+<button id="lockBtn">Lock / Unlock</button><button id="centerBtn">Centre</button>
+</div>
+</section>
+
+<section class="box">
+<button id="saveBtn" class="success">Save Template for Website</button>
+<div id="status" class="status"></div>
+</section>
+</aside>
+
+<main class="main">
+<div class="top">
+<strong>Editing: <span id="pageLabel">Front</span></strong> <small style="color:#8a91a2;font-weight:400">â€” Template #{{ template.id }} Â· {{ template.name }} Â· {{ product.name }}</small>
+<div class="top-actions"><button id="undoBtn">Undo</button><button id="redoBtn">Redo</button><button id="fitBtn">Fit</button></div>
+</div>
+<div class="area"><div class="board"><canvas id="canvas"></canvas></div></div>
+</main>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const W = Number('{{ product.width|default:1050 }}') || 1050;
+const H = Number('{{ product.height|default:600 }}') || 600;
+const raw = JSON.parse(document.getElementById('template-json-data').textContent || '{}');
+
+const canvas = new fabric.Canvas('canvas', {
+  preserveObjectStacking: true,
+  selection: true
+});
+window.designCanvas = canvas;
+if(window.ZenImageTools) ZenImageTools.attach(canvas,{onChange:()=>{snap();},lockBackgroundAfterEdit:true});
+
+fabric.Object.prototype.objectCaching = false;
+
+let pages = normalise(raw);
+let active = 0;
+let loading = false;
+let history = [];
+let historyIndex = -1;
+let pendingField = null;
+let manualMappingMode = false;
+let manualStartPoint = null;
+let manualPreviewRect = null;
+// V12: conversion is mandatory, admin editing is optional. A newly uploaded bitmap
+// cannot be published until it has been reconstructed into editable Fabric layers.
+let conversionRunning = false;
+let conversionReady = String(raw.source || '').includes('reconstructed') || Number(raw.auto_layer_version || 0) >= 5;
+
+const $ = id => document.getElementById(id);
+const uid = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+
+function normalise(value) {
+  // V28 keeps the rich admin working layers separately from the exact public visual master.
+  if (value && Array.isArray(value.adminPages) && value.adminPages.length) return value.adminPages;
+  if (value && Array.isArray(value.pages) && value.pages.length) return value.pages;
+  if (value && Array.isArray(value.objects)) return [{name:'Front',background:value.background||'#fff',objects:value.objects}];
+  return [{name:'Front',background:'#fff',objects:[]}];
+}
+
+function fit() {
+  const zoom = Math.max(.1, Math.min(1, (window.innerWidth-440)/W, (window.innerHeight-120)/H));
+  canvas.setDimensions({width:W*zoom,height:H*zoom});
+  canvas.setZoom(zoom);
+  canvas.requestRenderAll();
+}
+
+function isText(o) {
+  return o && ['i-text','text','textbox'].includes(o.type);
+}
+
+function common(o) {
+  const bg = !!o.backgroundAsset;
+  const locked = bg ? false : (!!o.locked || o.customerEditable===false);
+  return {
+    left:o.left??o.x??40,
+    top:o.top??o.y??40,
+    angle:o.angle||0,
+    opacity:o.opacity??1,
+    objectId:o.id||uid('object'),
+    name:o.name||'',
+    fieldType:o.fieldType||'',
+    backgroundAsset:bg,
+    customerEditable:o.customerEditable!==false,
+    selectable:!locked,
+    evented:!locked,
+    lockMovementX:locked,
+    lockMovementY:locked,
+    lockScalingX:locked,
+    lockScalingY:locked,
+    lockRotation:locked,
+    hasControls:!locked,
+    scaleX:o.scaleX??1,
+    scaleY:o.scaleY??1,
+    originX:o.originX||'left',
+    originY:o.originY||'top',
+    autoInvitationField:!!o.autoInvitationField,
+    autoInvitationCover:!!o.autoInvitationCover,
+    ocrOverlayPending:!!o.ocrOverlayPending,
+    sourceText:o.sourceText||'',
+    autoOcrText:!!o.autoOcrText,
+    sourceNormalizedBox:o.sourceNormalizedBox||null,
+    _zvPendingArtwork:!!o._zvPendingArtwork,
+    visualFallback:!!o.visualFallback,
+    replacementGroupId:o.replacementGroupId||'',
+    manualReplacement:!!o.manualReplacement,
+    manualTextPatch:!!o.manualTextPatch
+  };
+}
+
+function fromData(o) {
+  const p = {
+    ...common(o),
+    fill:o.fill||'#111827',
+    stroke:o.stroke||null,
+    strokeWidth:o.strokeWidth||0
+  };
+
+  if (['text','i-text','textbox'].includes(o.type)) {
+    const TextClass = o.type==='textbox' ? fabric.Textbox : fabric.IText;
+    const textOptions={
+      ...p,
+      fontSize:o.fontSize||32,
+      fontFamily:o.font||o.fontFamily||'Arial',
+      fontWeight:o.fontWeight||'normal',
+      fontStyle:o.fontStyle||'normal',
+      underline:!!o.underline,
+      textAlign:o.textAlign||'left',
+      charSpacing:o.charSpacing||0,
+      lineHeight:o.lineHeight||1
+    };
+    if(o.type==='textbox' && o.width) textOptions.width=o.width;
+    const textObj=new TextClass(o.text||'Text',textOptions);
+    textObj.sourceNormalizedBox=o.sourceNormalizedBox||null;
+    textObj.sourceConfidence=o.sourceConfidence??null;
+    textObj.visualFallback=!!o.visualFallback;
+    return textObj;
+  }
+
+  if (o.type==='rect') return new fabric.Rect({...p,width:o.width||200,height:o.height||80,rx:o.rx||0,ry:o.ry||0});
+  if (o.type==='circle') return new fabric.Circle({...p,radius:o.radius||60});
+  if (o.type==='triangle') return new fabric.Triangle({...p,width:o.width||120,height:o.height||120});
+  if (o.type==='line') return new fabric.Line([o.x1||0,o.y1||0,o.x2||200,o.y2||0],p);
+
+  return null;
+}
+
+function toData(o) {
+  const b = {
+    id:o.objectId||uid('object'),
+    type:o.type==='i-text'?'text':o.type,
+    left:o.left,
+    top:o.top,
+    angle:o.angle||0,
+    opacity:o.opacity??1,
+    name:o.name||'',
+    fieldType:o.fieldType||'',
+    backgroundAsset:!!o.backgroundAsset,
+    customerEditable:o.customerEditable!==false,
+    locked:!!o.lockMovementX,
+    scaleX:o.scaleX??1,
+    scaleY:o.scaleY??1,
+    originX:o.originX||'left',
+    originY:o.originY||'top',
+    autoInvitationField:!!o.autoInvitationField,
+    autoInvitationCover:!!o.autoInvitationCover,
+    ocrOverlayPending:!!o.ocrOverlayPending,
+    sourceText:o.sourceText||'',
+    autoOcrText:!!o.autoOcrText,
+    sourceNormalizedBox:o.sourceNormalizedBox||null,
+    _zvPendingArtwork:!!o._zvPendingArtwork,
+    visualFallback:!!o.visualFallback,
+    replacementGroupId:o.replacementGroupId||'',
+    manualReplacement:!!o.manualReplacement,
+    manualTextPatch:!!o.manualTextPatch
+  };
+
+  if (isText(o)) return {...b,text:o.text,width:o.width,height:o.height,fontSize:o.fontSize,font:o.fontFamily,fontWeight:o.fontWeight,fontStyle:o.fontStyle,underline:!!o.underline,textAlign:o.textAlign,charSpacing:o.charSpacing,lineHeight:o.lineHeight,fill:o.fill,stroke:o.stroke,strokeWidth:o.strokeWidth,sourceNormalizedBox:o.sourceNormalizedBox||null,sourceConfidence:o.sourceConfidence??null,visualFallback:!!o.visualFallback};
+  if (o.type==='image') return {...b,src:o.getSrc(),baseSrc:o.baseSrc||o.getSrc(),workingSrc:o.workingSrc||o.getSrc(),width:o.width,height:o.height,cropX:o.cropX||0,cropY:o.cropY||0,filters:(o.filters||[]).map(f=>f.toObject?f.toObject():f)};
+  if (o.type==='circle') return {...b,radius:o.radius,fill:o.fill,stroke:o.stroke,strokeWidth:o.strokeWidth};
+  if (o.type==='line') return {...b,x1:o.x1,y1:o.y1,x2:o.x2,y2:o.y2,fill:o.fill,stroke:o.stroke,strokeWidth:o.strokeWidth};
+
+  return {...b,width:o.width,height:o.height,rx:o.rx||0,ry:o.ry||0,fill:o.fill,stroke:o.stroke,strokeWidth:o.strokeWidth};
+}
+
+function sync() {
+  if (loading) return;
+  pages[active] = {
+    name:pages[active]?.name||(active===0?'Front':'Back'),
+    background:canvas.backgroundColor||'#fff',
+    objects:canvas.getObjects().map(toData)
+  };
+}
+
+function renderPages() {
+  const holder = $('pageButtons');
+  holder.innerHTML = '';
+
+  pages.forEach((page,index)=>{
+    const button = document.createElement('button');
+    button.textContent = page.name||`Page ${index+1}`;
+    button.className = index===active?'active':'';
+    button.onclick = ()=>loadPage(index);
+    holder.appendChild(button);
+  });
+
+  $('pageLabel').textContent = pages[active]?.name||`Page ${active+1}`;
+}
+
+function loadPage(index,skipSync=false) {
+  if (!skipSync) sync();
+
+  loading = true;
+  active = index;
+  canvas.clear();
+
+  const page = pages[index]||{name:index===0?'Front':'Back',background:'#fff',objects:[]};
+  canvas.backgroundColor = page.background||'#fff';
+
+  let pending = 0;
+  let finished = false;
+
+  const done = ()=>{
+    if (finished||pending>0) return;
+    finished = true;
+    loading = false;
+    canvas.requestRenderAll();
+    renderPages();
+    info();
+  };
+
+  (page.objects||[]).forEach(o=>{
+    if (o.type==='image'&&o.src) {
+      pending++;
+      fabric.Image.fromURL(o.src,img=>{
+        if (!img) { pending--; done(); return; }
+        img.set({...common(o),scaleX:o.scaleX??1,scaleY:o.scaleY??1,cropX:o.cropX||0,cropY:o.cropY||0}); img.baseSrc=o.baseSrc||o.src; img.workingSrc=o.workingSrc||o.src; img.sourceNormalizedBox=o.sourceNormalizedBox||null; img._zvPendingArtwork=!!o._zvPendingArtwork;
+        const addLoadedImage=()=>{
+          canvas.add(img);
+          if (o.backgroundAsset) canvas.sendToBack(img);
+          pending--;
+          done();
+        };
+        if (o.filters&&o.filters.length&&fabric.util.enlivenObjects) {
+          fabric.util.enlivenObjects(o.filters,filters=>{
+            img.filters=filters;
+            img.applyFilters();
+            addLoadedImage();
+          });
+        } else addLoadedImage();
+      });
+      return;
+    }
+
+    const obj = fromData(o);
+    if (obj) canvas.add(obj);
+  });
+
+  done();
+}
+
+function snap() {
+  if (loading) return;
+  sync();
+  const s = JSON.stringify(pages);
+  if (history[historyIndex]===s) return;
+  history = history.slice(0,historyIndex+1);
+  history.push(s);
+  if (history.length>60) history.shift();
+  historyIndex = history.length-1;
+}
+
+function restore(index) {
+  if (index<0||index>=history.length) return;
+  historyIndex = index;
+  pages = JSON.parse(history[index]);
+  active = Math.min(active,pages.length-1);
+  loadPage(active,true);
+}
+
+function add(o) {
+  canvas.add(o);
+  canvas.setActiveObject(o);
+  canvas.requestRenderAll();
+  snap();
+  info();
+}
+
+function uploadImage(file,index,pageName,backgroundAsset) {
+  if (!file) return;
+
+  if (!['image/png','image/jpeg','image/svg+xml'].includes(file.type)) {
+    alert('Please upload PNG, JPG or JPEG.');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = event=>{
+    fabric.Image.fromURL(event.target.result,img=>{
+      if (!img||!img.width||!img.height) {
+        $('status').textContent='Could not load image.';
+        $('status').className='status err';
+        return;
+      }
+
+      const scale = backgroundAsset
+        ? Math.min(W/img.width,H/img.height)
+        : Math.min((W*.28)/img.width,(H*.28)/img.height,1);
+
+      img.set({
+        left:backgroundAsset?(W-img.width*scale)/2:W*.1,
+        top:backgroundAsset?(H-img.height*scale)/2:H*.1,
+        scaleX:scale,
+        scaleY:scale,
+        objectId:uid(backgroundAsset?'artwork':'logo'),
+        name:backgroundAsset?`${pageName} artwork`:'Replaceable logo',
+        baseSrc:event.target.result,
+        backgroundAsset,
+        customerEditable:true,
+        selectable:true,
+        evented:true,
+        lockMovementX:false,
+        lockMovementY:false,
+        lockScalingX:false,
+        lockScalingY:false,
+        lockRotation:false,
+        hasControls:true
+      });
+
+      if (backgroundAsset) {
+        // V51: a flat PNG/JPG is never genuinely editable by simply wrapping it
+        // in JSON. Keep the pristine bitmap as the visual master, then immediately
+        // reconstruct text/artwork interaction layers above it. This is the same
+        // object-model principle used by Canva-style editors: the JSON stores real
+        // Fabric objects, while the original image remains a protected fallback.
+        conversionReady = false;
+        conversionRunning = false;
+        while (pages.length<=index) pages.push({name:pages.length===0?'Front':'Back',background:'#fff',objects:[]});
+        pages[index]={name:pageName,background:'#fff',objects:[toData(img)]};
+        active=index;
+        loadPage(index,true);
+        $('status').textContent=`${pageName} uploaded. Automatically rebuilding editable text and artworkâ€¦`;
+        $('status').className='status';
+        snap();
+        // Let Fabric finish loading the page before OCR/segmentation starts.
+        setTimeout(()=>convertCurrentArtworkToEditable(),80);
+      } else {
+        add(img);
+      }
+    });
+  };
+
+  reader.readAsDataURL(file);
+}
+
+$('frontUpload').onchange=e=>{uploadImage(e.target.files[0],0,'Front',true);e.target.value=''};
+
+function backgroundImageObject(){
+  return canvas.getObjects().find(o=>o.type==='image' && o.backgroundAsset);
+}
+
+function sampledCoverColour(img, box){
+  try{
+    const el=img.getElement();
+    const naturalW=el.naturalWidth||img.width;
+    const naturalH=el.naturalHeight||img.height;
+    const off=document.createElement('canvas');
+    off.width=naturalW; off.height=naturalH;
+    const ctx=off.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(el,0,0,naturalW,naturalH);
+    const x=Math.max(0,Math.min(naturalW-1,Math.floor(box.x0)));
+    const y=Math.max(0,Math.min(naturalH-1,Math.floor(box.y0)));
+    const w=Math.max(1,Math.min(naturalW-x,Math.ceil(box.x1-box.x0)));
+    const h=Math.max(1,Math.min(naturalH-y,Math.ceil(box.y1-box.y0)));
+    const strips=[];
+    const pad=Math.max(2,Math.round(Math.min(w,h)*0.12));
+    if(y-pad>=0) strips.push(ctx.getImageData(x,y-pad,w,Math.min(pad,naturalH-(y-pad))).data);
+    if(y+h<naturalH) strips.push(ctx.getImageData(x,y+h,w,Math.min(pad,naturalH-(y+h))).data);
+    if(x-pad>=0) strips.push(ctx.getImageData(x-pad,y,Math.min(pad,naturalW-(x-pad)),h).data);
+    if(x+w<naturalW) strips.push(ctx.getImageData(x+w,y,Math.min(pad,naturalW-(x+w)),h).data);
+    let r=0,g=0,b=0,n=0;
+    strips.forEach(data=>{for(let i=0;i<data.length;i+=16){if(data[i+3]>80){r+=data[i];g+=data[i+1];b+=data[i+2];n++;}}});
+    if(!n) return '#ffffff';
+    return `rgb(${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)})`;
+  }catch(e){ return '#ffffff'; }
+}
+
+function mapOcrBox(img,bbox){
+  const sx=img.scaleX||1, sy=img.scaleY||1;
+  return {
+    left:(img.left||0)+bbox.x0*sx,
+    top:(img.top||0)+bbox.y0*sy,
+    width:Math.max(4,(bbox.x1-bbox.x0)*sx),
+    height:Math.max(4,(bbox.y1-bbox.y0)*sy)
+  };
+}
+
+$('editBackgroundBtn').onclick=()=>{
+  const img=backgroundImageObject();
+  if(!img){ $('conversionProgress').textContent='Upload an image first.'; $('conversionProgress').className='status err'; return; }
+  img.set({selectable:true,evented:true,hasControls:true,lockMovementX:false,lockMovementY:false,lockScalingX:false,lockScalingY:false,lockRotation:false});
+  canvas.setActiveObject(img); canvas.requestRenderAll();
+  if(window.ZenImageTools) ZenImageTools.open(canvas,img);
+  $('conversionProgress').textContent='Image tools opened. Choose Crop, Blur area, Pixelate or Adjust. Closing the tools locks the page artwork again.';
+  $('conversionProgress').className='status ok';
+};
+
+function removePreviousAutoConversion(){
+  canvas.getObjects().slice().forEach(o=>{
+    if(o.fieldType==='ocr' || o.fieldType==='auto-fallback' || String(o.name||'').startsWith('OCR cover') || String(o.name||'').startsWith('Auto cover')) canvas.remove(o);
+  });
+}
+
+function addEditableRegion(img, spec, index){
+  const el=img.getElement();
+  const naturalW=el.naturalWidth||img.width;
+  const naturalH=el.naturalHeight||img.height;
+  const bbox={x0:spec.x*naturalW,y0:spec.y*naturalH,x1:(spec.x+spec.w)*naturalW,y1:(spec.y+spec.h)*naturalH};
+  const mapped=mapOcrBox(img,bbox);
+  const coverPad=Math.max(2,Math.min(12,mapped.height*.12));
+  const cover=new fabric.Rect({
+    left:mapped.left-coverPad,top:mapped.top-coverPad,
+    width:mapped.width+coverPad*2,height:mapped.height+coverPad*2,
+    fill:sampledCoverColour(img,bbox),strokeWidth:0,
+    objectId:uid('auto-cover'),name:`Auto cover ${index+1}`,
+    fieldType:'auto-fallback',customerEditable:false,selectable:false,evented:false,
+    lockMovementX:true,lockMovementY:true,lockScalingX:true,lockScalingY:true,lockRotation:true,hasControls:false
+  });
+  const textObj=new fabric.IText(spec.text,{
+    left:mapped.left+mapped.width/2,top:mapped.top+mapped.height/2,
+    originX:'center',originY:'center',
+    fontSize:Math.max(12,Math.round(mapped.height*(spec.fontScale||.72))),
+    fontFamily:spec.font||'Poppins',fontWeight:spec.weight||'normal',
+    textAlign:'center',fill:spec.fill||'#222222',
+    objectId:uid('auto-text'),name:`Editable ${spec.label||spec.text}`,
+    fieldType:'auto-fallback',customerEditable:true,selectable:true,evented:true,hasControls:true
+  });
+  canvas.add(cover);canvas.add(textObj);
+  return 1;
+}
+
+function addPortraitInvitationFallback(img){
+  const specs=[
+    {label:'Heading',text:'Please join us to celebrate the wedding of:',x:.19,y:.205,w:.62,h:.075,font:'Poppins',fontScale:.45},
+    {label:'First name',text:'Aaroon',x:.36,y:.405,w:.28,h:.055,font:'Great Vibes',fontScale:.88},
+    {label:'And',text:'&',x:.46,y:.458,w:.08,h:.035,font:'Great Vibes',fontScale:.9},
+    {label:'Second name',text:'Olivia',x:.36,y:.495,w:.28,h:.055,font:'Great Vibes',fontScale:.88},
+    {label:'Month',text:'APRIL',x:.40,y:.655,w:.20,h:.045,font:'Poppins',weight:'600',fontScale:.7},
+    {label:'Weekday',text:'SATURDAY',x:.17,y:.715,w:.25,h:.04,font:'Poppins',weight:'600',fontScale:.55},
+    {label:'Day',text:'26',x:.41,y:.695,w:.18,h:.075,font:'Poppins',weight:'600',fontScale:.85},
+    {label:'Time',text:'AT 08:00 PM',x:.60,y:.715,w:.25,h:.04,font:'Poppins',weight:'600',fontScale:.55},
+    {label:'Year',text:'2025',x:.41,y:.785,w:.18,h:.04,font:'Poppins',fontScale:.65},
+    {label:'Venue',text:'Liceria Grand Ballroom',x:.23,y:.845,w:.54,h:.04,font:'Poppins',weight:'600',fontScale:.55},
+    {label:'Address',text:'123 Anywhere St., Any City,\nST 12345',x:.20,y:.885,w:.60,h:.07,font:'Poppins',fontScale:.42}
+  ];
+  let count=0;specs.forEach((s,i)=>{count+=addEditableRegion(img,s,i)});return count;
+}
+
+function clearAutoOcrLayers(){
+  canvas.getObjects().slice().forEach(o=>{
+    if(o.fieldType==='ocr-auto' || o.autoOcrText || o.autoOcrCover || /Auto OCR (text|cover)/i.test(String(o.name||''))) canvas.remove(o);
+  });
+}
+
+function normaliseOcrLines(data){
+  /* V21 VALIDATED LINE OCR
+   * Never turn raw OCR WORD tokens directly into Fabric objects.  That was the
+   * cause of split headings ("CBook", "P", "a", "ry") and random letters
+   * being created from flowers / book artwork.  We prefer complete OCR lines;
+   * if the engine did not expose lines, words are reconstructed into visual
+   * lines before any Fabric object is created.
+   */
+  const lineNodes=[], wordNodes=[];
+  const walk=node=>{
+    if(!node || typeof node!=='object') return;
+    if(Array.isArray(node.lines)) node.lines.forEach(l=>{ lineNodes.push(l); walk(l); });
+    if(Array.isArray(node.words)) wordNodes.push(...node.words);
+    if(Array.isArray(node.paragraphs)) node.paragraphs.forEach(walk);
+    if(Array.isArray(node.blocks)) node.blocks.forEach(walk);
+  };
+  walk(data);
+  if(Array.isArray(data?.lines)) lineNodes.push(...data.lines);
+  if(Array.isArray(data?.words)) wordNodes.push(...data.words);
+
+  const boxOf=n=>{
+    const b=n?.bbox||{};
+    return {x0:Number(b.x0),y0:Number(b.y0),x1:Number(b.x1),y1:Number(b.y1)};
+  };
+  const validBox=b=>Number.isFinite(b.x0+b.y0+b.x1+b.y1) && b.x1>b.x0 && b.y1>b.y0;
+  const cleanText=t=>String(t||'').replace(/\s+/g,' ').trim();
+  const confidenceOf=n=>Number(n?.confidence??n?.conf??0);
+
+  let candidates=[];
+  const seenLines=new Set();
+  for(const l of lineNodes){
+    const text=cleanText(l?.text || (Array.isArray(l?.words)?l.words.map(w=>w.text).join(' '):''));
+    const bbox=boxOf(l);
+    if(!text || !validBox(bbox)) continue;
+    const key=`${text.toLowerCase()}|${Math.round(bbox.x0)}|${Math.round(bbox.y0)}|${Math.round(bbox.x1)}|${Math.round(bbox.y1)}`;
+    if(seenLines.has(key)) continue; seenLines.add(key);
+    let conf=confidenceOf(l);
+    if(!conf && Array.isArray(l.words) && l.words.length){
+      conf=l.words.reduce((a,w)=>a+confidenceOf(w),0)/l.words.length;
+    }
+    candidates.push({text,bbox,confidence:conf,words:l.words||[]});
+  }
+
+  // V31: ALWAYS reconstruct visual lines from word tokens as a second source.
+  // Script/calligraphy text is frequently omitted from Tesseract's line list even
+  // when useful word boxes exist. Previously this ran only when *no* line was
+  // detected anywhere on the page, which is why names and 'Reception to follow'
+  // could never become hotspots on otherwise well-recognised invitations.
+  if(wordNodes.length){
+    const words=wordNodes.map(w=>({text:cleanText(w?.text),bbox:boxOf(w),confidence:confidenceOf(w)}))
+      .filter(w=>w.text&&validBox(w.bbox)&&w.confidence>=18)
+      .sort((a,b)=>a.bbox.y0-b.bbox.y0||a.bbox.x0-b.bbox.x0);
+    const rows=[];
+    for(const w of words){
+      const h=w.bbox.y1-w.bbox.y0, cy=(w.bbox.y0+w.bbox.y1)/2;
+      let best=null,bestScore=Infinity;
+      for(const row of rows){
+        const rh=row.h||h, dy=Math.abs(cy-row.cy);
+        if(dy<=Math.max(5,Math.min(h,rh)*.62) && dy<bestScore){best=row;bestScore=dy;}
+      }
+      if(!best){best={words:[],cy,h};rows.push(best);}
+      best.words.push(w);
+      const n=best.words.length; best.cy=((best.cy*(n-1))+cy)/n; best.h=((best.h*(n-1))+h)/n;
+    }
+    for(const row of rows){
+      row.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
+      // Break one visual row only when a very large horizontal gap indicates
+      // independent columns (for example weekday | date | time).
+      let groups=[[]], prev=null;
+      for(const w of row.words){
+        const avgH=row.h||10, gap=prev ? w.bbox.x0-prev.bbox.x1 : 0;
+        if(prev && gap>avgH*4.5) groups.push([]);
+        groups[groups.length-1].push(w); prev=w;
+      }
+      for(const g of groups){
+        if(!g.length) continue;
+        const bbox={x0:Math.min(...g.map(w=>w.bbox.x0)),y0:Math.min(...g.map(w=>w.bbox.y0)),x1:Math.max(...g.map(w=>w.bbox.x1)),y1:Math.max(...g.map(w=>w.bbox.y1))};
+        const text=g.map(w=>w.text).join(' ');
+        const confidence=g.reduce((a,w)=>a+w.confidence,0)/g.length;
+        candidates.push({text,bbox,confidence,words:g});
+      }
+    }
+  }
+
+  // Text-likeness validation.  False positives from floral artwork are usually
+  // very short, low-confidence and punctuation-heavy.  Real invitation lines
+  // are retained even when they contain dates, '&', addresses or phone values.
+  return candidates.filter(item=>{
+    const text=cleanText(item.text), b=item.bbox, confidence=item.confidence||0;
+    const width=b.x1-b.x0,height=b.y1-b.y0;
+    if(!text || !validBox(b) || width<4 || height<4 || text.length>140) return false;
+    const alnum=(text.match(/[\p{L}\p{N}]/gu)||[]).length;
+    const chars=(text.match(/[^\s]/g)||[]).length||1;
+    const ratio=alnum/chars;
+    const wordCount=text.split(/\s+/).filter(Boolean).length;
+    const single=text.length===1;
+    // V31: invitation script fonts often receive modest OCR confidence. Keep
+    // geometrically sane alphabetic lines instead of silently dropping them.
+    const hasLetters=/[\p{L}]/u.test(text);
+    const plausibleLine=hasLetters && ratio>=.62 && width>=height*.9;
+    if(single && confidence<72 && text!=='&') return false;
+    if(wordCount===1 && text.length<=2 && confidence<64 && text!=='&') return false;
+    if(ratio<.40 && confidence<68) return false;
+    if(confidence < (wordCount>=2 ? (plausibleLine?24:46) : (plausibleLine?30:54))) return false;
+    // Reject strings dominated by OCR junk such as repeated isolated symbols.
+    if(/^[^A-Za-z0-9]*$/.test(text) && text!=='&') return false;
+    if(/(.)\1{3,}/.test(text)) return false;
+    return true;
+  }).map(x=>({...x,text:cleanText(x.text)}))
+    .sort((a,b)=>a.bbox.y0-b.bbox.y0||a.bbox.x0-b.bbox.x0);
+}
+
+function validateOcrDetections(items, naturalW, naturalH){
+  /* Final geometric gate shared by every template.  This deliberately favours
+   * preserving the original design over inventing editable garbage.  A region
+   * that fails validation is left untouched in the artwork instead of erased.
+   */
+  const area=Math.max(1,naturalW*naturalH);
+  const clean=[];
+  for(const it of items||[]){
+    const b=it.bbox||{}, w=b.x1-b.x0, h=b.y1-b.y0, boxArea=w*h;
+    if(!(w>3&&h>3) || boxArea>area*.22) continue;
+    if(h>naturalH*.16 && String(it.text||'').length<4) continue;
+    if(w>naturalW*.72 && String(it.text||'').length<4) continue;
+    // V37: reject tiny low-confidence OCR junk caused by floral strokes/leaves.
+    // Keep real short numeric/date tokens, but do not let fragments such as "LV ."
+    // steal clicks from a wider calligraphy fallback band.
+    const txt=String(it.text||'').trim();
+    const conf=Number(it.confidence||0);
+    const alphaNum=(txt.match(/[A-Za-z0-9]/g)||[]).length;
+    const likelyDate=/^(\d{1,4}|am|pm|sept?|oct|nov|dec|jan|feb|mar|apr|may|jun|jul|aug)$/i.test(txt);
+    if(!likelyDate && txt.length<=4 && alphaNum<=3 && conf<68) continue;
+    if(!likelyDate && w<naturalW*.035 && conf<60) continue;
+    clean.push(it);
+  }
+  return dedupeOcrDetections(clean);
+}
+
+function uiYield(){
+  return new Promise(resolve=>{
+    if(typeof requestAnimationFrame==='function') requestAnimationFrame(()=>resolve());
+    else setTimeout(resolve,0);
+  });
+}
+
+async function cleanDetectedTextFromArtwork(img, lines){
+  /* V20 PERFORMANCE FIX
+   * Previous versions pulled the entire source bitmap into one ImageData array
+   * and rewrote every pixel inside every OCR box synchronously. On invitation
+   * templates this could monopolise Chrome's main thread long enough to trigger
+   * "Page Unresponsive". This version keeps the original image on a canvas,
+   * samples only a thin ring around each OCR box, then covers the box using
+   * native canvas fill operations. We also yield to the browser periodically.
+   */
+  const src=img.baseSrc||img.getSrc();
+  const source=await imageFromSrc(src);
+  const w=source.naturalWidth||source.width,h=source.naturalHeight||source.height;
+  const off=document.createElement('canvas'); off.width=w; off.height=h;
+  const ctx=off.getContext('2d',{willReadFrequently:true}); ctx.drawImage(source,0,0,w,h);
+
+  const median=a=>{if(!a.length)return 248;a.sort((x,y)=>x-y);return a[Math.floor(a.length/2)]};
+  for(let li=0;li<lines.length;li++){
+    const b=lines[li].bbox||{};
+    const x0=Math.max(0,Math.floor(b.x0||0)-2), y0=Math.max(0,Math.floor(b.y0||0)-2);
+    const x1=Math.min(w,Math.ceil(b.x1||x0+1)+2), y1=Math.min(h,Math.ceil(b.y1||y0+1)+2);
+    const bw=Math.max(1,x1-x0), bh=Math.max(1,y1-y0), pad=Math.max(4,Math.min(18,Math.round(bh*.45)));
+    const sx=Math.max(0,x0-pad), sy=Math.max(0,y0-pad), ex=Math.min(w,x1+pad), ey=Math.min(h,y1+pad);
+    const sw=Math.max(1,ex-sx), sh=Math.max(1,ey-sy);
+    let sample;
+    try{sample=ctx.getImageData(sx,sy,sw,sh).data;}catch(e){sample=null;}
+    const rs=[],gs=[],bs=[];
+    if(sample){
+      const stride=Math.max(1,Math.floor(Math.max(sw,sh)/80));
+      for(let yy=0;yy<sh;yy+=stride){
+        for(let xx=0;xx<sw;xx+=stride){
+          // Only sample the ring outside the OCR rectangle.
+          const ax=sx+xx, ay=sy+yy;
+          if(ax>=x0&&ax<x1&&ay>=y0&&ay<y1) continue;
+          const i=(yy*sw+xx)*4, a=sample[i+3]; if(a<100) continue;
+          const r=sample[i],g=sample[i+1],bl=sample[i+2],bright=(r+g+bl)/3;
+          if(bright>115){rs.push(r);gs.push(g);bs.push(bl);}
+        }
+      }
+    }
+    const r=median(rs),g=median(gs),bl=median(bs);
+    ctx.save();
+    ctx.fillStyle=`rgb(${r},${g},${bl})`;
+    // Rounded cover softens rectangular seams on lightly textured paper.
+    const radius=Math.max(1,Math.min(5,bh*.12));
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x0,y0,bw,bh,radius); else ctx.rect(x0,y0,bw,bh);
+    ctx.fill();
+    ctx.restore();
+    if(li%5===4) await uiYield();
+  }
+  await uiYield();
+  return off.toDataURL('image/png');
+}
+
+function waitForOpenCV(timeoutMs=15000){
+  return new Promise((resolve,reject)=>{
+    const started=Date.now();
+    const tick=()=>{
+      if(window.cv && cv.Mat && cv.findContours) return resolve(cv);
+      if(Date.now()-started>timeoutMs) return reject(new Error('Artwork segmentation library did not finish loading.'));
+      setTimeout(tick,120);
+    };
+    tick();
+  });
+}
+
+function imageFromSrc(src){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>resolve(image);
+    image.onerror=()=>reject(new Error('Could not read the uploaded artwork.'));
+    image.crossOrigin='anonymous';
+    image.src=src;
+  });
+}
+
+function estimatePaperColour(image){
+  const off=document.createElement('canvas');
+  off.width=image.naturalWidth||image.width; off.height=image.naturalHeight||image.height;
+  const ctx=off.getContext('2d',{willReadFrequently:true}); ctx.drawImage(image,0,0,off.width,off.height);
+  const d=ctx.getImageData(0,0,off.width,off.height).data;
+  const samples=[];
+  const step=Math.max(3,Math.round(Math.min(off.width,off.height)/120));
+  for(let y=0;y<off.height;y+=step){
+    for(let x=0;x<off.width;x+=step){
+      const i=(y*off.width+x)*4,r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
+      if(a<220) continue;
+      const max=Math.max(r,g,b),min=Math.min(r,g,b),bright=(r+g+b)/3;
+      if(bright>185 && max-min<55) samples.push([r,g,b]);
+    }
+  }
+  if(!samples.length) return {r:255,g:255,b:255,hex:'#ffffff'};
+  const med=k=>{const a=samples.map(v=>v[k]).sort((x,y)=>x-y);return a[Math.floor(a.length/2)]};
+  const r=med(0),g=med(1),b=med(2);
+  return {r,g,b,hex:'#'+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('')};
+}
+
+function mergeBoxes(boxes,gap){
+  let out=boxes.map(b=>({...b})),changed=true;
+  const overlap=(a,b)=>!(a.x+a.w+gap<b.x||b.x+b.w+gap<a.x||a.y+a.h+gap<b.y||b.y+b.h+gap<a.y);
+  while(changed){
+    changed=false;
+    outer:for(let i=0;i<out.length;i++)for(let j=i+1;j<out.length;j++){
+      if(!overlap(out[i],out[j]))continue;
+      const a=out[i],b=out[j],x=Math.min(a.x,b.x),y=Math.min(a.y,b.y),x2=Math.max(a.x+a.w,b.x+b.w),y2=Math.max(a.y+a.h,b.y+b.h);
+      out[i]={x,y,w:x2-x,h:y2-y}; out.splice(j,1); changed=true; break outer;
+    }
+  }
+  return out;
+}
+
+async function splitArtworkIntoFabricLayers(img, sourceSrc){
+  await waitForOpenCV();
+  const source=await imageFromSrc(sourceSrc);
+  const sw=source.naturalWidth||source.width,sh=source.naturalHeight||source.height;
+  const paper=estimatePaperColour(source);
+  const off=document.createElement('canvas');off.width=sw;off.height=sh;
+  const ctx=off.getContext('2d',{willReadFrequently:true});ctx.drawImage(source,0,0,sw,sh);
+  const frame=ctx.getImageData(0,0,sw,sh),d=frame.data;
+
+  // Foreground mask: pixels materially different from the estimated paper colour.
+  const mask=new cv.Mat(sh,sw,cv.CV_8UC1);
+  const md=mask.data;
+  for(let i=0,p=0;i<d.length;i+=4,p++){
+    const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
+    const dist=Math.sqrt((r-paper.r)**2+(g-paper.g)**2+(b-paper.b)**2);
+    const max=Math.max(r,g,b),min=Math.min(r,g,b),sat=max-min,bright=(r+g+b)/3;
+    md[p]=(a>25 && (dist>34 || sat>32 || bright<Math.min(220,(paper.r+paper.g+paper.b)/3-24)))?255:0;
+  }
+  const kernel=cv.getStructuringElement(cv.MORPH_ELLIPSE,new cv.Size(5,5));
+  cv.morphologyEx(mask,mask,cv.MORPH_CLOSE,kernel,new cv.Point(-1,-1),1);
+  cv.dilate(mask,mask,kernel,new cv.Point(-1,-1),1);
+  const contours=new cv.MatVector(),hierarchy=new cv.Mat();
+  cv.findContours(mask,contours,hierarchy,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  const minArea=Math.max(80,sw*sh*0.00018), boxes=[];
+  for(let i=0;i<contours.size();i++){
+    const c=contours.get(i),area=cv.contourArea(c),r=cv.boundingRect(c); c.delete();
+    if(area<minArea||r.width<5||r.height<5)continue;
+    if(r.width*r.height>sw*sh*.93)continue;
+    boxes.push({x:r.x,y:r.y,w:r.width,h:r.height});
+  }
+  hierarchy.delete();contours.delete();kernel.delete();
+  let merged=mergeBoxes(boxes,Math.max(4,Math.round(Math.min(sw,sh)*.008)));
+  merged=merged.filter(b=>b.w*b.h>=minArea).sort((a,b)=>b.w*b.h-a.w*a.h).slice(0,70);
+
+  // Use a copy of the pre-dilation mask to make each region transparent outside artwork.
+  const maskPixels=mask.data.slice(); mask.delete();
+  const pieces=[];
+  for(let n=0;n<merged.length;n++){
+    const b=merged[n],pad=Math.max(2,Math.round(Math.min(b.w,b.h)*.04));
+    const x0=Math.max(0,b.x-pad),y0=Math.max(0,b.y-pad),x1=Math.min(sw,b.x+b.w+pad),y1=Math.min(sh,b.y+b.h+pad);
+    const pw=x1-x0,ph=y1-y0;
+    if(pw<4||ph<4)continue;
+    const pc=document.createElement('canvas');pc.width=pw;pc.height=ph;
+    const pctx=pc.getContext('2d',{willReadFrequently:true});pctx.drawImage(source,x0,y0,pw,ph,0,0,pw,ph);
+    const pdata=pctx.getImageData(0,0,pw,ph);
+    for(let y=0;y<ph;y++)for(let x=0;x<pw;x++){
+      if(maskPixels[(y0+y)*sw+(x0+x)]===0)pdata.data[(y*pw+x)*4+3]=0;
+    }
+    pctx.putImageData(pdata,0,0);
+    pieces.push({src:pc.toDataURL('image/png'),x:x0,y:y0,w:pw,h:ph});
+  }
+  return {paper,pieces};
+}
+
+
+/* Dependency-free reconstruction fallback.
+ * OpenCV is useful but must never be a single point of failure. This scanner
+ * finds non-paper connected regions directly in the browser and exports each
+ * region as its own transparent PNG/Fabric image layer. */
+async function splitArtworkNative(sourceSrc){
+  const source=await imageFromSrc(sourceSrc);
+  const sw=source.naturalWidth||source.width, sh=source.naturalHeight||source.height;
+  const paper=estimatePaperColour(source);
+  const off=document.createElement('canvas'); off.width=sw; off.height=sh;
+  const ctx=off.getContext('2d',{willReadFrequently:true}); ctx.drawImage(source,0,0,sw,sh);
+  const frame=ctx.getImageData(0,0,sw,sh), d=frame.data;
+  // Work on a reduced mask so large uploads stay responsive.
+  const step=Math.max(2,Math.ceil(Math.max(sw,sh)/700));
+  const mw=Math.ceil(sw/step), mh=Math.ceil(sh/step), mask=new Uint8Array(mw*mh);
+  for(let gy=0;gy<mh;gy++)for(let gx=0;gx<mw;gx++){
+    const x=Math.min(sw-1,gx*step),y=Math.min(sh-1,gy*step),i=(y*sw+x)*4;
+    const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3],dist=Math.hypot(r-paper.r,g-paper.g,b-paper.b);
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b),bright=(r+g+b)/3;
+    if(a>30 && (dist>38 || mx-mn>34 || bright<205)) mask[gy*mw+gx]=1;
+  }
+  // Dilate lightly so letters/nearby decoration form useful selectable regions.
+  let grown=mask.slice();
+  for(let pass=0;pass<2;pass++){
+    const next=grown.slice();
+    for(let y=1;y<mh-1;y++)for(let x=1;x<mw-1;x++) if(!grown[y*mw+x]){
+      let hit=0; for(let yy=-1;yy<=1&&!hit;yy++)for(let xx=-1;xx<=1;xx++) if(grown[(y+yy)*mw+x+xx]){hit=1;break}
+      if(hit) next[y*mw+x]=1;
+    }
+    grown=next;
+  }
+  const seen=new Uint8Array(mw*mh), boxes=[], minCells=Math.max(5,Math.round(mw*mh*.00008));
+  const qx=new Int32Array(mw*mh), qy=new Int32Array(mw*mh);
+  for(let sy=0;sy<mh;sy++)for(let sx=0;sx<mw;sx++){
+    const si=sy*mw+sx;if(!grown[si]||seen[si])continue;
+    let head=0,tail=0;qx[tail]=sx;qy[tail++]=sy;seen[si]=1;
+    let minx=sx,maxx=sx,miny=sy,maxy=sy,count=0;
+    while(head<tail){const x=qx[head],y=qy[head++];count++;minx=Math.min(minx,x);maxx=Math.max(maxx,x);miny=Math.min(miny,y);maxy=Math.max(maxy,y);
+      for(let yy=Math.max(0,y-1);yy<=Math.min(mh-1,y+1);yy++)for(let xx=Math.max(0,x-1);xx<=Math.min(mw-1,x+1);xx++){
+        const ni=yy*mw+xx;if(grown[ni]&&!seen[ni]){seen[ni]=1;qx[tail]=xx;qy[tail++]=yy}
+      }
+    }
+    if(count>=minCells){const x=Math.max(0,minx*step-step*2),y=Math.max(0,miny*step-step*2),x2=Math.min(sw,(maxx+1)*step+step*2),y2=Math.min(sh,(maxy+1)*step+step*2);if((x2-x)*(y2-y)<sw*sh*.92)boxes.push({x,y,w:x2-x,h:y2-y})}
+  }
+  let merged=mergeBoxes(boxes,Math.max(5,Math.round(Math.min(sw,sh)*.006))).sort((a,b)=>b.w*b.h-a.w*a.h).slice(0,90);
+  const pieces=[];
+  for(const b of merged){
+    const pc=document.createElement('canvas');pc.width=b.w;pc.height=b.h;const pcx=pc.getContext('2d',{willReadFrequently:true});
+    pcx.drawImage(source,b.x,b.y,b.w,b.h,0,0,b.w,b.h);const pd=pcx.getImageData(0,0,b.w,b.h);
+    for(let y=0;y<b.h;y++)for(let x=0;x<b.w;x++){const i=(y*b.w+x)*4,r=pd.data[i],g=pd.data[i+1],bl=pd.data[i+2];const dist=Math.hypot(r-paper.r,g-paper.g,bl-paper.b),mx=Math.max(r,g,bl),mn=Math.min(r,g,bl),bright=(r+g+bl)/3;if(dist<34&&mx-mn<30&&bright>205)pd.data[i+3]=0}
+    pcx.putImageData(pd,0,0);pieces.push({src:pc.toDataURL('image/png'),x:b.x,y:b.y,w:b.w,h:b.h});
+  }
+  // V21: never fake editability by slicing the page into arbitrary tiles.
+  // If segmentation finds no meaningful artwork, keep the original artwork intact.
+  return {paper,pieces};
+}
+
+function addFabricImageLayer(piece, sourceImage, index){
+  return new Promise(resolve=>{
+    fabric.Image.fromURL(piece.src,obj=>{
+      if(!obj)return resolve(false);
+      obj.set({
+        left:sourceImage.left+piece.x*(sourceImage.scaleX||1),
+        top:sourceImage.top+piece.y*(sourceImage.scaleY||1),
+        scaleX:sourceImage.scaleX||1,scaleY:sourceImage.scaleY||1,
+        objectId:uid('art-layer'),name:`Editable artwork ${index+1}`,
+        fieldType:'auto-art-layer',customerEditable:true,backgroundAsset:false,
+        sourceNormalizedBox:{x:piece.x/(sourceImage.getElement().naturalWidth||sourceImage.width||1),y:piece.y/(sourceImage.getElement().naturalHeight||sourceImage.height||1),w:piece.w/(sourceImage.getElement().naturalWidth||sourceImage.width||1),h:piece.h/(sourceImage.getElement().naturalHeight||sourceImage.height||1)},
+        selectable:true,evented:true,hasControls:true,lockMovementX:false,lockMovementY:false,
+        lockScalingX:false,lockScalingY:false,lockRotation:false
+      });
+      obj.baseSrc=piece.src;
+      canvas.add(obj);resolve(true);
+    },{crossOrigin:'anonymous'});
+  });
+}
+
+function sampleOcrTextColour(img,bbox){
+  try{
+    const el=img.getElement(),w=el.naturalWidth||img.width,h=el.naturalHeight||img.height;
+    const off=document.createElement('canvas');off.width=w;off.height=h;
+    const c=off.getContext('2d',{willReadFrequently:true});c.drawImage(el,0,0,w,h);
+    const x=Math.max(0,Math.floor(bbox.x0)),y=Math.max(0,Math.floor(bbox.y0));
+    const bw=Math.max(1,Math.min(w-x,Math.ceil(bbox.x1-bbox.x0))),bh=Math.max(1,Math.min(h-y,Math.ceil(bbox.y1-bbox.y0)));
+    const d=c.getImageData(x,y,bw,bh).data, dark=[];
+    for(let i=0;i<d.length;i+=4){if(d[i+3]<100)continue;const r=d[i],g=d[i+1],b=d[i+2],bright=(r+g+b)/3;if(bright<185)dark.push([r,g,b])}
+    if(!dark.length)return '#222222';
+    const med=k=>{const a=dark.map(v=>v[k]).sort((a,b)=>a-b);return a[Math.floor(a.length/2)]};
+    return '#'+[med(0),med(1),med(2)].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+  }catch(e){return '#222222'}
+}
+
+async function activatePendingArtwork(o){
+  if(!o||!o._zvPendingArtwork||o._zvActivatingArtwork)return o;
+  const bg=backgroundImageObject();if(!bg||!o.sourceNormalizedBox){o.set({_zvPendingArtwork:false,opacity:1});return o;}
+  o._zvActivatingArtwork=true;
+  try{
+    const patch=await ZenRasterEdit.addArtworkInpaintPatch(canvas,bg,o,{objectId:uid('art-inpaint'),artPatchFor:o.objectId||o.id});
+    const idx=canvas.getObjects().indexOf(o);canvas.moveTo(patch,Math.max(1,idx));canvas.bringToFront(o);
+    o.set({_zvPendingArtwork:false,opacity:1});o.setCoords();canvas.requestRenderAll();snap();info();
+  }catch(err){console.warn('Artwork separation activation failed',err);o.set({_zvPendingArtwork:false,opacity:1});}
+  finally{o._zvActivatingArtwork=false;}
+  return o;
+}
+
+function addFittedOcrText(img,line,index){
+  const mapped=mapOcrBox(img,line.bbox);
+  if(mapped.width<4||mapped.height<4)return false;
+  const sourceEl=img.getElement();
+  const naturalW=sourceEl.naturalWidth||img.width||1,naturalH=sourceEl.naturalHeight||img.height||1;
+  const normalizedBox={
+    x:line.bbox.x0/naturalW,y:line.bbox.y0/naturalH,
+    w:(line.bbox.x1-line.bbox.x0)/naturalW,h:(line.bbox.y1-line.bbox.y0)/naturalH
+  };
+  const fill=sampleOcrTextColour(img,line.bbox);
+
+  // V13 NON-DESTRUCTIVE OCR HOTSPOT.
+  // Keep the pristine uploaded artwork visible. OCR objects start almost
+  // transparent so the original design remains pixel-perfect until the admin
+  // or customer actually changes that word. On first Apply we create a local
+  // cover and turn this object into a normal editable Fabric text object.
+  const initialText=(line.visualFallback?'':line.text);
+  const obj=new fabric.IText(initialText,{
+    left:mapped.left,top:mapped.top,originX:'left',originY:'top',
+    fontFamily:'Arial',fill,fontSize:Math.max(7,mapped.height*.78),lineHeight:1,
+    objectId:uid('ocr-hotspot'),name:line.visualFallback?'Editable script text':`Editable text: ${line.text}`,
+    fieldType:'ocr-auto',autoOcrText:true,customerEditable:true,
+    selectable:true,evented:true,editable:true,hasControls:true,
+    opacity:0,
+    sourceNormalizedBox:normalizedBox,sourceConfidence:line.confidence,
+    ocrOverlayPending:!img._zvReconstructed,sourceText:line.sourceText||line.text||'',visualFallback:!!line.visualFallback
+  });
+  obj.initDimensions();
+  // Never stretch OCR text. Fit with font size only; initial object is a
+  // selectable hotspot and does not alter the visible design.
+  const maxW=Math.max(4,mapped.width), maxH=Math.max(4,mapped.height);
+  let fs=obj.fontSize;
+  for(let i=0;i<12 && ((obj.width||1)>maxW*1.08 || (obj.height||1)>maxH*1.15);i++){
+    fs=Math.max(6,fs*.9); obj.set('fontSize',fs); obj.initDimensions();
+  }
+  obj.set({scaleX:1,scaleY:1});
+  obj.setCoords();canvas.add(obj);return true;
+}
+
+async function activatePendingOcrText(o){
+  if(!o || !o.ocrOverlayPending || o._zvActivatingOcr) return;
+  const img=backgroundImageObject(), box=o.sourceNormalizedBox;
+  if(!img || !box){o.set({ocrOverlayPending:false,opacity:1});return;}
+  o._zvActivatingOcr=true;
+  try{
+    // V23: glyph-level background reconstruction. No solid rectangle is ever
+    // placed behind edited text. Only likely printed glyph pixels are replaced
+    // from nearby paper/texture pixels.
+    const patch=await ZenRasterEdit.addPatchToCanvas(canvas,img,box,{objectId:uid('ocr-inpaint'),ocrCoverFor:o.objectId||o.id});
+    const idx=canvas.getObjects().indexOf(o);canvas.moveTo(patch,Math.max(1,idx));
+    const mapped=ZenRasterEdit.canvasRectForNormalized(img,box);
+    o.set({ocrOverlayPending:false,opacity:1,scaleX:1,scaleY:1,left:mapped.left,top:mapped.top});
+    o.initDimensions?.();
+    let fs=o.fontSize||Math.max(8,mapped.height*.75);
+    for(let i=0;i<24 && ((o.width||1)>mapped.width*1.05 || (o.height||1)>mapped.height*1.18);i++){
+      fs=Math.max(6,fs*.94);o.set('fontSize',fs);o.initDimensions?.();
+    }
+    canvas.bringToFront(o);o.setCoords();canvas.requestRenderAll();
+  }catch(err){console.warn('Text background reconstruction failed',err);o.set({ocrOverlayPending:false,opacity:1});}
+  finally{o._zvActivatingOcr=false;}
+}
+
+function dedupeOcrDetections(items){
+  const scoreOverlap=(a,b)=>{
+    const x=Math.max(0,Math.min(a.bbox.x1,b.bbox.x1)-Math.max(a.bbox.x0,b.bbox.x0));
+    const y=Math.max(0,Math.min(a.bbox.y1,b.bbox.y1)-Math.max(a.bbox.y0,b.bbox.y0));
+    const inter=x*y, aa=Math.max(1,(a.bbox.x1-a.bbox.x0)*(a.bbox.y1-a.bbox.y0)), bb=Math.max(1,(b.bbox.x1-b.bbox.x0)*(b.bbox.y1-b.bbox.y0));
+    return inter/Math.min(aa,bb);
+  };
+  const out=[];
+  items.sort((a,b)=>(b.confidence||0)-(a.confidence||0));
+  for(const item of items){
+    const dup=out.find(o=>scoreOverlap(item,o)>.58 && (String(item.text).toLowerCase()===String(o.text).toLowerCase() || scoreOverlap(item,o)>.82));
+    if(!dup) out.push(item);
+  }
+  return out.sort((a,b)=>a.bbox.y0-b.bbox.y0||a.bbox.x0-b.bbox.x0);
+}
+
+async function makeOcrVariant(src, scale=2, mode='contrast'){
+  const im=await imageFromSrc(src), w=im.naturalWidth||im.width, h=im.naturalHeight||im.height;
+  const c=document.createElement('canvas');c.width=Math.round(w*scale);c.height=Math.round(h*scale);
+  const x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingEnabled=true;x.drawImage(im,0,0,c.width,c.height);
+  const f=x.getImageData(0,0,c.width,c.height),d=f.data;
+  for(let i=0;i<d.length;i+=4){
+    const gray=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+    let v=gray;
+    if(mode==='contrast') v=Math.max(0,Math.min(255,(gray-128)*1.75+128));
+    if(mode==='threshold') v=gray<190?0:255;
+    d[i]=d[i+1]=d[i+2]=v;
+  }
+  x.putImageData(f,0,0);return {src:c.toDataURL('image/png'),scale};
+}
+
+async function runMultiPassOcr(src, progress){
+  if(!window.Tesseract) return [];
+  const sourceImage=await imageFromSrc(src);
+  const nw=sourceImage.naturalWidth||sourceImage.width||1, nh=sourceImage.naturalHeight||sourceImage.height||1;
+  // V31: mixed-layout + sparse-text passes. Thin calligraphy and small footer
+  // lines need a different segmentation mode from ordinary body text.
+  const passes=[
+    {src,scale:1,label:'original-auto',psm:'3'},
+    {src,scale:1,label:'original-sparse',psm:'11'}
+  ];
+  try{const v=await makeOcrVariant(src,1.8,'contrast');passes.push({...v,label:'contrast-block',psm:'6'});}catch(e){}
+  try{const v=await makeOcrVariant(src,2.15,'threshold');passes.push({...v,label:'threshold-sparse',psm:'11'});}catch(e){}
+  const all=[];
+  for(let pi=0;pi<passes.length;pi++){
+    const pass=passes[pi];
+    try{
+      const result=await Promise.race([
+        Tesseract.recognize(pass.src,'eng',{tessedit_pageseg_mode:pass.psm||'3',preserve_interword_spaces:'1',logger:m=>{if(m.status==='recognizing text')progress.textContent=`Detecting all text stylesâ€¦ pass ${pi+1}/${passes.length} Â· ${Math.round((m.progress||0)*100)}%`; }},{blocks:true,text:true,hocr:false,tsv:false}),
+        new Promise((_,reject)=>setTimeout(()=>reject(new Error('OCR pass timeout')),45000))
+      ]);
+      const found=normaliseOcrLines(result?.data||{});
+      for(const f of found){
+        if(pass.scale!==1){f.bbox={x0:f.bbox.x0/pass.scale,y0:f.bbox.y0/pass.scale,x1:f.bbox.x1/pass.scale,y1:f.bbox.y1/pass.scale};}
+        all.push(f);
+      }
+    }catch(e){console.warn('OCR pass skipped',pi,e)}
+    await uiYield();
+  }
+  return validateOcrDetections(all,nw,nh);
+}
+
+
+// V33 generic visual text-band fallback.
+// OCR engines regularly miss calligraphy, thin serif type and decorative names.
+// This detector does not try to guess the wording. It finds line-shaped ink
+// regions in the central design area and creates transparent Fabric hotspots.
+// The original raster stays pixel-perfect until the user actually edits a field.
+async function detectVisualTextBands(src, existing=[]){
+  const im=await imageFromSrc(src), nw=im.naturalWidth||im.width||1, nh=im.naturalHeight||im.height||1;
+  const maxW=900, scale=Math.min(1,maxW/nw), w=Math.max(1,Math.round(nw*scale)), h=Math.max(1,Math.round(nh*scale));
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0,w,h);
+  const px=ctx.getImageData(0,0,w,h).data;
+  const isInk=(x,y)=>{
+    const i=(y*w+x)*4,a=px[i+3];if(a<60)return false;
+    const r=px[i],g=px[i+1],b=px[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+    const lum=.299*r+.587*g+.114*b, chroma=mx-mn;
+    // Works for black/brown/gold/coloured typography on light stationery.
+    return lum<178 || (chroma>22 && lum<212);
+  };
+  const overlap=(a,b)=>{const ix=Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0)),iy=Math.max(0,Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0));const inter=ix*iy;if(!inter)return 0;return inter/Math.min(Math.max(1,(a.x1-a.x0)*(a.y1-a.y0)),Math.max(1,(b.x1-b.x0)*(b.y1-b.y0)));};
+  const bands=[];
+  // Focus on the broad central area. Decorative borders usually live outside it.
+  const scanL=Math.floor(w*.12), scanR=Math.ceil(w*.88), scanW=scanR-scanL;
+  const rowInk=new Array(h).fill(0);
+  for(let y=0;y<h;y++)for(let x=scanL;x<scanR;x++)if(isInk(x,y))rowInk[y]++;
+  // Smooth projection so disconnected cursive strokes stay in one line.
+  const smooth=rowInk.map((_,y)=>{let n=0,cnt=0;for(let k=-2;k<=2;k++){const yy=y+k;if(yy>=0&&yy<h){n+=rowInk[yy];cnt++;}}return n/cnt;});
+  const minRow=Math.max(3,scanW*.0045), maxRow=scanW*.55;
+  const active=smooth.map(n=>n>=minRow&&n<=maxRow);
+  // bridge small vertical gaps in thin/script fonts
+  for(let y=1;y<h-1;y++)if(!active[y]&&active[y-1]&&active[y+1])active[y]=true;
+  for(let y=2;y<h-2;y++)if(!active[y]&&(active[y-1]||active[y-2])&&(active[y+1]||active[y+2]))active[y]=true;
+  let runs=[];let sy=-1;
+  for(let y=0;y<=h;y++){
+    if(y<h&&active[y]){if(sy<0)sy=y;continue;}
+    if(sy>=0){runs.push([sy,y-1]);sy=-1;}
+  }
+  // Merge adjacent runs that are only a few pixels apart (dot on i, accents, etc.).
+  const merged=[];
+  for(const r of runs){const prev=merged[merged.length-1];if(prev&&r[0]-prev[1]<=Math.max(4,h*.006))prev[1]=r[1];else merged.push(r.slice());}
+  for(const [y0,y1] of merged){
+    const bh=y1-y0+1;if(bh<3||bh>h*.105)continue;
+    const col=new Array(scanW).fill(0);
+    for(let yy=y0;yy<=y1;yy++)for(let x=scanL;x<scanR;x++)if(isInk(x,yy))col[x-scanL]++;
+    const minCol=Math.max(1,bh*.045);const on=col.map(n=>n>=minCol);
+    // bridge horizontal gaps within words/script flourishes
+    const bridge=Math.max(5,Math.round(w*.012));
+    let last=-1;for(let i=0;i<on.length;i++){if(on[i]){if(last>=0&&i-last<=bridge)for(let j=last;j<=i;j++)on[j]=true;last=i;}}
+    const spans=[];let sx=-1;
+    for(let i=0;i<=on.length;i++){
+      if(i<on.length&&on[i]){if(sx<0)sx=i;continue;}
+      if(sx>=0){spans.push([sx,i-1]);sx=-1;}
+    }
+    for(const [a,b] of spans){
+      const bx0=scanL+a,bx1=scanL+b+1,bw=bx1-bx0,cx=(bx0+bx1)/2;
+      // Text-line geometry: wide enough, reasonably central and not page-wide border art.
+      if(bw<w*.07||bw>w*.68)continue;
+      if(cx<w*.24||cx>w*.76)continue;
+      if(bw/Math.max(1,bh)<1.25)continue;
+      const box={x0:bx0/scale,y0:y0/scale,x1:bx1/scale,y1:(y1+1)/scale};
+      // OCR already owns a region? Avoid duplicate hotspots, but keep fallback when
+      // OCR only caught a tiny fragment of a much wider calligraphy line.
+      // V36: a tiny/incorrect OCR fragment must NOT suppress a full visual text line.
+      // Previous code divided overlap by the smaller box, so OCR junk such as "LV ."
+      // inside a large script name counted as 100% covered and removed the useful fallback.
+      // Only suppress the fallback when OCR genuinely covers most of THIS visual band.
+      const covered=existing.some(e=>{
+        if(!e?.bbox)return false;
+        const a=box,b=e.bbox;
+        const ix=Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0));
+        const iy=Math.max(0,Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0));
+        const inter=ix*iy, area=Math.max(1,(a.x1-a.x0)*(a.y1-a.y0));
+        const widthCoverage=Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0))/Math.max(1,a.x1-a.x0);
+        return inter/area>.52 && widthCoverage>.62;
+      });
+      if(covered)continue;
+      bands.push({text:'',bbox:box,confidence:0,visualFallback:true,sourceText:''});
+    }
+  }
+  // V37 SECOND FALLBACK: use the entire horizontal ink extent of each row-band.
+  // Script/calligraphy often has disconnected flourishes which the span pass above
+  // splits into several pieces. This second pass intentionally creates one broad
+  // selectable line hotspot without trying to guess the wording.
+  for(const [y0,y1] of merged){
+    const bh=y1-y0+1;if(bh<3||bh>h*.11)continue;
+    let minX=w,maxX=-1,ink=0;
+    for(let yy=y0;yy<=y1;yy++)for(let x=scanL;x<scanR;x++)if(isInk(x,yy)){ink++;if(x<minX)minX=x;if(x>maxX)maxX=x;}
+    if(maxX<minX)continue;
+    const bw=maxX-minX+1,cx=(minX+maxX)/2,density=ink/Math.max(1,bw*bh);
+    if(bw<w*.10||bw>w*.70)continue;
+    if(cx<w*.23||cx>w*.77)continue;
+    if(bw/Math.max(1,bh)<1.65)continue;
+    // Text lines are relatively sparse compared with filled artwork blocks.
+    if(density<.015||density>.52)continue;
+    const box={x0:minX/scale,y0:y0/scale,x1:(maxX+1)/scale,y1:(y1+1)/scale};
+    const covered=existing.some(e=>{
+      if(!e?.bbox)return false;const a=box,b=e.bbox;
+      const ix=Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0));
+      const iy=Math.max(0,Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0));
+      const inter=ix*iy,area=Math.max(1,(a.x1-a.x0)*(a.y1-a.y0));
+      const wc=Math.max(0,Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0))/Math.max(1,a.x1-a.x0);
+      return inter/area>.58&&wc>.68;
+    });
+    if(!covered)bands.push({text:'',bbox:box,confidence:0,visualFallback:true,sourceText:''});
+  }
+  // De-duplicate fallbacks against each other, preferring the wider line region.
+  const ordered=bands.slice().sort((a,b)=>(b.bbox.x1-b.bbox.x0)-(a.bbox.x1-a.bbox.x0));
+  return ordered.filter((b,i)=>!ordered.slice(0,i).some(a=>overlap(a.bbox,b.bbox)>.62));
+}
+
+async function reconstructAllLayers(img, originalSrc, detected, progress){
+  /* V22 SAFE MASTER
+   * Never destructively erase OCR boxes or replace the uploaded design during
+   * automatic conversion. The pristine upload remains the visual source of
+   * truth. Extracted artwork objects are helper masks/layers and start hidden;
+   * they are only revealed when an admin/customer actually edits that region.
+   * This prevents OCR/segmentation mistakes from visually damaging templates.
+   */
+  progress.textContent='Preparing non-destructive editable regionsâ€¦';
+  await uiYield();
+  let split=null;
+  try{split=await splitArtworkNative(originalSrc);}catch(e){console.warn('native segmentation',e)}
+  if(!split || !split.pieces?.length){
+    try{split=await splitArtworkIntoFabricLayers(img,originalSrc);}catch(e){console.warn('OpenCV segmentation unavailable',e)}
+  }
+  const pieces=split?.pieces||[];
+  const created=[];
+  for(let i=0;i<pieces.length;i++){
+    const before=canvas.getObjects().length;
+    if(await addFabricImageLayer(pieces[i],img,i)){
+      const obj=canvas.getObjects()[canvas.getObjects().length-1];
+      if(obj && obj.fieldType==='auto-art-layer'){
+        obj.set({opacity:0.001, _zvPendingArtwork:true});
+        obj.setCoords();
+      }
+      created.push(i);
+    }
+    if(i%4===3){progress.textContent=`Preparing editable artwork regionsâ€¦ ${i+1}/${pieces.length}`;await uiYield();}
+  }
+  // ALWAYS keep the pristine source visible and locked. Never punch holes in it.
+  img.set({opacity:1,visible:true,selectable:false,evented:false,customerEditable:false,
+           backgroundAsset:true,excludeFromExport:false,name:'Pristine source artwork'});
+  img._zvReconstructed=false;
+  await uiYield();
+  return created.length;
+}
+
+async function convertCurrentArtworkToEditable(){
+  const progress=$('conversionProgress');
+  const img=backgroundImageObject();
+  if(!img){progress.textContent='Upload an image first.';progress.className='status err';return;}
+  if(img.autoConversionRunning)return;
+  img.autoConversionRunning=true; conversionRunning=true;
+  const originalSrc=img.baseSrc||img.getSrc(); img.baseSrc=originalSrc;
+  clearAutoOcrLayers();
+  canvas.getObjects().slice().forEach(o=>{if(o.fieldType==='auto-art-layer'||o.fieldType==='ocr-cover')canvas.remove(o)});
+  progress.textContent='Analysing the complete template safelyâ€¦';progress.className='status';
+  try{
+    const detected=await runMultiPassOcr(originalSrc,progress);
+    progress.textContent=`Validated ${detected.length} OCR text region${detected.length===1?'':'s'}; checking script/calligraphy linesâ€¦`;
+    await uiYield();
+    const visualFallback=await detectVisualTextBands(originalSrc,detected);
+    detected.push(...visualFallback);
+    progress.textContent=`Prepared ${detected.length} editable text region${detected.length===1?'':'s'} (${visualFallback.length} visual fallback hotspot${visualFallback.length===1?'':'s'}).`;
+    await uiYield();
+    img._zvReconstructed=false;
+    const artCount=await reconstructAllLayers(img,originalSrc,detected,progress);
+    let createdText=0;
+    detected.forEach((word,index)=>{if(addFittedOcrText(img,word,index))createdText++;});
+    // Bring reconstructed text above artwork pieces.
+    canvas.getObjects().filter(o=>o.autoOcrText||o.fieldType==='ocr-auto').forEach(o=>canvas.bringToFront(o));
+    conversionReady=true; conversionRunning=false;
+    canvas.requestRenderAll();snap();info();
+    progress.textContent=`Conversion complete safely: ${createdText} editable text hotspot${createdText===1?'':'s'} + ${artCount} artwork region${artCount===1?'':'s'}. The original design remains pixel-perfect until an element is edited.`;
+    progress.className='status ok';
+  }catch(error){
+    console.error(error);
+    // Do not pretend a flat image is fully editable. Keep it visible and report the conversion issue.
+    img.set({opacity:1,visible:true,selectable:true,evented:true,customerEditable:true,excludeFromExport:false,backgroundAsset:true});
+    conversionReady=false;conversionRunning=false;
+    progress.textContent='Automatic full-layer conversion could not complete. The template was kept unchanged; please retry conversion before publishing.';
+    progress.className='status err';
+  }finally{conversionRunning=false;img.autoConversionRunning=false;}
+}
+
+$('convertToEditableBtn').onclick=convertCurrentArtworkToEditable;
+
+// V15: make invisible OCR fields directly clickable on top of the preserved source artwork.
+// Fabric normally returns the full-page image as the target, so route a click to the
+// smallest OCR hotspot whose source bounding box contains the pointer.
+function ocrHotspotAtPointer(pointer){
+  const bg=backgroundImageObject();
+  if(!bg)return null;
+  const el=bg.getElement(), nw=el.naturalWidth||bg.width||1, nh=el.naturalHeight||bg.height||1;
+  const sx=bg.scaleX||1, sy=bg.scaleY||1;
+  const hits=canvas.getObjects().filter(o=>(o.autoOcrText||o.fieldType==='ocr-auto')&&o.sourceNormalizedBox).filter(o=>{
+    const b=o.sourceNormalizedBox;
+    const l=(bg.left||0)+b.x*nw*sx, t=(bg.top||0)+b.y*nh*sy;
+    const w=b.w*nw*sx, h=b.h*nh*sy;
+    const pad=Math.max(5,Math.min(14,h*.45));
+    return pointer.x>=l-pad&&pointer.x<=l+w+pad&&pointer.y>=t-pad&&pointer.y<=t+h+pad;
+  });
+  hits.sort((a,b)=>(a.sourceNormalizedBox.w*a.sourceNormalizedBox.h)-(b.sourceNormalizedBox.w*b.sourceNormalizedBox.h));
+  if(hits[0]) return hits[0];
+
+  // V38 TEXT-FIRST fallback: decorative/artwork masks must never steal a click
+  // from a printed text line. If the exact OCR box is slightly wrong, choose
+  // the nearest editable text hotspot on the same visual row. This is
+  // especially important for cursive names and small invitation footer text.
+  const near=canvas.getObjects().filter(o=>(o.autoOcrText||o.fieldType==='ocr-auto')&&o.sourceNormalizedBox).map(o=>{
+    const b=o.sourceNormalizedBox;
+    const l=(bg.left||0)+b.x*nw*sx, t=(bg.top||0)+b.y*nh*sy;
+    const w=b.w*nw*sx, h=b.h*nh*sy, cx=l+w/2, cy=t+h/2;
+    const dy=Math.abs(pointer.y-cy), dx=Math.max(0,Math.abs(pointer.x-cx)-w/2);
+    const rowTol=Math.max(12,h*1.35), xTol=Math.max(24,w*.35);
+    return {o,score:dy+dx*.35,ok:dy<=rowTol&&dx<=xTol};
+  }).filter(x=>x.ok).sort((a,b)=>a.score-b.score);
+  return near[0]?.o||null;
+}
+function artworkHotspotAtPointer(pointer){
+  const hits=canvas.getObjects().filter(o=>o.fieldType==='auto-art-layer'&&o._zvPendingArtwork).filter(o=>{const r=o.getBoundingRect(true,true);return pointer.x>=r.left&&pointer.x<=r.left+r.width&&pointer.y>=r.top&&pointer.y<=r.top+r.height;});
+  hits.sort((a,b)=>{const ar=a.getBoundingRect(true,true),br=b.getBoundingRect(true,true);return ar.width*ar.height-br.width*br.height;});return hits[0]||null;
+}
+
+canvas.on('mouse:down',ev=>{
+  if(manualMappingMode||pendingField)return;
+  const p=canvas.getPointer(ev.e);
+  // V26: text always wins over broad artwork masks. Previous versions checked
+  // artwork first, so a large floral region could steal clicks from OCR text.
+  const hit=ocrHotspotAtPointer(p);
+  if(hit){canvas.setActiveObject(hit);info();canvas.requestRenderAll();return;}
+  // V38: normal clicks are reserved for editable text. Broad automatic artwork
+  // regions were the reason Chad/Reception/address clicks selected
+  // "Editable artwork 1" instead of text. Hold Alt only when intentionally
+  // selecting an extracted artwork region.
+  if(ev.e && ev.e.altKey){
+    const art=artworkHotspotAtPointer(p);
+    if(art){canvas.setActiveObject(art);info();canvas.requestRenderAll();}
+  }
+});
+canvas.on('mouse:dblclick',async ev=>{
+  if(manualMappingMode||pendingField)return;
+  const p=canvas.getPointer(ev.e); // V26 fix: V25 referenced an undefined `p` here.
+  const hit=ocrHotspotAtPointer(p);
+  if(hit){
+    if(hit.visualFallback && !String(hit.text||'').trim()){
+      const value=window.prompt('Enter replacement text','');
+      if(value===null)return;
+      hit.set({text:value,opacity:0});hit.initDimensions?.();
+    }
+    await activatePendingOcrText(hit);
+    canvas.setActiveObject(hit);hit.enterEditing?.();hit.selectAll?.();info();canvas.requestRenderAll();snap();
+    return;
+  }
+  const art=artworkHotspotAtPointer(p);
+  if(art){await activatePendingArtwork(art);canvas.setActiveObject(art);info();canvas.requestRenderAll();snap();}
+});
+
+function recolourAdminArtwork(img, colour){
+  return new Promise((resolve,reject)=>{
+    const source=img.getSrc()||img.baseSrc; if(!source)return reject(new Error('No artwork source'));
+    const src=new Image(); src.crossOrigin='anonymous';
+    src.onload=()=>{try{
+      const off=document.createElement('canvas');off.width=src.naturalWidth||src.width;off.height=src.naturalHeight||src.height;
+      const ctx=off.getContext('2d',{willReadFrequently:true});ctx.drawImage(src,0,0);
+      const frame=ctx.getImageData(0,0,off.width,off.height),d=frame.data;
+      const rgb=colour.replace('#','');const target={r:parseInt(rgb.slice(0,2),16),g:parseInt(rgb.slice(2,4),16),b:parseInt(rgb.slice(4,6),16)};
+      for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],max=Math.max(r,g,b),min=Math.min(r,g,b),chroma=max-min,brightness=(r+g+b)/3;
+        if(brightness>168&&chroma<62){const light=Math.max(0,Math.min(1,(brightness-168)/87)),neutral=Math.max(0,Math.min(1,1-chroma/62)),strength=Math.max(.18,light*neutral);
+          d[i]=Math.round(r*(1-strength)+target.r*strength);d[i+1]=Math.round(g*(1-strength)+target.g*strength);d[i+2]=Math.round(b*(1-strength)+target.b*strength);}}
+      ctx.putImageData(frame,0,0);resolve(off.toDataURL('image/png'));
+    }catch(e){reject(e)}};src.onerror=()=>reject(new Error('Could not recolour artwork'));src.src=source;
+  });
+}
+
+
+function hexRgbAdmin(hex){hex=(hex||'#000000').replace('#','');return{r:parseInt(hex.slice(0,2),16)||0,g:parseInt(hex.slice(2,4),16)||0,b:parseInt(hex.slice(4,6),16)||0}}
+function rgbToHsvAdmin(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return{h,s:mx?d/mx:0,v:mx}}
+function hsvToRgbAdmin(h,s,v){h=((h%360)+360)%360;const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return{r:Math.round((r+m)*255),g:Math.round((g+m)*255),b:Math.round((b+m)*255)}}
+function adjustAdminArtwork(img,opts){
+  return new Promise((resolve,reject)=>{
+    const source=img.getSrc()||img.baseSrc;if(!source)return reject(new Error('No artwork source'));
+    const src=new Image();src.crossOrigin='anonymous';
+    src.onload=()=>{try{
+      const off=document.createElement('canvas');off.width=src.naturalWidth||src.width;off.height=src.naturalHeight||src.height;
+      const ctx=off.getContext('2d',{willReadFrequently:true});ctx.drawImage(src,0,0,off.width,off.height);
+      const frame=ctx.getImageData(0,0,off.width,off.height),d=frame.data,tint=hexRgbAdmin(opts.tint),tintStrength=Math.max(0,Math.min(1,(opts.tintStrength||0)/100));
+      const satMul=(opts.saturation||100)/100,brightMul=(opts.brightness||100)/100,contrast=(opts.contrast||100)/100,hue=Number(opts.hue||0);
+      for(let i=0;i<d.length;i+=4){if(d[i+3]<10)continue;let r=d[i],g=d[i+1],b=d[i+2];const hsv=rgbToHsvAdmin(r,g,b);const chroma=Math.max(r,g,b)-Math.min(r,g,b);
+        // Only colourful artwork: keep white/cream paper and neutral black/grey text untouched.
+        if(hsv.s<0.14||chroma<24||hsv.v<0.16)continue;
+        hsv.h+=hue;hsv.s=Math.max(0,Math.min(1,hsv.s*satMul));hsv.v=Math.max(0,Math.min(1,hsv.v*brightMul));let out=hsvToRgbAdmin(hsv.h,hsv.s,hsv.v);
+        out.r=(out.r-128)*contrast+128;out.g=(out.g-128)*contrast+128;out.b=(out.b-128)*contrast+128;
+        if(tintStrength){out.r=out.r*(1-tintStrength)+tint.r*tintStrength;out.g=out.g*(1-tintStrength)+tint.g*tintStrength;out.b=out.b*(1-tintStrength)+tint.b*tintStrength}
+        d[i]=Math.max(0,Math.min(255,Math.round(out.r)));d[i+1]=Math.max(0,Math.min(255,Math.round(out.g)));d[i+2]=Math.max(0,Math.min(255,Math.round(out.b)));
+      }
+      ctx.putImageData(frame,0,0);resolve(off.toDataURL('image/png'));
+    }catch(e){reject(e)}};src.onerror=()=>reject(new Error('Could not adjust artwork'));src.src=source;
+  });
+}
+
+const ADMIN_FONT_LIST=['Arial','Georgia','Verdana','Trebuchet MS','Times New Roman','Courier New','Inter','Roboto','Open Sans','Lato','Montserrat','Poppins','Nunito','Raleway','Oswald','Playfair Display','Merriweather','DM Sans','Manrope','Bebas Neue','Anton','Pacifico','Lobster','Abril Fatface','Cinzel','Cormorant Garamond','Cormorant SC','Quicksand','Rubik','Work Sans','Source Sans 3','Josefin Sans','Archivo','Fira Sans','Ubuntu','Cabin','Karla','Libre Baskerville','Dancing Script','Great Vibes','Caveat','Permanent Marker','Sacramento','Parisienne','Allura','Alex Brush','Marck Script','Satisfy','Kaushan Script','Courgette','Yellowtail','Cookie','Rochester','Tangerine','Italianno','Petit Formal Script','Bodoni Moda','Prata','Lora','Crimson Text','EB Garamond','Spectral','Libre Caslon Text','Cardo','Domine','Arvo','Roboto Slab','Zilla Slab','Alegreya','Alegreya Sans','Barlow','Barlow Condensed','Exo 2','Orbitron','Rajdhani','Titillium Web','Mukta','PT Sans','PT Serif','Noto Sans','Noto Serif','Noto Sans Display','Noto Serif Display'];
+function loadAdminFont(name){if(['Arial','Georgia','Verdana','Trebuchet MS','Times New Roman','Courier New'].includes(name))return;const id='admin-gf-'+name.replace(/\W/g,'-');if(document.getElementById(id))return;const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(name).replace(/%20/g,'+')+':wght@300;400;500;600;700;800&display=swap';document.head.appendChild(l);}
+function buildAdminFonts(filter=''){
+  const select=$('fontFamily'),lib=$('adminFontLibrary');if(!select||!lib)return;
+  const current=select.value||'Arial';select.innerHTML='';ADMIN_FONT_LIST.forEach(f=>select.add(new Option(f,f)));if(ADMIN_FONT_LIST.includes(current))select.value=current;
+  lib.innerHTML='';ADMIN_FONT_LIST.filter(f=>f.toLowerCase().includes(filter.toLowerCase())).slice(0,70).forEach(f=>{const b=document.createElement('button');b.type='button';b.textContent=f;b.style.fontFamily=f;b.onclick=()=>{loadAdminFont(f);select.value=f;const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set({fontFamily:f,opacity:1});canvas.requestRenderAll();snap();info();}};lib.appendChild(b);});
+}
+buildAdminFonts();$('adminFontSearch')?.addEventListener('input',e=>buildAdminFonts(e.target.value));$('fontFamily')?.addEventListener('change',e=>loadAdminFont(e.target.value));ADMIN_FONT_LIST.slice(6,28).forEach(loadAdminFont);
+function setAdminAnyColour(c){if(!/^#[0-9a-f]{6}$/i.test(c))return;const norm=c.toUpperCase();$('fillColor').value=norm;$('fillColorAny').value=norm;$('fillHex').value=norm;const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set({fill:norm,opacity:1});}else if(o&&o.type!=='image')o.set('fill',norm);canvas.requestRenderAll();snap();info();}
+$('fillColorAny')?.addEventListener('input',e=>setAdminAnyColour(e.target.value));$('fillHex')?.addEventListener('change',e=>setAdminAnyColour(e.target.value));$('fillColor')?.addEventListener('input',e=>{if($('fillColorAny'))$('fillColorAny').value=e.target.value;if($('fillHex'))$('fillHex').value=e.target.value.toUpperCase();});
+
+const ADMIN_SWATCHES=['#111827','#000000','#ffffff','#7c3aed','#8b5cf6','#2563eb','#0ea5e9','#059669','#16a34a','#eab308','#f97316','#dc2626','#ec4899','#a855f7','#6b7280','#d4af37'];
+const adminPalette=$('adminColourPalette');
+if(adminPalette) ADMIN_SWATCHES.forEach(c=>{const b=document.createElement('button');b.type='button';b.title=c;b.style.background=c;b.onclick=()=>{$('fillColor').value=c;const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set({fill:c,opacity:1});canvas.requestRenderAll();snap();info();}else if(o&&o.type!=='image'){o.set('fill',c);canvas.requestRenderAll();snap();info();}};adminPalette.appendChild(b)});
+['adminHue','adminSaturation','adminBrightness','adminContrast'].forEach(id=>{const el=$(id),val=$(id+'Val');if(el&&val)el.oninput=()=>{val.textContent=id==='adminHue'?el.value+'Â°':el.value+'%'}});
+$('applyArtworkColourBtn').onclick=async()=>{const o=selected();if(!o||o.type!=='image')return alert('Select the uploaded artwork/image first.');if(o._zvPendingArtwork)await activatePendingArtwork(o);const btn=$('applyArtworkColourBtn');btn.disabled=true;btn.textContent='Applyingâ€¦';try{const data=await adjustAdminArtwork(o,{hue:$('adminHue').value,saturation:$('adminSaturation').value,brightness:$('adminBrightness').value,contrast:$('adminContrast').value,tint:$('adminTint').value,tintStrength:$('adminTintStrength').value});await new Promise(res=>o.setSrc(data,()=>{o.setCoords();res()}));canvas.requestRenderAll();snap();info();}catch(e){alert(e.message||'Artwork colour adjustment failed.')}finally{btn.disabled=false;btn.textContent='Apply artwork colour'}};
+$('resetArtworkColourBtn').onclick=()=>{const o=selected();if(!o||o.type!=='image'||!o.baseSrc)return;['adminHue','adminTintStrength'].forEach(id=>$(id).value=0);['adminSaturation','adminBrightness','adminContrast'].forEach(id=>$(id).value=100);$('adminHueVal').textContent='0Â°';$('adminSaturationVal').textContent=$('adminBrightnessVal').textContent=$('adminContrastVal').textContent='100%';o.setSrc(o.baseSrc,()=>{o.setCoords();canvas.requestRenderAll();snap();info()})};
+
+
+$('backUpload').onchange=e=>{uploadImage(e.target.files[0],1,'Back',true);e.target.value=''};
+$('logoUpload').onchange=e=>{uploadImage(e.target.files[0],active,'Logo',false);e.target.value=''};
+
+function textObject({text,left,top,fontSize,fill,fontWeight='normal',fieldType='custom',textAlign='left',originX='left'}) {
+  return {
+    id:uid('field'),
+    type:'text',
+    left,top,text,fontSize,
+    font:'Arial',
+    fontWeight,
+    fill,
+    opacity:1,
+    locked:false,
+    fieldType,
+    customerEditable:true,
+    textAlign,
+    originX,
+    originY:'top',
+    name:`${fieldType} field`
+  };
+}
+
+function getBackground(page) {
+  return (page.objects||[]).find(o=>o.type==='image'&&o.backgroundAsset);
+}
+
+function hasBackground(page) {
+  return !!getBackground(page);
+}
+
+/*
+ * Exact field regions for the supplied front image.
+ */
+
+function coverObject({left, top, width, height, fill, name}) {
+  return {
+    id: uid('cover'),
+    type: 'rect',
+    left,
+    top,
+    width,
+    height,
+    fill,
+    stroke: null,
+    strokeWidth: 0,
+    opacity: 1,
+    locked: true,
+    customerEditable: false,
+    backgroundAsset: false,
+    name: name || 'Original text cover'
+  };
+}
+
+function sampleRegionColour(imageSrc, region) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => {
+      const sampleCanvas = document.createElement('canvas');
+      sampleCanvas.width = image.width;
+      sampleCanvas.height = image.height;
+
+      const context = sampleCanvas.getContext('2d', {
+        willReadFrequently: true
+      });
+
+      context.drawImage(image, 0, 0);
+
+      const x = Math.max(
+        0,
+        Math.floor((region.x - 0.025) * image.width)
+      );
+
+      const y = Math.max(
+        0,
+        Math.floor((region.y - 0.025) * image.height)
+      );
+
+      const width = Math.max(
+        1,
+        Math.min(
+          image.width - x,
+          Math.ceil((region.w + 0.05) * image.width)
+        )
+      );
+
+      const height = Math.max(
+        1,
+        Math.min(
+          image.height - y,
+          Math.ceil((region.h + 0.05) * image.height)
+        )
+      );
+
+      const data = context.getImageData(
+        x,
+        y,
+        width,
+        height
+      ).data;
+
+      const colours = [];
+
+      /*
+       * Sample mostly the border around the text area so the text pixels
+       * themselves do not dominate the selected colour.
+       */
+      for (let py = 0; py < height; py += 2) {
+        for (let px = 0; px < width; px += 2) {
+          const border =
+            px < width * 0.16 ||
+            px > width * 0.84 ||
+            py < height * 0.20 ||
+            py > height * 0.80;
+
+          if (!border) {
+            continue;
+          }
+
+          const index = (py * width + px) * 4;
+
+          if (data[index + 3] > 200) {
+            colours.push([
+              data[index],
+              data[index + 1],
+              data[index + 2]
+            ]);
+          }
+        }
+      }
+
+      if (!colours.length) {
+        resolve('#17303b');
+        return;
+      }
+
+      const median = (channel) => {
+        const values = colours
+          .map((colour) => colour[channel])
+          .sort((first, second) => first - second);
+
+        return values[Math.floor(values.length / 2)];
+      };
+
+      const hex = [median(0), median(1), median(2)]
+        .map((value) => value.toString(16).padStart(2, '0'))
+        .join('');
+
+      resolve(`#${hex}`);
+    };
+
+    image.onerror = () => reject(
+      new Error('Could not read the uploaded artwork.')
+    );
+
+    image.src = imageSrc;
+  });
+}
+
+async function buildCovers(background, regions, pageName) {
+  const covers = [];
+
+  for (let index = 0; index < regions.length; index += 1) {
+    const region = regions[index];
+    const fill = await sampleRegionColour(background.src, region);
+
+    covers.push(
+      coverObject({
+        left: region.x * W,
+        top: region.y * H,
+        width: region.w * W,
+        height: region.h * H,
+        fill,
+        name: `${pageName} text cover ${index + 1}`
+      })
+    );
+  }
+
+  return covers;
+}
+
+const FRONT_CLEAN_REGIONS = [
+  {x:.285,y:.415,w:.43,h:.115},
+  {x:.37,y:.525,w:.26,h:.065}
+];
+
+/*
+ * Exact field regions for the supplied back image.
+ */
+const BACK_CLEAN_REGIONS = [
+  /*
+   * One merged cover for JOHN BUTLER + GENERAL MANAGER.
+   * It is intentionally wider than both original lines.
+   */
+  {x:.265, y:.145, w:.470, h:.225},
+
+  /*
+   * One merged cover for address + phone.
+   * Starts after the left-side icons so the icons stay visible.
+   */
+  {x:.145, y:.585, w:.405, h:.285},
+
+  /*
+   * One merged cover for email + website.
+   * Starts after the right-side icons so the icons stay visible.
+   */
+  {x:.635, y:.585, w:.345, h:.285}
+];
+
+async function createFrontPreset() {
+  const page = pages[0];
+
+  if (!page || !hasBackground(page)) {
+    throw new Error('Upload front first.');
+  }
+
+  const background = getBackground(page);
+  const covers = await buildCovers(
+    background,
+    FRONT_CLEAN_REGIONS,
+    'Front'
+  );
+
+  page.objects = [
+    background,
+    ...covers,
+
+    textObject({
+      text: 'COMPANY NAME',
+      left: W * 0.50,
+      top: H * 0.435,
+      fontSize: Math.round(H * 0.060),
+      fill: '#d4af37',
+      fontWeight: 'bold',
+      fieldType: 'company',
+      textAlign: 'center',
+      originX: 'center'
+    }),
+
+    textObject({
+      text: 'SLOGAN GOES HERE',
+      left: W * 0.50,
+      top: H * 0.535,
+      fontSize: Math.round(H * 0.025),
+      fill: '#d4af37',
+      fieldType: 'tagline',
+      textAlign: 'center',
+      originX: 'center'
+    })
+  ];
+}
+
+async function createBackPreset() {
+  const page = pages[1];
+
+  if (!page || !hasBackground(page)) {
+    throw new Error('Upload back first.');
+  }
+
+  const background = getBackground(page);
+
+  /*
+   * These three covers intentionally overlap the complete original
+   * name/title, left contact block and right contact block.
+   */
+  const covers = await buildCovers(
+    background,
+    BACK_CLEAN_REGIONS,
+    'Back'
+  );
+
+  page.objects = [
+    background,
+    ...covers,
+
+    textObject({
+      text: 'JOHN BUTLER',
+      left: W * 0.50,
+      top: H * 0.185,
+      fontSize: Math.round(H * 0.050),
+      fill: '#ffffff',
+      fontWeight: 'bold',
+      fieldType: 'name',
+      textAlign: 'center',
+      originX: 'center'
+    }),
+
+    textObject({
+      text: 'GENERAL MANAGER',
+      left: W * 0.50,
+      top: H * 0.285,
+      fontSize: Math.round(H * 0.023),
+      fill: '#d4af37',
+      fieldType: 'role',
+      textAlign: 'center',
+      originX: 'center'
+    }),
+
+    textObject({
+      text: 'CITY 123 STREET / 10-23',
+      left: W * 0.165,
+      top: H * 0.635,
+      fontSize: Math.round(H * 0.020),
+      fill: '#ffffff',
+      fieldType: 'address'
+    }),
+
+    textObject({
+      text: '+00 123 456 789 01',
+      left: W * 0.165,
+      top: H * 0.790,
+      fontSize: Math.round(H * 0.020),
+      fill: '#ffffff',
+      fieldType: 'phone'
+    }),
+
+    textObject({
+      text: 'COMPANY@GMAIL.COM',
+      left: W * 0.655,
+      top: H * 0.635,
+      fontSize: Math.round(H * 0.020),
+      fill: '#ffffff',
+      fieldType: 'email'
+    }),
+
+    textObject({
+      text: 'WWW.WEBNAME.COM',
+      left: W * 0.655,
+      top: H * 0.790,
+      fontSize: Math.round(H * 0.020),
+      fill: '#ffffff',
+      fieldType: 'website'
+    })
+  ];
+}
+
+
+
+
+function sampleCanvasBorderColour(left, top, width, height) {
+  const artwork = canvas
+    .getObjects()
+    .find(object => object.backgroundAsset);
+
+  if (!artwork || artwork.type !== 'image') {
+    return '#ffffff';
+  }
+
+  const source = artwork.getElement();
+  const temp = document.createElement('canvas');
+  temp.width = source.naturalWidth || source.width;
+  temp.height = source.naturalHeight || source.height;
+
+  const context = temp.getContext('2d', {
+    willReadFrequently: true
+  });
+
+  context.drawImage(source, 0, 0);
+
+  const artworkLeft = artwork.left || 0;
+  const artworkTop = artwork.top || 0;
+  const artworkWidth = artwork.getScaledWidth();
+  const artworkHeight = artwork.getScaledHeight();
+
+  const localLeft = Math.max(0, left - artworkLeft);
+  const localTop = Math.max(0, top - artworkTop);
+
+  const sourceX = Math.floor(
+    localLeft / artworkWidth * temp.width
+  );
+
+  const sourceY = Math.floor(
+    localTop / artworkHeight * temp.height
+  );
+
+  const sourceWidth = Math.max(
+    1,
+    Math.floor(width / artworkWidth * temp.width)
+  );
+
+  const sourceHeight = Math.max(
+    1,
+    Math.floor(height / artworkHeight * temp.height)
+  );
+
+  const pad = Math.max(
+    2,
+    Math.round(Math.min(sourceWidth, sourceHeight) * 0.18)
+  );
+
+  const x1 = Math.max(0, sourceX - pad);
+  const y1 = Math.max(0, sourceY - pad);
+  const x2 = Math.min(temp.width, sourceX + sourceWidth + pad);
+  const y2 = Math.min(temp.height, sourceY + sourceHeight + pad);
+
+  const sampleWidth = Math.max(1, x2 - x1);
+  const sampleHeight = Math.max(1, y2 - y1);
+
+  const pixels = context.getImageData(
+    x1,
+    y1,
+    sampleWidth,
+    sampleHeight
+  ).data;
+
+  const colours = [];
+
+  for (let py = 0; py < sampleHeight; py += 2) {
+    for (let px = 0; px < sampleWidth; px += 2) {
+      const border =
+        px < sampleWidth * 0.18 ||
+        px > sampleWidth * 0.82 ||
+        py < sampleHeight * 0.18 ||
+        py > sampleHeight * 0.82;
+
+      if (!border) {
+        continue;
+      }
+
+      const pixelIndex = (py * sampleWidth + px) * 4;
+
+      if (pixels[pixelIndex + 3] > 200) {
+        colours.push([
+          pixels[pixelIndex],
+          pixels[pixelIndex + 1],
+          pixels[pixelIndex + 2]
+        ]);
+      }
+    }
+  }
+
+  if (!colours.length) {
+    return '#ffffff';
+  }
+
+  const median = channel => {
+    const values = colours
+      .map(colour => colour[channel])
+      .sort((first, second) => first - second);
+
+    return values[Math.floor(values.length / 2)];
+  };
+
+  return '#' + [median(0), median(1), median(2)]
+    .map(value => value.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function readableTextColour(backgroundColour) {
+  const red = parseInt(backgroundColour.slice(1, 3), 16);
+  const green = parseInt(backgroundColour.slice(3, 5), 16);
+  const blue = parseInt(backgroundColour.slice(5, 7), 16);
+
+  const brightness =
+    (red * 299 + green * 587 + blue * 114) / 1000;
+
+  return brightness > 150 ? '#111111' : '#ffffff';
+}
+
+function startManualMapping() {
+  manualMappingMode = true;
+  manualStartPoint = null;
+
+  if (manualPreviewRect) {
+    canvas.remove(manualPreviewRect);
+    manualPreviewRect = null;
+  }
+
+  canvas.discardActiveObject();
+  canvas.selection = false;
+  // Lock every existing object while drawing the replacement box so dragging
+  // can never move the full template/artwork underneath the pointer.
+  canvas.getObjects().forEach(o=>{
+    if(o===manualPreviewRect)return;
+    o._zvMarkSelectable=o.selectable; o._zvMarkEvented=o.evented;
+    o.selectable=false; o.evented=false;
+  });
+  canvas.defaultCursor = 'crosshair';
+
+  $('manualMappingStatus').textContent =
+    'Drag a rectangle over the printed text.';
+
+  $('manualMappingStatus').className =
+    'status ok';
+}
+
+function stopManualMapping() {
+  manualMappingMode = false;
+  manualStartPoint = null;
+
+  if (manualPreviewRect) {
+    canvas.remove(manualPreviewRect);
+    manualPreviewRect = null;
+  }
+
+  canvas.selection = true;
+  canvas.getObjects().forEach(o=>{
+    if('_zvMarkSelectable' in o){o.selectable=o._zvMarkSelectable;delete o._zvMarkSelectable;}
+    if('_zvMarkEvented' in o){o.evented=o._zvMarkEvented;delete o._zvMarkEvented;}
+  });
+  canvas.defaultCursor = 'default';
+  canvas.requestRenderAll();
+
+  $('manualMappingStatus').textContent = '';
+}
+
+async function finishManualMapping(rectangle) {
+  const value = window.prompt('Enter the replacement text:', '');
+  if (value === null) { canvas.remove(rectangle); stopManualMapping(); return; }
+
+  const left=rectangle.left, top=rectangle.top;
+  const width=Math.max(2,rectangle.width*rectangle.scaleX), height=Math.max(2,rectangle.height*rectangle.scaleY);
+  canvas.remove(rectangle);
+
+  const bg=backgroundImageObject();
+  if(!bg){
+    $('manualMappingStatus').textContent='No uploaded template image is available.';
+    $('manualMappingStatus').className='status err';
+    stopManualMapping(); return;
+  }
+  const el=bg.getElement(), nw=el.naturalWidth||bg.width||W, nh=el.naturalHeight||bg.height||H;
+  const sx=bg.scaleX||1, sy=bg.scaleY||1;
+  const sourceNormalizedBox={
+    x:Math.max(0,(left-(bg.left||0))/(nw*sx)),
+    y:Math.max(0,(top-(bg.top||0))/(nh*sy)),
+    w:Math.min(1,width/(nw*sx)), h:Math.min(1,height/(nh*sy))
+  };
+  if(sourceNormalizedBox.x>=1||sourceNormalizedBox.y>=1||sourceNormalizedBox.w<=0||sourceNormalizedBox.h<=0){
+    $('manualMappingStatus').textContent='Please mark an area inside the uploaded image.';
+    $('manualMappingStatus').className='status err'; stopManualMapping(); return;
+  }
+
+  // Remove auto-OCR guesses that overlap the explicitly marked region.
+  // The manual Remove/Replace selection is authoritative.
+  const overlaps=(a,b)=>a&&b&&a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+  canvas.getObjects().slice().forEach(o=>{
+    if((o.autoOcrText||o.fieldType==='ocr-auto'||o.visualFallback) && overlaps(o.sourceNormalizedBox,sourceNormalizedBox)) canvas.remove(o);
+  });
+
+  $('manualMappingStatus').textContent='Removing printed textâ€¦';
+  $('manualMappingStatus').className='status ok';
+  try{
+    const replacementGroupId=uid('replacement');
+    const patch=await ZenRasterEdit.addPatchToCanvas(canvas,bg,sourceNormalizedBox,{
+      objectId:uid('manual-patch'),name:'Printed text cleanup',fieldType:'manual-inpaint',manualTextPatch:true,
+      replacementGroupId,sourceNormalizedBox
+    });
+    const bgIndex=canvas.getObjects().indexOf(bg);
+    canvas.moveTo(patch,Math.max(1,bgIndex+1));
+
+    const r=ZenRasterEdit.canvasRectForNormalized(bg,sourceNormalizedBox);
+    const requestedFontSize=Math.max(6,Number($('manualFontSize').value)||28);
+    const text=new fabric.IText(value||'Type here',{
+      left:r.left,top:r.top,originX:'left',originY:'top',
+      fontSize:Math.min(requestedFontSize,Math.max(10,r.height*.78)),fontFamily:'Arial',
+      fill:sampleOcrTextColour(bg,{x0:sourceNormalizedBox.x*nw,y0:sourceNormalizedBox.y*nh,x1:(sourceNormalizedBox.x+sourceNormalizedBox.w)*nw,y1:(sourceNormalizedBox.y+sourceNormalizedBox.h)*nh}),
+      objectId:uid('manual-text'),name:`Editable replacement: ${value||'Type here'}`,fieldType:'manual-replace',
+      customerEditable:true,selectable:true,evented:true,editable:true,hasControls:true,
+      opacity:1,sourceNormalizedBox,sourceText:value||'',ocrOverlayPending:false,autoOcrText:false,
+      replacementGroupId,manualReplacement:true
+    });
+    text.initDimensions();
+    if(text.width>r.width && text.width>0) text.scaleX=Math.max(.25,r.width/text.width);
+    canvas.add(text);canvas.bringToFront(text);canvas.setActiveObject(text);text.setCoords();
+    canvas.requestRenderAll();snap();info();stopManualMapping();
+    $('manualMappingStatus').textContent='Printed text removed. Replacement is now a normal editable text object.';
+    $('manualMappingStatus').className='status ok';
+  }catch(err){
+    console.error(err);
+    $('manualMappingStatus').textContent='Could not reconstruct this area. Try a tighter box around only the text.';
+    $('manualMappingStatus').className='status err';
+    stopManualMapping();
+  }
+}
+$('markTextAreaBtn').onclick = startManualMapping;
+$('cancelMarkingBtn').onclick = stopManualMapping;
+
+canvas.on('mouse:down', event => {
+  if (!manualMappingMode) {
+    return;
+  }
+
+  const pointer = canvas.getPointer(event.e);
+
+  manualStartPoint = {
+    x: pointer.x,
+    y: pointer.y
+  };
+
+  manualPreviewRect = new fabric.Rect({
+    left: pointer.x,
+    top: pointer.y,
+    width: 1,
+    height: 1,
+    fill: 'rgba(124,58,237,0.15)',
+    stroke: '#7c3aed',
+    strokeWidth: 2,
+    strokeDashArray: [8, 6],
+    selectable: false,
+    evented: false
+  });
+
+  canvas.add(manualPreviewRect);
+});
+
+canvas.on('mouse:move', event => {
+  if (
+    !manualMappingMode ||
+    !manualStartPoint ||
+    !manualPreviewRect
+  ) {
+    return;
+  }
+
+  const pointer = canvas.getPointer(event.e);
+
+  const left = Math.min(
+    manualStartPoint.x,
+    pointer.x
+  );
+
+  const top = Math.min(
+    manualStartPoint.y,
+    pointer.y
+  );
+
+  const width = Math.abs(
+    pointer.x - manualStartPoint.x
+  );
+
+  const height = Math.abs(
+    pointer.y - manualStartPoint.y
+  );
+
+  manualPreviewRect.set({
+    left,
+    top,
+    width,
+    height
+  });
+
+  manualPreviewRect.setCoords();
+  canvas.requestRenderAll();
+});
+
+canvas.on('mouse:up', () => {
+  if (
+    !manualMappingMode ||
+    !manualStartPoint ||
+    !manualPreviewRect
+  ) {
+    return;
+  }
+
+  const rectangle = manualPreviewRect;
+
+  manualPreviewRect = null;
+  manualStartPoint = null;
+
+  if (
+    rectangle.width < 8 ||
+    rectangle.height < 8
+  ) {
+    canvas.remove(rectangle);
+    stopManualMapping();
+    return;
+  }
+
+  finishManualMapping(rectangle);
+});
+
+const fieldDefaults = {
+  name:[48,'#ffffff','bold'],
+  company:[42,'#d4af37','bold'],
+  role:[24,'#d4af37','normal'],
+  phone:[22,'#ffffff','normal'],
+  email:[22,'#ffffff','normal'],
+  website:[22,'#ffffff','normal'],
+  address:[20,'#ffffff','normal'],
+  tagline:[22,'#d4af37','normal'],
+  custom:[28,'#ffffff','normal']
+};
+
+document.querySelectorAll('[data-field]').forEach(button=>{
+  button.onclick=()=>{
+    pendingField={type:button.dataset.field,text:button.dataset.text};
+    $('placementStatus').textContent=`Click on card to place ${pendingField.type}.`;
+    $('placementStatus').className='status ok';
+    canvas.defaultCursor='crosshair';
+  };
+});
+
+canvas.on('mouse:down',event=>{
+  if (manualMappingMode) return;
+  if (!pendingField) return;
+
+  const pointer=canvas.getPointer(event.e);
+  const settings=fieldDefaults[pendingField.type]||fieldDefaults.custom;
+
+  const object=new fabric.IText(pendingField.text,{
+    left:pointer.x,
+    top:pointer.y,
+    fontSize:settings[0],
+    fontFamily:'Arial',
+    fill:settings[1],
+    fontWeight:settings[2],
+    objectId:uid('field'),
+    name:`${pendingField.type} field`,
+    fieldType:pendingField.type,
+    customerEditable:true
+  });
+
+  add(object);
+  object.enterEditing();
+  object.selectAll();
+
+  pendingField=null;
+  canvas.defaultCursor='default';
+  $('placementStatus').textContent='Field added.';
+});
+
+function addShape(o) {
+  o.set({objectId:uid('shape'),name:`${o.type} shape`,customerEditable:true});
+  add(o);
+}
+
+$('addRectangle').onclick=()=>addShape(new fabric.Rect({left:W*.35,top:H*.35,width:220,height:100,fill:'#7c3aed'}));
+$('addRounded').onclick=()=>addShape(new fabric.Rect({left:W*.35,top:H*.35,width:220,height:100,rx:22,ry:22,fill:'#7c3aed'}));
+$('addCircle').onclick=()=>addShape(new fabric.Circle({left:W*.4,top:H*.35,radius:65,fill:'#7c3aed'}));
+$('addTriangle').onclick=()=>addShape(new fabric.Triangle({left:W*.4,top:H*.35,width:140,height:120,fill:'#7c3aed'}));
+$('addLine').onclick=()=>addShape(new fabric.Line([W*.3,H*.5,W*.7,H*.5],{stroke:'#111827',strokeWidth:5}));
+$('addArrow').onclick=()=>{
+  const line=new fabric.Line([0,0,220,0],{stroke:'#111827',strokeWidth:5});
+  const head=new fabric.Triangle({left:220,top:0,width:20,height:26,fill:'#111827',angle:90,originX:'center',originY:'center'});
+  add(new fabric.Group([line,head],{left:W*.35,top:H*.45,objectId:uid('arrow'),name:'Arrow',customerEditable:true}));
+};
+
+function selected(){return canvas.getActiveObject()}
+
+function info() {
+  const o=selected();
+
+  $('objectInfo').textContent=o
+    ? `Selected: ${o.name||o.type}${o.fieldType?' Â· '+o.fieldType:''}`
+    : 'No object selected';
+
+  if (!o) { $('adminImageColourPanel')?.classList.remove('visible'); $('textInput').value=''; $('fontSize').value=32; $('fontFamily').value='Arial'; $('textAlign').value='left'; $('charSpacing').value=0; return; }
+  $('adminImageColourPanel')?.classList.toggle('visible',o.type==='image');
+  if($('fillColourLabel')) $('fillColourLabel').textContent=isText(o)?'Text colour':(o.type==='image'?'Paper / background colour':'Object colour');
+
+  if (isText(o)) {
+    $('textInput').value=o.text||'';
+    $('fontSize').value=o.fontSize||32;
+    $('fontFamily').value=o.fontFamily||'Arial';
+    $('textAlign').value=o.textAlign||'left';
+    $('charSpacing').value=o.charSpacing||0;
+  }
+
+  $('opacityInput').value=o.opacity??1;
+  $('strokeWidth').value=o.strokeWidth||0;
+
+  if (typeof o.fill==='string'&&/^#[0-9a-f]{6}$/i.test(o.fill)) $('fillColor').value=o.fill;
+  if (typeof o.stroke==='string'&&/^#[0-9a-f]{6}$/i.test(o.stroke)) $('strokeColor').value=o.stroke;
+}
+
+$('applyBtn').onclick=()=>{
+  const o=selected();
+  if (!o) return alert('Select an object first.');
+  const wasPending=!!(isText(o) && o.ocrOverlayPending);
+  if (wasPending) activatePendingOcrText(o);
+
+  const commonChanges={
+    opacity:wasPending?1:Number($('opacityInput').value),
+    stroke:$('strokeColor').value,
+    strokeWidth:Number($('strokeWidth').value)||0
+  };
+
+  if (isText(o)) {
+    o.set({
+      ...commonChanges,
+      text:$('textInput').value,
+      fontSize:Number($('fontSize').value)||32,
+      fontFamily:$('fontFamily').value,
+      fill:$('fillColor').value,
+      textAlign:$('textAlign').value,
+      charSpacing:Number($('charSpacing').value)||0
+    });
+  } else {
+    o.set({
+      ...commonChanges,
+      fill:o.type==='line'?o.fill:$('fillColor').value
+    });
+    // A Fabric Image has no useful `fill`. For the uploaded page artwork, Apply
+    // recolours the light paper/background pixels while preserving darker artwork.
+    if(o.type==='image'&&o.backgroundAsset){
+      const chosen=$('fillColor').value;
+      recolourAdminArtwork(o,chosen).then(data=>o.setSrc(data,()=>{o.setCoords();canvas.requestRenderAll();snap();info()}));
+    }
+  }
+
+  o.setCoords();
+  canvas.requestRenderAll();
+  snap();
+  info();
+};
+
+$('boldBtn').onclick=()=>{const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set('fontWeight',o.fontWeight==='bold'?'normal':'bold');canvas.requestRenderAll();snap()}};
+$('italicBtn').onclick=()=>{const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set('fontStyle',o.fontStyle==='italic'?'normal':'italic');canvas.requestRenderAll();snap()}};
+$('underlineBtn').onclick=()=>{const o=selected();if(isText(o)){if(o.ocrOverlayPending)activatePendingOcrText(o);o.set('underline',!o.underline);canvas.requestRenderAll();snap()}};
+
+$('duplicateBtn').onclick=()=>{
+  const o=selected();
+  if (!o) return;
+
+  o.clone(clone=>{
+    clone.set({
+      left:(o.left||0)+20,
+      top:(o.top||0)+20,
+      objectId:uid('copy'),
+      backgroundAsset:false,
+      selectable:true,
+      evented:true
+    });
+    add(clone);
+  });
+};
+
+$('deleteBtn').onclick=async()=>{
+  const o=selected();
+  if(o&&o._zvPendingArtwork)await activatePendingArtwork(o);
+  if (!o||o.backgroundAsset) return;
+  canvas.remove(o);
+  canvas.discardActiveObject();
+  canvas.requestRenderAll();
+  snap();
+  info();
+};
+
+$('frontBtn').onclick=()=>{const o=selected();if(o){canvas.bringToFront(o);snap()}};
+$('backBtn').onclick=()=>{const o=selected();if(o&&!o.backgroundAsset){canvas.sendToBack(o);const art=canvas.getObjects().find(x=>x.backgroundAsset);if(art)canvas.sendToBack(art);snap()}};
+$('lockBtn').onclick=()=>{const o=selected();if(!o||o.backgroundAsset)return;const locked=!o.lockMovementX;o.set({lockMovementX:locked,lockMovementY:locked,lockScalingX:locked,lockScalingY:locked,lockRotation:locked,hasControls:!locked});canvas.requestRenderAll();snap()};
+$('centerBtn').onclick=()=>{const o=selected();if(!o||o.backgroundAsset)return;o.set({left:(W-o.getScaledWidth())/2,top:(H-o.getScaledHeight())/2});o.setCoords();canvas.requestRenderAll();snap()};
+
+canvas.on('selection:created',info);
+canvas.on('selection:updated',info);
+canvas.on('selection:cleared',info);
+canvas.on('object:modified',snap);
+canvas.on('text:changed',e=>{const o=e.target;if(o){if(o.ocrOverlayPending)activatePendingOcrText(o);if(o.autoOcrText||o.fieldType==='ocr-auto'||o.fieldType==='manual-ocr')o.adminTextEdited=true;}snap();});
+
+$('undoBtn').onclick=()=>restore(historyIndex-1);
+$('redoBtn').onclick=()=>restore(historyIndex+1);
+$('fitBtn').onclick=fit;
+
+function csrf() {
+  return document.cookie.split('; ').find(item=>item.startsWith('csrftoken='))?.split('=')[1]||'';
+}
+
+async function saveMasterTemplate(automatic=false) {
+  const saveButton=$('saveBtn');
+  if (conversionRunning) {
+    $('status').textContent='Please wait â€” the uploaded image is still being converted into editable layers.';
+    $('status').className='status err';
+    return;
+  }
+  if (!conversionReady) {
+    const pendingBg=backgroundImageObject();
+    if(pendingBg){
+      $('status').textContent='Finishing editable reconstruction before publishingâ€¦';
+      $('status').className='status';
+      await convertCurrentArtworkToEditable();
+      if(!conversionReady){
+        $('status').textContent='Could not create editable layers yet. Retry â€œRebuild editable text & artworkâ€, or mark missed wording with Remove / Replace printed text.';
+        $('status').className='status err';
+        if(saveButton) saveButton.disabled=false;
+        return;
+      }
+    }else{
+      $('status').textContent='This upload is not ready yet. Upload a front image/photo first.';
+      $('status').className='status err';
+      return;
+    }
+  }
+  if(saveButton) saveButton.disabled=true;
+  $('status').textContent='Saving...';
+  $('status').className='status';
+
+  sync();
+
+  // Public editor policy: every genuine layer is editable in the customer's personal copy.
+  // Protective cover rectangles remain locked because they only hide text baked into a flat PNG/JPG.
+  pages.forEach(page => (page.objects || []).forEach(object => {
+    const protectiveCover = object.customerEditable === false && (object.autoInvitationCover || /text cover|original text cover|ocr cover|auto cover/i.test(String(object.name || '')));
+    if (protectiveCover) return;
+    object.customerEditable = true;
+    object.locked = false;
+    if (object.backgroundAsset) object.name = object.name || 'Editable artwork background';
+  }));
+
+  const oldZoom=canvas.getZoom();
+  const oldWidth=canvas.getWidth();
+  const oldHeight=canvas.getHeight();
+
+  canvas.setZoom(1);
+  canvas.setDimensions({width:W,height:H});
+  canvas.requestRenderAll();
+
+  const preview=canvas.toDataURL({format:'jpeg',quality:0.82});
+
+  canvas.setZoom(oldZoom);
+  canvas.setDimensions({width:oldWidth,height:oldHeight});
+  canvas.requestRenderAll();
+
+  try {
+    // V42 LAYERED MASTER (Canva-style object model): do not flatten the admin
+    // canvas into one customer background screenshot. Keep the pristine uploaded
+    // artwork as the locked base and publish real Fabric objects above it.
+    // Manual text replacement is an atomic pair: cleanup patch + editable text.
+    const adminPages=JSON.parse(JSON.stringify(pages));
+    const publicPages=JSON.parse(JSON.stringify(pages)).map((page,pageIndex)=>{
+      const publicObjects=[];
+      const acceptedOcr=[];
+      const activatedTextIds=new Set((page.objects||[]).filter(x=>{
+        const f=String(x.fieldType||'');
+        return ['text','i-text','textbox'].includes(String(x.type||'')) && (f==='manual-replace'||x.manualReplacement||x.adminTextEdited||x.ocrOverlayPending===false) && (x.objectId||x.id);
+      }).map(x=>x.objectId||x.id));
+      const overlapRatio=(a,b)=>{
+        if(!a||!b)return 0;
+        const ax2=a.x+a.w, ay2=a.y+a.h, bx2=b.x+b.w, by2=b.y+b.h;
+        const iw=Math.max(0,Math.min(ax2,bx2)-Math.max(a.x,b.x));
+        const ih=Math.max(0,Math.min(ay2,by2)-Math.max(a.y,b.y));
+        const inter=iw*ih, small=Math.max(1,Math.min(a.w*a.h,b.w*b.h));
+        return inter/small;
+      };
+      (page.objects||[]).forEach(o=>{
+        const c=JSON.parse(JSON.stringify(o));
+        const type=String(c.type||'');
+        const field=String(c.fieldType||'');
+
+        if(c.backgroundAsset){
+          // Uploaded PNG/JPG/camera photo is the protected source of truth.
+          c.customerEditable=false;c.locked=true;c.selectable=false;c.evented=false;
+          c.exactVisualMaster=false;c.opacity=1;c.visible=true;
+          c.name=c.name||'Protected uploaded artwork';
+          publicObjects.push(c);return;
+        }
+
+        if(field==='manual-inpaint' || field==='ocr-inpaint' || c.manualTextPatch || c.ocrCoverFor){
+          // V50: pending OCR fields must keep the ORIGINAL bitmap untouched.
+          // Publish their cleanup patch only after the paired replacement is visible.
+          if(field==='ocr-inpaint' && c.ocrCoverFor && !activatedTextIds.has(c.ocrCoverFor)) return;
+          c.customerEditable=false;c.locked=true;c.selectable=false;c.evented=false;
+          c.opacity=1;c.visible=true;
+          publicObjects.push(c);return;
+        }
+
+        if(field==='manual-replace' || c.manualReplacement){
+          // This is already genuine Fabric text. Keep it visible and directly editable.
+          c.customerEditable=true;c.locked=false;c.selectable=true;c.evented=true;
+          c.opacity=1;c.visible=true;c.ocrOverlayPending=false;c.autoOcrText=false;
+          publicObjects.push(c);return;
+        }
+
+        if(['text','i-text','textbox'].includes(type) && (c.autoOcrText || field==='ocr-auto' || field==='manual-ocr')){
+          const box=c.sourceNormalizedBox;
+          if(box && acceptedOcr.some(x=>overlapRatio(x,box)>.72)) return;
+          if(box) acceptedOcr.push(box);
+          c.customerEditable=true;c.locked=false;c.selectable=true;c.evented=true;c.visible=true;
+          // V49 ROOT FIX: an OCR object that Admin activated/edited already has a
+          // cleanup patch. It must be published as VISIBLE real text, not reset to
+          // an invisible pending hotspot (which previously left a blank erased area).
+          const adminActivated = c.ocrOverlayPending === false || c.adminTextEdited === true;
+          if(adminActivated){
+            c.opacity=1;c.ocrOverlayPending=false;c.manualReplacement=true;
+            c.fieldType='manual-replace';c.autoOcrText=false;
+          }else{
+            c.opacity=0;c.ocrOverlayPending=true;
+          }
+          publicObjects.push(c);return;
+        }
+
+        if(type==='image' && c.sourceNormalizedBox && field==='auto-art-layer'){
+          c.customerEditable=true;c.locked=false;c.opacity=0;c._zvPendingArtwork=true;
+          publicObjects.push(c);return;
+        }
+
+        // Explicit admin-created text/shapes/logos remain real visible objects.
+        c.customerEditable=c.customerEditable!==false;
+        c.locked=!!c.locked && !c.customerEditable;
+        publicObjects.push(c);
+      });
+      return {...page,objects:publicObjects};
+    });
+    const response=await fetch(
+      "{% url 'designer:save_template_json' template.id %}",
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},
+        body:JSON.stringify({
+          json_data:{version:5,source:'zenvibe-layered-editable-master-v53',masterPersistenceVersion:53,
+            canvasWidth:W,canvasHeight:H,savedAt:Date.now(),templateType:'editable-master',
+            reconstructed:true,adminEdited:true,auto_ocr_version:53,auto_layer_version:13,
+            adminPages:adminPages,pages:publicPages},
+          preview_png:preview
+        })
+      }
+    );
+
+    const data=await response.json();
+
+    if (!response.ok||!data.ok) throw new Error(data.error||'Save failed');
+
+    $('status').textContent='Editable master saved successfully. Customers will load this exact latest version.';
+    $('status').className='status ok';
+  } catch(error) {
+    $('status').textContent=error.message;
+    $('status').className='status err';
+  } finally {
+    if(saveButton) saveButton.disabled=false;
+  }
+}
+$('saveBtn').onclick=()=>saveMasterTemplate(false);
+
+fit();
+loadPage(0,true);
+snap();
+
+// Existing saved masters are loaded exactly as saved. A fresh upload starts a clean conversion.
+window.addEventListener('resize',fit);
+
+})();
+</script>
+</body>
+</html>
+
+

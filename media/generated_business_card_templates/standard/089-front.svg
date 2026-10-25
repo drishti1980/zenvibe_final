@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1125" height="675" viewBox="0 0 1125 675">
+<rect width="1125" height="675" fill="#FCFCFD"/>
+<rect x="60" y="70" width="115" height="115" rx="12" fill="#7C3AED" stroke="none" stroke-width="0.0" opacity="0.92"/>
+<rect x="105" y="104" width="115" height="115" rx="12" fill="#EDE9FE" stroke="none" stroke-width="0.0" opacity="0.92"/>
+<rect x="150" y="138" width="115" height="115" rx="12" fill="#7C3AED" stroke="none" stroke-width="0.0" opacity="0.92"/>
+<rect x="195" y="172" width="115" height="115" rx="12" fill="#EDE9FE" stroke="none" stroke-width="0.0" opacity="0.92"/>
+<rect x="240" y="206" width="115" height="115" rx="12" fill="#7C3AED" stroke="none" stroke-width="0.0" opacity="0.92"/>
+<text x="460.00" y="164.00" fill="#111827" font-family="Montserrat" font-size="54.00" font-weight="bold" text-anchor="start"><tspan x="460.00" dy="0.00">ALEX MORGAN</tspan></text>
+<text x="460.00" y="205.00" fill="#7C3AED" font-family="Montserrat" font-size="23.00" font-weight="bold" text-anchor="start"><tspan x="460.00" dy="0.00">CREATIVE DIRECTOR</tspan></text>
+<text x="460.00" y="303.00" fill="#111827" font-family="Montserrat" font-size="23.00" font-weight="normal" text-anchor="start"><tspan x="460.00" dy="0.00">+61 400 123 456</tspan></text>
+<text x="460.00" y="341.00" fill="#111827" font-family="Montserrat" font-size="23.00" font-weight="normal" text-anchor="start"><tspan x="460.00" dy="0.00">alex@northstudio.com</tspan></text>
+<text x="460.00" y="379.00" fill="#111827" font-family="Montserrat" font-size="23.00" font-weight="normal" text-anchor="start"><tspan x="460.00" dy="0.00">northstudio.com</tspan></text>
+</svg>

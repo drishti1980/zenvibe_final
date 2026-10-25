@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#34463D" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="516.0" y="16" width="468.0" height="512.0" rx="0" ry="0" fill="none" stroke="#B89A62" stroke-width="2" opacity="1"/>
+<path d="M 590.0 408.0 L 590.0 163.2 Q 750.0 -10.88 910.0 163.2 L 910.0 408.0" fill="none" stroke="#B89A62" stroke-width="3" opacity="1"/>
+<line x1="560.0" y1="65.28" x2="720.0" y2="94.08" stroke="#B89A62" stroke-width="3" opacity="0.85"/>
+<ellipse cx="586.6666666666666" cy="52.08" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 586.6666666666666 52.08)"/>
+<ellipse cx="613.3333333333334" cy="92.88" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 613.3333333333334 92.88)"/>
+<ellipse cx="640.0" cy="61.68000000000001" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 640.0 61.68000000000001)"/>
+<ellipse cx="666.6666666666666" cy="102.47999999999999" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 666.6666666666666 102.47999999999999)"/>
+<ellipse cx="693.3333333333334" cy="71.28" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 693.3333333333334 71.28)"/>
+<line x1="940.0" y1="391.68" x2="790.0" y2="418.68" stroke="#B89A62" stroke-width="3" opacity="0.85"/>
+<ellipse cx="915.0" cy="378.18" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 915.0 378.18)"/>
+<ellipse cx="890.0" cy="418.68" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 890.0 418.68)"/>
+<ellipse cx="865.0" cy="387.18" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 865.0 387.18)"/>
+<ellipse cx="840.0" cy="427.68" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 840.0 427.68)"/>
+<ellipse cx="815.0" cy="396.18" rx="18" ry="8" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 815.0 396.18)"/>
+<text x="55" y="226" fill="#34463D" font-family="Cinzel" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">YOUR HAIR.</tspan><tspan x="55" dy="62.699999999999996">YOUR SIGNATURE.</tspan></text>
+<text x="58" y="387" fill="#34463D" font-family="Montserrat" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Cut â€¢ Colour â€¢ Styling</tspan></text>
+<text x="770.0" y="837" fill="#B89A62" font-family="Cinzel" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#F4F1E8" font-family="Montserrat" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#C5CFBA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#34463D" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#7C967F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F1E8" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK AN APPOINTMENT</tspan></text>
+<text x="954" y="69" fill="#7C967F" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">15</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,820 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}Order {{ order.order_number }} | ZenVibe{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     BREADCRUMB
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+
+        <h2>Order Tracking</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:my_orders' %}">
+                        Order Tracking
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    {{ order.order_number }}
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     ORDER TRACKING RESULT
+========================================================= -->
+<section class="section-b-space zv-tracking-result-page">
+
+    <div class="container">
+
+        <div class="zv-order-track-shell">
+
+
+            <!-- TOP INFORMATION -->
+            <div class="zv-track-order-head">
+
+                <div>
+
+                    <span class="zv-track-label">
+                        ORDER NUMBER
+                    </span>
+
+                    <h2>
+                        {{ order.order_number }}
+                    </h2>
+
+                    <p>
+                        Placed on {{ order.created_at|date:"M d, Y" }}
+                    </p>
+
+                </div>
+
+
+                <div class="zv-track-status">
+
+                    <span>
+                        Current Status
+                    </span>
+
+                    <strong>
+                        {{ order.get_status_display }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDER PROGRESS
+            ================================================== -->
+            <div class="zv-order-progress">
+
+                <div class="zv-progress-line"></div>
+
+
+                <!-- ORDER RECEIVED -->
+                <div class="zv-progress-step is-complete">
+
+                    <div class="zv-progress-icon">
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+
+                    <h4>Order Received</h4>
+
+                    <p>
+                        Your order has been received.
+                    </p>
+
+                </div>
+
+
+                <!-- CONFIRMED -->
+                <div class="zv-progress-step
+                    {% if order.status == 'confirmed' or order.status == 'in_production' or order.status == 'shipped' or order.status == 'completed' %}is-complete{% endif %}
+                ">
+
+                    <div class="zv-progress-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+
+                    <h4>Confirmed</h4>
+
+                    <p>
+                        Your order has been confirmed.
+                    </p>
+
+                </div>
+
+
+                <!-- PRODUCTION -->
+                <div class="zv-progress-step
+                    {% if order.status == 'in_production' or order.status == 'shipped' or order.status == 'completed' %}is-complete{% endif %}
+                ">
+
+                    <div class="zv-progress-icon">
+                        <i class="ri-tools-line"></i>
+                    </div>
+
+                    <h4>In Production</h4>
+
+                    <p>
+                        Your customized order is being prepared.
+                    </p>
+
+                </div>
+
+
+                <!-- SHIPPED -->
+                <div class="zv-progress-step
+                    {% if order.status == 'shipped' or order.status == 'completed' %}is-complete{% endif %}
+                ">
+
+                    <div class="zv-progress-icon">
+                        <i class="ri-truck-line"></i>
+                    </div>
+
+                    <h4>Shipped</h4>
+
+                    <p>
+                        Your order is on the way.
+                    </p>
+
+                </div>
+
+
+                <!-- COMPLETED -->
+                <div class="zv-progress-step
+                    {% if order.status == 'completed' %}is-complete{% endif %}
+                ">
+
+                    <div class="zv-progress-icon">
+                        <i class="ri-home-smile-line"></i>
+                    </div>
+
+                    <h4>Delivered</h4>
+
+                    <p>
+                        Order completed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PRODUCT DETAILS
+            ================================================== -->
+            <div class="zv-track-section">
+
+                <h3>
+                    Order Details
+                </h3>
+
+
+                <div class="zv-track-product">
+
+                    <div class="zv-track-product-img">
+
+                        {% if order.design.product.image %}
+
+                        <img
+                            src="{{ order.design.product.image.url }}"
+                            alt="{{ order.design.product.name }}"
+                        >
+
+                        {% else %}
+
+                        <i class="ri-image-line"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="zv-track-product-info">
+
+                        <h4>
+                            {{ order.design.product.name }}
+                        </h4>
+
+                        <p>
+                            Quantity: {{ order.quantity }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="zv-track-product-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong>
+                            ${{ order.total }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DELIVERY DETAILS
+            ================================================== -->
+            <div class="zv-track-info-grid">
+
+                <div class="zv-track-info-box">
+
+                    <h4>
+                        <i class="ri-user-line"></i>
+                        Customer
+                    </h4>
+
+                    <p>
+                        {{ order.customer_name }}
+                    </p>
+
+                    {% if order.customer_email %}
+                    <p>
+                        {{ order.customer_email }}
+                    </p>
+                    {% endif %}
+
+                    {% if order.customer_phone %}
+                    <p>
+                        {{ order.customer_phone }}
+                    </p>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="zv-track-info-box">
+
+                    <h4>
+                        <i class="ri-map-pin-line"></i>
+                        Delivery Address
+                    </h4>
+
+                    <p>
+                        {{ order.address }}
+                    </p>
+
+                    <p>
+                        {{ order.city }},
+                        {{ order.province }}
+                        {{ order.postal_code }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS HISTORY
+            ================================================== -->
+            {% if order.status_history.all %}
+
+            <div class="zv-track-section">
+
+                <h3>
+                    Order Updates
+                </h3>
+
+
+                <div class="zv-status-history">
+
+                    {% for history in order.status_history.all %}
+
+                    <div class="zv-status-history-item">
+
+                        <span class="zv-history-dot"></span>
+
+
+                        <div>
+
+                            <strong>
+                                {{ history.to_status|title }}
+                            </strong>
+
+                            <p>
+                                {{ history.created_at|date:"M d, Y - h:i A" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 ACTION
+            ================================================== -->
+            <div class="zv-track-bottom">
+
+                <a
+                    href="{% url 'designer:my_orders' %}"
+                    class="btn btn-solid"
+                >
+                    Track Another Order
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<style>
+
+.zv-tracking-result-page{
+    background:#fff;
+}
+
+.zv-order-track-shell{
+    border:1px solid #eeeeee;
+
+    background:#fff;
+}
+
+
+/* HEADER */
+
+.zv-track-order-head{
+    padding:28px 30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+    border-bottom:1px solid #eeeeee;
+}
+
+.zv-track-label{
+    display:block;
+
+    margin-bottom:6px;
+
+    color:#999;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:11px;
+    font-weight:500;
+
+    letter-spacing:.8px;
+}
+
+.zv-track-order-head h2{
+    margin:0 0 5px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:23px;
+    font-weight:600;
+}
+
+.zv-track-order-head p{
+    margin:0;
+
+    color:#888;
+
+    font-size:13px;
+}
+
+.zv-track-status{
+    min-width:180px;
+
+    padding:14px 18px;
+
+    background:#f7f7f7;
+
+    text-align:center;
+}
+
+.zv-track-status span{
+    display:block;
+
+    margin-bottom:4px;
+
+    color:#888;
+
+    font-size:11px;
+}
+
+.zv-track-status strong{
+    color:#0758b8;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:600;
+}
+
+
+/* PROGRESS */
+
+.zv-order-progress{
+    position:relative;
+
+    padding:45px 35px;
+
+    display:grid;
+
+    grid-template-columns:repeat(5,1fr);
+
+    border-bottom:1px solid #eeeeee;
+}
+
+.zv-progress-line{
+    position:absolute;
+
+    top:68px;
+    left:10%;
+    right:10%;
+
+    height:2px;
+
+    background:#e5e5e5;
+}
+
+.zv-progress-step{
+    position:relative;
+
+    z-index:2;
+
+    padding:0 10px;
+
+    text-align:center;
+}
+
+.zv-progress-icon{
+    width:48px;
+    height:48px;
+
+    margin:0 auto 13px;
+
+    display:grid;
+    place-items:center;
+
+    border:2px solid #dddddd;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    color:#aaa;
+
+    font-size:20px;
+}
+
+.zv-progress-step.is-complete .zv-progress-icon{
+    border-color:#0758b8;
+
+    background:#0758b8;
+
+    color:#fff;
+}
+
+.zv-progress-step h4{
+    margin:0 0 5px;
+
+    color:#444;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:13px;
+    font-weight:600;
+}
+
+.zv-progress-step p{
+    margin:0;
+
+    color:#999;
+
+    font-size:11px;
+    line-height:1.5;
+}
+
+
+/* SECTIONS */
+
+.zv-track-section{
+    padding:28px 30px;
+
+    border-bottom:1px solid #eeeeee;
+}
+
+.zv-track-section > h3{
+    margin:0 0 20px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:18px;
+    font-weight:600;
+}
+
+
+/* PRODUCT */
+
+.zv-track-product{
+    display:grid;
+
+    grid-template-columns:90px 1fr auto;
+
+    gap:18px;
+
+    align-items:center;
+}
+
+.zv-track-product-img{
+    width:90px;
+    height:90px;
+
+    display:grid;
+    place-items:center;
+
+    background:#f7f7f7;
+
+    color:#bbb;
+
+    font-size:25px;
+}
+
+.zv-track-product-img img{
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+}
+
+.zv-track-product-info h4{
+    margin:0 0 7px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:500;
+}
+
+.zv-track-product-info p{
+    margin:0;
+
+    color:#888;
+
+    font-size:13px;
+}
+
+.zv-track-product-total{
+    min-width:110px;
+
+    text-align:right;
+}
+
+.zv-track-product-total span{
+    display:block;
+
+    margin-bottom:4px;
+
+    color:#888;
+
+    font-size:11px;
+}
+
+.zv-track-product-total strong{
+    color:#0758b8;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:17px;
+    font-weight:600;
+}
+
+
+/* INFO BOXES */
+
+.zv-track-info-grid{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+}
+
+.zv-track-info-box{
+    padding:28px 30px;
+
+    border-bottom:1px solid #eeeeee;
+}
+
+.zv-track-info-box + .zv-track-info-box{
+    border-left:1px solid #eeeeee;
+}
+
+.zv-track-info-box h4{
+    margin:0 0 15px;
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:14px;
+    font-weight:600;
+}
+
+.zv-track-info-box h4 i{
+    color:#0758b8;
+}
+
+.zv-track-info-box p{
+    margin:0 0 5px;
+
+    color:#777;
+
+    font-size:13px;
+}
+
+
+/* HISTORY */
+
+.zv-status-history{
+    position:relative;
+}
+
+.zv-status-history-item{
+    position:relative;
+
+    display:flex;
+
+    gap:13px;
+
+    padding:0 0 18px 4px;
+}
+
+.zv-history-dot{
+    width:10px;
+    height:10px;
+
+    flex:0 0 10px;
+
+    margin-top:5px;
+
+    border-radius:50%;
+
+    background:#0758b8;
+}
+
+.zv-status-history-item strong{
+    color:#333;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:13px;
+    font-weight:500;
+}
+
+.zv-status-history-item p{
+    margin:3px 0 0;
+
+    color:#999;
+
+    font-size:11px;
+}
+
+
+/* BOTTOM */
+
+.zv-track-bottom{
+    padding:25px 30px;
+
+    text-align:right;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:991px){
+
+    .zv-order-progress{
+        grid-template-columns:1fr;
+
+        gap:22px;
+
+        padding:30px;
+    }
+
+    .zv-progress-line{
+        display:none;
+    }
+
+    .zv-progress-step{
+        display:grid;
+
+        grid-template-columns:50px 1fr;
+
+        column-gap:14px;
+
+        text-align:left;
+    }
+
+    .zv-progress-icon{
+        grid-row:1 / span 2;
+
+        margin:0;
+    }
+
+    .zv-progress-step h4,
+    .zv-progress-step p{
+        text-align:left;
+    }
+
+}
+
+@media(max-width:767px){
+
+    .zv-track-order-head{
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        padding:22px 18px;
+    }
+
+    .zv-track-status{
+        width:100%;
+    }
+
+    .zv-track-section,
+    .zv-track-info-box,
+    .zv-track-bottom{
+        padding:22px 18px;
+    }
+
+    .zv-track-product{
+        grid-template-columns:72px 1fr;
+    }
+
+    .zv-track-product-img{
+        width:72px;
+        height:72px;
+    }
+
+    .zv-track-product-total{
+        grid-column:2;
+
+        text-align:left;
+    }
+
+    .zv-track-info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .zv-track-info-box + .zv-track-info-box{
+        border-left:0;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+

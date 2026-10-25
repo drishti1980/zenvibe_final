@@ -1,0 +1,175 @@
+﻿{% extends account_layout %}
+{% block title %}My Orders | ZenVibe{% endblock %}
+{% block account_content %}
+{% if not request.user.is_authenticated %}
+<div class="breadcrumb-section"><div class="container"><h2>My Orders</h2><nav class="theme-breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'designer:home' %}">Home</a></li><li class="breadcrumb-item active">My Orders</li></ol></nav></div></div>
+{% endif %}
+<section class="section-b-space zv-account-orders"><div class="container"><div class="zv-orders-shell">
+<div class="zv-orders-head"><div><h2>Current Orders</h2><p>Follow orders that are being confirmed, produced or shipped.</p></div></div>
+<div class="table-responsive"><table class="table cart-table order-table"><thead><tr><th>Order</th><th>Product</th><th>Date</th><th>Delivery</th><th>Status</th><th>Total / payment</th><th>Action</th></tr></thead><tbody>
+{% for o in current_orders %}<tr{% if highlight_order == o.order_number %} class="zv-highlight-order"{% endif %}><td><strong>{{ o.order_number }}</strong><small class="d-block">{{ o.quantity }} item{{ o.quantity|pluralize }}</small></td><td><div class="zv-order-product">{% if o.design.product.image %}<img src="{{ o.design.product.image.url }}" alt="{{ o.design.product.name }}">{% endif %}<span>{{ o.design.product.name }}</span></div>{% if o.selected_size_key %}<small class="d-block">Size: {{ o.selected_size_key }}</small>{% endif %}</td><td>{{ o.created_at|date:"M d, Y" }}</td><td><span class="zv-delivery"><i class="ri-truck-line"></i>{% if o.status == 'shipped' %}Shipped{% elif o.status == 'in_production' %}In Production{% elif o.status == 'confirmed' %}Confirmed{% else %}Order Received{% endif %}</span></td><td>{{ o.get_status_display }}</td><td><strong>${{ o.total }}</strong><small class="d-block">{{ o.get_payment_status_display }}{% if o.payment_provider %} Â· {{ o.payment_provider|title }}{% endif %}</small></td><td>
+    <!-- <form method="post" action="{% url 'designer:choose_design' o.design.product.id %}">{% csrf_token %}<button class="btn btn-solid btn-sm" type="submit">Buy Again</button></form> -->
+<a
+    href="{% url 'designer:choose_design' o.design.product.id %}"
+    class="btn btn-solid btn-sm"
+>
+    Buy Again
+</a>
+</td></tr>
+<tr class="zv-history-row"><td colspan="7"><strong>Order progress:</strong> {% for h in o.status_history.all|slice:":5" %}<span>{{ h.created_at|date:"M d" }} â€” {{ h.to_status|title }}</span>{% empty %}<span>Order received</span>{% endfor %}</td></tr>{% empty %}<tr><td colspan="7" class="text-center py-4">No current orders.</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="zv-history-title"><h2>Order History</h2><p>Completed and cancelled orders are kept here.</p></div>
+<div class="table-responsive"><table class="table cart-table order-table"><thead><tr><th>Order</th><th>Product</th><th>Date</th><th>Status</th><th>Total</th><th>Action</th></tr></thead><tbody>{% for o in order_history %}<tr><td><strong>{{ o.order_number }}</strong></td><td><div class="zv-order-product">{% if o.design.product.image %}<img src="{{ o.design.product.image.url }}" alt="{{ o.design.product.name }}">{% endif %}<span>{{ o.design.product.name }}</span></div></td><td>{{ o.created_at|date:"M d, Y" }}</td><td>{{ o.get_status_display }}</td><td><strong>${{ o.total }}</strong></td><td>
+    <!-- <form method="post" action="{% url 'designer:choose_design' o.design.product.id %}">{% csrf_token %}<button class="btn btn-solid btn-sm" type="submit">Buy Again</button></form> -->
+<a
+    href="{% url 'designer:choose_design' o.design.product.id %}"
+    class="btn btn-solid btn-sm"
+>
+    Buy Again
+</a>
+</td></tr><tr class="zv-history-row"><td colspan="6">{% for h in o.status_history.all|slice:":5" %}<span>{{ h.created_at|date:"M d" }} â€” {{ h.to_status|title }}</span>{% empty %}<span>Order received</span>{% endfor %}</td></tr>{% empty %}<tr><td colspan="6" class="text-center py-4">No past orders yet.</td></tr>{% endfor %}</tbody></table></div>
+</div></div></section>
+<style>
+.zv-orders-shell {
+    border: 1px solid #eee;
+    padding: 26px;
+    background: #fff;
+}
+
+.zv-orders-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.zv-orders-head h2,
+.zv-history-title h2 {
+    margin: 0 0 5px;
+}
+
+.zv-orders-head p,
+.zv-history-title p {
+    margin: 0;
+    color: #777;
+}
+
+.zv-history-title {
+    margin: 38px 0 18px;
+}
+
+
+/* ==========================================
+   CENTER TABLE CONTENT VERTICALLY
+========================================== */
+
+.order-table > tbody > tr:not(.zv-history-row) > td {
+    vertical-align: middle !important;
+}
+
+.order-table > thead > tr > th {
+    vertical-align: middle !important;
+}
+
+
+/* PRODUCT */
+
+.zv-order-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 190px;
+}
+
+.zv-order-product img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    background: #f7f7f7;
+}
+
+.zv-order-product span {
+    display: flex;
+    align-items: center;
+}
+
+
+/* DELIVERY */
+
+.zv-delivery {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0758b8;
+}
+
+.zv-delivery i {
+    display: inline-flex;
+    align-items: center;
+}
+
+
+/* ACTION */
+
+.order-table td:last-child {
+    vertical-align: middle !important;
+}
+
+.order-table .btn {
+    margin: 0;
+}
+
+
+/* ORDER PROGRESS */
+
+.zv-history-row td {
+    background: #fafafa;
+    font-size: 12px;
+    color: #777;
+    vertical-align: middle !important;
+}
+
+.zv-history-row span {
+    margin-left: 14px;
+}
+
+
+/* HIGHLIGHT */
+
+.zv-highlight-order {
+    outline: 2px solid #f6a329;
+    outline-offset: -2px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .zv-orders-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .order-table {
+        min-width: 900px;
+    }
+}
+/* Account layout: keep the existing tables inside the persistent sidebar. */
+.zv-main .zv-account-orders{padding:0!important;margin:0!important}
+.zv-main .zv-account-orders>.container{max-width:100%!important;width:100%!important;padding:0!important;margin:0!important}
+.zv-main .zv-orders-shell{border:0!important;padding:0!important;box-shadow:none!important;max-width:100%;min-width:0}
+.zv-main .zv-orders-head h2,.zv-main .zv-history-title h2{font-size:21px!important;line-height:1.4!important;text-transform:none!important;letter-spacing:-.02em!important}
+.zv-main .zv-orders-head p,.zv-main .zv-history-title p{font-size:13px!important}
+.zv-main .table-responsive{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.zv-main .order-table{min-width:760px;width:100%}
+.zv-main .order-table th,.zv-main .order-table td{font-size:12px!important;padding:12px 9px!important}
+.zv-main .order-table .btn{white-space:nowrap}
+@media(max-width:700px){.zv-main .order-table{min-width:760px}}
+</style>
+<!-- <style>.zv-orders-shell{border:1px solid #eee;padding:26px;background:#fff}.zv-orders-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}.zv-orders-head h2,.zv-history-title h2{margin:0 0 5px}.zv-orders-head p,.zv-history-title p{margin:0;color:#777}.zv-history-title{margin:38px 0 18px}.zv-order-product{display:flex;align-items:center;gap:10px;min-width:190px}.zv-order-product img{width:58px;height:58px;object-fit:contain;background:#f7f7f7}.zv-delivery{display:inline-flex;gap:6px;align-items:center;color:#0758b8}.zv-history-row td{background:#fafafa;font-size:12px;color:#777}.zv-history-row span{margin-left:14px}.zv-highlight-order{outline:2px solid #f6a329;outline-offset:-2px}@media(max-width:700px){.zv-orders-head{align-items:flex-start;flex-direction:column}.order-table{min-width:900px}}</style> -->
+{% endblock %}
+
+
+

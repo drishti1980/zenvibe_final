@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff0f0" opacity="1"/>
+<line x1="80" y1="65" x2="670" y2="65" stroke="#c0767f" stroke-width="3" opacity="1"/>
+<line x1="80" y1="985" x2="670" y2="985" stroke="#c0767f" stroke-width="3" opacity="1"/>
+<line x1="55" y1="100" x2="55" y2="950" stroke="#ffffff" stroke-width="2" opacity="1"/>
+<line x1="695" y1="100" x2="695" y2="950" stroke="#ffffff" stroke-width="2" opacity="1"/>
+<rect x="270" y="0" width="210" height="1050" rx="0" fill="#ffffff" opacity="0.22"/>
+<line x1="270" y1="0" x2="270" y2="1050" stroke="#c0767f" stroke-width="2" opacity="1"/>
+<line x1="480" y1="0" x2="480" y2="1050" stroke="#c0767f" stroke-width="2" opacity="1"/>
+<circle cx="375" cy="160" r="34" fill="#fff0f0" opacity="1" stroke="#c0767f" stroke-width="3"/>
+<text x="375.0" y="171" text-anchor="middle" fill="#c0767f" font-size="35" font-family="Georgia" font-weight="700" opacity="1"><tspan x="375.0" dy="0">✦</tspan></text>
+<text x="385.0" y="333" text-anchor="middle" fill="#c0767f" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="385.0" dy="0">CELEBRATE WILLIAM&#x27;S GRADUATION</tspan></text>
+<text x="385.0" y="424" text-anchor="middle" fill="#6f1f2f" font-size="52" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="385.0" dy="0">CLASS OF 2026</tspan></text>
+<text x="385.0" y="541" text-anchor="middle" fill="#6f1f2f" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="385.0" dy="0">FRIDAY · 20 NOVEMBER 2026</tspan></text>
+<text x="385.0" y="581" text-anchor="middle" fill="#6f1f2f" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="385.0" dy="0">HARBOUR HALL · 6:00 PM</tspan></text>
+<text x="385.0" y="655" text-anchor="middle" fill="#c0767f" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="385.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#ffffff" opacity="0.025"/>
+</svg>

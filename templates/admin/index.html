@@ -1,0 +1,53 @@
+﻿{% extends "admin/base_site.html" %}{% load i18n static %}
+{% block content_title %}{% endblock %}
+{% block content %}
+<div class="page-header zv-dashboard-header">
+  <div class="page-header-left"><h3>Dashboard <small>ZenVibe Admin panel</small></h3></div>
+  <ol class="breadcrumb"><li class="breadcrumb-item"><i data-feather="home"></i></li><li class="breadcrumb-item active">Dashboard</li></ol>
+</div>
+
+<div class="row zv-kpi-row">
+  <div class="col-xxl-3 col-md-6"><div class="card o-hidden zv-kpi warning-box"><div class="card-body"><div class="media static-top-widget align-items-center"><div class="icons-widgets"><i data-feather="dollar-sign"></i></div><div class="media-body"><span>Revenue</span><h3>${{ zv_revenue|default:"0.00"|floatformat:2 }}</h3><small>Non-cancelled orders</small></div></div></div></div></div>
+  <div class="col-xxl-3 col-md-6"><div class="card o-hidden zv-kpi secondary-box"><div class="card-body"><div class="media static-top-widget align-items-center"><div class="icons-widgets"><i data-feather="box"></i></div><div class="media-body"><span>Products</span><h3>{{ zv_products|default:"0" }}</h3><small>Active catalogue items</small></div></div></div></div></div>
+  <div class="col-xxl-3 col-md-6"><div class="card o-hidden zv-kpi primary-box"><div class="card-body"><div class="media static-top-widget align-items-center"><div class="icons-widgets"><i data-feather="shopping-bag"></i></div><div class="media-body"><span>Total Orders</span><h3>{{ zv_total_orders|default:"0" }}</h3><small>{{ zv_new_orders|default:"0" }} new orders</small></div></div></div></div></div>
+  <div class="col-xxl-3 col-md-6"><div class="card o-hidden zv-kpi danger-box"><div class="card-body"><div class="media static-top-widget align-items-center"><div class="icons-widgets"><i data-feather="credit-card"></i></div><div class="media-body"><span>Pending Payments</span><h3>{{ zv_pending_payments|default:"0" }}</h3><small>{{ zv_workflow.get_payment_mode_display|default:"Payment mode" }}</small></div></div></div></div></div>
+</div>
+
+<div class="row">
+  <div class="col-xl-7 xl-100">
+    <div class="card zv-chart-card">
+      <div class="card-header zv-chart-head"><div><h5>Store Performance</h5><span>Choose what to measure and how to group it</span></div><div class="zv-chart-controls"><select id="zvChartMetric" aria-label="Chart metric"><option value="orders">Orders</option><option value="revenue">Revenue</option><option value="quantity">Quantity sold</option></select><select id="zvChartGroup" aria-label="Group chart by"><option value="month">By month</option><option value="status">By order status</option><option value="payment">By payment status</option><option value="category">By category</option></select></div></div>
+      <div class="card-body">
+        <div class="zv-performance-grid">
+          <div><span>Orders</span><strong>{{ zv_total_orders|default:"0" }}</strong><div class="zv-progress"><i style="width:{% if zv_total_orders %}76{% else %}4{% endif %}%"></i></div></div>
+          <div><span>Revenue</span><strong>${{ zv_revenue|default:"0.00"|floatformat:2 }}</strong><div class="zv-progress secondary"><i style="width:{% if zv_total_orders %}64{% else %}4{% endif %}%"></i></div></div>
+          <div><span>Products</span><strong>{{ zv_products|default:"0" }}</strong><div class="zv-progress warning"><i style="width:{% if zv_products %}88{% else %}4{% endif %}%"></i></div></div>
+          <div><span>Pending Payment</span><strong>{{ zv_pending_payments|default:"0" }}</strong><div class="zv-progress danger"><i style="width:{% if zv_pending_payments %}42{% else %}4{% endif %}%"></i></div></div>
+        </div>
+        <div class="zv-activity-chart" id="zvPerformanceChart" aria-label="Store performance chart"></div>
+        {{ zv_chart_rows|json_script:"zv-chart-data" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-5 xl-100">
+    <div class="card">
+      <div class="card-header zv-card-head"><h5>Latest Orders</h5><a href="{% url 'admin:designer_order_changelist' %}" class="btn btn-primary btn-sm">View All Orders</a></div>
+      <div class="card-body p-0">
+        <div class="user-status table-responsive latest-order-table">
+          <table class="table table-bordernone mb-0"><thead><tr><th>Order ID</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead><tbody>
+          {% for o in zv_recent_orders %}<tr><td><a href="{% url 'admin:designer_order_change' o.id %}">{{ o.order_number }}</a><small>{{ o.customer_name }}</small></td><td>${{ o.total }}</td><td><span class="zv-badge payment-{{ o.payment_status }}">{{ o.get_payment_status_display }}</span></td><td><span class="zv-badge status-{{ o.status }}">{{ o.get_status_display }}</span></td></tr>{% empty %}<tr><td colspan="4" class="zv-empty-table">No customer orders yet.</td></tr>{% endfor %}
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-8 xl-100"><div class="card"><div class="card-header zv-card-head"><h5>Best Selling Products</h5><a href="{% url 'admin:designer_product_changelist' %}">Manage products</a></div><div class="card-body"><div class="zv-best-grid">{% for p in zv_best_sellers %}<a href="{% url 'admin:designer_product_change' p.id %}" class="zv-best-item"><div class="zv-best-img">{% if p.image %}<img src="{{ p.image.url }}" alt="">{% else %}<i data-feather="package"></i>{% endif %}</div><div><b>{{ p.name }}</b><span>{{ p.category.name }}</span></div><strong>{{ p.units_sold|default:0 }}<small> sold</small></strong></a>{% empty %}<div class="zv-empty-panel">Best sellers will appear after customer orders are placed.</div>{% endfor %}</div></div></div></div>
+  <div class="col-xl-4 xl-100"><div class="card"><div class="card-header"><h5>Quick Actions</h5></div><div class="card-body zv-quick-actions"><a href="{% url 'admin:designer_product_add' %}"><i data-feather="plus-circle"></i><span>Add Product<small>Create a new catalogue product</small></span></a><a href="{% url 'admin:designer_order_changelist' %}"><i data-feather="archive"></i><span>Manage Orders<small>Fulfilment and customer artwork</small></span></a><a href="{% url 'admin:designer_designtemplate_add' %}"><i data-feather="image"></i><span>Create Template<small>Customisation templates</small></span></a><a href="{% url 'admin:designer_orderworkflowconfig_changelist' %}"><i data-feather="settings"></i><span>Order Settings<small>Automation, email and Stripe</small></span></a></div></div></div>
+</div>
+{% endblock %}
+
+

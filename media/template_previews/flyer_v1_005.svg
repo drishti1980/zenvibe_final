@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="446" y="76" width="288" height="488" rx="0" ry="0" fill="none" stroke="#B98A4C" stroke-width="2" opacity="1"/>
+<path d="M 487.6 450.0 L 487.6 216.0 Q 590.0 49.6 692.4 216.0 L 692.4 450.0" fill="none" stroke="#B98A4C" stroke-width="3" opacity="1"/>
+<line x1="468.4" y1="122.4" x2="570.8" y2="140.832" stroke="#B98A4C" stroke-width="3" opacity="0.85"/>
+<ellipse cx="485.46666666666664" cy="107.47200000000001" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 485.46666666666664 107.47200000000001)"/>
+<ellipse cx="502.5333333333333" cy="146.544" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 502.5333333333333 146.544)"/>
+<ellipse cx="519.6" cy="113.61600000000001" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 519.6 113.61600000000001)"/>
+<ellipse cx="536.6666666666666" cy="152.68800000000002" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 536.6666666666666 152.68800000000002)"/>
+<ellipse cx="553.7333333333333" cy="119.75999999999999" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 553.7333333333333 119.75999999999999)"/>
+<line x1="711.6" y1="434.4" x2="615.6" y2="451.67999999999995" stroke="#B98A4C" stroke-width="3" opacity="0.85"/>
+<ellipse cx="695.6" cy="419.28" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 695.6 419.28)"/>
+<ellipse cx="679.6" cy="458.15999999999997" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 679.6 458.15999999999997)"/>
+<ellipse cx="663.6" cy="425.03999999999996" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 663.6 425.03999999999996)"/>
+<ellipse cx="647.6" cy="463.91999999999996" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 647.6 463.91999999999996)"/>
+<ellipse cx="631.6" cy="430.79999999999995" rx="18" ry="8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 631.6 430.79999999999995)"/>
+<text x="60" y="78" fill="#B75C3F" font-family="Montserrat" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#4A2B22" font-family="Cinzel" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">FIND A PLACE</tspan><tspan x="60" dy="71.76">TO CALL HOME</tspan></text>
+<text x="62" y="414" fill="#4A2B22" font-family="Montserrat" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Premium properties. Personal service.</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#B98A4C" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#4A2B22" font-family="Montserrat" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">VIEW PROPERTIES</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">05</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

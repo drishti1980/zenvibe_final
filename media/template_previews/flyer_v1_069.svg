@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.16"/>
+<circle cx="282.4" cy="292.8" r="34" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="282.4" cy="292.8" r="17" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="272.4" y1="292.8" x2="292.4" y2="292.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<line x1="282.4" y1="282.8" x2="282.4" y2="302.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<circle cx="423.2" cy="292.8" r="34" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="423.2" cy="292.8" r="17" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="413.2" y1="292.8" x2="433.2" y2="292.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<line x1="423.2" y1="282.8" x2="423.2" y2="302.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<circle cx="564.0" cy="292.8" r="34" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="564.0" cy="292.8" r="17" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="554.0" y1="292.8" x2="574.0" y2="292.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<line x1="564.0" y1="282.8" x2="564.0" y2="302.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<circle cx="704.8000000000001" cy="292.8" r="34" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="704.8000000000001" cy="292.8" r="17" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="694.8000000000001" y1="292.8" x2="714.8000000000001" y2="292.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<line x1="704.8000000000001" y1="282.8" x2="704.8000000000001" y2="302.8" stroke="#0D0D0F" stroke-width="2" opacity="1"/>
+<text x="500.0" y="594" fill="#F5F1E8" font-family="DM Serif Display" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">CLASS OF 2026</tspan></text>
+<text x="500.0" y="747" fill="#F5F1E8" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Celebrate the achievement</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#E0BD73" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#6F5733" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F1E8" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0D0D0F" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">JOIN THE CELEBRATION</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">69</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

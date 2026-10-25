@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="185" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="84" fill="#E0B76A" font-family="Inter" font-size="16" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">PRIVATE EDITION</tspan></text>
+<ellipse cx="500.0" cy="516.4" rx="213.0" ry="23.4" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 500.0 516.4)"/>
+<rect x="301.2" y="298.0" width="397.6" height="202.8" rx="24" ry="24" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="386.4" y="266.8" width="227.20000000000002" height="226.2" rx="26" ry="26" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="429.0" y1="305.8" x2="571.0" y2="305.8" stroke="#E0B76A" stroke-width="3" opacity="1"/>
+<text x="500.0" y="686" fill="#FFF7EF" font-family="Poppins" font-size="66" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">AN EVENING OF</tspan><tspan x="500.0" dy="62.04">FINE TASTE</tspan></text>
+<text x="500.0" y="826" fill="#FFF7EF" font-family="Inter" font-size="21" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Curated menu â€¢ Elegant atmosphere</tspan></text>
+<line x1="250" y1="870" x2="750" y2="870" stroke="#E0B76A" stroke-width="2" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">RESERVE</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">96</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

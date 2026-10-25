@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="187.20000000000002" cy="253.20000000000002" r="34" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="187.20000000000002" cy="253.20000000000002" r="17" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="177.20000000000002" y1="253.20000000000002" x2="197.20000000000002" y2="253.20000000000002" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<line x1="187.20000000000002" y1="243.20000000000002" x2="187.20000000000002" y2="263.20000000000005" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<circle cx="389.6" cy="253.20000000000002" r="34" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="389.6" cy="253.20000000000002" r="17" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="379.6" y1="253.20000000000002" x2="399.6" y2="253.20000000000002" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<line x1="389.6" y1="243.20000000000002" x2="389.6" y2="263.20000000000005" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<circle cx="592.0" cy="253.20000000000002" r="34" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="592.0" cy="253.20000000000002" r="17" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="582.0" y1="253.20000000000002" x2="602.0" y2="253.20000000000002" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<line x1="592.0" y1="243.20000000000002" x2="592.0" y2="263.20000000000005" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<circle cx="794.4000000000001" cy="253.20000000000002" r="34" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="794.4000000000001" cy="253.20000000000002" r="17" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="784.4000000000001" y1="253.20000000000002" x2="804.4000000000001" y2="253.20000000000002" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<line x1="794.4000000000001" y1="243.20000000000002" x2="794.4000000000001" y2="263.20000000000005" stroke="#2A0F17" stroke-width="2" opacity="1"/>
+<text x="500.0" y="630" fill="#FFF7EF" font-family="DM Serif Display" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">THE NIGHT</tspan><tspan x="500.0" dy="65.8">BEGINS HERE</tspan></text>
+<text x="500.0" y="768" fill="#FFF7EF" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A new live production</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#E0B76A" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK SEATS</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">29</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

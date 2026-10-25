@@ -1,0 +1,15 @@
+
+/*
+ * Zenvibe Template UI Cleanup V7
+ */
+
+.zv-live-print-area,
+.zv-print-area-overlay,
+.editable-print-area,
+.template-category-chips,
+.template-filters,
+.template-filter-chips,
+.template-chip-row,
+[data-template-filter] {
+    display: none !important;
+}

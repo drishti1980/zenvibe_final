@@ -1,0 +1,12 @@
+Django>=5.0.6,<7
+Pillow>=10.3.0,<13
+stripe>=12.4.0,<13
+rembg[cpu]
+
+beautifulsoup4>=4.12,<5
+
+# Optional server OCR for admin image-to-template conversion
+easyocr>=1.7.2,<2
+
+# Encrypt admin-managed mailbox credentials at rest
+cryptography>=42,<47

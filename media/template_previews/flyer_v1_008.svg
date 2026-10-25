@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="455.6,580.0 474.8,580.0 465.20000000000005,226.4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="500.4,580.0 519.6,580.0 510.0,288.8" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="545.2,580.0 564.4000000000001,580.0 554.8000000000001,351.20000000000005" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="590.0,580.0 609.2,580.0 599.6,226.4" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="634.8,580.0 654.0,580.0 644.4,288.8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="679.6,580.0 698.8000000000001,580.0 689.2,351.20000000000005" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="724.4000000000001,580.0 743.6000000000001,580.0 734.0000000000001,226.4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="430.0" cy="60.0" r="3" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="548.4" cy="377.2" r="4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="666.8" cy="356.4" r="5" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="465.2" cy="335.6" r="6" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="583.6" cy="314.8" r="3" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="702.0" cy="294.0" r="4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="500.4" cy="273.2" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="618.8" cy="252.4" r="6" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="737.2" cy="231.6" r="3" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="535.6" cy="210.8" r="4" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="654.0" cy="190.0" r="5" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="452.4" cy="169.2" r="6" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="570.8" cy="148.4" r="3" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="689.2" cy="127.6" r="4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="487.6" cy="106.8" r="5" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="606.0" cy="86.0" r="6" fill="#C7A25D" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="724.4" cy="65.2" r="3" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="522.8" cy="382.4" r="4" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="60" y="78" fill="#B73C6C" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#5A1E37" font-family="Oswald" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">GOOD COFFEE.</tspan><tspan x="60" dy="71.76">GOOD DAYS.</tspan></text>
+<text x="62" y="414" fill="#5A1E37" font-family="Inter" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Roasted daily â€¢ Made with care</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#C7A25D" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#5A1E37" font-family="Inter" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#E7B5C5" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#5A1E37" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8EDEF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">VISIT TODAY</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">08</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,107 @@
+{% extends "admin/change_list.html" %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style id="zv-product-responsive-table">
+    /* Compact product list: retain ALL Django admin columns and inline controls. */
+    body.zv-mk-admin #changelist,
+    body.zv-mk-admin #changelist .results {min-width:0!important;max-width:100%!important}
+    body.zv-mk-admin #changelist .results {
+      display:block!important;width:100%!important;overflow-x:auto!important;
+      overflow-y:hidden!important;-webkit-overflow-scrolling:touch;
+      border:1px solid #e1e6ef;border-radius:9px;
+      scrollbar-width:thin;scrollbar-color:#8a9bb1 #edf1f5;
+    }
+    body.zv-mk-admin #changelist .results table {
+      width:100%!important;min-width:0!important;max-width:100%!important;
+      table-layout:fixed!important;border-collapse:collapse!important;
+      font-size:12px!important;
+    }
+    body.zv-mk-admin #changelist .results thead th {
+      white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;
+      font-size:11px!important;line-height:1.25!important;padding:9px 5px!important;
+      vertical-align:middle!important;text-align:left!important;min-width:0!important;
+    }
+    body.zv-mk-admin #changelist .results tbody td,
+    body.zv-mk-admin #changelist .results tbody th {
+      padding:9px 5px!important;vertical-align:middle!important;
+      min-width:0!important;max-width:none!important;
+      white-space:normal!important;overflow-wrap:anywhere!important;
+      line-height:1.35!important;
+    }
+    body.zv-mk-admin #changelist .results th.action-checkbox-column,
+    body.zv-mk-admin #changelist .results td.action-checkbox {
+      width:35px!important;min-width:35px!important;text-align:center!important;
+    }
+    body.zv-mk-admin #changelist .results input[type="number"],
+    body.zv-mk-admin #changelist .results input[type="text"],
+    body.zv-mk-admin #changelist .results select {
+      display:block!important;width:100%!important;min-width:0!important;
+      max-width:100%!important;box-sizing:border-box!important;
+      height:34px!important;padding:5px 4px!important;font-size:12px!important;
+    }
+    body.zv-mk-admin #changelist .results input[type="checkbox"] {
+      width:16px!important;height:16px!important;max-width:100%!important;
+    }
+    body.zv-mk-admin #changelist .results a.button,
+    body.zv-mk-admin #changelist .results .button {
+      display:inline-block!important;max-width:100%!important;
+      white-space:normal!important;text-align:center!important;
+      padding:7px 6px!important;font-size:11px!important;line-height:1.3!important;
+    }
+    body.zv-mk-admin #changelist .results td a {overflow-wrap:anywhere!important}
+    body.zv-mk-admin #changelist .results th.column-action_checkbox,
+    body.zv-mk-admin #changelist .results td.action-checkbox {width:35px!important}
+    body.zv-mk-admin #changelist .results th.column-__str__,
+    body.zv-mk-admin #changelist .results th.column-name,
+    body.zv-mk-admin #changelist .results th.column-product_name {width:13%!important}
+    body.zv-mk-admin #changelist .results th.column-category {width:12%!important}
+    body.zv-mk-admin #changelist .results th.column-print_area,
+    body.zv-mk-admin #changelist .results th.column-print_area_link {width:12%!important}
+    body.zv-mk-admin .change-list .actions {max-width:100%!important;flex-wrap:wrap!important}
+    /* Keep the Print Area action visible while other columns scroll horizontally. */
+    body.zv-mk-admin #changelist .results table {min-width:0!important}
+    body.zv-mk-admin #changelist .results thead th:last-child,
+    body.zv-mk-admin #changelist .results tbody tr > td:last-child,
+    body.zv-mk-admin #changelist .results tbody tr > th:last-child {
+      position:sticky!important;right:0!important;z-index:3!important;
+      background:#fff!important;min-width:125px!important;width:125px!important;
+      box-shadow:-5px 0 12px rgba(20,40,70,.09);
+      border-left:1px solid #e2e7ef!important;
+    }
+    body.zv-mk-admin #changelist .results thead th:last-child {
+      z-index:5!important;background:#f4f6f9!important;
+    }
+    body.zv-mk-admin #changelist .results tbody tr:hover > td:last-child,
+    body.zv-mk-admin #changelist .results tbody tr:hover > th:last-child {
+      background:#f7f9fc!important;
+    }
+    body.zv-mk-admin #changelist .results tbody tr > td:last-child a,
+    body.zv-mk-admin #changelist .results tbody tr > th:last-child a {
+      display:inline-flex!important;align-items:center!important;justify-content:center!important;
+      min-height:38px!important;padding:8px 10px!important;
+      max-width:100%!important;white-space:normal!important;
+      overflow-wrap:break-word!important;text-align:center!important;
+    }
+    body.zv-mk-admin #changelist .results {overscroll-behavior-x:contain!important}
+
+    @media(min-width:1600px) {
+      body.zv-mk-admin #changelist .results table {min-width:0!important;font-size:13px!important}
+      body.zv-mk-admin #changelist .results thead th {font-size:12px!important}
+    }
+    @media(max-width:1199px) {
+      body.zv-mk-admin #changelist .results table {min-width:1000px!important}
+    }
+    @media(max-width:767px) {
+      body.zv-mk-admin #changelist .results table {min-width:960px!important}
+      body.zv-mk-admin .zv-list-tools #toolbar {min-width:0!important;flex-basis:100%!important}
+    }
+  </style>
+{% endblock %}
+
+{% block object-tools-items %}
+  {% if catalog_import_url %}
+    <li><a href="{{ catalog_import_url }}" class="addlink">Import catalog</a></li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#F3E8DF" font-family="Montserrat" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<polygon points="577.5,41.39999999999998 614.1358358342618,113.27319928878237 681.8000000000001,69.3471007705661 677.5909648769558,149.9090351230442 758.152899229434,145.7 714.2268007112176,213.3641641657382 786.1,250.0 714.2268007112176,286.6358358342618 758.152899229434,354.3 677.5909648769558,350.0909648769558 681.8000000000001,430.6528992294339 614.1358358342618,386.7268007112176 577.5,458.6 540.8641641657382,386.7268007112176 473.20000000000005,430.65289922943396 477.4090351230442,350.0909648769558 396.84710077056604,354.3 440.7731992887824,286.63583583426185 368.9,250.00000000000003 440.7731992887824,213.36416416573817 396.8471007705661,145.69999999999996 477.4090351230442,149.9090351230442 473.1999999999999,69.3471007705661 540.8641641657382,113.27319928878237" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.96"/>
+<circle cx="205.0" cy="70.0" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="376.35" cy="234.0" r="7" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="547.7" cy="398.0" r="9" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="719.05" cy="162.0" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="890.4" cy="326.0" r="7" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="316.75" cy="90.0" r="9" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="488.1" cy="254.0" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="659.45" cy="418.0" r="7" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="830.8" cy="182.0" r="9" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="257.15" cy="346.0" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.7"/>
+<text x="205" y="605" fill="#4A2B22" font-family="Cinzel" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">TURN DATA</tspan><tspan x="205" dy="65.8">INTO ACTION</tspan></text>
+<text x="205" y="772" fill="#4A2B22" font-family="Montserrat" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Insights â€¢ Dashboards â€¢ Decisions</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SEE HOW</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">60</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

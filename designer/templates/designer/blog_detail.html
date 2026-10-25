@@ -1,0 +1,554 @@
+{% extends 'designer/base.html' %}
+
+{% block title %}{{ post.title }} | ZenVibe{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       ZENVIBE BLOG DETAIL - MULTIKART STYLE
+    ========================================================= */
+
+    .zv-blog-detail-page {
+        background: #ffffff;
+        color: #333333;
+        font-family: inherit;
+    }
+
+    /* =========================================================
+       BREADCRUMB
+    ========================================================= */
+
+    .zv-blog-detail-breadcrumb {
+        background: #f8f8f8;
+        padding: 28px 0;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .zv-blog-detail-breadcrumb .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .zv-blog-detail-breadcrumb h4 {
+        margin: 0;
+        color: #222222;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .zv-breadcrumb-links {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        margin: 0;
+
+        color: #777777;
+        font-size: 14px;
+    }
+
+    .zv-breadcrumb-links a {
+        color: #555555;
+        text-decoration: none;
+        transition: color .2s ease;
+    }
+
+    .zv-breadcrumb-links a:hover {
+        color: var(--theme-deafult, #ff4c3b);
+    }
+
+    .zv-breadcrumb-links span {
+        color: #999999;
+    }
+
+    /* =========================================================
+       ARTICLE
+    ========================================================= */
+
+    .zv-blog-article {
+        padding: 70px 0 80px;
+    }
+
+    .zv-blog-article-inner {
+        width: 100%;
+        max-width: 1050px;
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       ARTICLE HEADER
+    ========================================================= */
+
+    .zv-blog-article-header {
+        max-width: 900px;
+        margin: 0 auto 38px;
+        text-align: center;
+    }
+
+    .zv-blog-category {
+        display: inline-block;
+
+        margin-bottom: 15px;
+
+        color: var(--theme-deafult, #ff4c3b);
+
+        font-size: 13px;
+        font-weight: 700;
+
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .zv-blog-article-header h1 {
+        max-width: 900px;
+
+        margin: 0 auto 18px;
+
+        color: #222222;
+
+        font-size: 42px;
+        line-height: 1.22;
+        font-weight: 700;
+    }
+
+    .zv-blog-excerpt {
+        max-width: 760px;
+
+        margin: 0 auto;
+
+        color: #777777;
+
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    /* =========================================================
+       SMALL DIVIDER
+    ========================================================= */
+
+    .zv-title-divider {
+        width: 55px;
+        height: 2px;
+
+        margin: 22px auto 0;
+
+        background: var(--theme-deafult, #ff4c3b);
+    }
+
+    /* =========================================================
+       FEATURED IMAGE
+    ========================================================= */
+
+    .zv-blog-featured-image {
+        width: 100%;
+        margin: 0 auto 45px;
+        overflow: hidden;
+    }
+
+    .zv-blog-featured-image img {
+        display: block;
+
+        width: 100%;
+        max-height: 580px;
+
+        object-fit: cover;
+
+        border-radius: 0;
+    }
+
+    /* =========================================================
+       ARTICLE CONTENT
+    ========================================================= */
+
+    .zv-blog-content-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .zv-blog-content {
+        color: #555555;
+
+        font-size: 16px;
+        line-height: 1.9;
+    }
+
+    .zv-blog-content p {
+        margin: 0 0 24px;
+    }
+
+    .zv-blog-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .zv-blog-content h2 {
+        margin: 38px 0 18px;
+
+        color: #222222;
+
+        font-size: 28px;
+        line-height: 1.35;
+        font-weight: 700;
+    }
+
+    .zv-blog-content h3 {
+        margin: 32px 0 16px;
+
+        color: #222222;
+
+        font-size: 23px;
+        line-height: 1.4;
+        font-weight: 700;
+    }
+
+    .zv-blog-content ul,
+    .zv-blog-content ol {
+        margin: 0 0 25px;
+        padding-left: 25px;
+    }
+
+    .zv-blog-content li {
+        margin-bottom: 8px;
+        line-height: 1.8;
+    }
+
+    .zv-blog-content blockquote {
+        margin: 32px 0;
+        padding: 20px 28px;
+
+        border-left: 4px solid var(--theme-deafult, #ff4c3b);
+
+        background: #f8f8f8;
+
+        color: #555555;
+
+        font-size: 17px;
+        font-style: italic;
+        line-height: 1.8;
+    }
+
+    .zv-blog-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 20px 0;
+    }
+
+    /* =========================================================
+       ARTICLE BOTTOM
+    ========================================================= */
+
+    .zv-blog-bottom {
+        max-width: 900px;
+
+        margin: 50px auto 0;
+        padding-top: 30px;
+
+        border-top: 1px solid #eeeeee;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    /* =========================================================
+       MULTIKART STYLE BUTTON
+    ========================================================= */
+
+    .zv-back-blog-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 46px;
+
+        padding: 12px 26px;
+
+        border: 2px solid var(--theme-deafult, #ff4c3b);
+
+        background: var(--theme-deafult, #ff4c3b);
+        color: #ffffff !important;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        text-decoration: none !important;
+
+        transition:
+            background .25s ease,
+            color .25s ease,
+            border-color .25s ease;
+    }
+
+    .zv-back-blog-btn:hover {
+        background: transparent;
+
+        color: var(--theme-deafult, #ff4c3b) !important;
+
+        border-color: var(--theme-deafult, #ff4c3b);
+    }
+
+    .zv-back-arrow {
+        margin-right: 9px;
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 991px) {
+
+        .zv-blog-article {
+            padding: 55px 0 65px;
+        }
+
+        .zv-blog-article-header h1 {
+            font-size: 35px;
+        }
+
+        .zv-blog-featured-image img {
+            max-height: 500px;
+        }
+    }
+
+    @media (max-width: 767px) {
+
+        .zv-blog-detail-breadcrumb {
+            padding: 20px 0;
+        }
+
+        .zv-blog-detail-breadcrumb .container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .zv-blog-article {
+            padding: 42px 0 50px;
+        }
+
+        .zv-blog-article-header {
+            margin-bottom: 28px;
+        }
+
+        .zv-blog-article-header h1 {
+            font-size: 29px;
+            line-height: 1.3;
+        }
+
+        .zv-blog-excerpt {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .zv-blog-featured-image {
+            margin-bottom: 32px;
+        }
+
+        .zv-blog-featured-image img {
+            max-height: 400px;
+        }
+
+        .zv-blog-content {
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .zv-blog-content h2 {
+            font-size: 24px;
+        }
+
+        .zv-blog-content h3 {
+            font-size: 20px;
+        }
+
+        .zv-blog-bottom {
+            margin-top: 38px;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        .zv-blog-article-header h1 {
+            font-size: 25px;
+        }
+
+        .zv-blog-category {
+            font-size: 11px;
+        }
+
+        .zv-blog-featured-image img {
+            max-height: 320px;
+        }
+
+        .zv-blog-bottom {
+            display: block;
+        }
+
+        .zv-back-blog-btn {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<div class="zv-blog-detail-page">
+
+    <!-- =====================================================
+         MULTIKART STYLE BREADCRUMB
+    ====================================================== -->
+
+    <section class="zv-blog-detail-breadcrumb">
+
+        <div class="container">
+
+            <h4>
+                Blog
+            </h4>
+
+            <div class="zv-breadcrumb-links">
+
+                <a href="{% url 'designer:home' %}">
+                    Home
+                </a>
+
+                <span>/</span>
+
+                <a href="{% url 'designer:blog' %}">
+                    Blog
+                </a>
+
+                <span>/</span>
+
+                <span>
+                    {{ post.title|truncatewords:6 }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ARTICLE
+    ====================================================== -->
+
+    <article class="zv-blog-article">
+
+        <div class="container">
+
+            <div class="zv-blog-article-inner">
+
+
+                <!-- =========================================
+                     ARTICLE HEADER
+                ========================================== -->
+
+                <header class="zv-blog-article-header">
+
+                    <span class="zv-blog-category">
+
+                        {{ post.category|default:'ZENVIBE BLOG' }}
+
+                    </span>
+
+
+                    <h1>
+
+                        {{ post.title }}
+
+                    </h1>
+
+
+                    {% if post.excerpt %}
+
+                        <p class="zv-blog-excerpt">
+
+                            {{ post.excerpt }}
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <div class="zv-title-divider"></div>
+
+                </header>
+
+
+                <!-- =========================================
+                     FEATURED IMAGE
+                ========================================== -->
+
+                {% if post.image %}
+
+                    <div class="zv-blog-featured-image">
+
+                        <img
+                            src="{{ post.image.url }}"
+                            alt="{{ post.title }}"
+                            loading="eager"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =========================================
+                     ARTICLE CONTENT
+                ========================================== -->
+
+                <div class="zv-blog-content-wrap">
+
+                    <div class="zv-blog-content">
+
+                        {{ post.body|linebreaks }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     ARTICLE FOOTER
+                ========================================== -->
+
+                <div class="zv-blog-bottom">
+
+                    <a
+                        href="{% url 'designer:blog' %}"
+                        class="zv-back-blog-btn"
+                    >
+
+                        <span class="zv-back-arrow">
+                            ←
+                        </span>
+
+                        Back to All Articles
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </article>
+
+</div>
+
+{% endblock %}

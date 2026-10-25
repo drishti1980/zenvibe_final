@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#2A0F17" font-family="Inter" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<polygon points="205.0,130.0 689.25,70.0 950.0,198.0 488.1,310.0" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="316.75,470.0 562.5999999999999,190.0 950.0,278.0 748.85,470.0" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="264.6" y1="414.0" x2="875.5" y2="130.0" stroke="#E0B76A" stroke-width="3" opacity="0.85"/>
+<text x="205" y="605" fill="#FFF7EF" font-family="Playfair Display" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">OUTDOORS,</tspan><tspan x="205" dy="65.8">BEAUTIFULLY DONE</tspan></text>
+<text x="205" y="772" fill="#FFF7EF" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Design â€¢ Build â€¢ Maintain</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET A QUOTE</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">52</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

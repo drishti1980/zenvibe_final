@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0.0,0.0 1000.0,0.0 1000.0,500.0 0.0,720.0" fill="#F5F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<ellipse cx="550.0" cy="371.8" rx="114.0" ry="25.8" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 550.0 371.8)"/>
+<rect x="443.6" y="131.0" width="212.8" height="223.6" rx="24" ry="24" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="489.20000000000005" y="96.6" width="121.60000000000001" height="249.39999999999998" rx="26" ry="26" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="512.0" y1="139.6" x2="588.0" y2="139.6" stroke="#E0BD73" stroke-width="3" opacity="1"/>
+<text x="60" y="192" fill="#0D0D0F" font-family="Poppins" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">BUILD WEALTH</tspan><tspan x="60" dy="67.67999999999999">WITH CLARITY</tspan></text>
+<text x="62" y="384" fill="#0D0D0F" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Property â€¢ Strategy â€¢ Growth</tspan></text>
+<text x="60" y="792" fill="#F5F1E8" font-family="Inter" font-size="32" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">DESIGNED</tspan><tspan x="60" dy="33.6">FOR IMPACT</tspan></text>
+<line x1="60" y1="875" x2="350" y2="875" stroke="#C9A45C" stroke-width="6" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#6F5733" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F1E8" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0D0D0F" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SPEAK TO US</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">36</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

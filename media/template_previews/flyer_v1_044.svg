@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="34" y="34" width="932" height="732" rx="0" ry="0" fill="none" stroke="#C6A15B" stroke-width="2" opacity="1"/>
+<rect x="52" y="52" width="896" height="696" rx="0" ry="0" fill="none" stroke="#9FB8E8" stroke-width="1" opacity="1"/>
+<ellipse cx="515.2" cy="242.79999999999998" rx="91.2" ry="50.160000000000004" fill="none" stroke="#9FB8E8" stroke-width="2" opacity="0.8" transform="rotate(0 515.2 242.79999999999998)"/>
+<ellipse cx="515.2" cy="242.8" rx="152.0" ry="83.60000000000001" fill="none" stroke="#9FB8E8" stroke-width="2" opacity="0.8" transform="rotate(0 515.2 242.8)"/>
+<ellipse cx="515.2" cy="242.79999999999998" rx="220.39999999999998" ry="121.22" fill="none" stroke="#9FB8E8" stroke-width="2" opacity="0.8" transform="rotate(0 515.2 242.79999999999998)"/>
+<circle cx="720.4000000000001" cy="242.79999999999998" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="660.2983114994796" cy="280.98376618407354" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="515.2" cy="296.79999999999995" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="370.1016885005205" cy="280.98376618407354" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="310.0" cy="242.79999999999998" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="370.1016885005205" cy="204.61623381592642" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="515.2" cy="188.79999999999998" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="660.2983114994796" cy="204.61623381592642" r="7" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="515.2" cy="242.79999999999998" r="26" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="538" fill="#10223A" font-family="DM Serif Display" font-size="68" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">HEALTHCARE,</tspan><tspan x="500.0" dy="64.6">CLOSE TO HOME</tspan></text>
+<text x="500.0" y="687" fill="#10223A" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Advice â€¢ Essentials â€¢ Wellness</tspan></text>
+<text x="500.0" y="782" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">EST. 2026</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#9FB8E8" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#10223A" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8F5EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">VISIT US</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">44</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

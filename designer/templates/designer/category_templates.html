@@ -1,0 +1,33 @@
+{% extends 'designer/base.html' %}
+
+{% block content %}
+
+<h1>{{ category.name }}</h1>
+
+<div class="template-grid">
+
+    <div class="template-card">
+        <h3>Start Blank</h3>
+
+        <a href="/zenvibe/editor/blank/">
+            Customize
+        </a>
+    </div>
+
+    {% for template in templates %}
+
+        <div class="template-card">
+
+            <h3>{{ template.name }}</h3>
+
+            <a href="{% url 'editor' template.id %}">
+                Customize
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

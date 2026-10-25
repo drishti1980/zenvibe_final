@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="540.0,544.0 570.0,544.0 555.0,174.08" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="610.0,544.0 640.0,544.0 625.0,239.36" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="680.0,544.0 710.0,544.0 695.0,304.64000000000004" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="750.0,544.0 780.0,544.0 765.0,174.08" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="820.0,544.0 850.0,544.0 835.0,239.36" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="890.0,544.0 920.0,544.0 905.0,304.64000000000004" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="960.0,544.0 990.0,544.0 975.0,174.08" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="500.0" cy="0.0" r="3" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="685.0" cy="331.84" r="4" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="870.0" cy="310.08" r="5" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="555.0" cy="288.32" r="6" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="740.0" cy="266.56" r="3" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="925.0" cy="244.8" r="4" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="610.0" cy="223.04" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="795.0" cy="201.28" r="6" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="980.0" cy="179.52" r="3" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="665.0" cy="157.76" r="4" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="850.0" cy="136.0" r="5" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="535.0" cy="114.24" r="6" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="720.0" cy="92.48" r="3" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="905.0" cy="70.72" r="4" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="590.0" cy="48.96" r="5" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="775.0" cy="27.2" r="6" fill="#E0B76A" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="960.0" cy="5.44" r="3" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="645.0" cy="337.28" r="4" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="55" y="226" fill="#FFF7EF" font-family="Oswald" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">TIME, REFINED.</tspan></text>
+<text x="58" y="387" fill="#FFF7EF" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Precision â€¢ Craft â€¢ Character</tspan></text>
+<text x="770.0" y="837" fill="#E0B76A" font-family="Oswald" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#2A0F17" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">DISCOVER</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">18</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

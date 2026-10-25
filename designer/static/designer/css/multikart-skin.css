@@ -1,0 +1,113 @@
+/* ==========================================================================
+   ZenVibe x Multikart — Visual Skin Layer
+   Purely additive/override CSS. No HTML, JS, or template logic is touched.
+   Loaded LAST (after zenvibe-modern.css) so these rules take final effect.
+   Brings in Multikart's authentic typography, accent color, button and card
+   language (Montserrat font, #ec8951 theme orange, pill buttons, soft
+   large-radius shadows) while keeping ZenVibe's navy identity intact.
+   ========================================================================== */
+
+/* Multikart's font pairing (Montserrat + Lato) is already preloaded in base.html's
+   <head> with all needed weights — no extra @import needed here. */
+
+:root{
+  /* Multikart's exact brand tokens, layered on top of ZenVibe's existing --m-* variables */
+  --mk-theme:#ec8951;
+  --mk-theme-2:#f7a56f;
+  --mk-title:#222222;
+  --mk-content:#777777;
+  --mk-border:#dddada;
+  --mk-soft-bg:#f8f8f8;
+  --mk-shadow-card:0 0 90px -11px rgba(34,34,34,.07);
+  --mk-shadow-card-hover:0 10px 40px -8px rgba(34,34,34,.16);
+  --mk-radius-pill:100px;
+
+  /* Re-point ZenVibe's existing accent variable at Multikart's brand orange so
+     every component already using var(--m-orange) picks it up automatically. */
+  --m-orange:var(--mk-theme);
+  --m-orange-2:var(--mk-theme-2);
+}
+
+/* ---- Typography: Multikart's Montserrat / Lato pairing ---- */
+.zv-body,.zv-body *{
+  font-family:"Lato","Montserrat",sans-serif !important;
+}
+.zv-body h1,.zv-body h2,.zv-body h3,.zv-body h4,
+.zv-logo-name b,.zv-logo-name small,
+.zv-nav-inner nav a,.zv-menu-toggle,
+.zv-hero h1,.zv-hero-copy,.zv-kicker,.zv-sale,
+.zv-section-title h2,.zv-section-title span,
+.zv-lined-title,.zv-feature-overlay h3,
+.zv-btn,.zv-count-card b,.zv-step-visual b,.zv-steps h3,
+.zv-product-info h3,.zv-about-copy h2,.zv-about-copy>span,
+.zv-contact h2,.zv-contact-details strong,.zv-footer h4,
+.zv-stage-table span,.zv-stage-flag b,.zv-stage-banner strong,
+.zv-preview-info h2,.zv-preview-info>small,
+h1,h2,h3,h4,h5,h6{
+  font-family:"Montserrat",sans-serif !important;
+}
+
+/* ---- Buttons: Multikart's signature full-pill CTA ---- */
+.zv-btn{
+  border-radius:var(--mk-radius-pill);
+  font-weight:600;
+  letter-spacing:.01em;
+  text-transform:none;
+}
+.zv-btn-orange,.zv-btn-primary{
+  background:var(--mk-theme);
+  border:1px solid var(--mk-theme);
+  box-shadow:none;
+}
+.zv-btn-orange:hover,.zv-btn-primary:hover{
+  background:transparent;
+  color:var(--mk-theme);
+  border:1px solid var(--mk-theme);
+  transform:translateY(-2px);
+  box-shadow:none;
+}
+
+/* ---- Section titles: Multikart's muted grey copy under bold navy/dark heading ---- */
+.zv-section-title span{color:var(--mk-theme);letter-spacing:.14em;font-weight:700}
+.zv-section-title h2{font-weight:800}
+.zv-section-title p{color:var(--mk-content)}
+
+/* ---- Product & category cards: Multikart's soft, large-radius shadow card ---- */
+.premium-product-card,.z-catalog-card,.zv-feature-card,.zv-sale-card,.zv-count-card{
+  box-shadow:var(--mk-shadow-card);
+  transition:box-shadow .35s ease,transform .35s ease;
+}
+.premium-product-card:hover,.z-catalog-card:hover,.zv-feature-card:hover,
+.zv-sale-card:hover,.zv-count-card:hover{
+  box-shadow:var(--mk-shadow-card-hover);
+}
+
+/* ---- Testimonial / review cards: Multikart's clean shadow, no border ---- */
+.zv-review-grid article{box-shadow:var(--mk-shadow-card)}
+.zv-review-grid article:hover{box-shadow:var(--mk-shadow-card-hover)}
+
+/* ---- Price emphasis in Multikart's brand orange ---- */
+.z-product-card-foot strong,
+.zv-sale-dot,
+.z-product-meta-row span{
+  color:var(--mk-theme);
+}
+
+/* ---- Category "SHOP NOW" / badges: pill shape, Multikart weight ---- */
+.zv-feature-overlay b,.z-catalog-card-art b{
+  border-radius:var(--mk-radius-pill);
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+/* ---- Nav links: subtle uppercase micro-tracking like Multikart's header ---- */
+.zv-nav-inner nav a{
+  text-transform:none;
+  font-weight:600;
+}
+
+/* ---- Form fields: Multikart's soft rounded inputs ---- */
+.zv-question-form input,.zv-question-form textarea,
+.zv-footer-quote input,.zv-footer-quote textarea{
+  border-radius:10px;
+}

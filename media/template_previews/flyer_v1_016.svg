@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="1"/>
+<ellipse cx="750.0" cy="413.44" rx="150.0" ry="32.64" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 750.0 413.44)"/>
+<rect x="610.0" y="108.80000000000001" width="280.0" height="282.88" rx="24" ry="24" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="670.0" y="65.28" width="160.0" height="315.52" rx="26" ry="26" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="700.0" y1="119.68" x2="800.0" y2="119.68" stroke="#B98A4C" stroke-width="3" opacity="1"/>
+<text x="55" y="226" fill="#4A2B22" font-family="Poppins" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">THE NEW</tspan><tspan x="55" dy="62.699999999999996">COLLECTION</tspan></text>
+<text x="58" y="387" fill="#4A2B22" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Modern essentials â€¢ Limited release</tspan></text>
+<text x="770.0" y="837" fill="#B98A4C" font-family="Poppins" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#F3E8DF" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SHOP NOW</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">16</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="185" rx="0" ry="0" fill="#F5F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="84" fill="#E0BD73" font-family="Inter" font-size="16" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">PRIVATE EDITION</tspan></text>
+<polygon points="145.0,278.5 606.5,220.0 855.0,344.8 414.8,454.0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="251.5,610.0 485.8,337.0 855.0,422.8 663.3,610.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="201.8" y1="555.4" x2="784.0" y2="278.5" stroke="#E0BD73" stroke-width="3" opacity="0.85"/>
+<text x="500.0" y="686" fill="#F5F1E8" font-family="Playfair Display" font-size="66" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">POWER YOUR</tspan><tspan x="500.0" dy="62.04">FUTURE</tspan></text>
+<text x="500.0" y="826" fill="#F5F1E8" font-family="Inter" font-size="21" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Solar â€¢ Battery â€¢ Energy</tspan></text>
+<line x1="250" y1="870" x2="750" y2="870" stroke="#E0BD73" stroke-width="2" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#6F5733" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F1E8" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0D0D0F" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET A QUOTE</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">92</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

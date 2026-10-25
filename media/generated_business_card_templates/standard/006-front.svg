@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1125" height="675" viewBox="0 0 1125 675">
+<rect width="1125" height="675" fill="#FFFFFF"/>
+<rect x="35" y="35" width="1055" height="605" rx="10" fill="none" stroke="#FCA311" stroke-width="7.0" opacity="1.0"/>
+<text x="562.50" y="233.00" fill="#14213D" font-family="Montserrat" font-size="58.00" font-weight="bold" text-anchor="middle"><tspan x="562.50" dy="0.00">ALEX MORGAN</tspan></text>
+<text x="562.50" y="276.00" fill="#FCA311" font-family="Montserrat" font-size="23.00" font-weight="bold" text-anchor="middle"><tspan x="562.50" dy="0.00">BRAND STRATEGIST</tspan></text>
+<line x1="360" y1="310" x2="765" y2="310" stroke="#FCA311" stroke-width="4.0" opacity="1.0"/>
+<text x="562.50" y="371.00" fill="#14213D" font-family="Montserrat" font-size="21.00" font-weight="normal" text-anchor="middle"><tspan x="562.50" dy="0.00">+61 400 123 456   •   alex@studio.com   •   studio.com</tspan></text>
+</svg>

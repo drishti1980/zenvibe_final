@@ -1,0 +1,252 @@
+/* ==========================================================================
+   ZenVibe — Modern Design System v1
+   Restyles every existing zv-* component. No HTML/content changes required.
+   Loaded AFTER zenvibe-live.css so these rules take over the look & feel.
+   ========================================================================== */
+
+:root{
+  --m-navy:#0a2647;
+  --m-navy-2:#123a63;
+  --m-blue:#2563eb;
+  --m-blue-dark:#1743a6;
+  --m-orange:#ff6a1a;
+  --m-orange-2:#ff8a3d;
+  --m-cyan:#06b6d4;
+  --m-ink:#101828;
+  --m-muted:#64748b;
+  --m-line:#e6eaf1;
+  --m-soft:#f6f9fd;
+  --m-white:#fff;
+  --m-r-sm:12px;
+  --m-r-md:18px;
+  --m-r-lg:26px;
+  --m-r-pill:999px;
+  --m-shadow-sm:0 4px 18px rgba(16,24,40,.06);
+  --m-shadow-md:0 14px 34px rgba(16,24,40,.10);
+  --m-shadow-lg:0 26px 64px rgba(10,38,71,.16);
+}
+
+/* ---- Typography: swap the whole site to a modern pairing ---- */
+.zv-body,.zv-body *{font-family:"Inter","Lato",sans-serif !important}
+.zv-body h1,.zv-body h2,.zv-body h3,
+.zv-logo-name b,.zv-logo-name small,
+.zv-nav-inner nav a,.zv-menu-toggle,
+.zv-hero h1,.zv-hero-copy,.zv-kicker,.zv-sale,
+.zv-section-title h2,.zv-section-title span,
+.zv-lined-title,.zv-feature-overlay h3,
+.zv-btn,.zv-count-card b,.zv-step-visual b,.zv-steps h3,
+.zv-product-info h3,.zv-about-copy h2,.zv-about-copy>span,
+.zv-contact h2,.zv-contact-details strong,.zv-footer h4,
+.zv-stage-table span,.zv-stage-flag b,.zv-stage-banner strong,
+.zv-preview-info h2,.zv-preview-info>small{
+  font-family:"Plus Jakarta Sans","Manrope",sans-serif !important;
+}
+.zv-body{color:var(--m-ink);line-height:1.65}
+
+/* ---- Buttons: soft gradient, big radius, lift-on-hover ---- */
+.zv-btn{
+  border-radius:var(--m-r-pill);
+  padding:0 26px;
+  min-height:50px;
+  font-weight:700;
+  letter-spacing:.01em;
+  border:1px solid transparent;
+  box-shadow:none;
+}
+.zv-btn-orange{background:linear-gradient(135deg,var(--m-orange),var(--m-orange-2));color:#fff;box-shadow:0 12px 26px rgba(255,106,26,.28)}
+.zv-btn-primary{background:linear-gradient(135deg,var(--m-blue),var(--m-blue-dark));color:#fff;box-shadow:0 12px 26px rgba(37,99,235,.26)}
+.zv-btn-outline{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.55);color:#fff;backdrop-filter:blur(4px)}
+.zv-btn:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 18px 34px rgba(10,38,71,.24)}
+
+/* ---- Promo strip: cleaner pill-style ---- */
+.zv-promo-strip{background:linear-gradient(90deg,var(--m-orange),var(--m-orange-2))}
+.zv-promo-inner{font-weight:600;letter-spacing:.01em}
+
+/* ---- Top bar: quieter, modern ---- */
+.zv-topbar{background:var(--m-navy);border-top:0;color:#cfe0f5}
+.zv-topbar a{font-weight:600}
+.zv-topbar a:hover{color:var(--m-orange-2)}
+
+/* ---- Sticky header: glassmorphism ---- */
+.zv-header{background:rgba(255,255,255,.78);backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--m-line);box-shadow:none}
+.zv-header.is-scrolled{box-shadow:var(--m-shadow-md)}
+.zv-logo-mark{border-radius:16px;background:linear-gradient(145deg,var(--m-orange),var(--m-orange-2));box-shadow:0 10px 22px rgba(255,106,26,.30);transform:none}
+.zv-logo-name b{color:var(--m-navy);letter-spacing:-.03em}
+.zv-logo-name small{color:var(--m-muted);letter-spacing:.18em}
+.zv-search{border-radius:var(--m-r-pill);border-color:var(--m-line);box-shadow:none;overflow:hidden}
+.zv-search select{border-right:1px solid var(--m-line)}
+.zv-search button{background:var(--m-blue)}
+.zv-search button:hover{background:var(--m-orange)}
+.zv-search:focus-within{box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.zv-account-actions>a:hover{color:var(--m-orange)}
+.zv-account-actions i{background:var(--m-orange)}
+.zv-menu-toggle{border-radius:var(--m-r-sm);background:var(--m-navy)}
+
+/* ---- Nav band: flat modern navy, no gold underline ---- */
+.zv-nav-band{background:var(--m-navy);border-bottom:0}
+.zv-nav-inner nav a{font-weight:600;letter-spacing:.01em}
+.zv-nav-inner nav a:after{background:var(--m-orange)}
+.zv-nav-inner>span{color:#a9c6ec}
+@media(max-width:720px){.zv-nav-inner nav{background:var(--m-navy-2);border-radius:0 0 var(--m-r-md) var(--m-r-md)}}
+
+/* ---- Hero: soft gradient canvas, floating cards, no hard border box ---- */
+.zv-hero{background:linear-gradient(180deg,#f7fafe 0%,#fff 100%);padding:56px 0 0}
+.zv-hero-shell{
+  border:0;
+  border-radius:var(--m-r-lg);
+  background:linear-gradient(120deg,var(--m-navy) 0%,var(--m-navy-2) 45%,#0d5fae 100%);
+  box-shadow:var(--m-shadow-lg);
+  min-height:520px;
+}
+.zv-hero-copy{padding:70px 50px}
+.zv-sale{
+  display:inline-block;background:rgba(255,255,255,.14);color:#ffd77a;
+  padding:6px 16px;border-radius:var(--m-r-pill);font-size:13px;letter-spacing:.04em;
+}
+.zv-kicker{color:#9fd3ff;letter-spacing:.16em}
+.zv-hero h1{letter-spacing:-.03em;font-weight:800}
+.zv-hero h1 span{color:var(--m-orange-2)}
+.zv-hero-text{color:#dfeaff}
+.zv-hero-copy li:before{color:var(--m-orange-2)}
+.zv-hero-stage{border-radius:0 var(--m-r-lg) var(--m-r-lg) 0}
+.zv-stage-table,.zv-stage-banner{border-radius:var(--m-r-md)}
+.zv-stage-flag{border-radius:0 0 40% 40%}
+.zv-hero-note{color:var(--m-muted);font-weight:600}
+@media(max-width:900px){.zv-hero-stage{border-radius:var(--m-r-lg)}}
+
+/* ---- Section titles: consistent modern kicker + heading ---- */
+.zv-section-title span{color:var(--m-orange);letter-spacing:.14em}
+.zv-section-title h2{letter-spacing:-.025em;font-weight:800;color:var(--m-navy)}
+.zv-section-title p{color:var(--m-muted)}
+
+/* ---- Feature category cards ---- */
+.zv-feature-card{border-radius:var(--m-r-lg);box-shadow:var(--m-shadow-sm);transition:.35s ease}
+.zv-feature-card:hover{box-shadow:var(--m-shadow-lg);transform:translateY(-6px)}
+.zv-feature-overlay{border-radius:0 0 var(--m-r-lg) var(--m-r-lg)}
+.zv-feature-overlay b{border-radius:var(--m-r-pill);font-weight:700}
+.zv-slider-arrow{box-shadow:var(--m-shadow-md);color:var(--m-navy)}
+
+/* ---- All-products count grid ---- */
+.zv-count-card{border-radius:var(--m-r-md);border-color:var(--m-line);box-shadow:var(--m-shadow-sm)}
+.zv-count-card:hover{box-shadow:var(--m-shadow-md);border-color:transparent}
+.zv-count-card-img{border-radius:var(--m-r-sm)}
+.zv-count-card b{color:var(--m-navy)}
+
+/* ---- Proof CTA banner ---- */
+.zv-proof-cta{background:linear-gradient(120deg,var(--m-navy),var(--m-navy-2));padding:52px 0}
+.zv-proof-cta .container{border:0;border-radius:var(--m-r-lg);background:#fff;box-shadow:var(--m-shadow-lg)}
+.zv-proof-cta p{color:var(--m-navy)}
+
+/* ---- How it works ---- */
+.zv-step-visual{border-radius:var(--m-r-md)}
+.zv-step-visual b{color:var(--m-blue)}
+.zv-steps article:hover .zv-step-visual b{color:var(--m-orange)}
+
+/* ---- Why-strip ---- */
+.zv-why-strip{background:var(--m-navy);border-radius:0}
+.zv-why-strip div{border-radius:var(--m-r-md);box-shadow:var(--m-shadow-sm)}
+.zv-why-strip b{color:var(--m-blue)}
+
+/* ---- Sale cards ---- */
+.zv-sale-card{border-radius:var(--m-r-md);overflow:hidden;box-shadow:var(--m-shadow-sm);transition:.3s}
+.zv-sale-card:hover{box-shadow:var(--m-shadow-md);transform:translateY(-5px)}
+.zv-sale-media{border-radius:var(--m-r-md) var(--m-r-md) 0 0}
+.zv-sale-dot{background:var(--m-orange);border-radius:var(--m-r-pill);font-weight:700}
+
+/* ---- About / collage ---- */
+.zv-about-img{border-radius:var(--m-r-lg);box-shadow:var(--m-shadow-md)}
+.zv-about-copy>span{color:var(--m-orange);letter-spacing:.14em}
+.zv-about-copy h2{color:var(--m-navy);letter-spacing:-.02em}
+.zv-about-copy p{color:var(--m-muted)}
+
+/* ---- Testimonials: modern quote cards ---- */
+.zv-testimonials{background:linear-gradient(160deg,var(--m-navy),var(--m-navy-2))}
+.zv-review-grid article{
+  border-radius:var(--m-r-md);
+  box-shadow:none;
+  position:relative;
+  padding:32px 26px 26px;
+}
+.zv-review-grid article:before{
+  content:"“";position:absolute;top:6px;left:18px;font:800 56px/1 Georgia,serif;color:var(--m-line);
+}
+.zv-review-grid article:hover{box-shadow:var(--m-shadow-lg);transform:translateY(-6px)}
+.zv-review-grid b{color:var(--m-orange);letter-spacing:.1em}
+.zv-review-grid small{color:var(--m-navy)}
+
+/* ---- Trusted clients ---- */
+.zv-logo-wall span{border-radius:var(--m-r-md);box-shadow:var(--m-shadow-sm);font-weight:700;color:var(--m-muted)}
+.zv-logo-wall span:hover{color:var(--m-blue);box-shadow:var(--m-shadow-md)}
+
+/* ---- Contact ---- */
+.zv-contact{background:linear-gradient(160deg,var(--m-navy),var(--m-navy-2))}
+.zv-contact-details b{color:var(--m-orange-2)}
+.zv-question-form{background:rgba(255,255,255,.06);padding:30px;border-radius:var(--m-r-lg)}
+.zv-question-form input,.zv-question-form textarea{border-radius:var(--m-r-sm);box-shadow:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.92)}
+.zv-question-form button{border-radius:var(--m-r-pill);background:linear-gradient(135deg,var(--m-orange),var(--m-orange-2));font-weight:700}
+
+/* ---- Footer ---- */
+.zv-footer{background:var(--m-navy);color:#c3d3e8}
+.zv-footer h4{color:#fff}
+.zv-footer a{color:#c3d3e8}
+.zv-footer a:hover{color:var(--m-orange-2)}
+.zv-social a{border-radius:var(--m-r-pill);background:rgba(255,255,255,.12)}
+.zv-social a:hover{background:var(--m-orange)}
+.zv-footer-quote input,.zv-footer-quote textarea{border-radius:var(--m-r-sm);border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff}
+.zv-footer-quote button{border-radius:var(--m-r-pill);background:linear-gradient(135deg,var(--m-orange),var(--m-orange-2))}
+.zv-payment{background:var(--m-navy-2);color:#c3d3e8}
+.zv-payment span{background:rgba(255,255,255,.1);border-radius:var(--m-r-sm)}
+.zv-footer-bottom{background:var(--m-navy-2);color:#c3d3e8}
+
+/* ---- Quick-preview modal ---- */
+.zv-preview-panel{border-radius:var(--m-r-lg);overflow:hidden;box-shadow:var(--m-shadow-lg)}
+.zv-preview-info>small{color:var(--m-orange)}
+
+/* ---- Back to top ---- */
+.zv-back-top{border-radius:var(--m-r-pill);background:var(--m-navy);box-shadow:var(--m-shadow-md)}
+.zv-back-top:hover{background:var(--m-orange)}
+
+/* ---- Smoother reveal motion ---- */
+.zv-reveal{transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+
+/* ==========================================================================
+   Mobile refinements — tighter spacing, single-column stacking, larger tap targets
+   ========================================================================== */
+@media (max-width:720px){
+  .zv-hero-copy{padding:40px 26px}
+  .zv-hero-shell{border-radius:var(--m-r-md)}
+  .zv-btn{min-height:48px;padding:0 20px;font-size:13px}
+  .zv-section-title h2{font-size:clamp(24px,6vw,32px)}
+  .zv-count-grid{gap:12px}
+  .zv-question-form{padding:22px}
+}
+@media (max-width:480px){
+  .zv-hero h1{font-size:clamp(30px,8vw,40px)}
+  .zv-promo-inner{font-size:11px}
+}
+
+/* ---- Product reference photo (T-shirt / Pen configuration panels) ----
+   These two tools use a flat, print-ready design canvas rather than a
+   photographic background (the same approach the site already uses for
+   business cards and notebooks), so the real product photo is shown here
+   as a clear visual reference instead, rather than as the canvas itself. */
+.product-reference-photo{
+  margin:14px 0 18px;
+  border-radius:var(--m-r-md);
+  overflow:hidden;
+  box-shadow:var(--m-shadow-sm);
+  background:var(--m-soft);
+}
+.product-reference-photo img{
+  display:block;
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+}
+.product-reference-photo small{
+  display:block;
+  padding:8px 12px;
+  font-size:12px;
+  color:var(--m-muted);
+  font-weight:600;
+}

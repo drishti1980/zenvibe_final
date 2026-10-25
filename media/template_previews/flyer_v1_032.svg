@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0.0,0.0 1000.0,0.0 1000.0,500.0 0.0,720.0" fill="#152B45" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="360.0,109.5 607.0,45.0 740.0,182.6 504.4,303.0" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="417.0,475.0 542.4,174.0 740.0,268.6 637.4,475.0" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="390.4" y1="414.8" x2="702.0" y2="109.5" stroke="#C8A463" stroke-width="3" opacity="0.85"/>
+<text x="60" y="192" fill="#F6F8FB" font-family="Playfair Display" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">BUILD THE</tspan><tspan x="60" dy="67.67999999999999">FUTURE</tspan></text>
+<text x="62" y="384" fill="#F6F8FB" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Cloud â€¢ AI â€¢ Digital transformation</tspan></text>
+<text x="60" y="792" fill="#152B45" font-family="Inter" font-size="32" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">DESIGNED</tspan><tspan x="60" dy="33.6">FOR IMPACT</tspan></text>
+<line x1="60" y1="875" x2="350" y2="875" stroke="#2D7DD2" stroke-width="6" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#BBD7F3" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#152B45" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F6F8FB" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">TALK TO US</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">32</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

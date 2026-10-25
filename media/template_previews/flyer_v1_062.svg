@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3F0E7" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.16"/>
+<polygon points="180.0,148.5 596.0,90.0 820.0,214.8 423.2,324.0" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="276.0,480.0 487.2,207.0 820.0,292.8 647.2,480.0" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="231.2" y1="425.4" x2="756.0" y2="148.5" stroke="#B89555" stroke-width="3" opacity="0.85"/>
+<text x="500.0" y="594" fill="#173F35" font-family="Playfair Display" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">TURN THE IDEA</tspan><tspan x="500.0" dy="68.82000000000001">INTO MOMENTUM</tspan></text>
+<text x="500.0" y="747" fill="#173F35" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Strategy â€¢ Product â€¢ Growth</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#B89555" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#8FB8A1" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#173F35" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2E6A56" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3F0E7" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">LET'S BUILD</tspan></text>
+<text x="954" y="69" fill="#2E6A56" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">62</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#76558d" opacity="1"/>
+<rect x="52" y="52" width="646" height="946" rx="20" fill="transparent" opacity="1" stroke="#d8d2e7" stroke-width="3"/>
+<text x="375.0" y="155" text-anchor="middle" fill="#fffaff" font-size="35" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="375.0" dy="0">PLAN YOUR DAY</tspan></text>
+<text x="375.0" y="329" text-anchor="middle" fill="#d8d2e7" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">SCHEDULE</tspan></text>
+<text x="375.0" y="373" text-anchor="middle" fill="#fffaff" font-size="18" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">4:30 PM · Arrival</tspan><tspan x="375.0" dy="27.0">5:00 PM · Ceremony / Welcome</tspan><tspan x="375.0" dy="27.0">6:00 PM · Drinks &amp; Celebration</tspan></text>
+<text x="375.0" y="579" text-anchor="middle" fill="#d8d2e7" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">LOCATION</tspan></text>
+<text x="375.0" y="622" text-anchor="middle" fill="#fffaff" font-size="17" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">GRAND BALLROOM · 6:30 PM</tspan><tspan x="375.0" dy="24.14">123 Celebration Avenue · Victoria</tspan></text>
+<text x="375.0" y="779" text-anchor="middle" fill="#d8d2e7" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">DRESS / NOTES</tspan></text>
+<text x="375.0" y="821" text-anchor="middle" fill="#fffaff" font-size="16" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">Dress code: Cocktail</tspan><tspan x="375.0" dy="22.4">Parking available on site</tspan></text>
+</svg>

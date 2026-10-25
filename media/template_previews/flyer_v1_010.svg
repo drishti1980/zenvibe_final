@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="590.0,204.39999999999998 605.7361979422333,235.27170976162466 634.8,216.4041238209143 632.9920922961421,251.0079077038579 667.5958761790857,249.2 648.7282902383754,278.2638020577667 679.6,294.0 648.7282902383754,309.7361979422333 667.5958761790857,338.8 632.9920922961421,336.9920922961421 634.8,371.59587617908574 605.7361979422333,352.72829023837534 590.0,383.6 574.2638020577667,352.72829023837534 545.2,371.59587617908574 547.0079077038579,336.9920922961421 512.4041238209143,338.8 531.2717097616246,309.7361979422333 500.4,294.0 531.2717097616246,278.2638020577667 512.4041238209143,249.2 547.0079077038579,251.0079077038579 545.1999999999999,216.40412382091432 574.2638020577667,235.27170976162466" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.96"/>
+<circle cx="430.0" cy="60.0" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="503.6" cy="273.2" r="7" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="577.2" cy="486.4" r="9" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="650.8" cy="179.6" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="724.4" cy="392.8" r="7" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="478.0" cy="86.0" r="9" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="551.6" cy="299.2" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="625.2" cy="512.4" r="7" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="698.8" cy="205.6" r="9" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="452.4" cy="418.8" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.7"/>
+<text x="60" y="78" fill="#3867D6" font-family="Montserrat" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#10223A" font-family="Cinzel" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">EAT BRIGHT.</tspan><tspan x="60" dy="71.76">FEEL BETTER.</tspan></text>
+<text x="62" y="414" fill="#10223A" font-family="Montserrat" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Fresh bowls â€¢ Honest ingredients</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#C6A15B" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#10223A" font-family="Montserrat" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#9FB8E8" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#10223A" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8F5EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">VIEW MENU</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">10</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

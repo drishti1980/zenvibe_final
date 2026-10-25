@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#16a6a8" opacity="1"/>
+<circle cx="375" cy="125" r="5" fill="#e7c369" opacity="1"/>
+<line x1="375" y1="125" x2="416.04241719908026" y2="12.236885505691006" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="416.04" cy="12.24" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="452.13451316238474" y2="33.074666825722645" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="452.13" cy="33.07" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="478.92304845413264" y2="65.0" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="478.92" cy="65.0" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="493.176930361465" y2="104.16221867996836" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="493.18" cy="104.16" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="493.176930361465" y2="145.83778132003164" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="493.18" cy="145.84" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="478.92304845413264" y2="185.0" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="478.92" cy="185.0" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="452.13451316238474" y2="216.92533317427734" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="452.13" cy="216.93" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<line x1="375" y1="125" x2="416.04241719908026" y2="237.76311449430898" stroke="#e7c369" stroke-width="2" opacity="0.75"/>
+<circle cx="416.04" cy="237.76" r="3.5" fill="#dff7f6" opacity="0.95"/>
+<text x="375.0" y="224" text-anchor="middle" fill="#fffdfa" font-size="34" font-family="Playfair Display" font-weight="700" opacity="1"><tspan x="375.0" dy="0">THE CELEBRATION</tspan></text>
+<text x="375.0" y="329" text-anchor="middle" fill="#e7c369" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">SCHEDULE</tspan></text>
+<text x="375.0" y="373" text-anchor="middle" fill="#fffdfa" font-size="18" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">4:30 PM · Arrival</tspan><tspan x="375.0" dy="27.0">5:00 PM · Ceremony / Welcome</tspan><tspan x="375.0" dy="27.0">6:00 PM · Drinks &amp; Celebration</tspan></text>
+<text x="375.0" y="579" text-anchor="middle" fill="#e7c369" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">LOCATION</tspan></text>
+<text x="375.0" y="622" text-anchor="middle" fill="#fffdfa" font-size="17" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">THE TERRACE · GEELONG</tspan><tspan x="375.0" dy="24.14">123 Celebration Avenue · Victoria</tspan></text>
+<text x="375.0" y="779" text-anchor="middle" fill="#e7c369" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">DRESS / NOTES</tspan></text>
+<text x="375.0" y="821" text-anchor="middle" fill="#fffdfa" font-size="16" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">Dress code: Cocktail</tspan><tspan x="375.0" dy="22.4">Parking available on site</tspan></text>
+</svg>

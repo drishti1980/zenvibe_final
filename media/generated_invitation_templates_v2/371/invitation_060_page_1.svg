@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#073c42" opacity="1"/>
+<ellipse cx="375" cy="245" rx="250" ry="145" fill="#ffd9eb" opacity="0.45" stroke="#e53d92" stroke-width="2"/>
+<line x1="130" y1="110" x2="620" y2="110" stroke="#e53d92" stroke-width="2" opacity="1"/>
+<circle cx="375" cy="110" r="5" fill="#e53d92" opacity="1"/>
+<text x="110" y="349" text-anchor="start" fill="#e53d92" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">DINNER · DRINKS · DANCING</tspan></text>
+<text x="110" y="440" text-anchor="start" fill="#fff8fb" font-size="52" font-family="DM Serif Display" font-weight="700" opacity="1"><tspan x="110" dy="0">SOPHIA TURNS 30</tspan></text>
+<text x="110" y="557" text-anchor="start" fill="#fff8fb" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">SATURDAY · 24 OCTOBER 2026</tspan></text>
+<text x="110" y="597" text-anchor="start" fill="#fff8fb" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">THE GARDEN ROOM · 7:00 PM</tspan></text>
+<text x="110" y="671" text-anchor="start" fill="#e53d92" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff8fb" opacity="0.012"/>
+</svg>

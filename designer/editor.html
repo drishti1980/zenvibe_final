@@ -1,0 +1,1021 @@
+{% extends 'designer/base.html' %}
+{% load static %}
+{% block title %}Design Studio · {{ product.name }}{% endblock %}
+{% block head %}
+<script>
+document.documentElement.classList.add('editor-document');
+window.PRODUCT = {
+    id: {{ product.id }},
+    name: "{{ product.name|escapejs }}",
+    category: "{{ product.category.name|default:''|escapejs }}",
+    categorySlug: "{{ product.category.slug|default:''|escapejs }}",
+    parentCategory: "{% if product.category.parent %}{{ product.category.parent.name|escapejs }}{% endif %}",
+    subcategory: "{{ product.category.name|default:product.name|escapejs }}",
+    imageUrl: "{% if product.image %}{{ product.image.url|escapejs }}{% endif %}",
+    width: {{ product.width }},
+    height: {{ product.height }},
+    minDpi: {{ product.min_dpi }},
+    bleedMm: {{ product.bleed_mm }},
+    safeMarginMm: {{ product.safe_margin_mm }},
+    customizer_config: {{ customizer_config_json|default:"{}"|safe }},
+    editorProfile: {{ editor_profile_json|default:"{}"|safe }}
+};
+window.INITIAL_TEMPLATE={{ template_json|safe }};
+window.TEMPLATE_IMAGE="{% if template_image %}{{ template_image }}{% endif %}";
+window.SOURCE_TEMPLATE_ID={% if template %}{{ template.id }}{% else %}null{% endif %};
+window.PACK_TEMPLATE_ID="{{ pack_code|default:''|escapejs }}";
+window.TEMPLATE_UPDATED_AT={% if template and template.updated_at %}{{ template.updated_at.timestamp|floatformat:0 }}000{% else %}null{% endif %};
+window.TEMPLATE_CATALOG={{ template_catalog_json|safe }};
+window.PRODUCT_OPTIONS={{ product_options_json|default:"{}"|safe }};
+window.PRODUCT_IMAGE_URLS={{ product_image_urls_json|default:"[]"|safe }};
+window.ZENVIBE_STATIC_URL="{% static '' %}";
+window.EXISTING_DESIGN={id:{% if existing_design %}{{ existing_design.id }}{% else %}null{% endif %},name:"{% if existing_design %}{{ existing_design.name|escapejs }}{% endif %}",quantity:{% if existing_design %}{{ existing_design.quantity }}{% else %}100{% endif %}};
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+<script src="{% static 'designer/js/image-tools.js' %}"></script>
+<script src="{% static 'designer/js/raster-edit-tools.js' %}"></script>
+<script src="{% static 'designer/js/arrange-tools.js' %}"></script>
+<link rel="stylesheet" href="{% static 'designer/css/image-tools.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<script defer src="{% static 'designer/js/editor.js' %}?v=1811"></script>
+<script defer src="{% static 'designer/js/editor-enhancements.js' %}?v=1602"></script>
+{% if product.editor_layout_mode != "legacy" %}<script defer src="{% static 'designer/js/admin-print-area-guard.js' %}?v=1804"></script>{% endif %}
+<script defer src="{% static 'designer/js/canva-pro.js' %}?v=1403"></script>
+
+
+
+
+{% endblock %}
+{% block content %}
+<div class="studio-app editor-shell">
+  <header class="studio-topbar">
+    <div class="studio-brand-group">
+      <a class="studio-back" href="{% url 'designer:choose_design' product.id %}" aria-label="Back">←</a>
+      <a class="studio-logo" href="/">Z<span>ENVIBE</span></a>
+      <div class="studio-file-menu"><button id="fileMenuBtn">File</button></div><div class="studio-file-meta">
+        <input id="designName" value="{% if existing_design %}{{ existing_design.name }}{% else %}My Zenvibe Design{% endif %}" aria-label="Design name">
+        <small>{{ product.name }} · {% if product.editor_layout_mode != "legacy" %}<span id="zvArtboardSizeLabel">{% if product.workspace_width_in and product.workspace_height_in %}{{ product.workspace_width_in|floatformat:"-3" }} × {{ product.workspace_height_in|floatformat:"-3" }} in{% else %}Set workspace width/height (in) in Admin{% endif %}</span>{% else %}<span id="zvArtboardSizeLabel">{{ product.width }} × {{ product.height }}</span> px{% endif %}</small>
+      </div>
+    </div>
+    <div class="studio-history-actions">
+      <button id="undoBtn" class="icon-command" title="Undo (Ctrl+Z)">↶</button>
+      <button id="redoBtn" class="icon-command" title="Redo (Ctrl+Y)">↷</button>
+      <span id="autosaveStatus" class="autosave-status">Ready</span>
+    </div>
+    <div class="studio-primary-actions">
+      <button id="threeDViewBtn" class="studio-secondary" type="button" title="Preview this design in 3D">3D View</button>
+      <button id="downloadBtn" class="studio-secondary">Download</button>
+      <button id="saveDraftBtn" class="studio-secondary">Save</button>
+      <button id="saveBtn" class="studio-share">Continue to cart</button>
+    </div>
+  </header>
+
+
+  <div id="zv3dModal" class="zv3d-modal" hidden aria-hidden="true">
+    <div class="zv3d-dialog" role="dialog" aria-modal="true" aria-labelledby="zv3dTitle">
+      <div class="zv3d-head"><div><strong id="zv3dTitle">3D Product Preview</strong><small id="zv3dProductName"></small></div><button id="zv3dClose" type="button" aria-label="Close">×</button></div>
+      <div id="zv3dStage" class="zv3d-stage">
+        <div id="zv3dScene" class="zv3d-scene">
+          <div id="zv3dObject" class="zv3d-object"><div id="zv3dFace" class="zv3d-face"></div><div class="zv3d-edge zv3d-edge-right"></div><div class="zv3d-edge zv3d-edge-bottom"></div></div>
+        </div>
+      </div>
+      <div class="zv3d-controls"><button id="zv3dLeft" type="button">↶ Left</button><button id="zv3dReset" type="button">Reset</button><button id="zv3dRight" type="button">Right ↷</button><span>Drag to rotate · mouse wheel to zoom</span></div>
+    </div>
+  </div>
+  <style>
+  .zv3d-modal[hidden]{display:none}.zv3d-modal{position:fixed;inset:0;z-index:99999;background:rgba(8,10,24,.78);display:grid;place-items:center;padding:24px}
+  .zv3d-dialog{width:min(1000px,94vw);height:min(760px,90vh);background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.35);display:grid;grid-template-rows:auto 1fr auto}
+  .zv3d-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #e8e8ef}.zv3d-head strong{display:block;font-size:20px;color:#17152d}.zv3d-head small{display:block;color:#667085;margin-top:3px}.zv3d-head button{border:0;background:#f1f2f6;width:38px;height:38px;border-radius:50%;font-size:25px;cursor:pointer}
+  .zv3d-stage{min-height:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 38%,#fff 0,#f4f5f9 48%,#e4e6ed 100%);perspective:1200px;cursor:grab}.zv3d-stage:active{cursor:grabbing}
+  .zv3d-scene{width:72%;height:72%;display:grid;place-items:center;transform-style:preserve-3d}.zv3d-object{position:relative;width:min(620px,80%);aspect-ratio:var(--zv3d-ratio,1/1);transform-style:preserve-3d;transform:rotateX(var(--zv3d-x,-8deg)) rotateY(var(--zv3d-y,-22deg)) scale(var(--zv3d-scale,1));transition:transform .12s ease;filter:drop-shadow(0 32px 25px rgba(0,0,0,.24))}
+  .zv3d-face{position:absolute;inset:0;background:center/contain no-repeat;transform:translateZ(10px);backface-visibility:hidden}.zv3d-edge{position:absolute;background:#c8c9cf;transform-origin:center}.zv3d-edge-right{right:-10px;top:0;width:20px;height:100%;transform:rotateY(90deg)}.zv3d-edge-bottom{left:0;bottom:-10px;width:100%;height:20px;transform:rotateX(90deg)}
+  .zv3d-controls{display:flex;gap:10px;align-items:center;justify-content:center;padding:14px 18px;border-top:1px solid #e8e8ef}.zv3d-controls button{border:1px solid #d9dbe5;background:#fff;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer}.zv3d-controls span{font-size:12px;color:#667085;margin-left:8px}
+  @media(max-width:700px){.zv3d-dialog{height:82vh}.zv3d-controls span{display:none}.zv3d-scene{width:92%;height:70%}}
+  </style>
+
+  <aside class="studio-rail" aria-label="Design tools">
+    <button class="rail-tab active zv-category-tab" data-panel="templatesPanel" title="{{ product.category.name|default:product.name }}">
+      <span>▦</span><b>Product</b>
+    </button>
+    <button class="rail-tab" data-panel="elementsPanel"><span>◈</span><b>Elements</b></button>
+    <button class="rail-tab" data-panel="textPanel"><span>T</span><b>Text</b></button>
+    <button class="rail-tab" data-panel="uploadsPanel"><span>⇧</span><b>Uploads</b></button>
+    <button class="rail-tab" data-panel="iconsPanel"><span>✦</span><b>Icons</b></button>
+    <button class="rail-tab" data-panel="photosPanel"><span>▣</span><b>Photos</b></button>
+    <button class="rail-tab" data-panel="toolsPanel"><span>⌘</span><b>Tools</b></button>
+    <button class="rail-tab" data-panel="emojiPanel"><span aria-hidden="true">😀</span><b>Emoji</b></button>
+    <button class="rail-tab" data-panel="backgroundPanel"><span>▧</span><b>Background</b></button>
+    <button class="rail-tab" data-panel="layersPanelWrap"><span>☷</span><b>Layers</b></button>
+  </aside>
+
+  <aside class="studio-panel editor-sidebar">
+    <div class="panel-heading"><div><small>DESIGN STUDIO</small><h2 id="panelTitle">{{ product.name }}</h2></div><button id="closePanelBtn" aria-label="Close panel">×</button></div>
+
+    <section id="templatesPanel" class="studio-panel-section active" aria-hidden="false">
+      {% if product.id == 415 %}
+      <div class="zv-coaster-shape-picker">
+        <strong>Coaster shape</strong>
+        <p>Switch shape without changing your selected design.</p>
+        <div class="zv-coaster-shapes">
+          <button type="button" data-coaster-shape="square" class="{% if request.GET.shape != 'circle' %}active{% endif %}">
+            <span class="zv-shape-square"></span><b>Square</b>
+          </button>
+          <button type="button" data-coaster-shape="circle" class="{% if request.GET.shape == 'circle' %}active{% endif %}">
+            <span class="zv-shape-circle"></span><b>Circle</b>
+          </button>
+        </div>
+      </div>
+      <style>
+        .zv-coaster-shape-picker{padding:14px 2px 16px}.zv-coaster-shape-picker>strong{font-size:15px;color:#172033}
+        .zv-coaster-shape-picker>p{margin:3px 0 12px;font-size:12px;color:#667085}
+        .zv-coaster-shapes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .zv-coaster-shapes button{height:112px;border:1px solid #d8dce7;border-radius:12px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;color:#172033}
+        .zv-coaster-shapes button.active{border:2px solid #5b43e8;background:#f7f5ff}
+        .zv-coaster-shapes span{display:block;width:52px;height:52px;background:#f2dfc8;border:3px solid #c69a69;box-shadow:inset 0 0 0 4px #f8ead9}
+        .zv-shape-square{border-radius:9px}.zv-coaster-shapes .zv-shape-circle{border-radius:50%}
+      </style>
+      <script>
+      document.addEventListener('DOMContentLoaded',function(){
+        document.querySelectorAll('[data-coaster-shape]').forEach(function(btn){
+          btn.addEventListener('click',function(){
+            const url=new URL(window.location.href);
+            url.searchParams.set('shape',btn.dataset.coasterShape);
+            url.searchParams.delete('design');
+            window.location.href=url.pathname+url.search;
+          });
+        });
+      });
+      </script>
+      {% elif product.id == 427 %}
+      <div class="zv-badge-colors">
+        <strong>Color</strong><p>Choose the badge colour. Your selected editable design stays unchanged.</p>
+        <div class="zv-badge-swatches">
+          <button type="button" data-badge-color="red" style="--c:#BE2D2A" aria-label="Red"></button>
+          <button type="button" data-badge-color="blue" style="--c:#2417B8" aria-label="Blue"></button>
+          <button type="button" data-badge-color="green" style="--c:#00B93B" aria-label="Green"></button>
+          <button type="button" data-badge-color="pink" style="--c:#F25AA8" aria-label="Pink"></button>
+          <button type="button" data-badge-color="purple" style="--c:#6D28B7" aria-label="Purple"></button>
+        </div>
+      </div>
+      <style>.zv-badge-colors{padding:14px 2px 18px;border-bottom:1px solid #eceef3;margin-bottom:10px}.zv-badge-colors strong{font-size:16px;color:#172033}.zv-badge-colors p{font-size:12px;color:#667085;margin:5px 0 12px}.zv-badge-swatches{display:flex;gap:12px}.zv-badge-swatches button{width:46px;height:46px;border-radius:50%;border:4px solid #e2e5eb;background:var(--c);cursor:pointer}.zv-badge-swatches button.active{outline:3px solid #4034a8;outline-offset:3px}</style>
+      <script>document.addEventListener('DOMContentLoaded',function(){const u=new URL(location.href);let color=(u.searchParams.get('color')||localStorage.getItem('zv-badge-427-color')||'blue').toLowerCase();const apply=()=>document.querySelectorAll('[data-badge-color]').forEach(b=>b.classList.toggle('active',b.dataset.badgeColor===color));apply();document.querySelectorAll('[data-badge-color]').forEach(b=>b.addEventListener('click',function(){color=b.dataset.badgeColor;localStorage.setItem('zv-badge-427-color',color);apply();const n=new URL(location.href);n.searchParams.set('color',color);history.replaceState({},'',n.pathname+n.search);window.PRODUCT_OPTIONS.badgeColor=color;document.dispatchEvent(new CustomEvent('zenvibe:badge-color-change',{detail:{color}}));}));});</script>
+      {% elif product.id == 426 %}
+      <div class="zv-mousepad-shape-picker">
+        <strong>Mouse pad shape</strong>
+        <p>Rectangle and Round use the same 100 editable templates.</p>
+        <div class="zv-mousepad-shapes">
+          <button type="button" data-mousepad-shape="rectangle"><span class="zv-mousepad-rectangle"></span><b>Rectangle</b></button>
+          <button type="button" data-mousepad-shape="round"><span class="zv-mousepad-round"></span><b>Round</b></button>
+        </div>
+      </div>
+      <style>
+        .zv-mousepad-shape-picker{padding:14px 2px 16px;border-bottom:1px solid #eceef3;margin-bottom:10px}.zv-mousepad-shape-picker>strong{font-size:15px;color:#172033}.zv-mousepad-shape-picker>p{margin:4px 0 12px;font-size:12px;color:#667085}.zv-mousepad-shapes{display:grid;grid-template-columns:1fr 1fr;gap:10px}.zv-mousepad-shapes button{height:104px;border:1px solid #d8dce7;border-radius:12px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;color:#172033}.zv-mousepad-shapes button.active{border:2px solid #5b43e8;background:#f7f5ff}.zv-mousepad-shapes span{display:block;background:#f1e6d3;border:3px solid #c9a679}.zv-mousepad-rectangle{width:62px;height:50px;border-radius:7px}.zv-mousepad-shapes .zv-mousepad-round{width:52px;height:52px;border-radius:50%}
+      </style>
+      <script>
+      document.addEventListener('DOMContentLoaded',function(){
+        const u=new URL(location.href);
+        let shape=(u.searchParams.get('shape')||localStorage.getItem('zv-mousepad-426-shape')||'rectangle').toLowerCase();
+        if(!['rectangle','round'].includes(shape)) shape='rectangle';
+        const activate=()=>document.querySelectorAll('[data-mousepad-shape]').forEach(b=>b.classList.toggle('active',b.dataset.mousepadShape===shape));
+        activate();
+        document.querySelectorAll('[data-mousepad-shape]').forEach(btn=>btn.addEventListener('click',function(){
+          shape=btn.dataset.mousepadShape;
+          localStorage.setItem('zv-mousepad-426-shape',shape);
+          activate();
+          const next=new URL(location.href); next.searchParams.set('shape',shape);
+          history.replaceState({},'',next.pathname+next.search);
+          window.PRODUCT_OPTIONS.mousepadShape=shape;
+          document.dispatchEvent(new CustomEvent('zenvibe:mousepad-shape-change',{detail:{shape}}));
+        }));
+      });
+      </script>
+      {% elif product.id == 416 %}
+      <div class="zv-bottle-options">
+        <div class="zv-bottle-group">
+          <strong>Color</strong>
+          <p>Choose the bottle opener colour. Your selected editable design stays unchanged.</p>
+          <div class="zv-bottle-colors" role="group" aria-label="Bottle opener colour">
+            <button type="button" data-bottle-color="blue" style="--bc:#2563EB" aria-label="Blue"></button>
+            <button type="button" data-bottle-color="red" style="--bc:#EF4444" aria-label="Red"></button>
+            <button type="button" data-bottle-color="white" style="--bc:#F3F4F6" aria-label="White"></button>
+            <button type="button" data-bottle-color="green" style="--bc:#2F9E44" aria-label="Green"></button>
+            <button type="button" data-bottle-color="black" style="--bc:#333333" aria-label="Black"></button>
+          </div>
+        </div>
+        <div class="zv-bottle-group">
+          <strong>Templates</strong>
+          <p>100 editable bottle opener designs. Artwork is constrained to the branding face.</p>
+          <div class="panel-search"><span>⌕</span><input id="templateSearch" placeholder="Search 100 bottle opener templates" aria-label="Search bottle opener designs" autocomplete="off"></div>
+          <div id="templateSuggestions" class="template-suggestions"></div>
+        </div>
+      </div>
+      <style>
+        .zv-bottle-options{padding:2px 0 14px}.zv-bottle-group{padding:12px 2px 16px;border-bottom:1px solid #eceef3}.zv-bottle-group>strong{font-size:15px;color:#172033}.zv-bottle-group>p{margin:4px 0 12px;font-size:12px;line-height:1.45;color:#667085}
+        .zv-bottle-colors{display:flex;gap:12px;flex-wrap:wrap}.zv-bottle-colors button{width:46px;height:46px;border-radius:50%;border:3px solid #d7dbe3;background:var(--bc);cursor:pointer;box-shadow:inset 0 0 0 2px #fff}.zv-bottle-colors button.active{outline:3px solid #44348f;outline-offset:2px}.zv-bottle-colors button.active:after{content:'✓';display:grid;place-items:center;width:100%;height:100%;font-size:20px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
+      </style>
+      <script>
+      document.addEventListener('DOMContentLoaded',function(){
+        const valid=['blue','red','white','green','black'];
+        const url=new URL(location.href);
+        let color=(url.searchParams.get('color')||localStorage.getItem('zv-bottle-416-color')||'blue').toLowerCase();
+        if(!valid.includes(color)) color='blue';
+        function activate(){document.querySelectorAll('[data-bottle-color]').forEach(b=>b.classList.toggle('active',b.dataset.bottleColor===color));}
+        function apply(value){
+          color=value; activate(); localStorage.setItem('zv-bottle-416-color',color);
+          const next=new URL(location.href); next.searchParams.set('color',color);
+          history.replaceState({},'',next.pathname+next.search+next.hash);
+          window.PRODUCT_OPTIONS=window.PRODUCT_OPTIONS||{}; window.PRODUCT_OPTIONS.bottleColor=color;
+          document.dispatchEvent(new CustomEvent('zenvibe:bottle-color-change',{detail:{color:color}}));
+        }
+        activate(); apply(color);
+        document.querySelectorAll('[data-bottle-color]').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.bottleColor)));
+      });
+      </script>
+      {% elif product.id == 420 %}
+      <div class="zv-keychain-options">
+        <div class="zv-keychain-group">
+          <strong>Color</strong>
+          <p>Choose the keychain strap colour. Your Front and Back artwork stays editable.</p>
+          <div class="zv-keychain-colors" role="group" aria-label="Keychain colour">
+            <button type="button" data-keychain-color="red" style="--kc:#ed1111" aria-label="Red"></button>
+            <button type="button" data-keychain-color="light-blue" style="--kc:#45a8c9" aria-label="Light blue"></button>
+            <button type="button" data-keychain-color="blue" style="--kc:#1761c9" aria-label="Blue"></button>
+            <button type="button" data-keychain-color="black" style="--kc:#111111" aria-label="Black"></button>
+            <button type="button" data-keychain-color="orange" style="--kc:#f45b35" aria-label="Orange"></button>
+            <button type="button" data-keychain-color="green" style="--kc:#237d08" aria-label="Green"></button>
+            <button type="button" data-keychain-color="purple" style="--kc:#6b00a8" aria-label="Purple"></button>
+            <button type="button" data-keychain-color="yellow" style="--kc:#fff000" aria-label="Yellow"></button>
+          </div>
+        </div>
+        <div class="zv-keychain-group">
+          <strong>Templates</strong>
+          <p>Choose from 100 editable two-sided keychain designs.</p>
+          <div class="panel-search"><span>⌕</span><input id="templateSearch" placeholder="Search 100 keychain templates" aria-label="Search keychain designs" autocomplete="off"></div>
+          <div id="templateSuggestions" class="template-suggestions"></div>
+        </div>
+      </div>
+      <style>
+        .zv-keychain-options{padding:2px 0 14px}.zv-keychain-group{padding:12px 2px 16px;border-bottom:1px solid #eceef3}.zv-keychain-group>strong{font-size:15px;color:#172033}.zv-keychain-group>p{margin:4px 0 12px;font-size:12px;line-height:1.45;color:#667085}
+        .zv-keychain-colors{display:flex;flex-wrap:wrap;gap:12px}.zv-keychain-colors button{width:46px;height:46px;border-radius:50%;border:3px solid #d7dbe3;background:var(--kc);cursor:pointer;box-shadow:inset 0 0 0 2px #fff}.zv-keychain-colors button.active{outline:3px solid #44348f;outline-offset:2px}.zv-keychain-colors button.active:after{content:'✓';display:grid;place-items:center;width:100%;height:100%;font-size:20px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
+      </style>
+      <script>
+      document.addEventListener('DOMContentLoaded',function(){
+        const valid=['red','light-blue','blue','black','orange','green','purple','yellow'];
+        const u=new URL(location.href);
+        let color=u.searchParams.get('color')||localStorage.getItem('zv-keychain-420-color')||'red';
+        if(!valid.includes(color))color='red';
+        function activate(){document.querySelectorAll('[data-keychain-color]').forEach(b=>b.classList.toggle('active',b.dataset.keychainColor===color));}
+        function apply(v){
+          color=v;activate();localStorage.setItem('zv-keychain-420-color',color);
+          const next=new URL(location.href);next.searchParams.set('color',color);history.replaceState({},'',next.pathname+next.search+next.hash);
+          window.PRODUCT_OPTIONS=window.PRODUCT_OPTIONS||{};window.PRODUCT_OPTIONS.keychainColor=color;
+          document.dispatchEvent(new CustomEvent('zenvibe:keychain-color-change',{detail:{color:color}}));
+        }
+        activate();apply(color);
+        document.querySelectorAll('[data-keychain-color]').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.keychainColor)));
+      });
+      </script>
+      {% elif product.id == 419 %}
+      <div class="zv-freshener-options">
+        <div class="zv-freshener-group">
+          <strong>Shape</strong>
+          <p>Choose the freshener shape. Your current artwork stays in place.</p>
+          <div class="zv-freshener-shapes" role="group" aria-label="Freshener shape">
+            <button type="button" data-freshener-shape="square"><span class="zv-die zv-die-square"></span><b>Square</b></button>
+            <button type="button" data-freshener-shape="round"><span class="zv-die zv-die-round"></span><b>Round</b></button>
+            <button type="button" data-freshener-shape="rounded-square"><span class="zv-die zv-die-rounded"></span><b>Rounded</b></button>
+            <button type="button" data-freshener-shape="diamond"><span class="zv-die zv-die-diamond"></span><b>Diamond</b></button>
+            <button type="button" data-freshener-shape="hexagon"><span class="zv-die zv-die-hexagon"></span><b>Hexagon</b></button>
+            <button type="button" data-freshener-shape="octagon"><span class="zv-die zv-die-octagon"></span><b>Octagon</b></button>
+            <button type="button" data-freshener-shape="ticket"><span class="zv-die zv-die-ticket"></span><b>Ticket</b></button>
+            <button type="button" data-freshener-shape="badge"><span class="zv-die zv-die-badge"></span><b>Badge</b></button>
+            <button type="button" data-freshener-shape="clover"><span class="zv-die zv-die-clover">✤</span><b>Clover</b></button>
+            <button type="button" data-freshener-shape="butterfly"><span class="zv-die zv-die-butterfly">✤</span><b>Butterfly</b></button>
+            <button type="button" data-freshener-shape="scallop"><span class="zv-die zv-die-scallop">✿</span><b>Scallop</b></button>
+            <button type="button" data-freshener-shape="flower"><span class="zv-die zv-die-flower">✿</span><b>Flower</b></button>
+            <button type="button" data-freshener-shape="star"><span class="zv-die zv-die-star">★</span><b>Star</b></button>
+            <button type="button" data-freshener-shape="heart"><span class="zv-die zv-die-heart">♥</span><b>Heart</b></button>
+            <button type="button" data-freshener-shape="burst"><span class="zv-die zv-die-burst">✦</span><b>Burst</b></button>
+            <button type="button" data-freshener-shape="seal"><span class="zv-die zv-die-seal">✿</span><b>Seal</b></button>
+            <button type="button" data-freshener-shape="shield"><span class="zv-die zv-die-shield">⬟</span><b>Shield</b></button>
+            <button type="button" data-freshener-shape="triangle"><span class="zv-die zv-die-triangle"></span><b>Triangle</b></button>
+          </div>
+        </div>
+        <div class="zv-freshener-group">
+          <strong>Fragrance</strong>
+          <p>Choose a fragrance without changing the design.</p>
+          <div class="zv-fragrance-grid" role="group" aria-label="Freshener fragrance">
+            <button type="button" data-freshener-fragrance="vanilla">Vanilla</button>
+            <button type="button" data-freshener-fragrance="black-ice">Black Ice</button>
+          </div>
+        </div>
+        <div class="zv-freshener-group zv-freshener-template-group">
+          <strong>Templates</strong>
+          <p>Choose from 100 editable freshener designs.</p>
+          <div class="panel-search"><span>⌕</span><input id="templateSearch" placeholder="Search 100 freshener templates" aria-label="Search freshener designs" autocomplete="off"></div>
+          <div id="templateSuggestions" class="template-suggestions"></div>
+        </div>
+      </div>
+      <style>
+        .zv-freshener-options{padding:2px 0 14px}.zv-freshener-group{padding:12px 2px 15px;border-bottom:1px solid #eceef3}.zv-freshener-group>strong{font-size:15px;color:#172033}.zv-freshener-group>p{margin:4px 0 11px;font-size:12px;line-height:1.45;color:#667085}
+        .zv-freshener-shapes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.zv-freshener-shapes button{min-height:82px;border:1px solid #d8dce7;border-radius:11px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;color:#172033}.zv-freshener-shapes button.active,.zv-fragrance-grid button.active{border:2px solid #5b43e8;background:#f7f5ff;color:#4933d4}
+        .zv-freshener-shapes span{display:grid;place-items:center;width:42px;height:48px;background:#f6e5c8;border:2px solid #c79b68}.zv-freshener-shapes .zv-fs-rectangle{width:36px;height:50px;border-radius:5px}.zv-freshener-shapes .zv-fs-square{width:45px;height:45px;border-radius:5px}.zv-freshener-shapes .zv-fs-circle{width:46px;height:46px;border-radius:50%}.zv-freshener-shapes .zv-fs-star,.zv-freshener-shapes .zv-fs-car{border:0;background:transparent;color:#c79b68;font-size:38px;line-height:1}.zv-freshener-shapes .zv-fs-heart{border:0;background:transparent;color:#d88d7a;font-size:48px;line-height:1}
+        .zv-freshener-shapes .zv-die{width:42px;height:42px;background:#e5e7eb;border:1px solid #98a2b3;color:#98a2b3;font-size:38px;line-height:38px}.zv-die-square{border-radius:0}.zv-die-round{border-radius:50%}.zv-die-rounded{border-radius:8px}.zv-die-diamond{transform:rotate(45deg);width:34px!important;height:34px!important;border-radius:5px}.zv-die-hexagon{clip-path:polygon(25% 7%,75% 7%,100% 50%,75% 93%,25% 93%,0 50%)}.zv-die-octagon{clip-path:polygon(29% 0,71% 0,100% 29%,100% 71%,71% 100%,29% 100%,0 71%,0 29%)}.zv-die-ticket{clip-path:polygon(8% 0,92% 0,92% 8%,100% 8%,100% 92%,92% 92%,92% 100%,8% 100%,8% 92%,0 92%,0 8%,8% 8%)}.zv-die-badge{border-radius:35% 35% 25% 25%}.zv-die-star,.zv-die-heart,.zv-die-clover,.zv-die-butterfly,.zv-die-scallop,.zv-die-flower,.zv-die-burst,.zv-die-seal,.zv-die-shield{border:0;background:transparent}.zv-die-triangle{width:0!important;height:0!important;background:transparent!important;border-left:22px solid transparent!important;border-right:22px solid transparent!important;border-bottom:40px solid #e5e7eb!important;border-top:0!important}
+        .zv-fragrance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.zv-fragrance-grid button{min-height:42px;padding:8px;border:1px solid #d8dce7;border-radius:9px;background:#fff;font-weight:700;cursor:pointer;color:#344054}.zv-freshener-template-group{border-bottom:0}.zv-freshener-template-group .panel-search{margin-top:9px}
+      </style>
+      <script>
+      document.addEventListener('DOMContentLoaded',function(){
+        const url=new URL(window.location.href);
+        const validShapes=['square','round','rounded-square','diamond','hexagon','octagon','ticket','badge','clover','butterfly','scallop','flower','star','heart','burst','seal','shield','triangle'], validFragrances=['vanilla','black-ice'];
+        let shape=url.searchParams.get('shape')||localStorage.getItem('zv-freshener-419-shape')||'round';
+        let fragrance=url.searchParams.get('fragrance')||localStorage.getItem('zv-freshener-419-fragrance')||'vanilla';
+        if(!validShapes.includes(shape)) shape='round';
+        if(!validFragrances.includes(fragrance)) fragrance='vanilla';
+        function activate(attr,value){
+          document.querySelectorAll('['+attr+']').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute(attr)===value);});
+        }
+        function remember(key,value){
+          const next=new URL(window.location.href);
+          next.searchParams.set(key,value);
+          history.replaceState({},'',next.pathname+next.search+next.hash);
+          localStorage.setItem('zv-freshener-419-'+key,value);
+          window.PRODUCT_OPTIONS=window.PRODUCT_OPTIONS||{};
+          window.PRODUCT_OPTIONS[key]=value;
+          document.dispatchEvent(new CustomEvent('zenvibe:freshener-option-change',{detail:{key:key,value:value}}));
+        }
+        activate('data-freshener-shape',shape); activate('data-freshener-fragrance',fragrance);
+        remember('shape',shape); remember('fragrance',fragrance);
+        document.querySelectorAll('[data-freshener-shape]').forEach(function(btn){btn.addEventListener('click',function(){const v=btn.dataset.freshenerShape;activate('data-freshener-shape',v);remember('shape',v);});});
+        document.querySelectorAll('[data-freshener-fragrance]').forEach(function(btn){btn.addEventListener('click',function(){const v=btn.dataset.freshenerFragrance;activate('data-freshener-fragrance',v);remember('fragrance',v);});});
+
+        // Shape is a product/die-cut option, not template artwork. Keep all
+        // customer-editable objects and constrain their group to the selected
+        // die silhouette without reloading/resetting the chosen template.
+        function freshenerClip(shape,cw,ch){
+          const common={absolutePositioned:true,selectable:false,evented:false};
+          if(shape==='round') return new fabric.Circle({...common,left:cw*.10,top:ch*.10,radius:Math.min(cw,ch)*.40});
+          if(shape==='rounded-square') return new fabric.Rect({...common,left:cw*.10,top:ch*.10,width:cw*.80,height:ch*.80,rx:Math.min(cw,ch)*.08,ry:Math.min(cw,ch)*.08});
+          const pts={
+            diamond:[[.50,.08],[.92,.50],[.50,.92],[.08,.50]],
+            hexagon:[[.25,.08],[.75,.08],[.92,.50],[.75,.92],[.25,.92],[.08,.50]],
+            octagon:[[.28,.08],[.72,.08],[.92,.28],[.92,.72],[.72,.92],[.28,.92],[.08,.72],[.08,.28]],
+            ticket:[[.14,.08],[.86,.08],[.86,.14],[.92,.14],[.92,.86],[.86,.86],[.86,.92],[.14,.92],[.14,.86],[.08,.86],[.08,.14],[.14,.14]],
+            badge:[[.30,.08],[.70,.08],[.88,.20],[.92,.62],[.72,.90],[.28,.90],[.08,.62],[.12,.20]],
+            clover:[[.50,.08],[.62,.24],[.82,.18],[.92,.38],[.76,.50],[.92,.62],[.82,.82],[.62,.76],[.50,.92],[.38,.76],[.18,.82],[.08,.62],[.24,.50],[.08,.38],[.18,.18],[.38,.24]],
+            butterfly:[[.50,.25],[.66,.10],[.88,.18],[.80,.43],[.92,.65],[.70,.84],[.50,.68],[.30,.84],[.08,.65],[.20,.43],[.12,.18],[.34,.10]],
+            scallop:[[.50,.08],[.64,.13],[.76,.10],[.86,.22],[.90,.36],[.92,.50],[.88,.64],[.90,.76],[.76,.90],[.62,.87],[.50,.92],[.36,.87],[.24,.90],[.10,.76],[.12,.62],[.08,.50],[.12,.36],[.10,.24],[.24,.10],[.38,.13]],
+            flower:[[.50,.08],[.61,.25],[.78,.15],[.75,.36],[.92,.50],[.75,.64],[.78,.85],[.61,.75],[.50,.92],[.39,.75],[.22,.85],[.25,.64],[.08,.50],[.25,.36],[.22,.15],[.39,.25]],
+            star:[[.50,.07],[.60,.37],[.92,.37],[.66,.56],[.76,.88],[.50,.69],[.24,.88],[.34,.56],[.08,.37],[.40,.37]],
+            heart:[[.50,.90],[.12,.55],[.10,.30],[.24,.12],[.43,.15],[.50,.27],[.57,.15],[.76,.12],[.90,.30],[.88,.55]],
+            burst:[[.50,.07],[.59,.28],[.76,.13],[.72,.35],[.92,.30],[.76,.50],[.92,.68],[.70,.65],[.75,.88],[.58,.72],[.50,.93],[.42,.72],[.25,.88],[.30,.65],[.08,.68],[.24,.50],[.08,.30],[.28,.35],[.24,.13],[.41,.28]],
+            seal:[[.50,.08],[.61,.18],[.76,.12],[.82,.27],[.92,.38],[.84,.52],[.91,.68],[.75,.75],[.66,.90],[.50,.83],[.34,.90],[.25,.75],[.09,.68],[.16,.52],[.08,.38],[.18,.27],[.24,.12],[.39,.18]],
+            shield:[[.50,.08],[.88,.20],[.84,.58],[.70,.80],[.50,.92],[.30,.80],[.16,.58],[.12,.20]],
+            triangle:[[.50,.08],[.92,.90],[.08,.90]]
+          };
+          if(pts[shape]) return new fabric.Polygon(pts[shape].map(p=>({x:p[0]*cw,y:p[1]*ch})),common);
+          return new fabric.Rect({...common,left:cw*.10,top:ch*.10,width:cw*.80,height:ch*.80});
+        }
+        function applyFreshenerShape(){if(window.ZenvibeApplyFreshenerDie)window.ZenvibeApplyFreshenerDie();}
+        
+        // editor.js may create the Fabric canvas after DOMContentLoaded.
+        let shapeTries=0;
+        const shapeTimer=setInterval(function(){
+          shapeTries++;
+          if(window.canvas && window.fabric){clearInterval(shapeTimer);applyFreshenerShape(shape);}
+          else if(shapeTries>40) clearInterval(shapeTimer);
+        },100);
+        // Template switches are asynchronous; re-apply the selected die after
+        // the editor has replaced the editable objects.
+        document.addEventListener('zenvibe:template-loaded',function(){
+          const current=(new URL(window.location.href)).searchParams.get('shape')||shape;
+          setTimeout(function(){applyFreshenerShape(current);},0);
+        });
+      });
+      </script>
+      {% else %}
+      <div class="panel-search"><span>⌕</span><input id="templateSearch" placeholder="Search {{ product.category.name|default:product.name }} designs" aria-label="Search product designs" autocomplete="off"></div>
+      <div id="templateSuggestions" class="template-suggestions"></div>
+      {% endif %}
+      <div class="panel-callout"><strong>Master template protected</strong><p>Your edits are saved as a personal copy. The admin template is never changed.</p></div>
+      <div class="panel-callout" style="background:#fff8ed;border-color:#f3d9a8">
+        <strong style="color:#7a5a17">Seeing an old version?</strong>
+        <p>Your browser may have a saved draft from an earlier session.</p>
+        <button type="button" id="clearLocalDraftBtn" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid #f3d9a8;background:#fff;font-weight:700;cursor:pointer">Clear my saved draft &amp; reload</button>
+      </div>
+    </section>
+
+    <section id="elementsPanel" class="studio-panel-section">
+      <div class="panel-search"><span>⌕</span><input id="elementSearch" placeholder="Search shapes and lines" aria-label="Search elements"></div>
+      <h3>Lines &amp; shapes</h3>
+      <div id="shapeLibrary" class="asset-grid shape-grid">
+        <button data-shape="rect" title="Rectangle"><span class="shape-preview shape-square"></span></button>
+        <button data-shape="roundRect" title="Rounded rectangle"><span class="shape-preview shape-rounded"></span></button>
+        <button data-shape="circle" title="Circle"><span class="shape-preview shape-circle"></span></button>
+        <button data-shape="ellipse" title="Ellipse"><span class="shape-preview shape-ellipse"></span></button>
+        <button data-shape="triangle" title="Triangle"><span class="shape-preview shape-triangle"></span></button>
+        <button data-shape="diamond" title="Diamond"><span class="shape-preview shape-diamond"></span></button>
+        <button data-shape="pentagon" title="Pentagon"><span class="shape-preview">⬟</span></button>
+        <button data-shape="hexagon" title="Hexagon"><span class="shape-preview">⬢</span></button>
+        <button data-shape="star" title="Star"><span class="shape-preview">★</span></button>
+        <button data-shape="heart" title="Heart"><span class="shape-preview">♥</span></button>
+        <button data-shape="arrowRight" title="Arrow"><span class="shape-preview">➜</span></button>
+        <button data-shape="speech" title="Speech bubble"><span class="shape-preview">▰</span></button>
+        <button data-shape="line" title="Line"><span class="shape-preview">━</span></button>
+        <button data-shape="dashLine" title="Dashed line"><span class="shape-preview">┅</span></button>
+        <button data-shape="wave" title="Wave"><span class="shape-preview">〰</span></button>
+        <button data-shape="cross" title="Cross"><span class="shape-preview">✚</span></button>
+      </div>
+      <h3>Quick add</h3>
+      <div class="three-col legacy-adders"><button id="addRectBtn">Rectangle</button><button id="addCircleBtn">Circle</button><button id="addTriangleBtn">Triangle</button></div>
+    </section>
+
+    <section id="textPanel" class="studio-panel-section">
+      <button id="addTextBtn" class="big-text-command">＋ Add a text box</button>
+      <button class="text-preset" data-text-preset="heading"><strong>Add a heading</strong></button>
+      <button class="text-preset" data-text-preset="subheading"><span>Add a subheading</span></button>
+      <button class="text-preset" data-text-preset="body"><small>Add a little bit of body text</small></button>
+      <h3>Font</h3>
+      <select id="fontPanelSelect" class="zv-font-dropdown" aria-label="Choose font"><option value="">Choose a font</option></select>
+      <h3>Text colour</h3>
+      <label class="colour-row"><input id="textPanelColor" type="color" value="#111827"><span><strong>Any text colour</strong><small id="textPanelHex">#111827</small></span></label><input id="textPanelHexInput" value="#111827" maxlength="7" placeholder="#RRGGBB" style="margin-top:7px;text-transform:uppercase;font-family:monospace">
+      <div id="textColourSwatches" class="swatch-grid text-colour-swatches"></div>
+      <p class="panel-help">Select or double-click template text, then choose a colour. Detected printed text is converted to a real editable text layer when you change it.</p>
+    </section>
+
+    <section id="uploadsPanel" class="studio-panel-section">
+      <label class="upload-dropzone">📷<strong>Upload / take a photo</strong><span>PNG, JPG, WebP or SVG up to 15 MB</span><input id="imageUpload" type="file" accept="image/*,.svg" multiple hidden></label>
+      <div class="upload-note">Uploaded images remain inside the customer's saved design.</div>
+
+      <div class="tool-card" style="margin-top:14px">
+        <strong>Use my own photo as a background</strong>
+        <p style="font-size:12px;color:#667085;margin:6px 0 10px">Upload a photo, lock it in place, then drop an editable text box on top — same idea as our template builder, but this only affects your own design. Nothing here is saved to the shared template library.</p>
+        <label class="upload-dropzone" style="margin-bottom:8px">📷<strong>Upload / take background photo</strong><input id="bgPhotoUpload" type="file" accept="image/*" hidden></label>
+        <button type="button" id="addEditableTextBtn" class="primary-action" style="width:100%">+ Add editable text on top</button>
+      </div>
+    </section>
+
+
+    <section id="iconsPanel" class="studio-panel-section">
+      <div class="panel-search"><span>⌕</span><input id="iconSearch" placeholder="Search icons" aria-label="Search icons"></div>
+      <div id="iconCategories" class="asset-chip-row"></div>
+      <div id="iconLibrary" class="asset-grid icon-grid"></div>
+    </section>
+
+    <section id="photosPanel" class="studio-panel-section">
+      <div class="panel-search"><span>⌕</span><input id="photoSearch" placeholder="Search attractive photos, gradients and patterns" aria-label="Search photos"></div>
+      <div id="photoLibrary" class="photo-grid"></div>
+      <p class="panel-help">Choose Add photo for an editable image, or Use as background to fill the full page. All changes remain inside the customer's personal design.</p>
+    </section>
+
+    <section id="toolsPanel" class="studio-panel-section">
+      <h3>Pages</h3>
+      <div id="pageButtons" class="page-list"></div>
+      <div class="two-col"><button id="addPageBtn">＋ Add page</button><button id="duplicatePageBtn">Duplicate</button></div>
+      <button id="deletePageBtn" class="danger ghost-command">Delete current page</button>
+      <h3>Quick tools</h3>
+      <div id="quickToolStrip" class="zv-quick-tools" aria-label="Editor tools">
+        <button type="button" data-quick-tool="select" title="Select">➤<small>Select</small></button>
+        <button type="button" data-quick-tool="draw" title="Draw">✎<small>Draw</small></button>
+        <button type="button" data-quick-tool="shape" title="Add shape">●<small>Shape</small></button>
+        <button type="button" data-quick-tool="line" title="Add line">╱<small>Line</small></button>
+        <button type="button" data-quick-tool="note" title="Sticky note">◩<small>Note</small></button>
+        <button type="button" data-quick-tool="text" title="Add text">T<small>Text</small></button>
+        <button type="button" data-quick-tool="signature" title="Draw signature">✍️<small>Sign</small></button>
+        <button type="button" data-quick-tool="table" title="Add table">▦<small>Table</small></button>
+      </div>
+      <h3>Printed text</h3>
+      <div class="tool-card">
+        <strong>Remove / Replace printed text</strong>
+        <p class="panel-help">For flattened PNG/JPG or camera photos: drag a tight box over any printed name/date/text. ZenVibe removes the old raster lettering first, then creates a normal editable text layer. This is the reliable mode for script fonts and does not depend on OCR.</p>
+        <button type="button" id="replacePrintedTextBtn" class="primary-action" style="width:100%">Edit / Replace printed text</button>
+        <button type="button" id="cancelReplacePrintedTextBtn" style="width:100%;margin-top:7px;display:none">Cancel</button>
+        <small id="replacePrintedTextStatus" style="display:block;margin-top:7px;color:#667085"></small>
+      </div>
+      <h3>Design tools</h3>
+      <div class="tool-card"><strong>QR code</strong><input id="qrValue" value="" placeholder="URL or text"><button id="addQrBtn">Add QR code</button></div>
+      <div class="tool-card"><strong>Barcode</strong><input id="barcodeValue" value="123456789012" placeholder="Barcode value"><button id="addBarcodeBtn">Add barcode</button></div>
+      <div class="tool-card"><strong>Canvas guides</strong><button id="toggleRulersBtn">Show/hide rulers</button><button id="clearGuidesBtn">Clear draggable guides</button></div>
+      <div class="tool-card"><strong>Object position</strong><div class="position-grid"><label>X<input id="positionX" type="number"></label><label>Y<input id="positionY" type="number"></label><label>W<input id="positionW" type="number"></label><label>H<input id="positionH" type="number"></label></div><button id="applyPositionBtn">Apply position &amp; size</button></div>
+    </section>
+
+    <section id="emojiPanel" class="studio-panel-section">
+      <div class="panel-search"><span>⌕</span><input id="emojiSearch" placeholder="Search emoji" aria-label="Search emoji"></div>
+      <div id="emojiLibrary" class="emoji-grid"></div>
+    </section>
+
+    <section id="backgroundPanel" class="studio-panel-section">
+      <h3>Document background</h3><p class="panel-help">Changes the page colour. For flat PNG/JPG templates, ZenVibe also recolours the dominant paper/background area while preserving artwork and text as much as possible. The background artwork itself is selectable from Layers for crop, blur, resize and other image edits.</p><label class="colour-row document-colour-control"><input id="backgroundColor" type="color" value="#ffffff"><span><strong>Page colour</strong><small id="backgroundHex">#FFFFFF</small></span></label><button id="applyBackgroundBtn">Apply page colour</button>
+      <h3>Colour presets</h3><div id="backgroundSwatches" class="swatch-grid"></div>
+      <div class="tool-card artwork-colour-card">
+        <strong>Artwork / floral colour</strong>
+        <p class="panel-help">Select the uploaded artwork layer in Layers, then adjust the colourful parts of a flat PNG/JPG. Light paper and neutral black/grey text are preserved as much as possible.</p>
+        <label class="slider-label">Hue <span id="artHueVal">0°</span></label><input id="artHue" type="range" min="-180" max="180" value="0">
+        <label class="slider-label">Saturation <span id="artSaturationVal">100%</span></label><input id="artSaturation" type="range" min="0" max="200" value="100">
+        <label class="slider-label">Brightness <span id="artBrightnessVal">100%</span></label><input id="artBrightness" type="range" min="50" max="150" value="100">
+        <label class="slider-label">Contrast <span id="artContrastVal">100%</span></label><input id="artContrast" type="range" min="50" max="150" value="100">
+        <label class="colour-row" style="margin-top:8px"><input id="artTint" type="color" value="#8b5cf6"><span><strong>Tint colour</strong><small>Optional</small></span></label>
+        <label class="slider-label">Tint strength <span id="artTintStrengthVal">0%</span></label><input id="artTintStrength" type="range" min="0" max="100" value="0">
+        <div class="two-col" style="margin-top:8px"><button id="applyArtworkColourBtn">Apply artwork colour</button><button id="resetArtworkColourBtn">Reset</button></div>
+        <hr style="border:0;border-top:1px solid #e5e7eb;margin:14px 0">
+        <strong>Decorative artwork</strong>
+        <p class="panel-help">For a flattened PNG/JPG, remove colourful floral/decorative pixels while keeping the light paper and dark text as much as possible. You can restore them at any time.</p>
+        <label class="slider-label">Removal strength <span id="decorRemovalVal">72%</span></label>
+        <input id="decorRemovalStrength" type="range" min="35" max="95" value="72">
+        <div class="two-col" style="margin-top:8px"><button id="removeDecorBtn" class="danger">Remove floral / design</button><button id="restoreDecorBtn">Restore artwork</button></div>
+      </div>
+      <h3>View</h3><label class="check-row"><input id="snapToggle" type="checkbox" checked> Smart alignment guides</label>
+      <div class="three-col"><button id="fitBtn" title="Fit the whole page inside the available workspace">Fit</button><button id="gridBtn" title="Show or hide the alignment grid">Grid</button><button id="guidesBtn" title="Show print trim, bleed and safe margins">Safe/Bleed</button></div>
+      <div class="view-legend"><span><i class="legend-grid"></i>Grid helps alignment</span><span><i class="legend-bleed"></i>Red: trim/bleed</span><span><i class="legend-safe"></i>Green: safe area</span></div>
+    </section>
+
+    <section id="layersPanelWrap" class="studio-panel-section">
+      <div class="two-col"><button id="showAllBtn">Show all</button><button id="unlockAllBtn">Unlock all</button></div>
+      <div id="layersPanel" class="layers-panel modern-layers"></div>
+    </section>
+
+    <section class="studio-hidden-legacy" aria-hidden="true">
+      <button id="fullscreenBtn"></button><input id="zoomRange" type="range" min="20" max="180" value="100"><select id="zoomSelect"><option value="100" selected>100%</option></select><button id="zoomOutBtn"></button><button id="zoomInBtn"></button>
+      <div id="printResults"></div><input id="quantity" type="number" min="1" value="{% if existing_design %}{{ existing_design.quantity }}{% else %}100{% endif %}"><button id="downloadPdfBtn"></button><button id="discardBtn"></button><p id="saveStatus"></p>
+    </section>
+  </aside>
+
+  <main class="canvas-area studio-workspace">
+    <div id="contextToolbar" class="context-toolbar">
+      <div class="context-empty">Select an element to edit it</div>
+      <div class="context-controls">
+        <select id="fontFamily" title="Font family"></select>
+        <input id="fontSize" type="number" min="6" max="300" value="32" title="Font size">
+        <button id="boldBtn" title="Bold"><b>B</b></button><button id="italicBtn" title="Italic"><i>I</i></button><button id="underlineBtn" title="Underline"><u>U</u></button>
+        <label class="toolbar-colour" title="Fill"><input id="fillColor" type="color" value="#111827"><span></span></label>
+        <input id="textValue" placeholder="Text content" aria-label="Text content"><button id="applyTextBtn">Apply</button>
+        <button id="editImageBtn" style="display:none">Edit image</button><button id="duplicateBtn">Duplicate</button><button id="lockBtn">Lock</button><button id="deleteBtn" class="danger">Delete</button>
+        <input id="opacity" type="range" min="0.05" max="1" step="0.05" value="1" title="Opacity"><input id="rotation" type="range" min="-180" max="180" step="1" value="0" title="Rotation">
+      </div>
+      <div class="context-more arrange-dropdown" id="arrangeDropdown">
+        <button type="button" id="arrangeMenuBtn" class="arrange-menu-trigger" aria-expanded="false">Arrange <span>⌄</span></button>
+        <div class="arrange-menu" id="arrangeMenu" role="menu">
+          <div class="arrange-menu-heading">Align horizontally</div>
+          <div class="arrange-menu-grid three">
+            <button id="leftBtn" role="menuitem">Left</button><button id="centerBtn" role="menuitem">Centre</button><button id="rightBtn" role="menuitem">Right</button>
+          </div>
+          <div class="arrange-menu-heading">Align vertically</div>
+          <div class="arrange-menu-grid three">
+            <button id="topBtn" role="menuitem">Top</button><button id="middleBtn" role="menuitem">Middle</button><button id="bottomBtn" role="menuitem">Bottom</button>
+          </div>
+          <div class="arrange-menu-heading">Layer order</div>
+          <div class="arrange-menu-grid two">
+            <button id="bringFrontBtn" role="menuitem">Bring forward</button><button id="sendBackBtn" role="menuitem">Send backward</button>
+          </div>
+          <div class="arrange-menu-heading">Transform</div>
+          <div class="arrange-menu-grid two">
+            <button id="flipXBtn" role="menuitem">Flip horizontal</button><button id="flipYBtn" role="menuitem">Flip vertical</button>
+          </div>
+          <button id="groupBtn" class="arrange-menu-wide" role="menuitem">Group / Ungroup selection</button>
+        </div>
+      </div>
+    </div>
+    <div class="studio-canvas-scroll">
+      <div class="canvas-stage">
+        <div id="horizontalRuler" class="canvas-ruler horizontal-ruler"></div><div id="verticalRuler" class="canvas-ruler vertical-ruler"></div>
+        <div id="measurementBadge" class="measurement-badge" hidden></div><div id="smartGuideLayer" class="smart-guide-layer"></div><div class="canvas-wrap" id="canvasWrap"><canvas id="designCanvas"></canvas>
+          <!-- <div id="noEditableHint" style="display:none;position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(16,24,40,.35);align-items:center;gap:12px;font:600 13px Inter,Arial,sans-serif;z-index:50">
+            <span>This template doesn't have editable text yet.</span>
+            <button type="button" onclick="addQuickEditableText()" style="background:linear-gradient(135deg,#ff6a1a,#ff8a3d);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer">+ Add text</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <footer class="studio-bottom-bar">
+      <div class="zv-bottom-pages">
+        <button type="button" id="bottomPrevPage" class="zv-page-arrow" aria-label="Previous page">‹</button>
+        <div id="bottomPageButtons" class="zv-bottom-page-buttons" aria-label="Design pages"></div>
+        <button type="button" id="bottomNextPage" class="zv-page-arrow" aria-label="Next page">›</button>
+        <span id="pageCountBadge" class="zv-page-count">1 page</span>
+        <div class="page-status"><strong id="activePageLabel">Page 1</strong><span>Changes save to your personal design only</span></div>
+      </div>
+      <div class="zoom-controls"><button id="bottomZoomOut">−</button><input id="bottomZoomRange" type="range" min="20" max="180" value="100"><button id="bottomZoomIn">＋</button><span id="zoomLabel">100%</span></div>
+    </footer>
+  </main>
+</div>
+
+<div id="studioToast" class="studio-toast" role="status" aria-live="polite"></div>
+<div id="studioModal" class="studio-modal" aria-hidden="true">
+  <div class="studio-modal-backdrop" data-close-modal></div>
+  <section class="studio-modal-card" role="dialog" aria-modal="true" aria-labelledby="studioModalTitle">
+    <header><div><small>DESIGN REVIEW</small><h2 id="studioModalTitle">Print check</h2></div><button id="studioModalClose" aria-label="Close">×</button></header>
+    <div id="studioModalBody" class="studio-modal-body"></div>
+    <footer><button id="studioModalDone" class="studio-share">Done</button></footer>
+  </section>
+</div>
+
+
+
+<script>
+/* ZENVIBE_ONE_EDITOR_ALL_CATEGORIES_V5 */
+(function () {
+  function cleanProductLabel() {
+    const p = window.PRODUCT || {};
+    let name = String(p.name || p.subcategory || p.category || 'Product');
+    name = name.split('|')[0].trim();
+    name = name.replace(/^custom\s+/i, '').replace(/\s*[-–]\s*custom.*$/i, '').trim();
+    return name || 'Product';
+  }
+
+  function bootUniversalRail() {
+    const rail = document.querySelector('.studio-rail');
+    const panelHost = document.querySelector('.studio-panel');
+    if (!rail || !panelHost) return;
+
+    const templateTab = rail.querySelector('[data-panel="templatesPanel"]');
+    const templatePanel = document.getElementById('templatesPanel');
+    if (!templateTab || !templatePanel) return;
+
+    const label = cleanProductLabel();
+    const tabLabel = templateTab.querySelector('b');
+    if (tabLabel) tabLabel.textContent = 'Product';
+    templateTab.title = label;
+
+    const search = document.getElementById('templateSearch');
+    if (search) search.placeholder = 'Search ' + label + ' designs';
+
+    function selectTab(tab) {
+      if (!tab || !tab.dataset.panel) return;
+      const selected = document.getElementById(tab.dataset.panel);
+      if (!selected) return;
+
+      rail.querySelectorAll('.rail-tab').forEach(x => {
+        x.classList.toggle('active', x === tab);
+        x.hidden = false;
+      });
+
+      panelHost.querySelectorAll('.studio-panel-section').forEach(x => {
+        const on = x === selected;
+        x.classList.toggle('active', on);
+        x.hidden = !on;
+        x.setAttribute('aria-hidden', on ? 'false' : 'true');
+        x.style.setProperty('display', on ? 'block' : 'none', 'important');
+      });
+
+      const heading = document.getElementById('panelTitle');
+      const b = tab.querySelector('b');
+      if (heading) heading.textContent = b ? b.textContent : label;
+      panelHost.classList.remove('panel-closed');
+      /* Keep the shell state in sync. The rail handler above uses
+         stopImmediatePropagation(), so mobile cannot rely on a later
+         listener to reopen the drawer. */
+      const editorShell = document.querySelector('.studio-app.editor-shell');
+      if (editorShell) {
+        editorShell.classList.remove('zv-panel-collapsed');
+        /* Restore normal grid after a tool is reopened. */
+        editorShell.style.removeProperty('grid-template-columns');
+      }
+      panelHost.style.removeProperty('display');
+      panelHost.style.removeProperty('width');
+      panelHost.style.removeProperty('min-width');
+      panelHost.style.removeProperty('max-width');
+      const workspace = document.querySelector('.canvas-area.studio-workspace');
+      if (workspace) {
+        workspace.style.removeProperty('grid-column');
+        workspace.style.removeProperty('width');
+      }
+      setTimeout(function(){
+        window.dispatchEvent(new Event('resize'));
+        const fit=document.getElementById('fitBtn');
+        if(fit){ try{ fit.click(); }catch(e){} }
+        if(window.ZV_RENDER_PHYSICAL_RULERS) window.ZV_RENDER_PHYSICAL_RULERS();
+      },40);
+    }
+
+    rail.addEventListener('click', function (e) {
+      const tab = e.target.closest('.rail-tab');
+      if (!tab) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      selectTab(tab);
+    }, true);
+
+    templateTab.hidden = false;
+    templateTab.style.setProperty('display', 'flex', 'important');
+    templateTab.style.setProperty('visibility', 'visible', 'important');
+    templateTab.style.setProperty('opacity', '1', 'important');
+
+    selectTab(templateTab);
+    setTimeout(() => selectTab(templateTab), 100);
+    setTimeout(() => selectTab(templateTab), 700);
+
+    setTimeout(function () {
+      const box = document.getElementById('templateSuggestions');
+      const catalog = Array.isArray(window.TEMPLATE_CATALOG) ? window.TEMPLATE_CATALOG : [];
+      if (box && !catalog.length && !box.children.length) {
+        box.innerHTML =
+          '<div class="empty-suggestion"><strong>No designs assigned to this product.</strong>' +
+          '<br><small>Check the product/template mapping in Admin.</small></div>';
+      }
+    }, 900);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootUniversalRail);
+  } else {
+    bootUniversalRail();
+  }
+})();
+</script>
+
+<style id="zv-desktop-panel-collapse-v10">
+@media(min-width:1024px){
+  .studio-app.editor-shell.zv-panel-collapsed{
+    grid-template-columns:60px minmax(0,1fr)!important;
+  }
+  .studio-app.editor-shell.zv-panel-collapsed > .studio-panel.editor-sidebar{
+    display:none!important;
+  }
+  .studio-app.editor-shell.zv-panel-collapsed > .canvas-area.studio-workspace{
+    grid-column:2 / -1!important;
+    width:auto!important;
+    min-width:0!important;
+  }
+}
+</style>
+
+<script id="zv-desktop-panel-collapse-js-v10">
+(function(){
+  function refit(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        window.dispatchEvent(new Event('resize'));
+        var fit=document.getElementById('fitBtn');
+        if(fit){try{fit.click()}catch(e){}}
+        if(window.ZV_RENDER_PHYSICAL_RULERS){try{window.ZV_RENDER_PHYSICAL_RULERS()}catch(e){}}
+        if(window.designCanvas){
+          try{window.designCanvas.calcOffset();window.designCanvas.requestRenderAll()}catch(e){}
+        }
+      });
+    });
+  }
+  function boot(){
+    var shell=document.querySelector('.studio-app.editor-shell');
+    var panel=document.querySelector('.studio-panel.editor-sidebar');
+    var workspace=document.querySelector('.canvas-area.studio-workspace');
+    var close=document.getElementById('closePanelBtn');
+    if(!shell||!panel||!workspace||!close)return;
+
+    close.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      shell.classList.add('zv-panel-collapsed');
+      panel.classList.add('panel-closed');
+
+      /* Desktop fix: do not merely make the panel width zero.
+         Remove its grid track and explicitly move workspace into column 2. */
+      if(window.innerWidth>=1024){
+        shell.style.setProperty('grid-template-columns','60px minmax(0,1fr)','important');
+        panel.style.setProperty('display','none','important');
+        workspace.style.setProperty('grid-column','2 / -1','important');
+        workspace.style.setProperty('width','auto','important');
+      }
+      refit();
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
+  else boot();
+})();
+</script>
+
+<style>
+/* ZENVIBE UNIVERSAL MULTI-PAGE NAV V1 */
+.studio-bottom-bar{gap:16px}
+.zv-bottom-pages{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.zv-bottom-page-buttons{display:flex;align-items:center;gap:6px;max-width:520px;overflow-x:auto;scrollbar-width:thin;padding:3px 1px}
+.zv-bottom-page-buttons .page-btn,.zv-page-arrow{
+  min-height:36px;border:1px solid #d9dce7;background:#fff;color:#344054;border-radius:10px;
+  padding:7px 13px;font:700 13px/1.1 Inter,Arial,sans-serif;cursor:pointer;white-space:nowrap
+}
+.zv-bottom-page-buttons .page-btn.active{background:#5b3fd1;color:#fff;border-color:#5b3fd1;box-shadow:0 3px 10px rgba(91,63,209,.18)}
+.zv-page-arrow{width:36px;padding:0;font-size:22px}
+.zv-page-arrow:disabled{opacity:.35;cursor:not-allowed}
+.zv-page-count{white-space:nowrap;font:700 12px Inter,Arial,sans-serif;color:#667085;background:#f2f4f7;border-radius:999px;padding:7px 10px}
+.zv-bottom-pages .page-status{display:flex;align-items:center;gap:8px;white-space:nowrap}
+@media(max-width:1100px){
+  .zv-bottom-pages .page-status span{display:none}
+  .zv-bottom-page-buttons{max-width:320px}
+}
+@media(max-width:760px){
+  .studio-bottom-bar{align-items:flex-start;flex-wrap:wrap}
+  .zv-bottom-pages{width:100%;order:1}
+  .zoom-controls{order:2;margin-left:auto}
+  .zv-bottom-page-buttons{max-width:calc(100vw - 250px)}
+}
+</style>
+
+<style id="zv-responsive-editor-unified-v7">
+/* ONE source of truth for desktop/tablet/mobile panel behaviour. */
+html.editor-document,html.editor-document body{max-width:100%;overflow-x:hidden!important}
+
+/* Better emoji presentation everywhere */
+.emoji-grid{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(46px,1fr))!important;
+  gap:8px!important;
+  padding:10px!important;
+}
+.emoji-grid button,.emoji-grid .emoji-item{
+  min-width:46px!important;height:46px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:4px!important;border:1px solid #eaecf0!important;border-radius:10px!important;
+  background:#fff!important;font-size:25px!important;line-height:1!important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+  cursor:pointer!important;
+}
+.emoji-grid button:hover,.emoji-grid .emoji-item:hover{background:#f5f3ff!important;border-color:#c7bdfb!important}
+
+/* DESKTOP: normal 3-column editor; collapsed panel genuinely releases its width */
+@media(min-width:1024px){
+  .studio-app.editor-shell.zv-panel-collapsed{grid-template-columns:60px 0 minmax(0,1fr)!important}
+  .studio-app.editor-shell.zv-panel-collapsed .studio-panel.editor-sidebar{
+    width:0!important;min-width:0!important;max-width:0!important;padding:0!important;margin:0!important;
+    border:0!important;overflow:hidden!important;visibility:hidden!important;pointer-events:none!important
+  }
+  .studio-app.editor-shell.zv-panel-collapsed .canvas-area.studio-workspace{min-width:0!important;width:100%!important}
+}
+
+/* TABLET */
+@media(min-width:768px) and (max-width:1023px){
+  .studio-app.editor-shell{grid-template-columns:72px minmax(0,1fr)!important}
+  .studio-rail{width:72px!important;z-index:160!important}
+  .studio-panel.editor-sidebar{
+    position:fixed!important;top:72px!important;bottom:64px!important;left:72px!important;
+    width:min(340px,calc(100vw - 92px))!important;min-width:0!important;max-width:340px!important;
+    z-index:180!important;overflow-y:auto!important;background:#fff!important;
+    box-shadow:12px 0 30px rgba(16,24,40,.18)!important;transition:transform .18s ease,opacity .18s ease!important
+  }
+  .studio-panel.editor-sidebar.panel-closed,.studio-app.editor-shell.zv-panel-collapsed .studio-panel.editor-sidebar{
+    transform:translateX(-110%)!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important
+  }
+  .studio-app.editor-shell.zv-panel-collapsed{grid-template-columns:72px minmax(0,1fr)!important}
+  .canvas-area.studio-workspace{width:100%!important;min-width:0!important}
+  .studio-bottom-bar{left:72px!important;right:0!important;width:auto!important}
+}
+
+/* MOBILE */
+@media(max-width:767px){
+  html.editor-document,html.editor-document body{
+    width:100%!important;height:100%!important;margin:0!important;padding:0!important;
+    overflow:hidden!important;background:#eef0f4!important
+  }
+  html.editor-document body>header,html.editor-document .site-header,html.editor-document .main-header,
+  html.editor-document .header-main,html.editor-document .mobile-header,html.editor-document .zv-site-header{display:none!important}
+
+  .studio-app.editor-shell{
+    position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100dvh!important;
+    min-height:0!important;overflow:hidden!important;background:#eef0f4!important
+  }
+
+  .studio-topbar{
+    position:absolute!important;top:0!important;left:0!important;right:0!important;height:56px!important;min-height:56px!important;
+    padding:7px 10px!important;display:flex!important;align-items:center!important;gap:8px!important;overflow:hidden!important;z-index:500!important
+  }
+  .studio-brand-group{display:flex!important;align-items:center!important;gap:8px!important;flex:1 1 auto!important;min-width:0!important}
+  .studio-back{flex:0 0 40px!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+  .studio-logo,.studio-file-menu,.studio-file-meta small,.studio-history-actions{display:none!important}
+  .studio-file-meta{display:block!important;flex:1 1 auto!important;min-width:0!important;max-width:170px!important}
+  #designName{width:100%!important;max-width:170px!important;min-width:0!important;border:0!important;background:transparent!important;color:#fff!important;font-size:14px!important;font-weight:700!important;padding:4px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .studio-primary-actions{display:flex!important;align-items:center!important;flex:0 0 auto!important;margin-left:auto!important}
+  .studio-primary-actions #downloadBtn,.studio-primary-actions #saveDraftBtn{display:none!important}
+  #saveBtn{display:flex!important;align-items:center!important;justify-content:center!important;height:40px!important;max-width:132px!important;padding:6px 12px!important;border-radius:11px!important;font-size:11px!important;line-height:13px!important;white-space:normal!important;text-align:center!important}
+
+  /* middle editor */
+  .canvas-area.studio-workspace,.studio-app.editor-shell.zv-panel-collapsed .canvas-area.studio-workspace{
+    position:absolute!important;top:56px!important;left:0!important;right:0!important;bottom:64px!important;
+    width:100vw!important;height:auto!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;
+    display:block!important;overflow:hidden!important;background:#eef0f4!important
+  }
+  #contextToolbar.context-toolbar{
+    position:absolute!important;top:8px!important;left:8px!important;right:8px!important;width:auto!important;
+    height:46px!important;min-height:46px!important;margin:0!important;padding:5px 7px!important;display:flex!important;
+    align-items:center!important;gap:6px!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;
+    scrollbar-width:none!important;border-radius:12px!important;z-index:40!important;box-sizing:border-box!important
+  }
+  #contextToolbar::-webkit-scrollbar{display:none!important}
+  #contextToolbar .context-empty{flex:0 0 auto!important;white-space:nowrap!important;font-size:11px!important}
+  #contextToolbar .context-controls{display:flex!important;align-items:center!important;gap:6px!important;flex:0 0 auto!important;min-width:max-content!important}
+  #contextToolbar .context-controls>*{flex:0 0 auto!important}
+  #contextToolbar select{width:145px!important;height:36px!important}
+  #contextToolbar input[type=number]{width:72px!important;height:36px!important}
+  #contextToolbar button{min-width:36px!important;height:36px!important}
+
+  .studio-canvas-scroll{
+    position:absolute!important;top:62px!important;left:0!important;right:0!important;bottom:52px!important;
+    width:100%!important;height:auto!important;margin:0!important;padding:10px!important;box-sizing:border-box!important;
+    overflow:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;overscroll-behavior:contain!important
+  }
+  .canvas-stage{position:relative!important;flex:0 0 auto!important;margin:auto!important;max-width:100%!important}
+  /* Physical rulers live outside the Fabric canvas but inside the stage. */
+  .canvas-ruler{position:absolute!important;display:block!important;box-sizing:border-box!important;overflow:visible!important;pointer-events:none!important;z-index:40!important;background:#fff!important;color:#667085!important;font-family:Inter,Arial,sans-serif!important}
+  .horizontal-ruler{height:28px!important;border-bottom:1px solid #d0d5dd!important}
+  .vertical-ruler{width:28px!important;border-right:1px solid #d0d5dd!important}
+  .canvas-wrap{max-width:100%!important}
+
+  /* page row */
+  .studio-bottom-bar{
+    position:absolute!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:52px!important;
+    min-height:52px!important;max-height:52px!important;margin:0!important;padding:6px 8px!important;display:flex!important;
+    align-items:center!important;justify-content:center!important;gap:5px!important;overflow:hidden!important;box-sizing:border-box!important;
+    border-top:1px solid #e5e7eb!important;background:#fff!important;z-index:45!important
+  }
+  .zv-bottom-pages{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;gap:5px!important}
+  .zv-bottom-page-buttons{display:flex!important;align-items:center!important;gap:4px!important;max-width:46vw!important;overflow-x:auto!important;scrollbar-width:none!important;padding:0!important}
+  .zv-bottom-page-buttons::-webkit-scrollbar{display:none!important}
+  .zv-bottom-page-buttons .page-btn,.zv-page-arrow{flex:0 0 auto!important;min-width:32px!important;width:32px!important;height:34px!important;min-height:34px!important;padding:3px!important;border-radius:8px!important;font-size:10px!important}
+  .zv-page-count{flex:0 0 auto!important;font-size:10px!important;padding:5px 7px!important}
+  .zv-bottom-pages .page-status span{display:none!important}.zv-bottom-pages .page-status strong{font-size:11px!important;white-space:nowrap!important}
+  .zoom-controls{display:none!important}
+
+  /* bottom tools */
+  .studio-rail{
+    position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100vw!important;
+    height:64px!important;min-height:64px!important;display:flex!important;flex-direction:row!important;align-items:stretch!important;
+    gap:0!important;padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;z-index:460!important
+  }
+  .studio-rail::-webkit-scrollbar{display:none!important}
+  .studio-rail .rail-tab{flex:0 0 64px!important;width:64px!important;min-width:64px!important;height:64px!important;min-height:64px!important;padding:5px 2px!important;border-radius:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important}
+  .studio-rail .rail-tab span{font-size:18px!important;line-height:20px!important}.studio-rail .rail-tab b{font-size:9px!important;line-height:11px!important;white-space:nowrap!important}
+
+  /* one reusable bottom sheet for every tool */
+  .studio-panel.editor-sidebar{
+    position:fixed!important;left:8px!important;right:8px!important;top:auto!important;bottom:72px!important;
+    width:auto!important;min-width:0!important;max-width:none!important;height:min(62dvh,520px)!important;max-height:min(62dvh,520px)!important;
+    margin:0!important;padding:0!important;overflow-y:auto!important;overflow-x:hidden!important;border-radius:16px!important;
+    box-shadow:0 -10px 34px rgba(16,24,40,.22)!important;background:#fff!important;transform:translateY(0)!important;
+    opacity:1!important;visibility:visible!important;pointer-events:auto!important;z-index:490!important;transition:transform .18s ease,opacity .18s ease!important
+  }
+  .studio-panel.editor-sidebar.panel-closed,.studio-app.editor-shell.zv-panel-collapsed .studio-panel.editor-sidebar{
+    transform:translateY(calc(100% + 90px))!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important
+  }
+  .panel-heading{position:sticky!important;top:0!important;z-index:4!important;background:#fff!important}
+  #closePanelBtn{min-width:40px!important;min-height:40px!important}
+}
+@media(max-width:390px){
+  #designName{max-width:120px!important;font-size:12px!important}
+  #saveBtn{max-width:105px!important;padding:5px 8px!important;font-size:10px!important}
+  .studio-rail .rail-tab{flex-basis:60px!important;width:60px!important;min-width:60px!important}
+}
+</style>
+
+
+<style id="zv-editor-controls-clean-v8">
+/* Clean tool presentation. Existing editor.js / universal rail logic remains authoritative. */
+.zv-quick-tools{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin:8px 0 14px!important;
+}
+.zv-quick-tools button{
+  min-width:0!important;min-height:62px!important;padding:8px 5px!important;
+  border:1px solid #e4e7ec!important;border-radius:10px!important;background:#fff!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;font-size:21px!important;line-height:1!important;cursor:pointer!important;
+}
+.zv-quick-tools button small{font-size:11px!important;line-height:1.15!important;color:#475467!important;font-weight:700!important}
+.zv-quick-tools button:hover{background:#f7f5ff!important;border-color:#b8acf5!important}
+
+.emoji-grid{
+  display:grid!important;grid-template-columns:repeat(auto-fill,minmax(48px,1fr))!important;
+  gap:8px!important;padding:10px!important;
+}
+.emoji-grid button,.emoji-grid .emoji-item{
+  min-width:48px!important;height:48px!important;padding:4px!important;
+  border:1px solid #e4e7ec!important;border-radius:10px!important;background:#fff!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:25px!important;line-height:1!important;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+}
+@media(max-width:767px){
+  .zv-quick-tools{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .zv-quick-tools button{min-height:58px!important}
+  .emoji-grid{grid-template-columns:repeat(5,minmax(44px,1fr))!important;padding:8px!important}
+  .studio-panel.editor-sidebar{-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+}
+</style>
+
+
+{% endblock %}
+<script>
+/* ZENVIBE_INVITATION_SIZE_LABEL_V1 */
+document.addEventListener('DOMContentLoaded',function(){
+ const el=document.getElementById('zvDocumentSizeLabel');if(!el)return;
+ const p=window.PRODUCT||{},t=window.INITIAL_TEMPLATE||{},sz=t.size||{};
+ const inv=/invitation/i.test(String(p.name||''))||!!t.invitation_code||!!t.invitation_category;
+ if(inv){const w=Number(sz.width)||750,h=Number(sz.height)||1050;el.textContent=(p.name||'Invitation')+' · '+w+' × '+h+' px · 5 × 7 in';}
+});
+</script>
+
+<script src="{% static 'designer/js/apparel-config.js' %}"></script>
+
+

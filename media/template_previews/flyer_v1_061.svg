@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.16"/>
+<rect x="180" y="343.5" width="51.2" height="136.5" rx="0" ry="0" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="239.2" y="292.8" width="76.8" height="187.2" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="324.0" y="242.1" width="44.800000000000004" height="237.9" rx="0" ry="0" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="376.8" y="191.39999999999998" width="96.0" height="288.6" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="480.8" y="343.5" width="57.599999999999994" height="136.5" rx="0" ry="0" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="546.4" y="292.8" width="70.4" height="187.2" rx="0" ry="0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="500.0" y="594" fill="#4A2B22" font-family="Poppins" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">AI FOR</tspan><tspan x="500.0" dy="68.82000000000001">REAL WORK</tspan></text>
+<text x="500.0" y="747" fill="#4A2B22" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Automation â€¢ Intelligence â€¢ Scale</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#B98A4C" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">EXPLORE AI</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">61</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

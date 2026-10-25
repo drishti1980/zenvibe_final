@@ -1,0 +1,72 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+/* Coupon product selection only; retain the existing admin form and submission. */
+body.zv-mk-admin .field-products .related-widget-wrapper {float:none!important;width:100%!important;min-width:0!important;display:block!important}
+body.zv-mk-admin .field-products div.zv-coupon-products {display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box;max-height:360px;overflow:auto;border:1px solid #dce2eb;border-radius:8px;background:#fff;padding:6px!important;clear:both}
+body.zv-mk-admin .field-products div.zv-coupon-products > div {margin:0!important;padding:0!important;width:100%!important}
+body.zv-mk-admin .field-products div.zv-coupon-products label {display:flex!important;align-items:flex-start;gap:10px;float:none!important;width:auto!important;max-width:100%;padding:11px 10px!important;margin:0!important;border-radius:5px;font-weight:400!important;line-height:1.5;cursor:pointer;white-space:normal;overflow-wrap:anywhere;text-align:left!important}
+body.zv-mk-admin .field-products div.zv-coupon-products label:hover {background:#f4f7fb}
+body.zv-mk-admin .field-products div.zv-coupon-products label:has(input:checked) {background:#edf3fa;color:#102f50}
+body.zv-mk-admin .field-products div.zv-coupon-products input[type=checkbox] {appearance:auto!important;position:static!important;opacity:1!important;display:inline-block!important;flex:0 0 18px;width:18px!important;min-width:18px!important;height:18px!important;margin:2px 0 0!important;padding:0!important;accent-color:#102f50}
+body.zv-mk-admin .field-products .zv-product-tools {display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:0 0 12px;clear:both}
+body.zv-mk-admin .field-products .zv-product-tools input {flex:1 1 220px;width:auto!important;min-width:0!important;max-width:100%!important;box-sizing:border-box;height:40px!important;border:1px solid #dce2eb;border-radius:6px;padding:8px 12px!important}
+body.zv-mk-admin .field-products .zv-product-tools button {background:#102f50;color:#fff;border:0;border-radius:6px;padding:10px 13px;min-height:40px;cursor:pointer;font-size:13px;line-height:20px}
+body.zv-mk-admin .field-products .zv-product-tools button:disabled {opacity:.5;cursor:default}
+body.zv-mk-admin .field-products .zv-product-count {display:block;margin:10px 0;color:#526178;font-size:13px}
+body.zv-mk-admin .field-products .zv-product-empty {margin:12px 0;color:#526178}
+body.zv-mk-admin .field-products div.zv-coupon-products > div[hidden] {display:none!important}
+@media(max-width:600px) {body.zv-mk-admin .field-products .zv-product-tools input {flex-basis:100%}body.zv-mk-admin .field-products div.zv-coupon-products {max-height:300px}}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var list = document.querySelector('.field-products div.zv-coupon-products');
+  if (!list || list.dataset.ready) return;
+  list.dataset.ready = '1';
+  var boxes = Array.from(list.querySelectorAll('input[type="checkbox"][name="products"]'));
+  var tools = document.createElement('div'); tools.className = 'zv-product-tools';
+  var search = document.createElement('input'); search.type = 'search';
+  search.placeholder = 'Search products'; search.setAttribute('aria-label', 'Search coupon products');
+  search.setAttribute('aria-controls', list.id); tools.appendChild(search);
+  function button(text) {
+    var item = document.createElement('button'); item.type = 'button'; item.textContent = text;
+    tools.appendChild(item); return item;
+  }
+  var select = button('Select shown'), clear = button('Clear shown');
+  var count = document.createElement('span'); count.className = 'zv-product-count';
+  count.setAttribute('role', 'status'); count.setAttribute('aria-live', 'polite');
+  var empty = document.createElement('p'); empty.className = 'zv-product-empty';
+  empty.textContent = 'No matching products.'; empty.hidden = true;
+  list.before(tools, count); list.after(empty);
+  function refresh() {
+    var query = search.value.trim().toLocaleLowerCase(), shown = [];
+    boxes.forEach(function (box) {
+      var row = box.closest('label').parentElement;
+      row.hidden = !row.textContent.toLocaleLowerCase().includes(query);
+      if (!row.hidden) shown.push(box);
+    });
+    count.textContent = boxes.filter(function (box) { return box.checked; }).length + ' selected · ' + shown.length + ' of ' + boxes.length + ' products shown';
+    empty.hidden = shown.length > 0;
+    select.disabled = !shown.some(function (box) { return !box.disabled && !box.checked; });
+    clear.disabled = !shown.some(function (box) { return !box.disabled && box.checked; });
+    return shown;
+  }
+  function choose(value) {
+    refresh().forEach(function (box) {
+      if (!box.disabled && box.checked !== value) {
+        box.checked = value;
+      }
+    });
+    list.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+  search.addEventListener('input', refresh);
+  search.addEventListener('keydown', function (event) { if (event.key === 'Enter') event.preventDefault(); });
+  list.addEventListener('change', refresh);
+  select.addEventListener('click', function () { choose(true); });
+  clear.addEventListener('click', function () { choose(false); });
+  refresh();
+});
+</script>
+{% endblock %}

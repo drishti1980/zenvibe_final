@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F6FA" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#0B2C63" stroke="none" stroke-width="0" opacity="1"/>
+<line x1="132.0" y1="81.0" x2="665.5999999999999" y2="177.04799999999997" stroke="#F4F6FA" stroke-width="3" opacity="0.85"/>
+<ellipse cx="191.2888888888889" cy="73.672" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 191.2888888888889 73.672)"/>
+<ellipse cx="250.57777777777775" cy="120.344" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 250.57777777777775 120.344)"/>
+<ellipse cx="309.8666666666666" cy="95.01599999999999" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 309.8666666666666 95.01599999999999)"/>
+<ellipse cx="369.1555555555555" cy="141.688" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 369.1555555555555 141.688)"/>
+<ellipse cx="428.4444444444444" cy="116.35999999999999" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 428.4444444444444 116.35999999999999)"/>
+<ellipse cx="487.73333333333323" cy="163.03199999999998" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 487.73333333333323 163.03199999999998)"/>
+<ellipse cx="547.0222222222221" cy="137.70399999999998" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 547.0222222222221 137.70399999999998)"/>
+<ellipse cx="606.311111111111" cy="184.37599999999998" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 606.311111111111 184.37599999999998)"/>
+<line x1="868.0" y1="327.0" x2="408.0" y2="409.8" stroke="#1746D1" stroke-width="3" opacity="0.85"/>
+<ellipse cx="810.5" cy="319.35" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 810.5 319.35)"/>
+<ellipse cx="753.0" cy="365.7" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 753.0 365.7)"/>
+<ellipse cx="695.5" cy="340.05" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 695.5 340.05)"/>
+<ellipse cx="638.0" cy="386.4" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 638.0 386.4)"/>
+<ellipse cx="580.5" cy="360.75" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 580.5 360.75)"/>
+<ellipse cx="523.0" cy="407.1" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 523.0 407.1)"/>
+<ellipse cx="465.5" cy="381.45" rx="18" ry="8" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 465.5 381.45)"/>
+<circle cx="224.0" cy="335.2" r="101.2" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.12"/>
+<text x="500.0" y="630" fill="#0B2C63" font-family="Oswald" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">LEARN TODAY.</tspan><tspan x="500.0" dy="65.8">LEAD TOMORROW.</tspan></text>
+<text x="500.0" y="768" fill="#0B2C63" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Programs for ambitious minds</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#C8A055" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#94B3FF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#0B2C63" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#1746D1" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F6FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">APPLY NOW</tspan></text>
+<text x="954" y="69" fill="#1746D1" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">23</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A055" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

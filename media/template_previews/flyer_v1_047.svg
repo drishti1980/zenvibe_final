@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="34" y="34" width="932" height="732" rx="0" ry="0" fill="none" stroke="#E0BD73" stroke-width="2" opacity="1"/>
+<rect x="52" y="52" width="896" height="696" rx="0" ry="0" fill="none" stroke="#6F5733" stroke-width="1" opacity="1"/>
+<polygon points="120.0,358.0 325.20000000000005,149.2 454.4,278.79999999999995 591.2,113.19999999999999 880.0,358.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.68"/>
+<polygon points="180.8,358.0 393.59999999999997,214.0 500.0,329.2 712.8000000000001,178.0 880.0,358.0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.7"/>
+<circle cx="728.0" cy="134.8" r="34" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.88"/>
+<text x="500.0" y="538" fill="#F5F1E8" font-family="Playfair Display" font-size="68" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">MOVE WITHOUT</tspan><tspan x="500.0" dy="64.6">THE STRESS</tspan></text>
+<text x="500.0" y="687" fill="#F5F1E8" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Local â€¢ Interstate â€¢ Packing</tspan></text>
+<text x="500.0" y="782" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">EST. 2026</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#6F5733" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F1E8" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0D0D0F" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET A QUOTE</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">47</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.16"/>
+<ellipse cx="512.8" cy="277.2" rx="76.8" ry="42.24" fill="none" stroke="#E7B5C5" stroke-width="2" opacity="0.8" transform="rotate(0 512.8 277.2)"/>
+<ellipse cx="512.8" cy="277.2" rx="128.0" ry="70.4" fill="none" stroke="#E7B5C5" stroke-width="2" opacity="0.8" transform="rotate(0 512.8 277.2)"/>
+<ellipse cx="512.8" cy="277.2" rx="185.6" ry="102.08" fill="none" stroke="#E7B5C5" stroke-width="2" opacity="0.8" transform="rotate(0 512.8 277.2)"/>
+<circle cx="685.5999999999999" cy="277.2" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="634.9880517890354" cy="318.565746699413" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="512.8" cy="335.7" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="390.61194821096456" cy="318.565746699413" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="339.99999999999994" cy="277.2" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="390.6119482109645" cy="235.83425330058697" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="512.8" cy="218.7" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="634.9880517890354" cy="235.83425330058697" r="7" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="512.8" cy="277.2" r="26" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="594" fill="#5A1E37" font-family="DM Serif Display" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">BUILD YOUR</tspan><tspan x="500.0" dy="68.82000000000001">OWN PATH</tspan></text>
+<text x="500.0" y="747" fill="#5A1E37" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Creative services for growing brands</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#C7A25D" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#E7B5C5" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#5A1E37" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8EDEF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">LET'S WORK</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">64</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0B0D12" stroke="none" stroke-width="0" opacity="1"/>
+<text x="55" y="133" fill="#F5F7FA" font-family="DM Serif Display" font-size="68" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">SUPER</tspan><tspan x="55" dy="63.919999999999995">SALE</tspan></text>
+<text x="58" y="267" fill="#F5F7FA" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Fresh offers â€¢ Limited time</tspan></text>
+<circle cx="454.4" cy="165.0" r="34" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="454.4" cy="165.0" r="17" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="444.4" y1="165.0" x2="464.4" y2="165.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<line x1="454.4" y1="155.0" x2="454.4" y2="175.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<circle cx="529.2" cy="165.0" r="34" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="529.2" cy="165.0" r="17" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="519.2" y1="165.0" x2="539.2" y2="165.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<line x1="529.2" y1="155.0" x2="529.2" y2="175.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<circle cx="604.0" cy="165.0" r="34" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="604.0" cy="165.0" r="17" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="594.0" y1="165.0" x2="614.0" y2="165.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<line x1="604.0" y1="155.0" x2="604.0" y2="175.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<circle cx="678.8" cy="165.0" r="34" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="678.8" cy="165.0" r="17" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="668.8" y1="165.0" x2="688.8" y2="165.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<line x1="678.8" y1="155.0" x2="678.8" y2="175.0" stroke="#0B0D12" stroke-width="2" opacity="1"/>
+<rect x="55" y="370" width="205" height="270" rx="18" ry="18" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="75" y="413" fill="#24D3EE" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">01</tspan></text>
+<text x="75" y="533" fill="#F5F7FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">PLAN</tspan></text>
+<rect x="290" y="370" width="205" height="270" rx="18" ry="18" fill="#F5F7FA" stroke="none" stroke-width="0" opacity="0.96"/>
+<text x="310" y="413" fill="#D6B35A" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">02</tspan></text>
+<text x="310" y="533" fill="#0B0D12" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">CREATE</tspan></text>
+<rect x="525" y="370" width="205" height="270" rx="18" ry="18" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="545" y="413" fill="#24D3EE" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">03</tspan></text>
+<text x="545" y="533" fill="#F5F7FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">GROW</tspan></text>
+<text x="500.0" y="725" fill="#F5F7FA" font-family="Inter" font-size="25" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A clean, modern framework built around your next move.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#865CFF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F7FA" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0B0D12" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SHOP SALE</tspan></text>
+<text x="954" y="69" fill="#24D3EE" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">79</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#D6B35A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

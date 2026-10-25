@@ -1,0 +1,8 @@
+﻿{% extends 'designer/base.html' %}
+{% block title %}Track Order | ZenVibe{% endblock %}
+{% block content %}
+<div class="breadcrumb-section"><div class="container"><h2>Order Tracking</h2><nav class="theme-breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'designer:home' %}">Home</a></li><li class="breadcrumb-item active">Order Tracking</li></ol></nav></div></div>
+<section class="login-page section-b-space"><div class="container"><div class="zv-track-wrap"><h3>Track Your Order</h3><p>Enter the ZenVibe order ID and the phone number used at checkout.</p>{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}<form method="post" class="theme-form">{% csrf_token %}<div class="form-box"><label>Order ID</label><input class="form-control" name="order_number" value="{{ order_number }}" placeholder="Example: ZV-AB12CD34" required></div><div class="form-box"><label>Phone Number</label><input class="form-control" name="phone" value="{{ phone }}" placeholder="Phone number used for the order" required></div><button class="btn btn-solid" type="submit">Track Order</button></form></div></div></section>
+<style>.zv-track-wrap{max-width:650px;margin:auto;border:1px solid #eee;padding:32px;background:#fff}.zv-track-wrap>p{color:#777;margin-bottom:25px}.zv-track-wrap .form-box{margin-bottom:20px}.zv-track-wrap label{display:block;margin-bottom:8px}.zv-track-wrap .form-control{min-height:48px;border-radius:0}</style>
+{% endblock %}
+

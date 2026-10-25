@@ -1,0 +1,962 @@
+{% extends 'designer/base.html' %}
+
+{% block title %}
+{% if kind == 'about' %}
+About Us | ZenVibe Corporate Gifts
+{% elif kind == 'work' %}
+Our Work | ZenVibe Corporate Gifts
+{% elif kind == 'contact' %}
+Contact Us | ZenVibe Corporate Gifts
+{% else %}
+{{ title }} | ZenVibe Corporate Gifts
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>
+            {% if kind == 'about' %}
+                About Us
+            {% elif kind == 'work' %}
+                Our Work
+            {% elif kind == 'contact' %}
+                Contact Us
+            {% else %}
+                {{ title }}
+            {% endif %}
+        </h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    {% if kind == 'about' %}
+                        About Us
+                    {% elif kind == 'work' %}
+                        Our Work
+                    {% elif kind == 'contact' %}
+                        Contact Us
+                    {% else %}
+                        {{ title }}
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+{% if kind == 'about' %}
+<div class="zv-ref-about">
+
+    <!-- HERO / ABOUT INTRO — admin managed -->
+    <section class="zv-ref-hero">
+        {% if about_hero and about_hero.image %}
+            <img src="{{ about_hero.image.url }}" alt="{{ about_hero.heading|default:'About ZenVibe Corporate Gifts' }}">
+        {% endif %}
+        <div class="zv-ref-hero-shade"></div>
+        <div class="zv-ref-hero-copy">
+            <h1>{{ about_hero.heading|default:"About ZenVibe Corporate Gifts" }}</h1>
+            <p>{{ about_hero.body|default:"Your Trusted Canadian Partner for Custom Promotional Products, Corporate Gifts, Apparel, Awards & Event Branding"|linebreaksbr }}</p>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE ZENVIBE — admin managed -->
+    <section class="zv-ref-dark zv-ref-why">
+        <div class="zv-ref-heading">
+            <span></span>
+            <h2>{{ about_why_heading.heading|default:"Why Choose ZenVibe?" }}</h2>
+            {% if about_why_heading.body %}<p>{{ about_why_heading.body }}</p>{% endif %}
+        </div>
+
+        <div class="zv-ref-four">
+            {% for block in about_why_cards %}
+                {% if block.section_key != 'why-heading' %}
+                <article class="zv-ref-feature">
+                    {% if block.image %}
+                    <div class="zv-ref-feature-img"><img src="{{ block.image.url }}" alt="{{ block.heading }}"></div>
+                    {% endif %}
+                    <div class="zv-ref-feature-copy">
+                        <i></i>
+                        <h3>{{ block.heading }}</h3>
+                        <p>{{ block.body }}</p>
+                    </div>
+                </article>
+                {% endif %}
+            {% empty %}
+                {% for product in products|slice:":4" %}
+                <article class="zv-ref-feature">
+                    {% if product.image %}<div class="zv-ref-feature-img"><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>{% endif %}
+                    <div class="zv-ref-feature-copy"><i></i><h3>{{ product.name }}</h3></div>
+                </article>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- WHO WE ARE — missing section restored, admin managed -->
+    {% if about_who %}
+    <section class="zv-ref-who">
+        <div class="zv-ref-who-media">
+            {% if about_who.image %}<img src="{{ about_who.image.url }}" alt="{{ about_who.heading }}">{% endif %}
+        </div>
+        <div class="zv-ref-who-copy">
+            {% if about_who.subheading %}<small>{{ about_who.subheading }}</small>{% endif %}
+            <h2>{{ about_who.heading|default:"Who We Are" }}</h2>
+            <div>{{ about_who.body|linebreaks }}</div>
+            {% if about_who.button_text and about_who.button_url %}
+            <a class="btn btn-solid" href="{{ about_who.button_url }}">{{ about_who.button_text }}</a>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- WHAT WE OFFER — admin managed -->
+    <section class="zv-ref-dark zv-ref-offer">
+        <div class="zv-ref-heading">
+            <span></span>
+            <h2>{{ about_offer_heading.heading|default:"What We Offer" }}</h2>
+            {% if about_offer_heading.body %}<p>{{ about_offer_heading.body }}</p>{% endif %}
+        </div>
+
+        <div class="zv-ref-four zv-ref-offer-grid">
+            {% for block in about_offer_cards %}
+                {% if block.section_key != 'offer-heading' %}
+                <article class="zv-ref-feature">
+                    {% if block.button_url %}<a href="{{ block.button_url }}">{% endif %}
+                    {% if block.image %}<div class="zv-ref-feature-img"><img src="{{ block.image.url }}" alt="{{ block.heading }}"></div>{% endif %}
+                    <div class="zv-ref-feature-copy">
+                        <i></i>
+                        <h3>{{ block.heading }}</h3>
+                        <p>{{ block.body }}</p>
+                    </div>
+                    {% if block.button_url %}</a>{% endif %}
+                </article>
+                {% endif %}
+            {% empty %}
+                {% for c in categories|slice:":6" %}
+                <article class="zv-ref-feature">
+                    <a href="{% url 'designer:category_detail' c.slug %}">
+                        {% if c.image %}
+                        <div class="zv-ref-feature-img"><img src="{{ c.image.url }}" alt="{{ c.name }}"></div>
+                        {% else %}
+                            {% with p=c.products.first %}
+                            {% if p and p.image %}<div class="zv-ref-feature-img"><img src="{{ p.image.url }}" alt="{{ c.name }}"></div>{% endif %}
+                            {% endwith %}
+                        {% endif %}
+                        <div class="zv-ref-feature-copy"><i></i><h3>{{ c.name }}</h3>{% if c.description %}<p>{{ c.description|striptags|truncatewords:16 }}</p>{% endif %}</div>
+                    </a>
+                </article>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- GET IN TOUCH — missing section restored, admin/site-settings managed -->
+    <section class="zv-ref-contact">
+        <div class="zv-ref-heading zv-ref-contact-title">
+            <span></span>
+            <h2>{{ about_contact.heading|default:"Get In Touch With Us" }}</h2>
+            {% if about_contact.body %}
+                <p>{{ about_contact.body }}</p>
+            {% endif %}
+        </div>
+
+        <div class="zv-ref-contact-grid">
+
+            {% if site_settings.email %}
+            <a href="mailto:{{ site_settings.email }}"
+               class="zv-ref-contact-item"
+               aria-label="Email {{ site_settings.email }}">
+                <span class="zv-ref-contact-icon">
+                    <i class="ri-mail-line"></i>
+                </span>
+                <strong>{{ site_settings.email }}</strong>
+            </a>
+            {% endif %}
+
+            {% if site_settings.address %}
+            <a href="https://www.google.com/maps/search/?api=1&query={{ site_settings.address|urlencode }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="zv-ref-contact-item"
+               aria-label="Open {{ site_settings.address }} in Google Maps">
+                <span class="zv-ref-contact-icon">
+                    <i class="ri-map-pin-line"></i>
+                </span>
+                <strong>{{ site_settings.address|linebreaksbr }}</strong>
+            </a>
+            {% endif %}
+
+            {% if site_settings.phone %}
+            <a href="tel:{{ site_settings.phone_href|default:site_settings.phone }}"
+               class="zv-ref-contact-item"
+               aria-label="Call {{ site_settings.phone }}">
+                <span class="zv-ref-contact-icon">
+                    <i class="ri-phone-line"></i>
+                </span>
+                <strong>{{ site_settings.phone }}</strong>
+            </a>
+            {% endif %}
+
+        </div>
+
+        {% if about_contact.button_text and about_contact.button_url %}
+        <div class="zv-ref-contact-button">
+            <a class="btn btn-light" href="{{ about_contact.button_url }}">
+                {{ about_contact.button_text }}
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+</div>
+
+{% elif kind == 'work' %}
+<!-- =========================================================
+     OUR WORK - MULTIKART COLLECTION STYLE
+========================================================= -->
+<section class="section-b-space">
+    <div class="container">
+
+        <div class="title1">
+            <h4>Our Work</h4>
+            <h2 class="title-inner1">Branding In The Real World</h2>
+            <p>
+                Explore products ZenVibe creates for businesses,
+                events, teams, schools and corporate gifting.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            {% for c in categories %}
+            <div class="col-lg-4 col-md-6">
+
+                <div class="zv-mk-work-card">
+
+                    <a 
+                       class="zv-mk-work-media">
+
+                        {% if c.image %}
+                        <img src="{{ c.image.url }}"
+                             class="img-fluid blur-up lazyload"
+                             alt="{{ c.name }}"
+                             loading="lazy">
+                        {% else %}
+                            {% with p=c.products.first %}
+                                {% if p and p.image %}
+                                <img src="{{ p.image.url }}"
+                                     class="img-fluid blur-up lazyload"
+                                     alt="{{ c.name }}"
+                                     loading="lazy">
+                                {% else %}
+                                <div class="zv-category-placeholder">Z</div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+
+                    </a>
+
+                    <div class="zv-mk-work-copy">
+                        <h3>
+                            <a href="{% url 'designer:category_detail' c.slug %}">
+                                {{ c.name }}
+                            </a>
+                        </h3>
+                       
+                        <a href="{% url 'designer:category_detail' c.slug %}"
+                           class="btn btn-solid">
+                            View Collection
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <h3>Our work is being updated.</h3>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% elif kind == 'contact' %}
+<!-- =========================================================
+     CONTACT - MULTIKART CONTACT STYLE
+========================================================= -->
+
+<section class="contact-page">
+    <div class="container">
+
+        <div class="row g-sm-4 g-3">
+
+            <!-- LEFT INTRO -->
+            <div class="col-lg-5">
+
+                <div class="contact-title">
+                    <h2>Get In Touch</h2>
+
+                    <p>
+                        We're here to help! Reach out to us with any questions,
+                        feedback, product enquiries, artwork requests or bulk-order
+                        questions, and we'll get back to you as soon as possible.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT CONTACT FORM -->
+            <div class="col-lg-7">
+
+                <form class="theme-form contact-form" method="post">
+
+                    {% csrf_token %}
+
+                    <div class="row g-4">
+
+                        <!-- FULL NAME -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="name" class="form-label">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Full Name"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- EMAIL -->
+                        <div class="col-md-6">
+                            <div class="form-box">
+
+                                <label for="email">
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="Email"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- PHONE -->
+                        <div class="col-md-6">
+                            <div class="form-box">
+
+                                <label for="phone">
+                                    Phone
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    class="form-control"
+                                    placeholder="Enter Your Phone Number"
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- SUBJECT -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="subject">
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    name="subject"
+                                    class="form-control"
+                                    placeholder="Subject"
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <!-- MESSAGE -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <label for="message">
+                                    Write Your Message
+                                </label>
+
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    rows="6"
+                                    class="form-control"
+                                    placeholder="Write Your Message"
+                                    required
+                                ></textarea>
+
+                            </div>
+                        </div>
+
+
+                        <!-- BUTTON -->
+                        <div class="col-12">
+                            <div class="form-box">
+
+                                <button
+                                    class="btn btn-solid"
+                                    type="submit"
+                                >
+                                    Send Your Message
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- CONTACT INFORMATION -->
+            <div class="col-12">
+
+                <div class="contact-right">
+
+                    <ul>
+
+                        <!-- PHONE -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-phone-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Contact Us</h6>
+
+                                <p>
+                                    <a href="tel:+15873402358">
+                                        +1 (587) 340-2358
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- ADDRESS -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-map-pin-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Address</h6>
+
+                                <p>
+                                    <a
+                                        href="https://www.google.com/maps/search/?api=1&query=4003+98+St+NW+Unit+72+Edmonton+AB+T6E+6M8"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        4003 98 St NW Unit 72, Edmonton, AB T6E 6M8
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- EMAIL -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-mail-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Email</h6>
+
+                                <p>
+                                    <a href="mailto:info@zenvibe.ca">
+                                        info@zenvibe.ca
+                                    </a>
+                                </p>
+
+                            </div>
+
+                        </li>
+
+
+                        <!-- SUPPORT -->
+                        <li>
+
+                            <div class="contact-icon">
+                                <i class="ri-customer-service-2-fill"></i>
+                            </div>
+
+                            <div class="media-body">
+
+                                <h6>Support</h6>
+
+                                <p>
+                                    ZenVibe Customer Support
+                                </p>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================================================
+     MAP - SAME MULTIKART POSITION
+========================================================= -->
+
+<section class="map-section">
+
+    <iframe
+        frameborder="0"
+        class="w-100 h-100"
+        loading="lazy"
+        title="ZenVibe Edmonton Location"
+        src="https://www.google.com/maps?q=4003+98+St+NW+Unit+72,+Edmonton,+AB+T6E+6M8&output=embed"
+    ></iframe>
+
+</section>
+
+{% endif %}
+
+<style>
+/* =========================================================
+   SMALL ZENVIBE OVERRIDES
+   Main structure uses Multikart classes from base CSS.
+========================================================= */
+
+.zv-about-banner{
+    margin-bottom:30px;
+    background:#f5f5f5;
+    overflow:hidden;
+}
+
+.zv-about-banner img{
+    width:100%;
+    max-height:520px;
+    object-fit:contain;
+}
+
+.zv-about-placeholder,
+.zv-feature-placeholder,
+.zv-category-placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:260px;
+    background:#f4f5f7;
+    color:#0758b8;
+    font-size:48px;
+    font-weight:700;
+}
+
+.about-page h4{
+    margin-bottom:15px;
+    color:#222;
+    font-size:18px;
+    font-weight:600;
+}
+
+.about-page p{
+    color:#777;
+    line-height:1.8;
+}
+
+.zv-mk-feature-box{
+    height:100%;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+.zv-mk-feature-media{
+    height:190px;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-mk-feature-media img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.zv-mk-feature-content{
+    padding:20px;
+    text-align:center;
+}
+
+.zv-mk-feature-content h4{
+    margin-bottom:8px;
+    color:#222;
+}
+
+.zv-mk-feature-content p{
+    margin:0;
+    color:#777;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.zv-mk-category-card,
+.zv-mk-work-card{
+    height:100%;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+.zv-mk-category-media,
+.zv-mk-work-media{
+    display:block;
+    width:100%;
+    height:260px;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-mk-category-media img,
+.zv-mk-work-media img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.zv-mk-category-copy,
+.zv-mk-work-copy{
+    padding:20px;
+}
+
+.zv-mk-category-copy h4,
+.zv-mk-work-copy h3{
+    margin-bottom:8px;
+    color:#222;
+}
+
+.zv-mk-category-copy p,
+.zv-mk-work-copy p{
+    color:#777;
+    font-size:13px;
+    line-height:1.65;
+}
+
+.zv-mk-category-copy > a,
+.zv-mk-work-copy h3 a{
+    color:#0758b8;
+    text-decoration:none;
+}
+
+.zv-service-icon{
+    font-size:38px;
+    margin-right:16px;
+    color:#0758b8;
+}
+
+.zv-contact-title{
+    margin-bottom:20px;
+}
+
+.zv-contact-intro{
+    color:#777;
+    line-height:1.75;
+    margin-bottom:28px;
+}
+
+.zv-contact-list{
+    border-top:1px solid #eee;
+}
+
+.zv-contact-item{
+    display:flex;
+    gap:15px;
+    align-items:flex-start;
+    padding:18px 0;
+    border-bottom:1px solid #eee;
+}
+
+.zv-contact-item > i{
+    font-size:24px;
+    color:#0758b8;
+}
+
+.zv-contact-item h5{
+    margin:0 0 5px;
+    color:#222;
+}
+
+.zv-contact-item a{
+    color:#777;
+    text-decoration:none;
+}
+
+.zv-contact-item a:hover{
+    color:#0758b8;
+}
+
+.zv-contact-card-mk{
+    height:100%;
+    padding:35px;
+    border:1px solid #eee;
+}
+
+.zv-contact-card-mk h3{
+    margin-bottom:15px;
+}
+
+.zv-contact-card-mk p{
+    margin-bottom:22px;
+    color:#777;
+    line-height:1.7;
+}
+
+@media(max-width:767px){
+    .zv-mk-category-media,
+    .zv-mk-work-media{
+        height:220px;
+    }
+
+    .zv-contact-card-mk{
+        padding:25px 20px;
+    }
+}
+.zv-mk-work-copy{
+    padding:20px;
+    text-align:center;
+}
+
+.zv-mk-work-copy .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin:15px auto 0;
+}
+
+/* =========================================================
+   ZENVIBE ABOUT — reference-page structure
+   Isolated to .zv-ref-about so other pages are not affected.
+========================================================= */
+.zv-ref-about{
+    width:min(1120px,calc(100% - 40px));
+    margin:34px auto 50px;
+    background:#202326;
+    color:#fff;
+}
+.zv-ref-about *{box-sizing:border-box}
+.zv-ref-about img{display:block;width:100%;max-width:100%}
+.zv-ref-hero{height:480px;position:relative;overflow:hidden;background:#111}
+.zv-ref-hero>img{width:100%;height:100%;object-fit:cover;object-position:center}
+.zv-ref-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,10,20,.92) 0%,rgba(2,10,20,.66) 42%,rgba(2,10,20,.12) 75%)}
+.zv-ref-hero-copy{position:absolute;left:38px;top:50%;transform:translateY(-50%);z-index:2;max-width:560px}
+.zv-ref-hero-copy h1{margin:0 0 26px;color:#fff;font-size:38px;line-height:1.15;font-weight:800}
+.zv-ref-hero-copy p{margin:0;color:#fff;font-size:16px;line-height:1.65;font-weight:600}
+.zv-ref-dark{background:#202326;padding:82px 32px}
+.zv-ref-heading{text-align:center;margin:0 auto 50px;max-width:760px}
+.zv-ref-heading>span{display:block;width:52px;height:3px;background:#147bd1;margin:0 auto 22px}
+.zv-ref-heading h2{margin:0;color:#fff;font-size:40px;line-height:1.15;font-weight:800}
+.zv-ref-heading p{color:#c9cdd2;margin:14px 0 0;line-height:1.7}
+.zv-ref-four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.zv-ref-feature{min-width:0;text-align:center}
+.zv-ref-feature a{display:block;color:inherit;text-decoration:none}
+.zv-ref-feature-img{aspect-ratio:4/3;overflow:hidden;background:#fff}
+.zv-ref-feature-img img{width:100%;height:100%;object-fit:cover}
+.zv-ref-feature-copy{padding:20px 8px 0}
+.zv-ref-feature-copy i{display:block;width:58px;height:3px;background:#147bd1;margin:0 auto 16px}
+.zv-ref-feature-copy h3{margin:0 0 10px;color:#fff;font-size:21px;line-height:1.25;font-weight:700}
+.zv-ref-feature-copy p{margin:0;color:#d2d4d7;font-size:13px;line-height:1.6}
+.zv-ref-who{display:grid;grid-template-columns:1fr 1fr;background:#292c2f;min-height:560px}
+.zv-ref-who-media{min-height:560px;overflow:hidden}
+.zv-ref-who-media img{width:100%;height:100%;object-fit:cover}
+.zv-ref-who-copy{display:flex;flex-direction:column;justify-content:center;padding:54px 60px}
+.zv-ref-who-copy small{color:#147bd1;text-transform:uppercase;font-weight:700;letter-spacing:.08em;margin-bottom:8px}
+.zv-ref-who-copy h2{color:#fff;font-size:42px;line-height:1.1;margin:0 0 24px;font-weight:800}
+.zv-ref-who-copy p{color:#f0f1f2;font-size:14px;line-height:1.75;margin:0 0 16px}
+.zv-ref-offer{padding-top:76px}
+.zv-ref-offer-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.zv-ref-offer-grid .zv-ref-feature:nth-child(n+5){grid-column:auto}
+.zv-ref-contact{background:#075eae;padding:70px 45px 76px}
+.zv-ref-contact-title{margin-bottom:42px}
+.zv-ref-contact-title h2{font-size:38px}
+.zv-ref-contact-title p{color:#fff}
+.zv-ref-contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:25px;text-align:center}
+.zv-ref-contact-grid>a,.zv-ref-contact-grid>div{color:#fff;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:14px;font-size:16px;line-height:1.45}
+.zv-ref-contact-grid i{font-size:52px;color:#fff}
+@media(max-width:991px){
+ .zv-ref-four,.zv-ref-offer-grid{grid-template-columns:repeat(2,1fr)}
+ .zv-ref-who{grid-template-columns:1fr}
+ .zv-ref-who-media{min-height:420px}
+ .zv-ref-hero{height:420px}
+}
+@media(max-width:575px){
+ .zv-ref-about{width:100%;margin-top:0}
+ .zv-ref-hero{height:400px}
+ .zv-ref-hero-copy{left:22px;right:22px}
+ .zv-ref-hero-copy h1{font-size:30px}
+ .zv-ref-dark{padding:55px 18px}
+ .zv-ref-heading h2{font-size:31px}
+ .zv-ref-four,.zv-ref-offer-grid{grid-template-columns:1fr}
+ .zv-ref-who-copy{padding:42px 22px}
+ .zv-ref-who-copy h2{font-size:34px}
+ .zv-ref-contact{padding:55px 20px}
+ .zv-ref-contact-grid{grid-template-columns:1fr;gap:38px}
+}
+
+
+/* =========================================================
+   ABOUT CONTACT — clickable Email / Maps / Phone
+========================================================= */
+.zv-ref-contact{
+    background:#075eae;
+    padding:70px 45px 76px;
+    color:#fff;
+}
+.zv-ref-contact-title{
+    margin:0 auto 48px;
+    text-align:center;
+}
+.zv-ref-contact-title>span{
+    display:block;
+    width:56px;
+    height:3px;
+    margin:0 auto 24px;
+    background:#fff;
+}
+.zv-ref-contact-title h2{
+    margin:0 0 16px!important;
+    color:#fff!important;
+    font-size:38px!important;
+    line-height:1.15!important;
+    font-weight:800!important;
+    text-transform:uppercase;
+}
+.zv-ref-contact-title p{
+    max-width:780px;
+    margin:0 auto!important;
+    color:rgba(255,255,255,.94)!important;
+    font-size:15px!important;
+    line-height:1.65!important;
+}
+.zv-ref-contact-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    align-items:start!important;
+    gap:36px!important;
+    width:100%;
+    text-align:center;
+}
+.zv-ref-contact-grid .zv-ref-contact-item{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:16px!important;
+    min-width:0;
+    padding:8px 12px!important;
+    color:#fff!important;
+    text-decoration:none!important;
+    text-align:center!important;
+    transition:transform .18s ease,opacity .18s ease;
+}
+.zv-ref-contact-grid .zv-ref-contact-item:hover{
+    color:#fff!important;
+    text-decoration:none!important;
+    transform:translateY(-3px);
+    opacity:.92;
+}
+.zv-ref-contact-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:76px;
+    height:76px;
+}
+.zv-ref-contact-icon i{
+    margin:0!important;
+    color:#fff!important;
+    font-size:62px!important;
+    line-height:1!important;
+    font-weight:400!important;
+}
+.zv-ref-contact-item strong{
+    display:block;
+    max-width:330px;
+    margin:0 auto;
+    color:#fff!important;
+    font-size:21px!important;
+    line-height:1.5!important;
+    font-weight:700!important;
+    overflow-wrap:anywhere;
+}
+.zv-ref-contact-button{
+    margin-top:34px;
+    text-align:center;
+}
+@media(max-width:767.98px){
+    .zv-ref-contact{padding:54px 20px 58px}
+    .zv-ref-contact-title{margin-bottom:38px}
+    .zv-ref-contact-title h2{font-size:30px!important}
+    .zv-ref-contact-grid{
+        grid-template-columns:1fr!important;
+        gap:34px!important;
+    }
+    .zv-ref-contact-icon{width:62px;height:62px}
+    .zv-ref-contact-icon i{font-size:50px!important}
+    .zv-ref-contact-item strong{font-size:18px!important}
+}
+
+</style>
+
+{% endblock %}

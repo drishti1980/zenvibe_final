@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#10223A" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="40.0,101.5 638.0,40.0 960.0,171.2 389.6,286.0" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="178.0,450.0 481.59999999999997,163.0 960.0,253.20000000000002 711.6,450.0" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="113.60000000000001" y1="392.6" x2="868.0" y2="101.5" stroke="#C6A15B" stroke-width="3" opacity="0.85"/>
+<text x="500.0" y="630" fill="#10223A" font-family="Playfair Display" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">THE FUTURE</tspan><tspan x="500.0" dy="65.8">STARTS HERE</tspan></text>
+<text x="500.0" y="768" fill="#10223A" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Connect â€¢ Learn â€¢ Lead</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#C6A15B" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#9FB8E8" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#10223A" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8F5EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET TICKETS</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">22</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

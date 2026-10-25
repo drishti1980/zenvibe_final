@@ -1,0 +1,3639 @@
+import base64
+import json
+import re
+import hashlib
+import mimetypes
+from datetime import timedelta
+from pathlib import Path
+
+from django.conf import settings
+from django.utils import timezone
+
+# import pytesseract
+import io
+import json
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from PIL import Image, ImageDraw, ImageFont
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.files.base import ContentFile
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, Http404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.templatetags.static import static
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.urls import reverse
+from django.db.models import Q, Prefetch
+
+
+
+def _site_contact_email():
+    """Fallback contact email for this project version, which has no SiteSettings model."""
+    return getattr(settings, "DEFAULT_FROM_EMAIL", "") or ""
+
+def asset_candidates(url):
+    """Given any already-built static or media URL (e.g. '/zenvibe/media/products/x.webp'
+    or '/zenvibe/static/designer/img/drinkware/y.png'), return a de-duplicated list of
+    plausible alternate URLs for hosts that serve assets under a different path prefix
+    than what STATIC_URL/MEDIA_URL declare in settings.py (common on cPanel/Passenger
+    deployments -- see award_asset() below, which this generalises to every asset type
+    used across the site: category photos, product photos, and customizer mockups).
+    The front-end tries these in order and keeps whichever one actually loads."""
+    if not url:
+        return []
+    candidates = [url]
+    if url.startswith("/zenvibe/"):
+        candidates.append(url[len("/zenvibe"):])          # strip the /zenvibe prefix
+    else:
+        candidates.append("/zenvibe" + url)                # or add it back
+    candidates.append(url.lstrip("/"))                      # relative, last resort
+    seen = set()
+    result = []
+    for c in candidates:
+        if c and c not in seen:
+            seen.add(c)
+            result.append(c)
+    return result
+
+from .models import (
+    Category,
+    DesignTemplate,
+    DesignVersion,
+    Product,
+    SavedDesign,
+    Order,
+    ChatbotKnowledge,
+    ChatInquiry,
+    BlogPost,
+    BlogComment,
+    PageContentBlock,
+    SiteSettings,
+    Testimonial,
+    BrandLogo,
+    HomeBanner,
+)
+from .services.template_converter import (
+    convert_uploaded_template,
+)
+
+
+
+def _externalize_template_data_urls(value, template_id, cache=None):
+    """Persist generated layer data-URLs to MEDIA storage and replace them with URLs.
+
+    Automatic reconstruction can create many transparent PNG layer images. Keeping
+    those base64 payloads inside JSONField makes the database unnecessarily large,
+    so save them once as normal media assets.
+    """
+    from django.core.files.storage import default_storage
+    cache = cache if cache is not None else {}
+    if isinstance(value, list):
+        return [_externalize_template_data_urls(v, template_id, cache) for v in value]
+    if isinstance(value, dict):
+        return {k: _externalize_template_data_urls(v, template_id, cache) for k, v in value.items()}
+    if not (isinstance(value, str) and value.startswith("data:image/") and "," in value):
+        return value
+    if value in cache:
+        return cache[value]
+    try:
+        header, encoded = value.split(",", 1)
+        mime = header[5:].split(";", 1)[0].lower()
+        ext = mimetypes.guess_extension(mime) or ".png"
+        if ext == ".jpe":
+            ext = ".jpg"
+        raw = base64.b64decode(encoded)
+        digest = hashlib.sha256(raw).hexdigest()[:20]
+        name = f"template_layers/template-{template_id}/{digest}{ext}"
+        if not default_storage.exists(name):
+            default_storage.save(name, ContentFile(raw))
+        url = default_storage.url(name)
+        cache[value] = url
+        return url
+    except Exception:
+        # Never corrupt a template because one optional generated layer could not
+        # be externalised; retain the original source as a safe fallback.
+        return value
+
+
+def _inline_template_media_urls(value):
+    """Return template JSON with locally stored media images embedded as data URLs.
+
+    This deliberately trades some response size for reliability. Design masters must
+    never disappear just because the site is deployed below /zenvibe/, /client/ or
+    another URL prefix. Existing V42-V54 templates may contain absolute MEDIA_URL
+    paths such as /zenvibe/media/template_layers/...; those are resolved from the
+    configured storage and embedded before the customer editor receives the JSON.
+    """
+    from django.core.files.storage import default_storage
+    from django.conf import settings
+
+    if isinstance(value, list):
+        return [_inline_template_media_urls(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _inline_template_media_urls(v) for k, v in value.items()}
+    if not isinstance(value, str) or value.startswith("data:image/"):
+        return value
+
+    # Only touch image/media references. Leave normal links/strings unchanged.
+    lowered = value.lower().split("?", 1)[0]
+    if not lowered.endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg")):
+        return value
+
+    media_url = str(getattr(settings, "MEDIA_URL", "/media/") or "/media/")
+    candidates = []
+    clean = value.split("?", 1)[0]
+    if media_url and clean.startswith(media_url):
+        candidates.append(clean[len(media_url):].lstrip("/"))
+    # Recover older deployments that persisted an application prefix into MEDIA_URL.
+    if "/media/" in clean:
+        candidates.append(clean.split("/media/", 1)[1].lstrip("/"))
+    candidates.append(clean.lstrip("/"))
+
+    seen = set()
+    for name in candidates:
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        try:
+            if not default_storage.exists(name):
+                continue
+            with default_storage.open(name, "rb") as fh:
+                raw = fh.read()
+            mime = mimetypes.guess_type(name)[0] or "image/png"
+            return "data:%s;base64,%s" % (mime, base64.b64encode(raw).decode("ascii"))
+        except Exception:
+            continue
+    return value
+
+
+def visible_categories(top_level=False):
+    qs = Category.objects.filter(is_active=True, is_out_of_stock=False)
+    if top_level:
+        qs = qs.filter(parent__isnull=True)
+    return qs
+
+
+def active_children_prefetch(with_products=False):
+    """Never repopulate a parent with inactive children after filtering it."""
+    queryset = visible_categories().order_by("sort_order", "name")
+    if with_products:
+        queryset = queryset.prefetch_related(Prefetch(
+            "products",
+            queryset=Product.objects.filter(is_active=True, is_out_of_stock=False).order_by("name"),
+        ))
+    return Prefetch("children", queryset=queryset)
+
+
+def _is_business_card_product(product):
+    if not product:
+        return False
+    product_name = (product.name or "").lower()
+    category = getattr(product, "category", None)
+    category_name = (category.name if category else "").lower()
+    category_slug = (category.slug if category else "").lower()
+    return (
+        "business card" in product_name
+        or "business card" in category_name
+        or "business-card" in category_slug
+    )
+
+
+def _business_card_master_product():
+    """
+    One shared Business Card template library.
+
+    Templates are physically stored only on Standard Business Cards (#216).
+    Premium Business Cards (#1) and Standard Business Cards (#216)
+    both display the exact same 100 templates.
+    """
+    master = Product.objects.filter(id=216).first()
+
+    if master:
+        return master
+
+    # Fallback only if product ID changes in another database.
+    return (
+        Product.objects.filter(
+            slug="standard-business-cards"
+        ).order_by("id").first()
+    )
+
+
+def _equivalent_template_products(product):
+    """Find duplicate catalogue rows representing the same sellable product."""
+    from django.db.models import Q
+    qs = Product.objects.exclude(id=product.id)
+    same_name = qs.filter(name__iexact=product.name)
+    slug = (product.slug or "").strip().lower()
+    slug_prefix = slug[:40] if len(slug) >= 20 else slug
+    same_slug = qs.none()
+    if slug_prefix:
+        same_slug = qs.filter(Q(slug__iexact=slug) | Q(slug__istartswith=slug_prefix))
+    ids = []
+    for p in list(same_name.order_by("id")) + list(same_slug.order_by("id")):
+        if p.id not in ids:
+            ids.append(p.id)
+    return ids
+
+
+def _template_category_ids(product):
+    """Return the selected product category and its parent category, if any."""
+    if not product or not product.category_id:
+        return []
+    ids = [product.category_id]
+    category = product.category
+    if category and category.parent_id:
+        ids.append(category.parent_id)
+    return list(dict.fromkeys(ids))
+
+
+def live_templates_for(product):
+    """Return only templates that belong to the selected sellable product.
+
+    Business Card products may additionally share the canonical Business Card
+    master library. Templates from unrelated products in the same category are
+    deliberately NOT included.
+    """
+    if not product:
+        return []
+
+    result, seen_ids, seen_names = [], set(), set()
+
+    def add_templates(queryset):
+        for template in queryset:
+            name_key = (template.name or "").strip().lower()
+            if template.id in seen_ids or (name_key and name_key in seen_names):
+                continue
+            seen_ids.add(template.id)
+            if name_key:
+                seen_names.add(name_key)
+            result.append(template)
+
+    base = DesignTemplate.objects.select_related(
+        "product", "product__category"
+    ).filter(is_active=True)
+
+    # 1. Exact selected product.
+    add_templates(base.filter(product_id=product.id).order_by("name", "-updated_at", "-id"))
+
+    # 2. Genuine duplicate catalogue rows representing the same product.
+    equivalent_ids = _equivalent_template_products(product)
+    if equivalent_ids:
+        add_templates(
+            base.filter(product_id__in=equivalent_ids)
+                .order_by("name", "-updated_at", "-id")
+        )
+
+    # 3. Business Cards intentionally share one canonical Business Card library.
+    if _is_business_card_product(product):
+        master = _business_card_master_product()
+        if master and master.id != product.id:
+            add_templates(
+                base.filter(product_id=master.id)
+                    .order_by("name", "-updated_at", "-id")
+            )
+
+    # IMPORTANT:
+    # Never add every template from product.category or its parent category.
+    # That was the cause of Business Cards displaying other products' templates.
+    return result
+
+
+def _template_allowed_for_product(template, product):
+    """Security check matching live_templates_for(): no category-wide leakage."""
+    if not template or not product:
+        return False
+    if template.product_id == product.id:
+        return True
+    if template.product_id in _equivalent_template_products(product):
+        return True
+    if _is_business_card_product(product):
+        master = _business_card_master_product()
+        if master and template.product_id == master.id:
+            return True
+    return False
+
+
+def _get_template_for_product(template_id, product):
+    template = get_object_or_404(
+        DesignTemplate.objects.select_related("product", "product__category"),
+        id=template_id,
+        is_active=True,
+    )
+    if not _template_allowed_for_product(template, product):
+        raise Http404("This template is not available for the selected product.")
+    return template
+
+def _ensure_session(request):
+    if not request.session.session_key:
+        request.session.create()
+    return request.session.session_key
+
+
+def _owner_kwargs(request):
+    if request.user.is_authenticated:
+        return {"user": request.user}
+    return {"session_key": _ensure_session(request)}
+
+
+def _can_access(request, design):
+    if request.user.is_staff:
+        return True
+    if request.user.is_authenticated:
+        return design.user_id == request.user.id
+    return bool(design.session_key and design.session_key == _ensure_session(request))
+
+
+def legal_page(request, page):
+    """Render legal pages using template-safe objects rather than dictionaries."""
+    from types import SimpleNamespace
+    pages = {
+        "privacy-policy": {
+            "title":"Privacy Policy","updated":"February 2026",
+            "intro":'ZenVibe Corporate Gifts Inc. (“we”, “our”, “us”) respects your privacy and is committed to protecting your personal information.',
+            "sections":[
+                ("Information We Collect",[],["Name","Email address","Phone number","Billing and shipping address","Order and quotation details"],[]),
+                ("How We Use Your Information",[],["Process orders","Provide quotations","Deliver products","Send order updates","Improve our services and customer experience"],[]),
+                ("Payment Security",["All payments are processed securely through third-party payment providers. We do not store credit card information on our servers."],[],[]),
+                ("Sharing Information",["We do not sell, trade, or rent your personal information to third parties."],[],[]),
+                ("Cookies",["Our website may use cookies to improve user experience and analyze website traffic."],[],[]),
+                ("Contact Information",["ZenVibe Corporate Gifts Inc.","4104 B 97 St NW #101","Edmonton, AB T6E 5C5","Email: nprajapati@zenvibe.ca"],[],[]),
+            ]},
+        "terms-and-conditions": {
+            "title":"Terms & Conditions","updated":"February 2026",
+            "intro":"These terms apply when you browse ZenVibe, submit artwork, request customization, or purchase products from ZenVibe Corporate Gifts Inc.",
+            "sections":[
+                ("Orders and Pricing",["Product availability, pricing, turnaround estimates and promotions may change. An order is accepted when ZenVibe confirms it and any required payment has been successfully processed."],[],[]),
+                ("Custom Artwork and Proofs",["Customers are responsible for checking names, spelling, colours, sizes, quantities, artwork and other customization details before approval. Screen colours and final printed or embroidered colours may vary."],[],[]),
+                ("Customer Content",["By submitting artwork, logos, names, images or other content, you confirm that you have the rights and permissions required for ZenVibe to reproduce that content for your order."],[],[]),
+                ("Production and Delivery",["Production and delivery dates are estimates unless expressly confirmed otherwise. Carrier, weather, supply and other circumstances outside reasonable control can affect delivery."],[],[]),
+                ("Product Variations",["Minor variations can occur in colour, positioning, dimensions, materials, engraving, embroidery and printing as part of normal custom production."],[],[]),
+                ("Website Use",["You may use the website for lawful shopping and design purposes. You must not misuse the site, interfere with its operation, or submit unlawful or infringing content."],[],[]),
+                ("Liability",["To the extent permitted by applicable law, ZenVibe is not responsible for indirect or consequential losses arising from website use, delayed delivery or customer-approved artwork."],[],[]),
+                ("Contact",["Questions about these terms can be sent to info@zenvibe.ca."],[],[]),
+            ]},
+        "refund-policy": {
+            "title":"Refund and Returns Policy","updated":"February 2026",
+            "intro":"At ZenVibe Corporate Gifts Inc., we specialize in custom and promotional products. Please review our refund policy carefully.",
+            "sections":[
+                ("Custom Products",["Due to the customized nature of our products (printed, engraved, embroidered, or personalized items), all custom orders are final sale once production has started.","We do not offer refunds on approved artwork or completed custom products unless there is a manufacturing defect."],[],[]),
+                ("Non-Custom Products",["For non-custom, blank items:"],["Returns must be requested within 7 days of delivery.","Items must be unused and in original packaging.","Customer is responsible for return shipping costs."],[]),
+                ("Damaged or Incorrect Orders",["If you receive:"],["A damaged item","Incorrect product","Printing error caused by us"],["Please contact us within 48 hours of delivery with photos.","We will review and offer replacement or refund if applicable."]),
+                ("Order Cancellations",["Orders may be cancelled only before production begins.","Once production starts, cancellation is not permitted."],[],[]),
+                ("Refund Processing",["Approved refunds will be processed to the original payment method within 5–10 business days."],[],[]),
+                ("Contact Us",["ZenVibe Corporate Gifts Inc.","4104 B 97 St NW #101","Edmonton, Alberta T6E 5C5","Email: nprajapati@zenvibe.ca"],[],[]),
+            ]},
+    }
+    raw=pages.get(page)
+    if not raw: raise Http404("Page not found")
+    sections=[SimpleNamespace(title=t,paragraphs=p,items=i,after=a) for t,p,i,a in raw["sections"]]
+    data=SimpleNamespace(title=raw["title"],updated=raw["updated"],intro=raw["intro"],sections=sections)
+    return render(request,"designer/legal_page.html",{"legal_page":data})
+
+def home(request):
+    # Keep the home page focused on main catalogue groups. Product counts include
+    # both direct products and the products inside each immediate subcategory.
+    categories = list(
+        visible_categories(top_level=True)
+        .prefetch_related(
+            Prefetch("products", queryset=Product.objects.filter(is_active=True, is_out_of_stock=False).order_by("name")),
+            active_children_prefetch(with_products=True),
+        )
+        .order_by("sort_order", "name")
+    )
+    for category in categories:
+        direct_count = sum(
+            1 for product in category.products.all()
+            if product.is_active and not product.is_out_of_stock
+        )
+        child_count = sum(
+            1
+            for child in category.children.all()
+            if child.is_active and not child.is_out_of_stock
+            for product in child.products.all()
+            if product.is_active and not product.is_out_of_stock
+        )
+        category.product_count = direct_count + child_count
+
+    # Always query live Admin values; avoid relying on the first twelve IDs.
+    products = Product.objects.filter(
+        is_active=True, is_out_of_stock=False, category__is_active=True,
+        image__isnull=False,
+    ).exclude(image="").select_related("category").order_by("-id")[:12]
+    sale_products = Product.objects.filter(
+        is_active=True, is_out_of_stock=False, is_on_sale=True,
+        category__is_active=True,
+    ).select_related("category").order_by("sale_priority", "-id")[:12]
+    return render(request, "designer/home.html", {
+        "categories": categories, "products": products, "sale_products": sale_products,
+        "testimonials": Testimonial.objects.filter(is_active=True)[:12],
+        "brand_logos": BrandLogo.objects.filter(is_active=True)[:20],
+        "home_content_blocks": PageContentBlock.objects.filter(page="home", is_active=True),
+        "home_banners": HomeBanner.objects.filter(is_active=True).order_by("sort_order", "id"),
+    })
+
+
+def about(request):
+    blocks = list(
+        PageContentBlock.objects.filter(
+            page="about",
+            is_active=True
+        ).order_by("sort_order", "id")
+    )
+
+    by_key = {
+        block.section_key: block
+        for block in blocks
+    }
+
+    why_cards = [
+        block
+        for block in blocks
+        if block.section_key.startswith("why-")
+        and block.section_key != "why-heading"
+    ]
+
+    offer_cards = [
+        block
+        for block in blocks
+        if block.section_key.startswith("offer-")
+        and block.section_key != "offer-heading"
+    ]
+
+    # Global contact information
+    site_settings = SiteSettings.objects.first()
+
+    return render(
+        request,
+        "designer/info_page.html",
+        {
+            "title": "About ZenVibe",
+            "kind": "about",
+
+            "managed_blocks": blocks,
+
+            "about_hero": by_key.get("hero"),
+
+            "about_why_heading": by_key.get("why-heading"),
+            "about_why_cards": why_cards,
+
+            "about_who": by_key.get("who-we-are"),
+
+            "about_offer_heading": by_key.get("offer-heading"),
+            "about_offer_cards": offer_cards,
+
+            "about_contact": by_key.get("contact"),
+
+            # Email / phone / address
+            "site_settings": site_settings,
+        }
+    )
+
+
+def our_work(request):
+    """Reference-style Our Works gallery, fully managed through PageContentBlock."""
+    categories = visible_categories(top_level=True).prefetch_related("products", active_children_prefetch())
+    blocks = list(PageContentBlock.objects.filter(page="our_work", is_active=True).order_by("sort_order", "id"))
+    keyed = {block.section_key: block for block in blocks}
+    sections = [
+        ("banners", "BANNERS & DISPLAYS"),
+        ("promotional", "PROMOTIONAL PRODUCTS"),
+        ("corporate", "CORPORATE GIFT SETS"),
+        ("awards", "AWARDS"),
+        ("marketing", "MARKETING MATERIALS"),
+        ("apparel", "CUSTOM APPAREL"),
+    ]
+    gallery = []
+    for key, default_heading in sections:
+        heading = keyed.get(key + "-heading")
+        images = [b for b in blocks if b.section_key.startswith(key + "-image-") and b.image]
+        if heading or images:
+            gallery.append({"key": key, "heading": heading.heading if heading and heading.heading else default_heading,
+                            "body": heading.body if heading else "", "images": images})
+    # Additional admin-created groups can use a section_key prefix such as "events-heading"/"events-image-01".
+    existing_keys = {s[0] for s in sections}
+    for block in blocks:
+        if not block.section_key.endswith("-heading"):
+            continue
+        key = block.section_key[:-8]
+        if key in existing_keys or key in {"services", "intro"}:
+            continue
+        images = [b for b in blocks if b.section_key.startswith(key + "-image-") and b.image]
+        gallery.append({"key": key, "heading": block.heading, "body": block.body, "images": images})
+    # Admin can add independent gallery images without manually creating a
+    # matching heading record first. Respect the block's sort order.
+    represented = {section["key"] for section in gallery}
+    additional = {}
+    for block in blocks:
+        if not block.image or "-image-" not in block.section_key:
+            continue
+        key = block.section_key.split("-image-", 1)[0]
+        if key in represented or not key:
+            continue
+        additional.setdefault(key, []).append(block)
+    for key, images in additional.items():
+        heading = keyed.get(key + "-heading")
+        gallery.append({
+            "key": key, "heading": (heading.heading if heading and heading.heading else key.replace("-", " ").title()),
+            "body": heading.body if heading else "", "images": images,
+        })
+    return render(request, "designer/our_work.html", {
+        "categories": categories,
+        "work_hero": keyed.get("hero"),
+        "work_intro": keyed.get("intro"),
+        "work_gallery": gallery,
+        "work_cta": keyed.get("cta"),
+    })
+
+def contact(request):
+    from django.contrib import messages
+    from django.core.cache import cache
+    from django.core.validators import validate_email
+    from django.core.exceptions import ValidationError
+    from .services.store_email import active_account, send_store_email, render_store_template
+    from .models import Category, ChatInquiry
+    categories = Category.objects.filter(parent__isnull=True, is_active=True).order_by("sort_order", "name")
+    if request.method == "POST":
+        name = (request.POST.get("name") or "").strip()[:140]
+        email = (request.POST.get("email") or "").strip()[:254]
+        phone = (request.POST.get("phone") or "").strip()[:40]
+        subject = (request.POST.get("subject") or "").strip()[:160]
+        body = (request.POST.get("message") or "").strip()[:4000]
+        category_id = (request.POST.get("product_category") or "").strip()
+        category = categories.filter(pk=category_id).first() if category_id.isdecimal() else None
+        try:
+            validate_email(email)
+            if not all((name, phone, subject, body)) or category is None:
+                raise ValidationError("All contact fields and a valid product category are required.")
+        except ValidationError:
+            messages.error(request, "Please complete every field, including a valid email address and product category.")
+        else:
+            key = "zv_contact:" + (request.META.get("REMOTE_ADDR") or "unknown")
+            if not cache.add(key, "1", timeout=60):
+                messages.error(request, "Please wait a minute before sending another enquiry.")
+            else:
+                ChatInquiry.objects.create(
+                    name=name, email=email, phone=phone,
+                    message="Product category: " + category.name + "\\nSubject: " + subject + "\\n" + body,
+                    page_url=request.build_absolute_uri()[:500],
+                )
+                account = active_account()
+                if account and account.notify_on_contact:
+                    try:
+                        email_message = render_store_template(
+                            "contact_admin", "ZenVibe contact: " + subject,
+                            "From: " + name + " <" + email + ">\\nPhone: " + phone + "\\nCategory: " + category.name + "\\n\\n" + body,
+                            {"customer_name": name, "customer_email": email, "phone": phone,
+                             "subject": subject, "message": body, "product_category": category.name},
+                        )
+                        if email_message:
+                            send_store_email(*email_message, [account.email_address], reply_to=email)
+                    except Exception:
+                        import logging
+                        logging.getLogger(__name__).exception("Contact notification failed")
+                messages.success(request, "Your enquiry has been received.")
+                return redirect("designer:contact")
+    return render(request, "designer/info_page.html", {
+        "title": "Contact Us",
+        "intro": "Have a product, artwork or bulk-order question? Talk to the ZenVibe team.",
+        "kind": "contact",
+        "managed_blocks": PageContentBlock.objects.filter(page="contact", is_active=True),
+        "contact_categories": categories,
+    })
+
+
+def blog(request):
+    posts = BlogPost.objects.filter(is_published=True).order_by("-published_at", "-created_at")
+    return render(request, "designer/blog.html", {"posts": posts})
+
+def blog_detail(request, slug):
+
+    post = get_object_or_404(
+        BlogPost,
+        slug=slug,
+        is_published=True
+    )
+
+    # Only approved comments are visible publicly
+    comments = BlogComment.objects.filter(
+        post=post,
+        is_approved=True
+    ).order_by("created_at")
+
+
+    # Related articles
+    related = (
+        BlogPost.objects
+        .filter(is_published=True)
+        .exclude(pk=post.pk)
+        .order_by("-published_at", "-created_at")[:3]
+    )
+
+
+    comment_success = False
+    comment_error = ""
+    comment_data = {
+        "name": "",
+        "email": "",
+        "website": "",
+        "comment": "",
+    }
+
+
+    # ---------------------------------------------------------
+    # COMMENT SUBMISSION
+    # ---------------------------------------------------------
+
+    if request.method == "POST":
+
+        if not post.allow_comments:
+            comment_error = "Comments are closed for this article."
+            return render(request, "designer/blog_detail.html", {"post": post, "related_posts": related, "comments": comments, "comment_success": False, "comment_error": comment_error, "comment_data": comment_data})
+
+        name = (request.POST.get("name") or "").strip()
+        email = (request.POST.get("email") or "").strip()
+        website = (request.POST.get("website") or "").strip()
+        comment_text = (request.POST.get("comment") or "").strip()
+
+        comment_data = {
+            "name": name,
+            "email": email,
+            "website": website,
+            "comment": comment_text,
+        }
+
+
+        # Basic validation
+        if not name:
+
+            comment_error = "Please enter your name."
+
+        elif not email:
+
+            comment_error = "Please enter your email address."
+
+        elif "@" not in email:
+
+            comment_error = "Please enter a valid email address."
+
+        elif not comment_text:
+
+            comment_error = "Please enter your comment."
+
+        else:
+
+            BlogComment.objects.create(
+                post=post,
+                name=name[:120],
+                email=email[:254],
+                website=website[:200],
+                comment=comment_text[:4000],
+                is_approved=False,
+            )
+
+            comment_success = True
+
+            # Clear form after successful submission
+            comment_data = {
+                "name": "",
+                "email": "",
+                "website": "",
+                "comment": "",
+            }
+
+
+    return render(
+        request,
+        "designer/blog_detail.html",
+        {
+            "post": post,
+            "related_posts": related,
+            "comments": comments,
+            "comment_success": comment_success,
+            "comment_error": comment_error,
+            "comment_data": comment_data,
+        }
+    )
+
+def chatbot_message(request):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "POST required"}, status=405)
+    try:
+        payload = json.loads(request.body.decode("utf-8") or "{}")
+    except Exception:
+        payload = request.POST.dict()
+    message = (payload.get("message") or "").strip()[:1000]
+    email = (payload.get("email") or "").strip()[:254]
+    if not message:
+        return JsonResponse({"ok": False, "reply": "Please type a question."}, status=400)
+
+    lowered = message.lower()
+    order_match = re.search(r"\bZV-[A-Z0-9]{6,12}\b", message.upper())
+    if order_match:
+        order = Order.objects.filter(order_number=order_match.group(0)).first()
+        if order:
+            allowed = request.user.is_authenticated and (request.user.is_staff or order.user_id == request.user.id)
+            if not allowed and email and email.lower() == order.customer_email.lower():
+                allowed = True
+            if allowed:
+                return JsonResponse({"ok": True, "reply": f"Order {order.order_number} is currently {order.get_status_display()}. Payment: {order.get_payment_status_display()}."})
+            return JsonResponse({"ok": True, "needs_email": True, "reply": "I found that order. For privacy, enter the email used for the order and send the order number again."})
+        email = _site_contact_email()
+        return JsonResponse({"ok": True, "reply": f"I couldn't find that ZenVibe order number. Please check it or contact {email}."})
+
+    words = set(re.findall(r"[a-z0-9]+", lowered))
+    best = None
+    best_score = 0
+    for item in ChatbotKnowledge.objects.filter(is_active=True):
+        hay = f"{item.question} {item.keywords} {item.category}".lower()
+        terms = set(re.findall(r"[a-z0-9]+", hay))
+        score = len(words & terms)
+        if item.question.lower() in lowered or lowered in item.question.lower():
+            score += 4
+        if score > best_score:
+            best, best_score = item, score
+    if best and best_score >= 1:
+        return JsonResponse({"ok": True, "reply": best.answer, "category": best.category})
+
+    return JsonResponse({"ok": True, "fallback": True, "reply": "I can help with products, customization, proofs, bulk pricing, shipping, order status and contact details. If you want, leave your details and the ZenVibe team can follow up."})
+
+
+def chatbot_inquiry(request):
+    if request.method != "POST":
+        return JsonResponse({"ok": False}, status=405)
+    try:
+        payload = json.loads(request.body.decode("utf-8") or "{}")
+    except Exception:
+        payload = request.POST.dict()
+    message = (payload.get("message") or "").strip()[:3000]
+    if not message:
+        return JsonResponse({"ok": False, "error": "Message required"}, status=400)
+    inquiry = ChatInquiry.objects.create(
+        name=(payload.get("name") or "").strip()[:140],
+        email=(payload.get("email") or "").strip()[:254],
+        phone=(payload.get("phone") or "").strip()[:40],
+        message=message,
+        page_url=(payload.get("page_url") or "").strip()[:500],
+        session_key=_ensure_session(request),
+    )
+    return JsonResponse({"ok": True, "id": inquiry.id, "reply": "Thanks — your message has been saved for the ZenVibe team."})
+
+def product_search_suggestions(request):
+    q = (request.GET.get("q") or "").strip()
+    if len(q) < 2:
+        return JsonResponse({"results": []})
+    products = (Product.objects.filter(
+        is_active=True, is_out_of_stock=False, category__is_active=True
+    ).filter(
+        Q(name__icontains=q) | Q(description__icontains=q) | Q(category__name__icontains=q)
+    ).select_related("category").order_by("category__sort_order", "name")[:8])
+    results = []
+    for product in products:
+        results.append({
+            "id": product.id,
+            "name": product.name,
+            "category": product.category.name,
+            "price": str(product.sale_price or product.price),
+            "image": product.image.url if product.image else "",
+            "url": reverse("designer:choose_design", args=[product.id]),
+        })
+    return JsonResponse({"results": results})
+
+
+def start_designing(request):
+    categories = visible_categories(top_level=True).prefetch_related(active_children_prefetch())
+    products = Product.objects.filter(
+        is_active=True, is_out_of_stock=False, category__is_active=True
+    ).select_related("category").order_by("category__sort_order", "name")
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        products = products.filter(
+            Q(name__icontains=q) | Q(description__icontains=q) | Q(category__name__icontains=q)
+        )
+    return render(request, "designer/start_designing.html", {
+        "categories": categories, "products": products, "search_query": q
+    })
+
+
+def product_viewer_data(request, product_id):
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    images = []
+    if product.image:
+        images.append(product.image.url)
+    for angle in product.angle_images.all():
+        if angle.image:
+            images.append(angle.image.url)
+    if product.hover_image:
+        images.append(product.hover_image.url)
+    seen=[]
+    for u in images:
+        if u and u not in seen:
+            seen.append(u)
+    return JsonResponse({"ok": True, "name": product.name, "images": seen})
+
+
+def category_detail(request, slug):
+    category = get_object_or_404(Category, slug=slug, is_active=True, is_out_of_stock=False)
+    children = category.children.filter(is_active=True, is_out_of_stock=False).order_by("sort_order", "name")
+
+    # Only these two parent categories use the photo subcategory landing page.
+    # Every other category continues to use the existing product-list page.
+    subcategory_parent_slugs = {"banners-displays", "banner-display", "custom-apparel"}
+    if category.slug in subcategory_parent_slugs and children.exists():
+        subcategories = list(children.prefetch_related("products"))
+        for child in subcategories:
+            child.product_count = child.products.filter(is_active=True, is_out_of_stock=False).count()
+        return render(request, "designer/subcategory_list.html", {
+            "category": category,
+            "subcategories": subcategories,
+        })
+
+    child_ids = list(children.values_list("id", flat=True))
+    category_ids = [category.id] + child_ids
+    products = (
+        Product.objects.filter(category_id__in=category_ids, is_active=True, is_out_of_stock=False)
+        .select_related("category")
+        .order_by("category__sort_order", "name")
+    )
+    return render(request, "designer/category.html", {"category": category, "products": products, "children": children})
+
+
+def our_work_detail(request):
+    
+    return render(request, "designer/our_work_detail.html")
+
+
+
+def customizer_kind_for(product):
+    """Every customer-facing product uses the single universal editor."""
+    return "editor"
+
+
+def _business_card_pack_templates(product):
+    """Return the bundled business-card gallery only for Business Card products/categories."""
+    product_name = (product.name or "").lower()
+    category_name = (product.category.name if product.category else "").lower()
+    category_slug = (product.category.slug if product.category else "").lower()
+    if "business card" not in product_name and "business card" not in category_name and "business-card" not in category_slug:
+        return []
+    manifest_path = Path(settings.BASE_DIR) / "designer" / "static" / "designer" / "business_card_templates" / "manifest.json"
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return []
+    out = []
+    for item in payload.get("templates", []):
+        code = str(item.get("id", "")).strip()
+        if not code:
+            continue
+        out.append({
+            "id": code,
+            "name": item.get("name") or code,
+            "category": item.get("category") or "Business Card",
+            "preview_front": static(f"designer/business_card_templates/previews/{code}_front.svg"),
+            "preview_back": static(f"designer/business_card_templates/previews/{code}_back.svg"),
+        })
+    return out
+
+
+def _business_card_db_gallery(product):
+    """Format DB-backed Business Card templates for the existing gallery UI."""
+    if not _is_business_card_product(product):
+        return []
+    out = []
+    for template in live_templates_for(product):
+        meta = template.json_data or {}
+        code = str(meta.get("business_card_code") or template.name.split(" ", 1)[0]).strip()
+        category = str(meta.get("business_card_category") or "Business Card")
+        back_static = meta.get("preview_back_static") or ""
+        front_static = meta.get("preview_front_static") or ""
+        # ZENVIBE_PRO_BUSINESS_CARD_PREVIEW_V1
+        out.append({
+            "id": template.id,
+            "code": code,
+            "name": template.name,
+            "category": category,
+            "preview_front": static(front_static) if front_static else (template.preview.url if template.preview else ""),
+            "preview_back": static(back_static) if back_static else (template.preview.url if template.preview else ""),
+            "url": f"{reverse('designer:editor', args=[product.id])}?template={template.id}",
+        })
+    return out
+
+
+def _load_business_card_pack(code):
+    """Convert one bundled card JSON into the editor's native layered page format."""
+    code = str(code or "").upper().strip()
+    if not re.fullmatch(r"BC\d{3}", code):
+        return None
+    path = Path(settings.BASE_DIR) / "designer" / "static" / "designer" / "business_card_templates" / "templates" / f"{code}.json"
+    try:
+        source = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return None
+
+    def convert(el):
+        typ = el.get("type")
+        common = {
+            "id": f"{code}-{el.get('role') or typ}-{abs(hash(json.dumps(el, sort_keys=True))) % 1000000}",
+            "name": (el.get("role") or typ or "Layer").replace("_", " ").title(),
+            "type": typ,
+            "left": el.get("x", 0), "top": el.get("y", 0),
+            "opacity": el.get("opacity", 1), "angle": el.get("angle", 0), "customerEditable": el.get("editable", True),
+        }
+        if typ == "text":
+            common.update({"text": el.get("text", "Text"), "fontSize": el.get("fontSize", 32),
+                           "font": el.get("fontFamily", "Arial"), "fontWeight": el.get("fontWeight", 400),
+                           "fill": el.get("color", "#111827"), "textAlign": el.get("align", "left")})
+            if el.get("width"): common["width"] = el["width"]
+        elif typ == "rect":
+            common.update({"width": el.get("width", 100), "height": el.get("height", 100),
+                           "fill": el.get("fill", "#ffffff"), "rx": el.get("radius", 0), "ry": el.get("radius", 0)})
+        elif typ == "circle":
+            common.update({"radius": el.get("radius", 50), "fill": el.get("fill", "#111827")})
+        elif typ == "line":
+            common.update({"left": 0, "top": 0,
+                           "points": [el.get("x1", 0), el.get("y1", 0), el.get("x2", 100), el.get("y2", 0)],
+                           "stroke": el.get("stroke", "#111827"), "strokeWidth": el.get("strokeWidth", 2), "fill": None})
+        elif typ == "image":
+            # Keep the supplied logo slot editable without a broken placeholder image.
+            if str(el.get("src", "")).startswith("placeholder://"):
+                return {"id": common["id"], "name": "Logo - upload/replace", "type": "rect",
+                        "left": el.get("x", 0), "top": el.get("y", 0), "width": el.get("width", 180),
+                        "height": el.get("height", 120), "fill": "#f8fafc", "stroke": "#94a3b8",
+                        "strokeWidth": 2, "customerEditable": True, "opacity": 1}
+            common.update({"src": el.get("src"), "width": el.get("width", 180), "height": el.get("height", 120)})
+        return common
+
+    pages=[]
+    for side_name in ("front", "back"):
+        side=(source.get("sides") or {}).get(side_name) or {}
+        objects=[convert(x) for x in side.get("elements", [])]
+        objects=[x for x in objects if x]
+        pages.append({"name": side_name.title(), "background": "#ffffff", "objects": objects})
+    return {"version": 2, "pack_id": code, "name": source.get("name", code), "pages": pages}
+
+
+# ZENVIBE_INVITATION_DB_GALLERY_V1
+def _is_invitation_product(product):
+    product_name=(product.name or "").lower()
+    category_name=(product.category.name if product.category else "").lower()
+    category_slug=(product.category.slug if product.category else "").lower()
+    return "invitation" in product_name or "invitation" in category_name or "invitation" in category_slug
+
+def _invitation_db_gallery(product):
+    if not _is_invitation_product(product):
+        return []
+    out=[]
+    for template in live_templates_for(product):
+        meta=template.json_data or {}
+        code=str(meta.get("invitation_code") or f"INV-{template.id}")
+        category=str(meta.get("invitation_category") or "Invitation")
+        page_count=int(meta.get("page_count") or len(meta.get("pages") or []) or 1)
+        front_static=meta.get("preview_front_static") or ""
+        preview=reverse("designer:invitation_template_preview", args=[template.id])
+        out.append({
+            "id":template.id,
+            "code":code,
+            "name":str(meta.get("name") or template.name),
+            "category":category,
+            "page_count":page_count,
+            "preview":preview,
+            "url":f"{reverse('designer:editor', args=[product.id])}?template={template.id}",
+        })
+    return out
+
+# ZENVIBE_INVITATION_LIVE_PREVIEW_V2
+def invitation_template_preview(request, template_id):
+    from html import escape
+    template=get_object_or_404(DesignTemplate,id=template_id)
+    data=template.json_data or {}
+    pages=data.get("pages") or []
+    page=pages[0] if pages else data
+    objects=page.get("objects") or []
+    size=data.get("size") or {}
+    width=int(float(size.get("width") or 750))
+    height=int(float(size.get("height") or 1050))
+    bg=page.get("background") or data.get("background") or "#ffffff"
+
+    def num(v,default=0):
+        try:return float(v)
+        except (TypeError,ValueError):return default
+    def colour(v,default="none"):
+        if v is None or str(v).lower() in ("none","transparent",""): return "none"
+        return escape(str(v),quote=True)
+
+    svg=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}">',
+         f'<rect width="100%" height="100%" fill="{colour(bg,"#fff")}"/>']
+
+    for o in objects:
+        if not isinstance(o,dict) or o.get("visible") is False: continue
+        typ=str(o.get("type") or "").lower()
+        x=num(o.get("left",o.get("x",0))); y=num(o.get("top",o.get("y",0)))
+        opacity=max(0,min(1,num(o.get("opacity",1),1)))
+        fill=colour(o.get("fill")); stroke=colour(o.get("stroke")); sw=max(0,num(o.get("strokeWidth",0)))
+        style=f' opacity="{opacity}"'
+        if stroke!="none": style+=f' stroke="{stroke}" stroke-width="{sw or 1}"'
+        if typ=="rect":
+            svg.append(f'<rect x="{x}" y="{y}" width="{num(o.get("width",o.get("w",100)),100)}" height="{num(o.get("height",o.get("h",100)),100)}" rx="{num(o.get("rx",0))}" ry="{num(o.get("ry",0))}" fill="{fill}"{style}/>')
+        elif typ=="circle":
+            r=num(o.get("radius",o.get("r",40)),40)
+            svg.append(f'<circle cx="{x+r}" cy="{y+r}" r="{r}" fill="{fill}"{style}/>')
+        elif typ=="ellipse":
+            rx=num(o.get("rx",90),90); ry=num(o.get("ry",55),55)
+            svg.append(f'<ellipse cx="{x+rx}" cy="{y+ry}" rx="{rx}" ry="{ry}" fill="{fill}"{style}/>')
+        elif typ=="line":
+            pts=o.get("points") or [0,0,100,0]
+            if len(pts)>=4:
+                svg.append(f'<line x1="{num(pts[0])}" y1="{num(pts[1])}" x2="{num(pts[2])}" y2="{num(pts[3])}" stroke="{stroke if stroke!="none" else colour(o.get("fill"),"#222")}" stroke-width="{sw or 2}" opacity="{opacity}"/>')
+        elif typ=="path" and o.get("path"):
+            d=escape(str(o.get("path")),quote=True)
+            trans=f'translate({x} {y})'
+            angle=num(o.get("angle",0))
+            if angle: trans+=f' rotate({angle})'
+            svg.append(f'<path d="{d}" transform="{trans}" fill="{fill}"{style}/>')
+        elif typ in ("text","i-text","textbox"):
+            text=escape(str(o.get("text") or ""))
+            size_px=max(6,num(o.get("fontSize",32),32))
+            family=escape(str(o.get("font") or o.get("fontFamily") or "Arial"),quote=True)
+            weight=escape(str(o.get("fontWeight") or ("700" if o.get("bold") else "400")),quote=True)
+            align=str(o.get("textAlign") or "left")
+            anchor={"center":"middle","right":"end"}.get(align,"start")
+            svg.append(f'<text x="{x}" y="{y+size_px}" fill="{fill if fill!="none" else "#222"}" font-family="{family}" font-size="{size_px}" font-weight="{weight}" text-anchor="{anchor}" opacity="{opacity}">{text}</text>')
+        elif typ=="image" and o.get("src"):
+            src=escape(str(o.get("src")),quote=True)
+            svg.append(f'<image href="{src}" x="{x}" y="{y}" width="{num(o.get("width",180),180)}" height="{num(o.get("height",120),120)}" preserveAspectRatio="xMidYMid meet" opacity="{opacity}"/>')
+
+    svg.append("</svg>")
+    response=HttpResponse(chr(10).join(svg),content_type="image/svg+xml")
+    response["Cache-Control"]="no-store, max-age=0"
+    return response
+
+
+def editable_template_preview(request, template_id):
+    template = get_object_or_404(
+        DesignTemplate,
+        pk=template_id,
+        is_active=True
+    )
+
+    # Existing uploaded preview always wins
+    if getattr(template, "preview", None):
+        try:
+            with template.preview.open("rb") as f:
+                return HttpResponse(
+                    f.read(),
+                    content_type="image/png"
+                )
+        except Exception:
+            pass
+
+    # Find JSON field
+    data = None
+
+    for field_name in (
+        "template_json",
+        "design_json",
+        "json_data",
+    ):
+        if hasattr(template, field_name):
+            data = getattr(template, field_name)
+            if data:
+                break
+
+    if isinstance(data, str):
+        try:
+            data = json.loads(data)
+        except Exception:
+            data = {}
+
+    data = data or {}
+
+    pages = data.get("pages") or []
+    page = pages[0] if pages else {}
+
+    objects = page.get("objects") or []
+
+    # Thumbnail
+    thumb_w = 300
+    thumb_h = 420
+
+    document = data.get("document") or {}
+
+    source_w = float(document.get("width") or 750)
+    source_h = float(document.get("height") or 1050)
+
+    sx = thumb_w / source_w
+    sy = thumb_h / source_h
+
+    bg = page.get("background") or "#ffffff"
+
+    try:
+        image = Image.new(
+            "RGB",
+            (thumb_w, thumb_h),
+            bg
+        )
+    except Exception:
+        image = Image.new(
+            "RGB",
+            (thumb_w, thumb_h),
+            "#ffffff"
+        )
+
+    draw = ImageDraw.Draw(image)
+
+    def colour(value, default="#111111"):
+        if not value:
+            return default
+
+        # Don't attempt CSS rgba in PIL
+        if str(value).startswith("rgba"):
+            return default
+
+        return value
+
+    for obj in objects:
+
+        obj_type = obj.get("type")
+
+        left = float(
+            obj.get("left", obj.get("x", 0)) or 0
+        ) * sx
+
+        top = float(
+            obj.get("top", obj.get("y", 0)) or 0
+        ) * sy
+
+        # RECTANGLE
+        if obj_type == "rect":
+
+            width = float(
+                obj.get("width", obj.get("w", 0)) or 0
+            ) * sx
+
+            height = float(
+                obj.get("height", obj.get("h", 0)) or 0
+            ) * sy
+
+            fill = obj.get("fill")
+
+            if fill and not str(fill).startswith("rgba"):
+                try:
+                    draw.rectangle(
+                        [
+                            left,
+                            top,
+                            left + width,
+                            top + height
+                        ],
+                        fill=fill
+                    )
+                except Exception:
+                    pass
+
+            stroke = obj.get("stroke")
+
+            if stroke:
+                try:
+                    draw.rectangle(
+                        [
+                            left,
+                            top,
+                            left + width,
+                            top + height
+                        ],
+                        outline=stroke,
+                        width=max(
+                            1,
+                            int(
+                                float(
+                                    obj.get(
+                                        "strokeWidth",
+                                        1
+                                    )
+                                ) * sx
+                            )
+                        )
+                    )
+                except Exception:
+                    pass
+
+        # LINE
+        elif obj_type == "line":
+
+            points = obj.get("points") or []
+
+            if len(points) >= 4:
+                try:
+                    draw.line(
+                        [
+                            float(points[0]) * sx,
+                            float(points[1]) * sy,
+                            float(points[2]) * sx,
+                            float(points[3]) * sy,
+                        ],
+                        fill=colour(
+                            obj.get("stroke")
+                        ),
+                        width=max(
+                            1,
+                            int(
+                                float(
+                                    obj.get(
+                                        "strokeWidth",
+                                        1
+                                    )
+                                ) * sx
+                            )
+                        )
+                    )
+                except Exception:
+                    pass
+
+        # CIRCLE
+        elif obj_type == "circle":
+
+            radius = float(
+                obj.get("radius", 0) or 0
+            )
+
+            try:
+                draw.ellipse(
+                    [
+                        left,
+                        top,
+                        left + radius * 2 * sx,
+                        top + radius * 2 * sy,
+                    ],
+                    fill=colour(
+                        obj.get("fill"),
+                        "#eeeeee"
+                    )
+                )
+            except Exception:
+                pass
+
+        # EDITABLE TEXT
+        elif obj_type in (
+            "text",
+            "i-text",
+            "textbox",
+        ):
+
+            value = str(
+                obj.get("text") or ""
+            )
+
+            font_size = max(
+                8,
+                int(
+                    float(
+                        obj.get(
+                            "fontSize",
+                            24
+                        )
+                    ) * sy
+                )
+            )
+
+            try:
+                font = ImageFont.truetype(
+                    "arial.ttf",
+                    font_size
+                )
+            except Exception:
+                font = ImageFont.load_default()
+
+            fill = colour(
+                obj.get("fill"),
+                "#111111"
+            )
+
+            width = float(
+                obj.get("width", 600) or 600
+            ) * sx
+
+            align = obj.get(
+                "textAlign",
+                "left"
+            )
+
+            lines = value.split("\n")
+
+            y = top
+
+            for line_text in lines:
+
+                try:
+                    bbox = draw.textbbox(
+                        (0, 0),
+                        line_text,
+                        font=font
+                    )
+
+                    tw = bbox[2] - bbox[0]
+                except Exception:
+                    tw = 0
+
+                x = left
+
+                if align == "center":
+                    x = left + (
+                        width - tw
+                    ) / 2
+
+                elif align == "right":
+                    x = left + width - tw
+
+                try:
+                    draw.text(
+                        (x, y),
+                        line_text,
+                        font=font,
+                        fill=fill
+                    )
+                except Exception:
+                    pass
+
+                y += font_size * 1.25
+
+    buffer = io.BytesIO()
+
+    image.save(
+        buffer,
+        format="PNG",
+        optimize=True
+    )
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="image/png"
+    )
+
+    response["Cache-Control"] = (
+        "public, max-age=3600"
+    )
+
+    return response
+
+def _is_apparel_product(product):
+    category=getattr(product,"category",None); parent=getattr(category,"parent",None) if category else None
+    hay=" ".join([str(getattr(product,"name","") or ""),str(getattr(category,"name","") or ""),str(getattr(parent,"name","") or "")]).lower()
+    return any(x in hay for x in ("apparel","t-shirt","tshirt","shirt","polo","hoodie","jacket","jersey","sportswear","cap","hat"))
+
+def _variant_image_url(product,color_name="",color_key=""):
+    wanted={str(color_name or "").strip().lower(),str(color_key or "").replace("-"," ").strip().lower()}; wanted.discard("")
+    for image in product.angle_images.all():
+        if not image.image: continue
+        label=str(image.label or "").strip().lower()
+        if label and any(v==label or v in label or label in v for v in wanted):
+            return image.image.url
+    for image in product.angle_images.all():
+        if not image.image: continue
+        name=str(getattr(image.image,"name","") or "").lower().replace("-"," ")
+        if any(v and v in name for v in wanted): return image.image.url
+    return product.image.url if product.image else ""
+
+
+def _design_storefront_options(design):
+    data = getattr(design, "design_json", None)
+    if not isinstance(data, dict):
+        return {}
+    opts = data.get("_zenvibe_storefront")
+    return opts if isinstance(opts, dict) else {}
+
+def _design_selected_size_key(design):
+    opts = _design_storefront_options(design)
+    if opts.get("size_key"):
+        return str(opts.get("size_key") or "").strip()[:100]
+    data = getattr(design, "design_json", None) or {}
+    profile = data.get("sizeProfile") if isinstance(data, dict) else {}
+    return str(profile.get("sizeKey") or "").strip()[:100] if isinstance(profile, dict) else ""
+
+def _design_selected_color_key(design):
+    opts = _design_storefront_options(design)
+    if opts.get("color_key"):
+        return str(opts.get("color_key") or "").strip()[:100]
+    data = getattr(design, "design_json", None) or {}
+    return str(data.get("productColor") or "").strip()[:100] if isinstance(data, dict) else ""
+
+def _set_design_storefront_options(design, size_key="", color_key=""):
+    data = getattr(design, "design_json", None)
+    data = dict(data) if isinstance(data, dict) else {}
+    data["_zenvibe_storefront"] = {
+        "size_key": str(size_key or "").strip()[:100],
+        "color_key": str(color_key or "").strip()[:100],
+    }
+    design.design_json = data
+
+def _effective_minimum_quantity(product, size_key=""):
+    """Minimum order quantity, independent of quantity-based price breaks.
+
+    Product.minimum_quantity is the authoritative purchase minimum. A price
+    tier's min_quantity is only the threshold for its unit price, not a
+    mandatory order quantity. The size key is retained for caller compatibility.
+    """
+    try:
+        return max(1, int(product.minimum_quantity or 1))
+    except (TypeError, ValueError):
+        return 1
+
+
+def _product_unit_price(product, quantity, size_key=""):
+    """Resolve the authoritative ONE-UNIT price for a cart quantity/size.
+
+    Priority:
+      1. Selected/default size variant quantity tier.
+      2. Product-wide quantity tier.
+      3. Selected/default size variant price.
+      4. Product sale/base price.
+
+    Line totals are always unit price * quantity.
+    """
+    from decimal import Decimal
+
+    try:
+        qty = max(1, int(quantity or 1))
+    except (TypeError, ValueError):
+        qty = 1
+
+    tiers = product.price_tiers.filter(is_active=True)
+
+    if size_key:
+        variant = product.size_variants.filter(
+            size_key=size_key, is_active=True
+        ).first()
+    else:
+        # ProductSizeVariant has no is_default database field.
+        # The first active variant by configured sort order is the storefront default.
+        variant = (
+            product.size_variants
+            .filter(is_active=True)
+            .order_by("sort_order", "id")
+            .first()
+        )
+
+    eligible = None
+    if variant is not None:
+        eligible = (
+            tiers.filter(variant=variant, min_quantity__lte=qty)
+            .order_by("-min_quantity", "-id")
+            .first()
+        )
+
+    if eligible is None:
+        eligible = (
+            tiers.filter(variant__isnull=True, min_quantity__lte=qty)
+            .order_by("-min_quantity", "-id")
+            .first()
+        )
+
+    if eligible is not None:
+        return Decimal(str(eligible.unit_price)).quantize(Decimal("0.01"))
+
+    if variant is not None and variant.price is not None:
+        return Decimal(str(variant.price)).quantize(Decimal("0.01"))
+
+    if product.is_on_sale and product.sale_price is not None:
+        return Decimal(str(product.sale_price)).quantize(Decimal("0.01"))
+
+    return Decimal(str(product.price or 0)).quantize(Decimal("0.01"))
+
+def _editor_product_options(product,request,existing_design=None):
+    admin_mode = getattr(product, "editor_layout_mode", "legacy") or "legacy"
+    admin_enabled = admin_mode != "legacy"
+    workspace_width = float(product.workspace_width_in) if getattr(product, "workspace_width_in", None) is not None else None
+    workspace_height = float(product.workspace_height_in) if getattr(product, "workspace_height_in", None) is not None else None
+
+    sizes=[]
+    for index,item in enumerate(product.size_variants.filter(is_active=True).order_by("sort_order","name","id")):
+        profile={"sizeKey":item.size_key,"editorProfile":item.editor_profile or ""}
+        # Backward compatibility: old products keep their existing ruler behaviour.
+        # New Admin-driven products never overload PRINT dimensions as WORKSPACE dimensions.
+        if not admin_enabled:
+            if item.print_width_in is not None: profile["physicalWidth"]=float(item.print_width_in)
+            if item.print_height_in is not None: profile["physicalHeight"]=float(item.print_height_in)
+        if item.canvas_width: profile["documentWidth"]=item.canvas_width
+        if item.canvas_height: profile["documentHeight"]=item.canvas_height
+        sizes.append({
+            "key":item.size_key,"name":item.name,"price":"",
+            "minimum_quantity":product.minimum_quantity,
+            "is_default":index==0,
+            "editor_profile":profile,
+        })
+
+    colors=[]
+    cm=getattr(product,"color_variants",None)
+    if cm is not None:
+        for index,item in enumerate(cm.filter(is_active=True).order_by("sort_order","name","id")):
+            colors.append({
+                "key":item.color_key,"name":item.name,"hex":item.hex_value or "",
+                "is_default":index==0,
+                "image_url":_variant_image_url(product,item.name,item.color_key),
+            })
+
+    ss=(request.GET.get("size") or request.GET.get("size_key") or "").strip()
+    sc=(request.GET.get("color") or request.GET.get("color_key") or "").strip()
+    if existing_design:
+        ss=ss or _design_selected_size_key(existing_design)
+        sc=sc or _design_selected_color_key(existing_design)
+    if not ss and sizes: ss=sizes[0]["key"]
+    if not sc and colors: sc=colors[0]["key"]
+    row=next((x for x in colors if x["key"]==sc),None)
+
+    # Coaster shape is a product variant, not a second template library.
+    # The same template ID/JSON is used for Square and Circle; only the locked
+    # non-printing product reference changes.
+    selected_shape=(request.GET.get("shape") or request.GET.get("option_shape") or "square").strip().lower()
+    if selected_shape not in {"square","circle"}:
+        selected_shape="square"
+    coaster_shape_url=""
+    if (product.name or "").strip().lower()=="custom 3d printed coasters with logo":
+        coaster_shape_url=static(
+            "designer/product_refs/coaster-circle.svg"
+            if selected_shape=="circle" else "designer/product_refs/coaster-square.svg"
+        )
+
+    print_surfaces=[]
+    surface_manager=getattr(product,"print_surfaces",None)
+    if surface_manager is not None:
+        for surface in surface_manager.filter(is_active=True).order_by("sort_order","id"):
+            sw = float(surface.workspace_width_in) if admin_enabled and surface.workspace_width_in is not None else workspace_width
+            sh = float(surface.workspace_height_in) if admin_enabled and surface.workspace_height_in is not None else workspace_height
+            print_surfaces.append({
+                "id":surface.id,
+                "key":getattr(surface,"key","") or "",
+                "label":surface.label,
+                # Existing editor reads printWidth/printHeight for its ruler.
+                # For opted-in products only, feed it the explicit WORKSPACE dimensions.
+                "printWidth": sw if admin_enabled and sw else float(surface.print_width_in),
+                "printHeight": sh if admin_enabled and sh else float(surface.print_height_in),
+                "workspaceWidth":sw,
+                "workspaceHeight":sh,
+                "physicalPrintWidth":float(surface.print_width_in),
+                "physicalPrintHeight":float(surface.print_height_in),
+                "unit":"in",
+                "sortOrder":surface.sort_order,
+            })
+
+    print_areas=[]
+    area_manager=getattr(product,"print_areas",None)
+    if area_manager is not None:
+        for area in area_manager.select_related("surface","product_image").order_by("sort_order","id"):
+            print_areas.append({
+                "id":area.id,
+                "name":area.name,
+                "surfaceId":area.surface_id,
+                "productImageId":area.product_image_id,
+                "leftPct":float(area.left),
+                "topPct":float(area.top),
+                "widthPct":float(area.width),
+                "heightPct":float(area.height),
+                "printWidth":float(area.print_width_in) if area.print_width_in is not None else None,
+                "printHeight":float(area.print_height_in) if area.print_height_in is not None else None,
+                "sortOrder":area.sort_order,
+            })
+
+    # The Admin "Default editable print area" is authoritative when no
+    # per-surface/per-image ProductPrintArea record overrides it. Previously
+    # printAreas was empty and the customer editor never received these values.
+    if not print_areas:
+        print_areas.append({
+            "id":None, "name":"Default print area",
+            "surfaceId":None, "productImageId":None,
+            "leftPct":float(product.print_left_pct if product.print_left_pct is not None else 0),
+            "topPct":float(product.print_top_pct if product.print_top_pct is not None else 0),
+            "widthPct":float(product.print_width_pct if product.print_width_pct is not None else 100),
+            "heightPct":float(product.print_height_pct if product.print_height_pct is not None else 100),
+            "printWidth":float(product.print_width_in) if product.print_width_in is not None else None,
+            "printHeight":float(product.print_height_in) if product.print_height_in is not None else None,
+            "sortOrder":0,
+        })
+
+    # Locked reference views are separate from customer artwork. Promotional
+    # products may expose Front/Back together on ONE editor page, matching the
+    # source catalogue presentation. ProductImage rows remain non-printing.
+    reference_images=[]
+    seen_reference_urls=set()
+    def _add_reference(url,label="",image_id=None):
+        if not url or url in seen_reference_urls:
+            return
+        seen_reference_urls.add(url)
+        reference_images.append({"url":url,"label":label or "Product","productImageId":image_id})
+    if coaster_shape_url:
+        _add_reference(coaster_shape_url, selected_shape.title())
+    elif product.editor_reference_image:
+        _add_reference(product.editor_reference_image.url,"Front")
+    elif product.image:
+        _add_reference(product.image.url,"Front")
+    angle_qs=product.angle_images.all().order_by("sort_order","id")
+    for angle in angle_qs:
+        if angle.image:
+            _add_reference(angle.image.url,angle.label or f"View {len(reference_images)+1}",angle.id)
+
+    editor_config={
+        "enabled":admin_enabled,
+        "mode":admin_mode,
+        "workspaceWidth":workspace_width,
+        "workspaceHeight":workspace_height,
+        "unit":"in",
+        "constrainToPrintArea":bool(getattr(product,"constrain_to_print_area",False)),
+        "showProductReference":bool(getattr(product,"show_product_reference",False)),
+        "printAreas":print_areas,
+        "referenceImages":reference_images,
+        "referenceLayout":"single-page-front-back" if product.category and product.category.slug=="promotional-products" else "single",
+    }
+
+    return {
+        "is_apparel":_is_apparel_product(product),"sizes":sizes,"colors":colors,
+        "selected_size":ss,"selected_color":sc,"selected_shape":selected_shape,
+        "minimum_quantity":product.minimum_quantity,
+        "base_image_url":(
+            # Storefront colour selection is authoritative for product-first editors.
+            # A selected colour must reach Customize as the matching local ProductImage;
+            # editor_reference_image is only the colourless/default fallback.
+            (coaster_shape_url or (row or {}).get("image_url") or (
+                product.editor_reference_image.url if product.editor_reference_image else _variant_image_url(product)
+            ))
+            if admin_enabled and admin_mode == "print_area"
+            else ((row or {}).get("image_url") or _variant_image_url(product))
+        ),
+        "print_surfaces":print_surfaces,
+        "printSurfaces":print_surfaces,
+        "editor_config":editor_config,
+        "editorConfig":editor_config,
+    }
+
+def _ensure_apparel_product_base(template_json,options,product):
+    if not options.get("is_apparel"): return template_json or {}
+    data=json.loads(json.dumps(template_json or {})); size=data.get("size") or {}
+    W=int(size.get("width") or product.width or 900); H=int(size.get("height") or product.height or 900)
+    pages=data.get("pages")
+    if not isinstance(pages,list) or not pages: pages=[{"name":"Front","background":"#fff","objects":[]}]; data["pages"]=pages
+    url=options.get("base_image_url") or ""
+    for i,page in enumerate(pages):
+        objs=[]
+        for o in page.get("objects") or []:
+            if not isinstance(o,dict): continue
+            if str(o.get("fieldType") or "") in ("customer-product-asset","product-base-asset"): continue
+            if str(o.get("name") or "").lower() in ("editable apparel product image","apparel product visual"): continue
+            objs.append(o)
+        if url:
+            objs.insert(0,{"id":f"zv-product-base-{i+1}","type":"image","src":url,"baseSrc":url,"left":W/2,"top":H/2,
+                "originX":"center","originY":"center","width":W,"height":H,"opacity":1,"backgroundAsset":True,
+                "exactVisualMaster":True,"customerEditable":False,"locked":True,"name":"Product colour preview","fieldType":"product-base-asset"})
+        page["objects"]=objs
+    data["size"]={"width":W,"height":H}; data["selectedSizeKey"]=options.get("selected_size",""); data["selectedColorKey"]=options.get("selected_color","")
+    return data
+
+def _product_option_groups(product, size_variants, color_variants):
+    """Normalize arbitrary source product attributes for the storefront.
+
+    Size and Colour use their dedicated DB tables when present. Everything else
+    (Material, Printed Sides, Printing Method, Decoration Technology, etc.) is
+    read from Product.source_attributes, so different products can expose
+    different controls without hard-coded category logic.
+    """
+    raw = getattr(product, "source_attributes", None) or {}
+    groups = []
+    if isinstance(raw, dict):
+        items = raw.items()
+    else:
+        items = []
+    skip = {"quantity", "qty", "price", "unit price"}
+    if size_variants:
+        skip.update({"size", "select size", "product size"})
+    if color_variants:
+        skip.update({"color", "colour", "product color", "product colour"})
+    for label, values in items:
+        label_text = str(label or "").strip()
+        label_key = label_text.lower()
+        # Internal import/provenance metadata belongs in the database only.
+        # Never expose source URLs, source IDs or localisation flags as
+        # customer-selectable product options on the storefront.
+        if (
+            not label_text
+            or label_key in skip
+            or label_key.startswith("source_")
+            or label_key.startswith("catalogue_")
+            or label_key in {"live_url", "source_localized"}
+        ):
+            continue
+        if isinstance(values, str):
+            values = [v.strip() for v in re.split(r"[,|]", values) if v.strip()]
+        elif isinstance(values, (tuple, set)):
+            values = list(values)
+        if not isinstance(values, list):
+            continue
+        cleaned = []
+        for value in values:
+            text = str(value or "").strip()
+            if text and text not in cleaned:
+                cleaned.append(text)
+        if cleaned:
+            groups.append({"label": label_text, "key": re.sub(r"[^a-z0-9]+", "-", label_text.lower()).strip("-"), "values": cleaned})
+    return groups
+
+
+def invitation_template_preview(request, template_id):
+    template = get_object_or_404(
+        DesignTemplate,
+        id=template_id,
+        is_active=True,
+    )
+
+    # Use uploaded/generated preview first.
+    if template.preview:
+        return redirect(template.preview.url)
+
+    # If no preview exists, open the editable template itself.
+    if template.product_id:
+        return redirect(
+            f"{reverse('designer:editor', args=[template.product_id])}"
+            f"?template={template.id}"
+        )
+
+    raise Http404("Template preview is not available.")
+
+
+def _add_business_days(start_date, business_days):
+    """Add Monday-Friday business days. Weekends are skipped."""
+    current = start_date
+    remaining = max(0, int(business_days or 0))
+    while remaining:
+        current += timedelta(days=1)
+        if current.weekday() < 5:
+            remaining -= 1
+    return current
+
+
+def _ordinal_day(day):
+    """Return 1st, 2nd, 3rd, 4th ... for storefront delivery dates."""
+    if 10 <= day % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+    return f"{day}{suffix}"
+
+
+def _format_delivery_date(value):
+    return f"{value.strftime('%b')} {_ordinal_day(value.day)}, {value.year}"
+
+
+def _product_fastest_delivery(product):
+    """
+    Per-product fastest-delivery configuration.
+
+    Stored in Product.source_attributes so this works with the current database
+    without adding a schema migration. Values are edited as normal fields in
+    Django Admin by ProductAdminForm.
+    """
+    attrs = product.source_attributes if isinstance(product.source_attributes, dict) else {}
+    enabled = bool(attrs.get("fastest_delivery_enabled", False))
+    if not enabled:
+        return None
+
+    try:
+        minimum = int(attrs.get("fastest_delivery_min_business_days"))
+        maximum = int(attrs.get("fastest_delivery_max_business_days"))
+    except (TypeError, ValueError):
+        return None
+
+    if minimum < 0 or maximum < minimum:
+        return None
+
+    today = timezone.localdate()
+    earliest = _add_business_days(today, minimum)
+    latest = _add_business_days(today, maximum)
+
+    return {
+        "enabled": True,
+        "min_business_days": minimum,
+        "max_business_days": maximum,
+        "start_date": earliest,
+        "end_date": latest,
+        "start_label": _format_delivery_date(earliest),
+        "end_label": _format_delivery_date(latest),
+    }
+
+
+def choose_design(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    templates = live_templates_for(product)
+    angle_images = list(product.angle_images.all())
+    angle_image_urls = [asset_candidates(img.image.url)[0] if img.image else None for img in angle_images]
+    angle_image_urls = [u for u in angle_image_urls if u]
+
+    size_variants = list(product.size_variants.filter(is_active=True))
+    color_variants = list(product.color_variants.filter(is_active=True))
+    tiers = list(product.price_tiers.filter(is_active=True).select_related("variant").order_by("variant_id", "min_quantity", "id"))
+
+    # Build display ranges from the next tier: 50-99, 100-249, 250-499, 500+.
+    price_tier_rows = []
+    by_variant = {}
+    for tier in tiers:
+        by_variant.setdefault(tier.variant_id, []).append(tier)
+    for variant_id, rows in by_variant.items():
+        for index, tier in enumerate(rows):
+            next_min = rows[index + 1].min_quantity if index + 1 < len(rows) else None
+            explicit_max = getattr(tier, "max_quantity", None)
+            max_qty = explicit_max if explicit_max is not None else (next_min - 1 if next_min else None)
+            price_tier_rows.append({
+                "tier": tier,
+                "min_quantity": tier.min_quantity,
+                "max_quantity": max_qty,
+                "unit_price": tier.unit_price,
+                "variant_key": tier.variant.size_key if tier.variant_id else "",
+            })
+
+    return render(request, "designer/choose_design.html", {
+        "product": product, "templates": templates,
+        "bc_pack_templates": _business_card_db_gallery(product),
+        "invitation_templates": _invitation_db_gallery(product),
+        "angle_image_urls_json": json.dumps(angle_image_urls),
+        "customizer_kind": customizer_kind_for(product),
+        "size_variants": size_variants,
+        "color_variants": color_variants,
+        "option_groups": _product_option_groups(product, size_variants, color_variants),
+        "price_tiers": tiers,
+        "price_tier_rows": price_tier_rows,
+        "effective_minimum_quantity": _effective_minimum_quantity(
+            product,
+            size_variants[0].size_key if size_variants else "",
+        ),
+        "fastest_delivery": _product_fastest_delivery(product),
+    })
+
+def editable_template_preview(request, template_id):
+    """
+    Fallback preview for editable DesignTemplate records that do not
+    have a saved preview image yet.
+    """
+    template = get_object_or_404(
+        DesignTemplate,
+        pk=template_id,
+        is_active=True,
+    )
+
+    # If a real preview image exists, use it.
+    if getattr(template, "preview", None):
+        try:
+            return redirect(template.preview.url)
+        except Exception:
+            pass
+
+    # Otherwise send the user directly to the editable template.
+    return redirect(
+        f"{reverse('designer:editor', args=[template.product_id])}"
+        f"?template={template.id}"
+    )
+
+
+def editor(request, product_id):
+    # Legacy Promotional import IDs are no longer sellable products. Keep old
+    # bookmarks/links working by redirecting them to their canonical catalogue
+    # records instead of rendering a dead editor.
+    promotional_redirects = {
+        63: 479,   # old generic keychain -> Premium Heavy Duty Custom Keychain
+        163: 479,  # corrupted heavy-duty keychain import/address record
+        164: 427,  # Badge1 -> Custom Name Badge
+        165: 419,  # Car Freshener Back -> Custom Car Freshener
+        166: 475,  # Cart Token -> Shopping Cart Coin Keychain
+        167: 428,  # old office door sign
+        252: 421,  # old full-colour lanyard
+    }
+    canonical_id = promotional_redirects.get(int(product_id))
+    if canonical_id:
+        query = request.GET.urlencode()
+        target = reverse("designer:editor", args=[canonical_id])
+        return redirect(f"{target}?{query}" if query else target)
+
+    # Use the exact product selected on the storefront. Some legacy catalogue
+    # products are still shown by the existing UI even when their is_active flag
+    # is false, so do not turn a valid storefront Customize link into a 404.
+    product = get_object_or_404(Product, id=product_id)
+    template_id = request.GET.get("template")
+    design_id = request.GET.get("design")
+    template = None
+    template_json = {}
+    template_image = ""
+    existing_design = None
+    pack_code = request.GET.get("pack")
+
+    # UNIVERSAL DEFAULT TEMPLATE:
+    # Main Customize -> first active editable template for this product.
+    # Explicit template/design/pack/blank requests keep existing behaviour.
+    explicit_blank = (request.GET.get("mode") or "").strip().lower() == "blank"
+    if not template_id and not design_id and not pack_code and not explicit_blank:
+        product_templates = live_templates_for(product)
+        if product_templates:
+            template_id = str(product_templates[0].id)
+
+    if pack_code and not design_id and not template_id:
+        packed = _load_business_card_pack(pack_code)
+        if packed:
+            template_json = packed
+
+    if design_id:
+        candidate = get_object_or_404(SavedDesign, id=design_id, product=product)
+        if _can_access(request, candidate):
+            existing_design = candidate
+            template_json = _inline_template_media_urls(json.loads(json.dumps(candidate.design_json or {})))
+    elif template_id:
+        # Template libraries are replaceable. A browser/bookmark may still carry
+        # an ID from the previous generator after --replace. Do not 404 the whole
+        # editor: fall back to the first current live template for this product.
+        try:
+            template = _get_template_for_product(template_id, product)
+        except Http404:
+            current_templates = live_templates_for(product)
+            if not current_templates:
+                raise
+            template = current_templates[0]
+        template_json = _inline_template_media_urls(json.loads(json.dumps(template.json_data or {})))
+        if template.preview:
+            template_image = template.preview.url
+
+    product_options = _editor_product_options(product, request, existing_design)
+
+    # Restricted product editors (Awards, Drinkware, etc.) are product-first:
+    # the locked Product.image is the physical blank/reference and templates are
+    # customer artwork only. Never allow a flattened template/master image to
+    # replace the product reference.
+    editor_cfg = product_options.get("editor_config") or {}
+    if editor_cfg.get("enabled") and editor_cfg.get("mode") == "print_area":
+        data = json.loads(json.dumps(template_json or {}))
+        for page in data.get("pages") or []:
+            if not isinstance(page, dict):
+                continue
+            clean = []
+            for obj in page.get("objects") or []:
+                if not isinstance(obj, dict):
+                    continue
+                if (
+                    obj.get("backgroundAsset") is True
+                    or obj.get("exactVisualMaster") is True
+                    or str(obj.get("fieldType") or "") in {"product-base-asset", "customer-product-asset"}
+                ):
+                    continue
+                src = str(obj.get("src") or obj.get("baseSrc") or "").lower().split("?", 1)[0]
+                if str(obj.get("type") or "").lower() == "image" and src.endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):
+                    continue
+                clean.append(obj)
+            page["objects"] = clean
+            # The product image is the visual base; template paper/background must
+            # not cover it in restricted print-area mode.
+            page["background"] = "rgba(255,255,255,0)"
+        template_json = data
+
+    template_json = _ensure_apparel_product_base(template_json, product_options, product)
+
+    # Render the page count from the actual selected master, not a static
+    # one-page footer. This also makes the correct count visible before JS runs.
+    editor_template_page_count = len((template_json or {}).get("pages") or [])
+    if not editor_template_page_count:
+        editor_template_page_count = len(product_options.get("print_surfaces") or []) or 1
+
+    template_catalog = [
+        {
+            "id": t.id,
+            "name": t.name,
+            "preview_url": (
+                f"{t.preview.url}?v={int(t.updated_at.timestamp()) if t.updated_at else 0}"
+                if t.preview
+                else ""
+            ),
+            "url": (f"{reverse('designer:editor', args=[product.id])}?template={t.id}"
+                    + (f"&size={(t.json_data or {}).get('sizeKey')}" if (t.json_data or {}).get("sizeKey") else "")),
+            "size_key": (t.json_data or {}).get("sizeKey", ""),
+            # Lightweight editable-vector data lets the editor draw a real
+            # thumbnail when a generated template has no uploaded preview PNG.
+            "preview_width": (t.json_data or {}).get("document", {}).get("width", product.width),
+            "preview_height": (t.json_data or {}).get("document", {}).get("height", product.height),
+            "preview_objects": (((t.json_data or {}).get("pages") or [{}])[0].get("objects") or []),
+            "preview_background": (((t.json_data or {}).get("pages") or [{}])[0].get("background") or "#FFFFFF"),
+            "kind": "database",
+        }
+        for t in live_templates_for(product)
+    ]
+    # Coaster templates are shape-aware views of the SAME editable artwork.
+    # Preserve the selected shape on every template URL so switching designs
+    # never silently returns the product to square.
+    if product.id == 415:
+        for item in template_catalog:
+            item["url"] += ("&" if "?" in item["url"] else "?") + f"shape={product_options.get('selected_shape') or 'square'}"
+
+    response = render(request, "designer/editor.html", {
+        "product": product,
+        "template": template,
+        "template_json": json.dumps(template_json),
+        "template_image": template_image,
+        "template_catalog_json": json.dumps(template_catalog),
+        "product_options_json": json.dumps(product_options),
+        "admin_print_surfaces_json": json.dumps(product_options.get("print_surfaces") or []),
+        "editor_template_page_count": editor_template_page_count,
+        "existing_design": existing_design,
+        # Loaded templates must initialize the front-end in template mode.
+        "mode": request.GET.get("mode") or ("template" if template is not None else "blank"),
+        "pack_code": pack_code or "",
+    })
+    # V27: template editing must reflect the latest admin-published JSON immediately.
+    if template is not None:
+        response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
+    return response
+
+
+
+def drinkware_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def print_area_designer(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    default_area = {"left": 30.0, "top": 55.0, "width": 40.0, "height": 20.0}
+    product_area = {
+        "left": float(product.print_left_pct) if product.print_left_pct is not None else default_area["left"],
+        "top": float(product.print_top_pct) if product.print_top_pct is not None else default_area["top"],
+        "width": float(product.print_width_pct) if product.print_width_pct is not None else default_area["width"],
+        "height": float(product.print_height_pct) if product.print_height_pct is not None else default_area["height"],
+    }
+    images = []
+    if product.image:
+        images.append({"key": "main", "image_id": None, "label": "Main image", "url": product.image.url,
+                       "area": product_area, "has_custom_area": product.print_left_pct is not None})
+    for image in product.angle_images.all():
+        if not image.image:
+            continue
+        image_area = {
+            "left": float(image.print_left_pct) if image.print_left_pct is not None else product_area["left"],
+            "top": float(image.print_top_pct) if image.print_top_pct is not None else product_area["top"],
+            "width": float(image.print_width_pct) if image.print_width_pct is not None else product_area["width"],
+            "height": float(image.print_height_pct) if image.print_height_pct is not None else product_area["height"],
+        }
+        images.append({"key": f"image-{image.id}", "image_id": image.id,
+                       "label": image.label or f"Image {image.sort_order + 1}", "url": image.image.url,
+                       "area": image_area, "has_custom_area": image.print_left_pct is not None})
+    return render(request, "designer/print_area_designer.html", {
+        "product": product, "print_images_json": json.dumps(images)
+    })
+
+
+@staff_member_required
+def save_print_area(request, product_id):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+    product = get_object_or_404(Product, id=product_id)
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+        left = float(payload.get("left")); top = float(payload.get("top"))
+        width = float(payload.get("width")); height = float(payload.get("height"))
+        image_id = payload.get("image_id")
+    except (TypeError, ValueError, AttributeError):
+        return JsonResponse({"ok": False, "error": "Invalid print area values."}, status=400)
+    if not (0 <= left <= 100 and 0 <= top <= 100 and 1 <= width <= 100 and 1 <= height <= 100):
+        return JsonResponse({"ok": False, "error": "Print area must stay within 0–100%."}, status=400)
+    if left + width > 100.01 or top + height > 100.01:
+        return JsonResponse({"ok": False, "error": "Print area extends beyond the product image."}, status=400)
+    target = product
+    if image_id not in (None, "", "main"):
+        target = get_object_or_404(product.angle_images, id=int(image_id))
+    fields = ["print_left_pct", "print_top_pct", "print_width_pct", "print_height_pct"]
+    target.print_left_pct = left; target.print_top_pct = top
+    target.print_width_pct = width; target.print_height_pct = height
+    target.save(update_fields=fields)
+    return JsonResponse({"ok": True, "message": "Print area saved for this image."})
+
+
+def _build_photo_studio_context(request, product, fallback_image_asset="designer/img/bags/budget-cotton-tote.png"):
+    """Shared engine behind every 'photo + editable area' customizer (Bags, and the
+    generic photo customizer used for every other non-bespoke category). Builds a
+    catalogue of every sibling product in the same category, each with its own
+    uploaded photo and admin-defined (or default) percentage-based print area."""
+    template_id = request.GET.get("template")
+    design_id = request.GET.get("design")
+    template = None
+    template_json = {}
+    template_image = ""
+    existing_design = None
+    if design_id:
+        candidate = get_object_or_404(SavedDesign, id=design_id, product=product)
+        if _can_access(request, candidate):
+            existing_design = candidate
+            template_json = json.loads(json.dumps(candidate.design_json or {}))
+    elif template_id:
+        template = _get_template_for_product(template_id, product)
+        template_json = json.loads(json.dumps(template.json_data or {}))
+        if template.preview:
+            template_image = template.preview.url
+    template_catalog = [{"id": t.id, "name": t.name, "size_key": (t.json_data or {}).get("sizeKey", ""), "preview": (t.preview.name if t.preview else None),
+                          "cache_bust": (int(t.updated_at.timestamp()) if t.updated_at else 0)} for t in live_templates_for(product)]
+    for item in template_catalog:
+        preview_name = item.get("preview")
+        base_url = DesignTemplate._meta.get_field("preview").storage.url(preview_name) if preview_name else ""
+        item["preview_url"] = f"{base_url}?v={item['cache_bust']}" if base_url else ""
+        item.pop("preview", None)
+        item.pop("cache_bust", None)
+
+    # Default editable-area box (percent of photo size) used when a product hasn't
+    # had its print area set yet via the Print Area Designer. A centered, slightly
+    # lower box is a reasonable starting point for most product photos.
+    DEFAULT_AREA_PCT = {"left": 30.0, "top": 55.0, "width": 40.0, "height": 20.0}
+    FALLBACK_IMAGE = static(fallback_image_asset)
+
+    sibling_products = (
+        Product.objects.filter(category=product.category, is_active=True, is_out_of_stock=False)
+        .order_by("name")
+    )
+
+    catalogue = []
+    for p in sibling_products:
+        image_url = p.image.url if p.image else FALLBACK_IMAGE
+        image_urls = asset_candidates(image_url)
+        area_pct = {
+            "left": float(p.print_left_pct) if p.print_left_pct is not None else DEFAULT_AREA_PCT["left"],
+            "top": float(p.print_top_pct) if p.print_top_pct is not None else DEFAULT_AREA_PCT["top"],
+            "width": float(p.print_width_pct) if p.print_width_pct is not None else DEFAULT_AREA_PCT["width"],
+            "height": float(p.print_height_pct) if p.print_height_pct is not None else DEFAULT_AREA_PCT["height"],
+        }
+        views = [{
+            "key": "main", "image_id": None, "label": "Main", "image_url": image_url,
+            "image_urls": image_urls, "print_area_pct": area_pct,
+            "has_custom_area": p.print_left_pct is not None,
+        }]
+        for idx, extra in enumerate(p.angle_images.all()):
+            if not extra.image:
+                continue
+            extra_pct = {
+                "left": float(extra.print_left_pct) if extra.print_left_pct is not None else area_pct["left"],
+                "top": float(extra.print_top_pct) if extra.print_top_pct is not None else area_pct["top"],
+                "width": float(extra.print_width_pct) if extra.print_width_pct is not None else area_pct["width"],
+                "height": float(extra.print_height_pct) if extra.print_height_pct is not None else area_pct["height"],
+            }
+            extra_url = extra.image.url
+            views.append({
+                "key": f"image-{extra.id}", "image_id": extra.id,
+                "label": extra.label or f"View {idx + 2}", "image_url": extra_url,
+                "image_urls": asset_candidates(extra_url), "print_area_pct": extra_pct,
+                "has_custom_area": extra.print_left_pct is not None,
+            })
+        editor_options = p.customizer_config or {}
+        configured_sizes = {v.name: float(v.price if v.price is not None else p.price) for v in p.size_variants.filter(is_active=True)}
+        catalogue.append({
+            "key": p.slug, "name": p.name, "product_id": p.id,
+            "image_url": image_url, "image_urls": image_urls, "views": views,
+            "sizes": configured_sizes or editor_options.get("sizes") or {"Standard": float(p.price)},
+            "colours": editor_options.get("colours") or ["#111111", "#ffffff", "#2563eb"],
+            "methods": editor_options.get("methods") or ["front", "screen-print", "embroidery", "heat-transfer", "full-colour"],
+            "preview": editor_options.get("preview") or {"max_width": 692, "max_height": 692},
+            "print_area_pct": area_pct,
+            "has_custom_area": p.print_left_pct is not None,
+            "admin_area_url": f"/admin-print-area/{p.id}/",
+        })
+
+    selected_key = product.slug if any(c["key"] == product.slug for c in catalogue) else (catalogue[0]["key"] if catalogue else "")
+
+    return {
+        "product": product, "template": template, "template_json": json.dumps(template_json),
+        "template_image": template_image, "template_catalog_json": json.dumps(template_catalog),
+        "existing_design": existing_design, "mode": request.GET.get("mode", "blank"),
+        "config_json": json.dumps({"catalogue": catalogue, "selected_key": selected_key}),
+    }
+
+
+def bags_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def photo_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def awards_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def tshirt_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def pen_customizer(request, product_id):
+    """Backward-compatible legacy URL -> universal editor."""
+    target = reverse("designer:editor", args=[product_id])
+    query = request.GET.urlencode()
+    if query:
+        target = f"{target}?{query}"
+    return redirect(target)
+
+
+def save_design(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+        product = Product.objects.get(id=payload.get("product_id"))
+        design_id = payload.get("design_id")
+        autosave = bool(payload.get("autosave"))
+        design = None
+
+        if design_id:
+            # V33: stale browser/localStorage design ids must never break autosave.
+            # A template can be opened for a different product/session after an old
+            # SavedDesign was deleted. In that case simply create a fresh personal
+            # design and return its new id to the browser.
+            candidate = SavedDesign.objects.filter(id=design_id, product=product).first()
+            if candidate is not None and _can_access(request, candidate):
+                design = candidate
+
+        source_template = None
+        source_template_id = payload.get("source_template_id")
+        if source_template_id:
+            candidate_template = (
+                DesignTemplate.objects
+                .select_related("product", "product__category")
+                .filter(id=source_template_id, is_active=True)
+                .first()
+            )
+            if candidate_template and _template_allowed_for_product(candidate_template, product):
+                source_template = candidate_template
+
+        if design is None:
+            # A customer's first save always creates a separate SavedDesign.
+            # It never writes to DesignTemplate, even when opened from a master template.
+            design = SavedDesign(
+                product=product,
+                source_template=source_template,
+                **_owner_kwargs(request),
+            )
+
+        changed = design.design_json != (payload.get("design_json") or {})
+        design.name = payload.get("name") or f"{product.name} Design"
+        design.design_json = payload.get("design_json") or {}
+        design.preview_png = payload.get("preview_png") or design.preview_png
+        requested_qty = max(1, int(payload.get("quantity") or 1))
+        selected_size_key = str(payload.get("size_key") or (payload.get("design_json") or {}).get("sizeProfile", {}).get("sizeKey") or "")[:100]
+        selected_color_key = str(payload.get("color_key") or (payload.get("design_json") or {}).get("productColor") or "")[:100]
+        _set_design_storefront_options(design, selected_size_key, selected_color_key)
+        minimum = _effective_minimum_quantity(product, selected_size_key)
+        design.quantity = max(minimum, requested_qty)
+        design.is_autosave = autosave
+        design.status = "draft" if autosave else payload.get("status", "cart")
+        if design.pk and changed:
+            design.version += 1
+        design.save()
+
+        if changed:
+            DesignVersion.objects.get_or_create(
+                design=design,
+                version=design.version,
+                defaults={"design_json": design.design_json, "preview_png": design.preview_png},
+            )
+
+        if design.status == "cart" and not autosave:
+            size_key = _design_selected_size_key(design)
+            color_key = _design_selected_color_key(design)
+            key = f"{product.id}:{size_key}:{color_key}" if (size_key or color_key) else str(product.id)
+
+            cart = _store_cart(request)
+            cart[key] = max(1, min(9999, int(design.quantity or 1)))
+            _save_store_cart(request, cart)
+
+            design_map = _cart_design_map(request)
+            design_map[key] = design.id
+            _save_cart_design_map(request, design_map)
+
+        return JsonResponse({
+            "ok": True,
+            "design_id": design.id,
+            "version": design.version,
+            "updated_at": design.updated_at.isoformat(),
+            "cart_url": reverse("designer:cart"),
+        })
+    except Exception as exc:
+        # Keep the JSON error visible to the editor; server logs now show the real cause too.
+        import logging
+        logging.getLogger(__name__).exception("save_design failed")
+        return JsonResponse({"ok": False, "error": str(exc)}, status=400)
+
+
+def design_versions(request, design_id):
+    design = get_object_or_404(SavedDesign, id=design_id)
+    if not _can_access(request, design):
+        return JsonResponse({"ok": False, "error": "Not permitted"}, status=403)
+    versions = [{"version": v.version, "created_at": v.created_at.isoformat()} for v in design.versions.all()[:20]]
+    return JsonResponse({"ok": True, "versions": versions})
+
+
+def restore_design_version(request, design_id, version):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+    design = get_object_or_404(SavedDesign, id=design_id)
+    if not _can_access(request, design):
+        return JsonResponse({"ok": False, "error": "Not permitted"}, status=403)
+    snapshot = get_object_or_404(DesignVersion, design=design, version=version)
+    design.design_json = snapshot.design_json
+    design.preview_png = snapshot.preview_png
+    design.version += 1
+    design.save()
+    return JsonResponse({"ok": True, "design_json": design.design_json, "version": design.version})
+
+
+def ai_assist(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+        action = payload.get("action", "critique")
+        text = (payload.get("text") or "").strip()
+        design = payload.get("design") or {}
+
+        if action == "tagline":
+            subject = re.sub(r"[^a-zA-Z0-9 '&-]", "", text)[:60] or "your brand"
+            options = [
+                f"Designed around {subject}",
+                f"Make {subject} unforgettable",
+                f"Simple ideas. Powerful {subject}.",
+                f"Create more with {subject}",
+            ]
+            return JsonResponse({"ok": True, "result": options})
+
+        pages = design.get("pages") or []
+        objects = sum((p.get("objects") or [] for p in pages), [])
+        issues = []
+        if not objects:
+            issues.append("Add at least one text or image element.")
+        if len(objects) > 15:
+            issues.append("The design may feel crowded; consider reducing the number of elements.")
+        tiny_text = [o for o in objects if o.get("type") == "text" and float(o.get("fontSize", 32)) < 14]
+        if tiny_text:
+            issues.append("Some text is smaller than 14 px and may be difficult to print clearly.")
+        transparent = [o for o in objects if float(o.get("opacity", 1)) < 0.35]
+        if transparent:
+            issues.append("Very transparent elements may not be visible in the final print.")
+        if not issues:
+            issues.append("The design passes the initial layout and readability review.")
+        return JsonResponse({"ok": True, "result": issues})
+    except Exception as exc:
+        return JsonResponse({"ok": False, "error": str(exc)}, status=400)
+
+
+
+# -----------------------------------------------------------------------------
+# Session storefront cart (standard, non-customised products)
+# -----------------------------------------------------------------------------
+CART_SESSION_KEY = "zenvibe_store_cart"
+CART_DESIGN_MAP_KEY = "zenvibe_cart_design_map"
+
+
+def _store_cart(request):
+    cart = request.session.get(CART_SESSION_KEY, {})
+    if not isinstance(cart, dict):
+        cart = {}
+    return cart
+
+
+def _save_store_cart(request, cart):
+    request.session[CART_SESSION_KEY] = cart
+    request.session.modified = True
+
+
+def _cart_design_map(request):
+    mapping = request.session.get(CART_DESIGN_MAP_KEY, {})
+    return mapping if isinstance(mapping, dict) else {}
+
+
+def _save_cart_design_map(request, mapping):
+    request.session[CART_DESIGN_MAP_KEY] = mapping
+    request.session.modified = True
+
+
+def _cart_payload(request):
+    from decimal import Decimal
+    cart = _store_cart(request)
+    design_map = _cart_design_map(request)
+    ids = []
+    for key in cart.keys():
+        try:
+            ids.append(int(str(key).split(":", 1)[0]))
+        except (TypeError, ValueError):
+            pass
+    products = {
+        p.id: p for p in Product.objects.filter(
+            id__in=ids, is_active=True, is_out_of_stock=False
+        ).select_related("category")
+    }
+    items = []
+    subtotal = Decimal("0.00")
+    clean = {}
+    for key, raw_qty in cart.items():
+        try:
+            parts = str(key).split(":", 2); pid = int(parts[0]); size_key = parts[1] if len(parts)>1 else ""; color_key = parts[2] if len(parts)>2 else ""
+            qty = max(1, min(9999, int(raw_qty)))
+        except (TypeError, ValueError):
+            continue
+        product = products.get(pid)
+        if not product:
+            continue
+        variant = product.size_variants.filter(size_key=size_key, is_active=True).first() if size_key else None
+        color_variant = product.color_variants.filter(color_key=color_key, is_active=True).first() if color_key else None
+        minimum = _effective_minimum_quantity(product, size_key)
+        maximum = int(product.maximum_quantity or 9999)
+        maximum = max(minimum, min(9999, maximum))
+        qty = max(minimum, min(maximum, qty))
+        unit_price = _product_unit_price(product, qty, size_key)
+        line_total = (unit_price * qty).quantize(Decimal("0.01"))
+        subtotal = (subtotal + line_total).quantize(Decimal("0.01"))
+        clean[str(key)] = qty
+        design = None
+        design_id = design_map.get(str(key))
+        if design_id:
+            candidate = SavedDesign.objects.filter(id=design_id, product=product).first()
+            if candidate is not None and _can_access(request, candidate):
+                design = candidate
+
+        items.append({
+            "product": product,
+            "quantity": qty,
+            "unit_price": unit_price,
+            "line_total": line_total,
+            "size_key": size_key,
+            "color_key": color_key,
+            "cart_key": str(key),
+            "variant": variant,
+            "color_variant": color_variant,
+            "minimum_quantity": minimum,
+            "maximum_quantity": maximum,
+            "design": design,
+        })
+    if clean != cart:
+        _save_store_cart(request, clean)
+    return items, subtotal
+
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id, is_active=True, is_out_of_stock=False)
+    cart = _store_cart(request)
+    try:
+        qty = int(request.POST.get("quantity", 1))
+    except (TypeError, ValueError):
+        qty = product.minimum_quantity or 1
+
+    size_key = (request.POST.get("size_key") or request.GET.get("size") or "").strip()[:100]
+    color_key = (request.POST.get("color_key") or request.GET.get("color") or "").strip()[:100]
+
+    if size_key and not product.size_variants.filter(size_key=size_key, is_active=True).exists():
+        size_key = ""
+    if color_key and not product.color_variants.filter(color_key=color_key, is_active=True).exists():
+        color_key = ""
+
+    minimum = _effective_minimum_quantity(product, size_key)
+    maximum = int(product.maximum_quantity or 9999)
+    maximum = max(minimum, min(9999, maximum))
+    qty = max(minimum, min(maximum, qty))
+
+    key = f"{product.id}:{size_key}:{color_key}" if (size_key or color_key) else str(product.id)
+
+    # The quantity entered on the product page is the requested cart quantity.
+    # Example: if the customer enters 60, the cart must contain 60 — not the
+    # previous quantity plus 60. This also makes repeated Add To Cart clicks idempotent.
+    cart[key] = qty
+    _save_store_cart(request, cart)
+
+    count = sum(int(v) for v in cart.values())
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({
+            "ok": True,
+            "count": count,
+            "product": product.name,
+            "quantity": cart[key],
+            "cart_url": reverse("designer:cart"),
+        })
+    if request.POST.get("cart_action") == "buy_now":
+        return redirect("designer:cart_checkout")
+    return redirect("designer:cart")
+
+
+def cart(request):
+    items, subtotal = _cart_payload(request)
+    return render(request, "designer/cart.html", {
+        "items": items,
+        "subtotal": subtotal,
+        "cart_count": sum(i["quantity"] for i in items),
+    })
+
+
+def update_cart(request, product_id):
+    if request.method != "POST":
+        return redirect("designer:cart")
+
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    cart = _store_cart(request)
+
+    posted_key = (request.POST.get("cart_key") or "").strip()
+    requested_size = (request.POST.get("size_key") or "").strip()
+    requested_color = (request.POST.get("color_key") or "").strip()
+
+    if posted_key and posted_key in cart and posted_key.split(":", 1)[0] == str(product_id):
+        key = posted_key
+    elif requested_size or requested_color:
+        key = f"{product_id}:{requested_size}:{requested_color}"
+    else:
+        key = next(
+            (str(k) for k in cart if str(k).split(":", 1)[0] == str(product_id)),
+            str(product_id),
+        )
+
+    key_parts = str(key).split(":", 2)
+    key_size = key_parts[1] if len(key_parts) > 1 else requested_size
+    minimum = _effective_minimum_quantity(product, key_size)
+    maximum = int(product.maximum_quantity or 9999)
+    maximum = max(minimum, min(9999, maximum))
+
+    try:
+        qty = int((request.POST.get("quantity") or "").strip())
+    except (TypeError, ValueError):
+        qty = minimum
+
+    qty = max(minimum, min(maximum, qty))
+    cart[key] = qty
+    _save_store_cart(request, cart)
+
+    items, subtotal = _cart_payload(request)
+    count = sum(i["quantity"] for i in items)
+    line = next((i for i in items if i.get("cart_key") == str(key)), None)
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({
+            "ok": True,
+            "count": count,
+            "subtotal": f"{subtotal:.2f}",
+            "quantity": line["quantity"] if line else qty,
+            "unit_price": f"{line['unit_price']:.2f}" if line else "0.00",
+            "line_total": f"{line['line_total']:.2f}" if line else "0.00",
+        })
+
+    return redirect("designer:cart")
+
+def remove_from_cart(request, product_id):
+    if request.method != "POST":
+        return redirect("designer:cart")
+
+    cart = _store_cart(request)
+    posted_key = (request.POST.get("cart_key") or "").strip()
+    requested_size = (request.POST.get("size_key") or "").strip()
+    requested_color = (request.POST.get("color_key") or "").strip()
+
+    removed = False
+
+    if posted_key and posted_key in cart and posted_key.split(":", 1)[0] == str(product_id):
+        cart.pop(posted_key, None)
+        removed = True
+    elif requested_size or requested_color:
+        key = f"{product_id}:{requested_size}:{requested_color}"
+        if key in cart:
+            cart.pop(key, None)
+            removed = True
+    else:
+        # No variant was supplied: remove the matching product line(s).
+        for key in list(cart.keys()):
+            if str(key).split(":", 1)[0] == str(product_id):
+                cart.pop(key, None)
+                removed = True
+
+    _save_store_cart(request, cart)
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        items, subtotal = _cart_payload(request)
+        return JsonResponse({
+            "ok": True,
+            "removed": removed,
+            "count": sum(i["quantity"] for i in items),
+            "subtotal": f"{subtotal:.2f}",
+            "empty": len(items) == 0,
+        })
+
+    return redirect("designer:cart")
+
+def _create_stripe_cart_session(request, orders):
+    import stripe
+    from django.conf import settings
+    from .models import OrderWorkflowConfig
+    stripe.api_key = settings.STRIPE_SECRET_KEY or SiteSettings.current().stripe_secret_key
+    cfg = OrderWorkflowConfig.current()
+    order_numbers = [o.order_number for o in orders]
+    line_items = []
+    for order in orders:
+        line_items.append({"quantity": 1, "price_data": {
+            "currency": cfg.currency.lower(),
+            "unit_amount": int(order.total * 100),
+            "product_data": {"name": order.design.product.name if order.design and order.design.product else "ZenVibe product"},
+        }})
+    success_url = request.build_absolute_uri(reverse("designer:cart_order_success")) + "?session_id={CHECKOUT_SESSION_ID}"
+    cancel_url = request.build_absolute_uri(reverse("designer:cart_checkout")) + "?payment=cancelled"
+    session = stripe.checkout.Session.create(
+        mode="payment",
+        client_reference_id=order_numbers[0],
+        customer_email=orders[0].customer_email,
+        metadata={"order_numbers": ",".join(order_numbers)},
+        line_items=line_items,
+        success_url=success_url,
+        cancel_url=cancel_url,
+    )
+    for order in orders:
+        order.stripe_checkout_session_id = session.id
+        order.payment_provider = "stripe"
+        order.save(update_fields=["stripe_checkout_session_id", "payment_provider", "updated_at"])
+    return session.url
+
+
+def _canadian_checkout_error(request):
+    from .customer_models import CustomerAddress
+    province = request.POST.get("province", "").strip().upper()
+    postal = re.sub(r"[ -]", "", request.POST.get("postal_code", "").upper())
+    if province not in dict(CustomerAddress.PROVINCES):
+        return "Select a valid Canadian province or territory."
+    if not re.fullmatch(r"[ABCEGHJ-NPRSTVXY][0-9][ABCEGHJ-NPRSTV-Z][0-9][ABCEGHJ-NPRSTV-Z][0-9]", postal):
+        return "Enter a valid Canadian postal code (e.g. M5V 3L9)."
+    return None
+
+def _customer_checkout_context(request):
+    from .customer_models import CustomerAddress
+    addresses = list(CustomerAddress.objects.filter(user=request.user)) if request.user.is_authenticated else []
+    default_address = next((a for a in addresses if a.is_default), addresses[0] if addresses else None)
+    user = request.user if request.user.is_authenticated else None
+    # POST always wins: never replace a customer's submitted edits after validation.
+    def checkout_value(field, saved=""):
+        if request.method == "POST":
+            return request.POST.get(field, "")
+        return saved or ""
+    full_name = (user.get_full_name().strip() or user.username) if user else ""
+    return {
+        "saved_addresses": addresses, "default_address": default_address,
+        "canadian_provinces": CustomerAddress.PROVINCES,
+        "checkout_initial": {
+            "customer_name": checkout_value("customer_name", default_address.full_name if default_address else full_name),
+            "customer_email": checkout_value("customer_email", user.email if user else ""),
+            "customer_phone": checkout_value("customer_phone", default_address.phone if default_address else ""),
+            "company": checkout_value("company", default_address.company if default_address else ""),
+            "address": checkout_value("address", default_address.address if default_address else ""),
+            "city": checkout_value("city", default_address.city if default_address else ""),
+            "province": checkout_value("province", default_address.province if default_address else ""),
+            "postal_code": checkout_value("postal_code", default_address.postal_code if default_address else ""),
+        },
+    }
+
+def _save_checkout_address(request):
+    if not request.user.is_authenticated or not request.POST.get("save_address"):
+        return
+    from .customer_views import AddressForm
+    from .customer_models import CustomerAddress
+    data = request.POST.copy()
+    data["full_name"] = request.POST.get("customer_name", "")
+    data["phone"] = request.POST.get("customer_phone", "")
+    data["label"] = request.POST.get("address_label", "Home") or "Home"
+    form = AddressForm(data)
+    if form.is_valid():
+        address = form.save(commit=False)
+        address.user = request.user
+        existing = CustomerAddress.objects.filter(user=request.user)
+        if not existing.filter(address__iexact=address.address, city__iexact=address.city, postal_code=address.postal_code).exists():
+            address.is_default = not existing.exists()
+            address.save()
+
+def _checkout_coupon(code, subtotal):
+    from decimal import Decimal
+    from django.utils import timezone
+    from .models import DiscountCoupon
+    coupon = DiscountCoupon.objects.filter(code=code.strip().upper().lstrip("#"), is_active=True).first()
+    if not coupon:
+        return None, Decimal("0.00"), "Invalid or inactive coupon code."
+    now = timezone.now()
+    if (coupon.starts_at and now < coupon.starts_at) or (coupon.expires_at and now >= coupon.expires_at):
+        return None, Decimal("0.00"), "This coupon is not currently available."
+    if subtotal < coupon.minimum_subtotal:
+        return None, Decimal("0.00"), "Minimum order amount for this coupon has not been reached."
+    discount = (subtotal * coupon.value / Decimal("100")) if coupon.discount_type == "percent" else coupon.value
+    discount = min(subtotal, discount).quantize(Decimal("0.01"))
+    return coupon, discount, ""
+
+
+def cart_checkout(request):
+    from .models import Order, OrderWorkflowConfig
+    from .services.order_workflow import send_order_created_emails, sync_order_status
+    items, subtotal = _cart_payload(request)
+    if not items:
+        return redirect("designer:cart")
+    cfg = OrderWorkflowConfig.current()
+    from .models import DiscountCoupon
+    from decimal import Decimal
+    from django.utils import timezone
+    now = timezone.now()
+    visible_coupons = DiscountCoupon.objects.filter(is_active=True, show_at_checkout=True).filter(
+        Q(starts_at__isnull=True) | Q(starts_at__lte=now)
+    ).filter(Q(expires_at__isnull=True) | Q(expires_at__gt=now))[:8]
+    coupon_code = request.session.get("zv_checkout_coupon", "")
+    coupon, discount, coupon_error = _checkout_coupon(coupon_code, subtotal) if coupon_code else (None, Decimal("0.00"), "")
+    coupon_context = {"visible_coupons": visible_coupons, "applied_coupon": coupon, "discount": discount, "discounted_total": subtotal - discount, "coupon_error": coupon_error}
+    if request.method == "POST" and request.POST.get("coupon_action"):
+        entered = request.POST.get("coupon", "").strip()
+        if request.POST.get("coupon_action") == "remove":
+            request.session.pop("zv_checkout_coupon", None)
+            return redirect("designer:cart_checkout")
+        coupon, discount, coupon_error = _checkout_coupon(entered, subtotal)
+        if coupon:
+            request.session["zv_checkout_coupon"] = coupon.code
+            return redirect("designer:cart_checkout")
+        coupon_context.update({"coupon_error": coupon_error, "applied_coupon": None, "discount": Decimal("0.00"), "discounted_total": subtotal})
+        return render(request, "designer/cart_checkout.html", {**_customer_checkout_context(request), **coupon_context, "items": items, "subtotal": subtotal, "payment_mode": cfg.payment_mode})
+    if request.method == "POST":
+        required = ["customer_name", "customer_email", "customer_phone", "company", "address", "city", "province", "postal_code"]
+        missing = [x for x in required if not request.POST.get(x, "").strip()]
+        if not missing:
+            address_error = _canadian_checkout_error(request)
+            if address_error:
+                return render(request, "designer/cart_checkout.html", {**_customer_checkout_context(request), **coupon_context, "error": address_error, "items": items, "subtotal": subtotal, "payment_mode": cfg.payment_mode})
+            _save_checkout_address(request)
+            orders = []
+            for item in items:
+                product = item["product"]
+                design = item.get("design")
+                if design is not None:
+                    design.quantity = item["quantity"]
+                    _set_design_storefront_options(design, item.get("size_key", ""), item.get("color_key", ""))
+                    design.status = "ordered"
+                    design.is_autosave = False
+                    design.save(update_fields=["quantity","design_json","status","is_autosave","updated_at"])
+                else:
+                    design = SavedDesign(
+                        user=request.user if request.user.is_authenticated else None,
+                        session_key="" if request.user.is_authenticated else _ensure_session(request),
+                        product=product,
+                        name=f"{product.name} - Standard order",
+                        design_json={"source":"storefront_cart","product_id":product.id},
+                        quantity=item["quantity"],
+                        status="ordered",
+                    )
+                    _set_design_storefront_options(design, item.get("size_key", ""), item.get("color_key", ""))
+                    design.save()
+                order = Order.objects.create(
+                    design=design,
+                    user=request.user if request.user.is_authenticated else None,
+                    customer_name=request.POST["customer_name"].strip(),
+                    customer_email=request.POST["customer_email"].strip(),
+                    customer_phone=request.POST.get("customer_phone", "").strip(),
+                    company=request.POST.get("company", "").strip(),
+                    address=request.POST["address"].strip(),
+                    city=request.POST["city"].strip(),
+                    province=request.POST["province"].strip(),
+                    postal_code=request.POST["postal_code"].strip(),
+                    quantity=item["quantity"], unit_price=item["unit_price"],
+                    total=item["line_total"] - (discount * item["line_total"] / subtotal).quantize(Decimal("0.01")),
+                    coupon_code=coupon.code if coupon else "",
+                    discount_amount=(discount * item["line_total"] / subtotal).quantize(Decimal("0.01")),
+                    customer_notes=request.POST.get("customer_notes", "").strip(),
+                    payment_provider="stripe" if cfg.payment_mode == "stripe" else "bypass",
+                    payment_status="pending" if cfg.payment_mode == "stripe" else "bypassed",
+                )
+                send_order_created_emails(order)
+                orders.append(order)
+            request.session["zenvibe_recent_cart_orders"] = [o.order_number for o in orders]
+            if cfg.payment_mode == "stripe" and _stripe_enabled():
+                try:
+                    return redirect(_create_stripe_cart_session(request, orders))
+                except Exception as exc:
+                    return render(request, "designer/cart_checkout.html", {**_customer_checkout_context(request), **coupon_context, 
+                        "items": items, "subtotal": subtotal, "payment_mode": cfg.payment_mode,
+                        "error": f"Stripe checkout could not start: {exc}",
+                    })
+            for order in orders:
+                if cfg.payment_mode == "stripe":
+                    order.payment_provider = "bypass"
+                    order.payment_status = "bypassed"
+                    order.save(update_fields=["payment_provider", "payment_status", "updated_at"])
+                sync_order_status(order)
+            request.session[CART_SESSION_KEY] = {}
+            request.session[CART_DESIGN_MAP_KEY] = {}
+            request.session.pop("zv_checkout_coupon", None)
+            request.session.modified = True
+            return redirect("designer:cart_order_success")
+        return render(request, "designer/cart_checkout.html", {**_customer_checkout_context(request), **coupon_context, 
+            "items": items, "subtotal": subtotal, "payment_mode": cfg.payment_mode,
+            "error": "Please complete all required delivery details.",
+        })
+    return render(request, "designer/cart_checkout.html", {**_customer_checkout_context(request), **coupon_context, "items": items, "subtotal": subtotal, "payment_mode": cfg.payment_mode})
+
+
+def cart_order_success(request):
+    from .models import Order
+    from .services.order_workflow import sync_order_status
+    session_id = request.GET.get("session_id", "").strip()
+    orders = []
+    if session_id:
+        orders = list(Order.objects.filter(stripe_checkout_session_id=session_id).select_related("design", "design__product"))
+    if not orders:
+        numbers = request.session.get("zenvibe_recent_cart_orders", [])
+        if numbers:
+            orders = list(Order.objects.filter(order_number__in=numbers).select_related("design", "design__product"))
+    for order in orders:
+        sync_order_status(order)
+    if orders:
+        request.session[CART_SESSION_KEY] = {}
+        request.session.modified = True
+    return render(request, "designer/cart_order_success.html", {"orders": orders})
+
+def cart_preview(request, design_id):
+    design = get_object_or_404(SavedDesign, id=design_id)
+    if not _can_access(request, design):
+        return redirect("designer:home")
+    return render(request, "designer/custom_cart_preview.html", {"design": design})
+
+
+@staff_member_required
+def admin_template_builder(request, template_id):
+    template = get_object_or_404(
+        DesignTemplate.objects.select_related("product"),
+        id=template_id,
+    )
+
+    return render(
+        request,
+        "designer/admin_template_builder.html",
+        {
+            "template": template,
+            "product": template.product,
+            "template_json": template.json_data or {},
+            "builder_print_surfaces": [
+                {
+                    "name": surface.label,
+                    "width_in": str(surface.print_width_in or template.product.print_width_in or template.product.workspace_width_in or ""),
+                    "height_in": str(surface.print_height_in or template.product.print_height_in or template.product.workspace_height_in or ""),
+                }
+                for surface in template.product.print_surfaces.filter(is_active=True).order_by("sort_order", "id")
+            ],
+        },
+    )
+
+
+@staff_member_required
+def save_template_json(request, template_id):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+
+    try:
+        template = get_object_or_404(DesignTemplate, id=template_id)
+        payload = json.loads(request.body.decode("utf-8"))
+
+        json_data = payload.get("json_data")
+
+        if not isinstance(json_data, dict):
+            return JsonResponse(
+                {"ok": False, "error": "Invalid template JSON."}, status=400
+            )
+
+        # V12 publishing contract: customer templates must be editable masters.
+        # Never let a newly imported flat bitmap masquerade as a converted design.
+        if not json_data.get("reconstructed") or json_data.get("templateType") != "editable-master":
+            return JsonResponse(
+                {
+                    "ok": False,
+                    "error": "The uploaded artwork must finish conversion into editable layers before it can be published.",
+                },
+                status=409,
+            )
+        pages = json_data.get("pages") or []
+        admin_pages = json_data.get("adminPages") or []
+        objects = [o for page in pages if isinstance(page, dict) for o in (page.get("objects") or []) if isinstance(o, dict)]
+        admin_objects = [o for page in admin_pages if isinstance(page, dict) for o in (page.get("objects") or []) if isinstance(o, dict)]
+        editable = [o for o in objects if o.get("customerEditable") is not False and not o.get("backgroundAsset")]
+        manual_pairs = [o for o in objects if o.get("fieldType") == "manual-replace" or o.get("manualReplacement")]
+        # V42: a newly uploaded template may be published before OCR conversion;
+        # explicit Remove/Replace text, added text, shapes, logos and other Fabric
+        # objects are valid editable layers. Do not reject a layered master merely
+        # because OCR generated zero results.
+        if not editable and not manual_pairs:
+            admin_editable = [o for o in admin_objects if o.get("customerEditable") is not False and not o.get("backgroundAsset")]
+            if not admin_editable:
+                return JsonResponse(
+                    {"ok": False, "error": "Add or replace at least one editable element before publishing this template."},
+                    status=409,
+                )
+
+        # V55 stable: keep image data URLs inside the master JSON. This makes the
+        # published design independent of MEDIA_URL/application prefixes and avoids
+        # blank canvases after deployment moves. Existing media URLs are still read.
+        template.json_data = json_data
+
+        preview_png = payload.get("preview_png", "")
+
+        if preview_png and preview_png.startswith("data:image"):
+            try:
+                header, encoded_image = preview_png.split(",", 1)
+                image_data = base64.b64decode(encoded_image)
+
+                filename = f"template-{template.id}-preview.png"
+
+                template.preview.save(
+                    filename,
+                    ContentFile(image_data),
+                    save=False,
+                )
+            except (ValueError, TypeError, base64.binascii.Error):
+                return JsonResponse(
+                    {
+                        "ok": False,
+                        "error": "The generated preview image is invalid.",
+                    },
+                    status=400,
+                )
+
+        template.save()
+
+        return JsonResponse(
+            {
+                "ok": True,
+                "message": "Template saved successfully.",
+                "template_id": template.id,
+                "preview_url": (
+                    template.preview.url
+                    if template.preview
+                    else ""
+                ),
+            }
+        )
+
+    except Exception as exc:
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": str(exc),
+            },
+            status=400,
+        )
+        
+def category_templates(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    product = Product.objects.filter(category=category).first()
+    templates = live_templates_for(product) if product else []
+    return render(request, "designer/category_templates.html", {"category": category, "templates": templates})
+
+
+
+class ZenVibeRegistrationForm(UserCreationForm):
+    """Small storefront registration form using Django's existing User model."""
+    from django import forms
+    email = forms.EmailField(required=True)
+
+    class Meta(UserCreationForm.Meta):
+        fields = ("username", "email")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect("designer:home")
+    if request.method == "POST":
+        form = ZenVibeRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Public signup always creates a customer, never staff/admin access.
+            if user.is_staff or user.is_superuser:
+                user.is_staff = False
+                user.is_superuser = False
+                user.save(update_fields=["is_staff", "is_superuser"])
+            login(request, user)
+            return redirect("designer:customer_panel")
+    else:
+        form = ZenVibeRegistrationForm()
+    return render(request, "registration/register.html", {"form": form})
+
+def demo_login(request):
+    if request.method == "POST":
+        configured_code = SiteSettings.current().demo_access_code
+        if configured_code and request.POST.get("access_code") == configured_code:
+            request.session["demo_access"] = True
+            return redirect("/")
+        return render(request, "designer/demo_login.html", {"error": "Invalid access code"})
+    return render(request, "designer/demo_login.html")
+
+
+@staff_member_required
+@staff_member_required
+def convert_template_image(request, template_id):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST required")
+
+    uploaded_image = request.FILES.get("image")
+
+    if not uploaded_image:
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "Please select an image.",
+            },
+            status=400,
+        )
+
+    if not uploaded_image.content_type.startswith("image/"):
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "Only image files are supported.",
+            },
+            status=400,
+        )
+
+    maximum_size = 15 * 1024 * 1024
+
+    if uploaded_image.size > maximum_size:
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "The image must be smaller than 15 MB.",
+            },
+            status=400,
+        )
+
+    try:
+        template = get_object_or_404(
+            DesignTemplate.objects.select_related("product"),
+            id=template_id,
+        )
+
+        generated_json = convert_uploaded_template(
+            uploaded_file=uploaded_image,
+            template_id=template.id,
+        )
+
+        template.json_data = generated_json
+        template.save(update_fields=["json_data"])
+
+        return JsonResponse(
+            {
+                "ok": True,
+                "message": (
+                    "Artwork imported. Open Template Builder and ZenVibe will automatically reconstruct editable text and visual layers."
+                ),
+                "json_data": generated_json,
+                "detected_lines": 0,
+            }
+        )
+
+    except Exception as exc:
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": str(exc),
+            },
+            status=400,
+        )
+
+
+def _stripe_enabled():
+    from .models import OrderWorkflowConfig
+    from django.conf import settings
+    cfg = OrderWorkflowConfig.current()
+    site = SiteSettings.current()
+    return cfg.payment_mode == "stripe" and bool(settings.STRIPE_SECRET_KEY or site.stripe_secret_key)
+
+def _create_stripe_session(request, order):
+    import stripe
+    from django.conf import settings
+    from .models import OrderWorkflowConfig
+    stripe.api_key = settings.STRIPE_SECRET_KEY or SiteSettings.current().stripe_secret_key
+    cfg = OrderWorkflowConfig.current()
+    success_url = request.build_absolute_uri(reverse("designer:order_success", args=[order.order_number])) + "?session_id={CHECKOUT_SESSION_ID}"
+    cancel_url = request.build_absolute_uri(reverse("designer:checkout", args=[order.design_id])) + "?payment=cancelled"
+    session = stripe.checkout.Session.create(
+        mode="payment",
+        client_reference_id=order.order_number,
+        customer_email=order.customer_email,
+        metadata={"order_number": order.order_number},
+        line_items=[{"quantity": order.quantity, "price_data": {
+            "currency": cfg.currency.lower(),
+            "unit_amount": int(order.unit_price * 100),
+            "product_data": {"name": order.design.product.name if order.design and order.design.product else "ZenVibe customised product"},
+        }}],
+        success_url=success_url,
+        cancel_url=cancel_url,
+    )
+    order.stripe_checkout_session_id = session.id
+    order.payment_provider = "stripe"
+    order.save(update_fields=["stripe_checkout_session_id", "payment_provider", "updated_at"])
+    return session.url
+
+def checkout(request, design_id):
+    from decimal import Decimal
+    from .models import SavedDesign, Order, OrderWorkflowConfig, OrderStatusHistory
+    from .services.order_workflow import send_order_created_emails, sync_order_status
+    design = get_object_or_404(SavedDesign.objects.select_related("product"), id=design_id)
+    if not _can_access(request, design): return redirect("designer:checkout")
+    selected_size_key = _design_selected_size_key(design)
+    unit_price = _product_unit_price(design.product, design.quantity, selected_size_key) if design.product else Decimal("0")
+    total = unit_price * design.quantity
+    cfg = OrderWorkflowConfig.current()
+    if request.method == "POST":
+        required = ["customer_name", "customer_email", "customer_phone", "company", "address", "city", "province", "postal_code"]
+        missing = [x for x in required if not request.POST.get(x, "").strip()]
+        if not missing:
+            address_error = _canadian_checkout_error(request)
+            if address_error:
+                return render(request, "designer/checkout.html", {**_customer_checkout_context(request), "error": address_error, "design": design, "unit_price": unit_price, "total": total, "payment_mode": cfg.payment_mode})
+            _save_checkout_address(request)
+            order = Order.objects.create(
+                design=design, user=request.user if request.user.is_authenticated else None,
+                customer_name=request.POST["customer_name"].strip(), customer_email=request.POST["customer_email"].strip(),
+                customer_phone=request.POST.get("customer_phone", "").strip(), company=request.POST.get("company", "").strip(),
+                address=request.POST["address"].strip(), city=request.POST["city"].strip(), province=request.POST["province"].strip(),
+                postal_code=request.POST["postal_code"].strip(), quantity=design.quantity, unit_price=unit_price, total=total,
+                customer_notes=request.POST.get("customer_notes", "").strip(),
+                payment_provider="stripe" if cfg.payment_mode == "stripe" else "bypass",
+                payment_status="pending" if cfg.payment_mode == "stripe" else "bypassed",
+            )
+            design.status = "ordered"; design.save(update_fields=["status", "updated_at"])
+            send_order_created_emails(order)
+            if cfg.payment_mode == "stripe":
+                if not _stripe_enabled():
+                    order.payment_provider = "bypass"; order.payment_status = "bypassed"; order.save(update_fields=["payment_provider","payment_status","updated_at"])
+                    sync_order_status(order)
+                    return redirect("designer:order_success", order_number=order.order_number)
+                try:
+                    return redirect(_create_stripe_session(request, order))
+                except Exception as exc:
+                    return render(request, "designer/checkout.html", {**_customer_checkout_context(request), "design":design,"unit_price":unit_price,"total":total,"payment_mode":cfg.payment_mode,"error":f"Stripe checkout could not start: {exc}"})
+            sync_order_status(order)
+            return redirect("designer:order_success", order_number=order.order_number)
+        return render(request, "designer/checkout.html", {**_customer_checkout_context(request), "design":design,"unit_price":unit_price,"total":total,"payment_mode":cfg.payment_mode,"error":"Please complete all required delivery details."})
+    return render(request, "designer/checkout.html", {**_customer_checkout_context(request), "design":design,"unit_price":unit_price,"total":total,"payment_mode":cfg.payment_mode})
+
+
+def order_tracking(request):
+
+    context = {
+        "order_number": "",
+        "phone": "",
+    }
+
+    if request.method == "POST":
+
+        order_number = request.POST.get(
+            "order_number",
+            ""
+        ).strip()
+
+        phone = request.POST.get(
+            "phone",
+            ""
+        ).strip()
+
+        context["order_number"] = order_number
+        context["phone"] = phone
+
+
+        if not order_number or not phone:
+
+            context["error"] = (
+                "Please enter both your order ID "
+                "and phone number."
+            )
+
+            return render(
+                request,
+                "designer/order_tracking.html",
+                context
+            )
+
+
+        # IMPORTANT:
+        # Replace customer_phone below only if your Order model
+        # uses a different phone field name.
+        order = (
+            Order.objects
+            .filter(
+                order_number__iexact=order_number,
+                customer_phone=phone,
+            )
+            .first()
+        )
+
+
+        if not order:
+
+            context["error"] = (
+                "We could not find an order matching "
+                "that order ID and phone number."
+            )
+
+            return render(
+                request,
+                "designer/order_tracking.html",
+                context
+            )
+
+
+        # Save this verified order in the session before redirecting.
+        verified_orders = request.session.get(
+            "verified_tracking_orders",
+            []
+        )
+
+        if order.order_number not in verified_orders:
+            verified_orders.append(
+                order.order_number
+            )
+
+        request.session[
+            "verified_tracking_orders"
+        ] = verified_orders
+
+        request.session.modified = True
+
+
+        # DO NOT redirect to my_orders.
+        # Redirect to the dedicated tracking result page.
+        return redirect(
+            "designer:order_tracking_result",
+            order_number=order.order_number,
+        )
+
+
+    return render(
+        request,
+        "designer/order_tracking.html",
+        context
+    )
+
+
+
+# ============================================================
+# ORDER TRACKING RESULT
+# ============================================================
+
+def order_tracking_result(request, order_number):
+
+    order = get_object_or_404(
+        Order.objects
+        .select_related(
+            "design",
+            "design__product",
+        )
+        .prefetch_related(
+            "status_history",
+        ),
+        order_number=order_number,
+    )
+
+
+    # Protect the tracking result page.
+    # The order must first be verified through the tracking form,
+    # unless it belongs to the currently logged-in user.
+    verified_orders = request.session.get(
+        "verified_tracking_orders",
+        []
+    )
+
+
+    is_owner = (
+        request.user.is_authenticated
+        and order.user_id == request.user.id
+    )
+
+
+    if (
+        order.order_number not in verified_orders
+        and not is_owner
+    ):
+        return redirect(
+            "designer:order_tracking"
+        )
+
+
+    return render(
+        request,
+        "designer/order_tracking_result.html",
+        {
+            "order": order,
+        }
+    )
+
+def order_success(request, order_number):
+    from .models import Order
+    from .services.order_workflow import sync_order_status
+    order = get_object_or_404(Order.objects.select_related("design", "design__product"), order_number=order_number)
+    if order.user_id and (not request.user.is_authenticated or (request.user.id != order.user_id and not request.user.is_staff)):
+        return redirect("designer:home")
+    sync_order_status(order); order.refresh_from_db()
+    return render(request, "designer/order_success.html", {"order":order})
+
+def my_orders(request):
+    from .models import Order
+    from .services.order_workflow import sync_order_status
+
+    if request.user.is_authenticated:
+        orders = list(
+            Order.objects.filter(user=request.user)
+            .select_related("design", "design__product")
+            .prefetch_related("status_history")
+        )
+    else:
+        # A guest can reach My Orders only after verifying order number + phone
+        # on the order-tracking page.
+        tracked_id = request.session.get("tracked_order_id")
+        orders = list(
+            Order.objects.filter(pk=tracked_id)
+            .select_related("design", "design__product")
+            .prefetch_related("status_history")
+        ) if tracked_id else []
+
+    for o in orders:
+        sync_order_status(o)
+        o.refresh_from_db()
+
+    current_statuses = {"new", "confirmed", "in_production", "shipped"}
+    current_orders = [o for o in orders if o.status in current_statuses]
+    order_history = [o for o in orders if o.status not in current_statuses]
+
+    highlight = (request.GET.get("order") or "").strip()
+    return render(request, "designer/my_orders.html", {
+        "orders": orders,
+        "current_orders": current_orders,
+        "order_history": order_history,
+        "highlight_order": highlight,
+        "account_layout": "designer/account_shell.html" if request.user.is_authenticated else "designer/base.html",
+    })
+
+
+@login_required
+def customer_panel(request):
+    """Customer-only account area; staff retain their existing admin workflow."""
+    if request.user.is_staff:
+        return redirect("admin:index")
+    return render(request, "designer/customer_panel.html", {
+        "order_count": Order.objects.filter(user=request.user).count(),
+    })
+
+
+@login_required
+def profile(request):
+    return render(request, "designer/profile.html", {
+        "profile_user": request.user,
+        "order_count": Order.objects.filter(user=request.user).count(),
+    })
+
+
+def buy_again(request, order_id):
+    if request.method != "POST":
+        return redirect("designer:my_orders")
+
+    if request.user.is_authenticated:
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+    else:
+        tracked_id = request.session.get("tracked_order_id")
+        if not tracked_id or int(tracked_id) != int(order_id):
+            return redirect("designer:order_tracking")
+        order = get_object_or_404(Order, pk=order_id)
+
+    product = order.design.product if order.design else None
+    if product and product.is_active and not product.is_out_of_stock:
+        cart = _store_cart(request)
+        size_key = _design_selected_size_key(order.design)
+        color_key = _design_selected_color_key(order.design)
+        key = f"{product.id}:{size_key}:{color_key}" if (size_key or color_key) else str(product.id)
+        cart[key] = min(9999, int(cart.get(key, 0)) + max(1, int(order.quantity or 1)))
+        _save_store_cart(request, cart)
+    return redirect("designer:cart")
+
+@staff_member_required
+def admin_order_artwork_download(request, order_id, fmt):
+    from .models import Order
+    from .services.order_workflow import preview_bytes
+    order = get_object_or_404(Order.objects.select_related("design"), pk=order_id)
+    try:
+        payload, content_type, ext = preview_bytes(order.design, fmt)
+    except ValueError as exc:
+        return HttpResponse(str(exc), status=404, content_type="text/plain")
+    response = HttpResponse(payload, content_type=content_type)
+    response["Content-Disposition"] = f'attachment; filename="{order.order_number}-custom-artwork.{ext}"'
+    return response
+
+@csrf_exempt
+def stripe_webhook(request):
+    from django.conf import settings
+    from django.utils import timezone
+    from .models import Order
+    from .services.order_workflow import sync_order_status
+    if request.method != "POST": return HttpResponse(status=405)
+    try:
+        import stripe
+        payload = request.body
+        sig = request.META.get("HTTP_STRIPE_SIGNATURE", "")
+        site = SiteSettings.current()
+        webhook_secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "") or site.stripe_webhook_secret
+        event = stripe.Webhook.construct_event(payload, sig, webhook_secret)
+    except Exception:
+        return HttpResponse(status=400)
+    if event.get("type") == "checkout.session.completed":
+        session = event["data"]["object"]
+        metadata = session.get("metadata") or {}
+        order_number = session.get("client_reference_id") or metadata.get("order_number")
+        order_numbers = [x.strip() for x in metadata.get("order_numbers", "").split(",") if x.strip()]
+        if not order_numbers and order_number:
+            order_numbers = [order_number]
+        if order_numbers and session.get("payment_status") == "paid":
+            for order in Order.objects.filter(order_number__in=order_numbers):
+                order.payment_status = "paid"; order.payment_provider = "stripe"; order.paid_at = timezone.now(); order.stripe_checkout_session_id = session.get("id", "")
+                order.save(update_fields=["payment_status","payment_provider","paid_at","stripe_checkout_session_id","updated_at"])
+                sync_order_status(order)
+    return HttpResponse(status=200)
+
+
+@require_POST
+def vectorize_upload(request):
+    """Convert customer-uploaded raster artwork to SVG without touching product/UI images.
+
+    PNG/JPEG/WebP uploads are traced with VTracer. SVG uploads are returned after
+    lightweight XML sanitisation. The editor loads the returned SVG as Fabric vector
+    objects so artwork can be moved, resized, recoloured, layered and ungrouped.
+    """
+    upload = request.FILES.get("file")
+    if not upload:
+        return JsonResponse({"ok": False, "error": "No artwork file supplied."}, status=400)
+    if upload.size > 15 * 1024 * 1024:
+        return JsonResponse({"ok": False, "error": "Artwork exceeds the 15 MB limit."}, status=400)
+    raw = upload.read()
+    content_type = (upload.content_type or "").lower()
+    name = (upload.name or "artwork").lower()
+    try:
+        if content_type == "image/svg+xml" or name.endswith(".svg"):
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(raw.decode("utf-8", errors="strict"))
+            # Remove script/foreignObject and inline event handlers/external hrefs.
+            forbidden = {"script", "foreignObject"}
+            for parent in list(root.iter()):
+                for child in list(parent):
+                    if child.tag.split("}")[-1] in forbidden:
+                        parent.remove(child)
+                for key in list(parent.attrib):
+                    local = key.split("}")[-1].lower()
+                    val = parent.attrib.get(key, "")
+                    if local.startswith("on") or (local in {"href", "xlink:href"} and val.startswith(("http:", "https:", "javascript:"))):
+                        del parent.attrib[key]
+            svg = ET.tostring(root, encoding="unicode")
+        else:
+            if content_type and content_type not in {"image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp"}:
+                return JsonResponse({"ok": False, "error": "Use PNG, JPG, WebP, BMP or SVG artwork."}, status=400)
+            try:
+                import vtracer
+            except ImportError:
+                return JsonResponse({"ok": False, "error": "VTracer is not installed. Run: python -m pip install -r requirements.txt"}, status=500)
+            cfg = vtracer.Config.poster()
+            cfg.hierarchical = "cutout"
+            cfg.mode = "spline"
+            cfg.max_colors = 32
+            cfg.optimize = 2
+            svg = cfg.convert_bytes(raw)
+        return JsonResponse({"ok": True, "svg": svg, "name": upload.name})
+    except Exception as exc:
+        return JsonResponse({"ok": False, "error": "Could not vectorize this artwork: %s" % exc}, status=400)
+
+
+@staff_member_required
+@require_POST
+def admin_image_text_ocr(request):
+    """Server-side OCR for uploaded artwork; image bytes are not persisted."""
+    import base64
+    import io
+    from PIL import Image
+    from django.http import JsonResponse
+    try:
+        payload = json.loads(request.body)
+        data = payload.get("image", "")
+        if not data.startswith("data:image/") or "," not in data:
+            return JsonResponse({"error": "Image data URL required"}, status=400)
+        raw = base64.b64decode(data.split(",", 1)[1], validate=True)
+        if len(raw) > 15 * 1024 * 1024:
+            return JsonResponse({"error": "Image exceeds 15 MB"}, status=413)
+        image = Image.open(io.BytesIO(raw))
+        image.verify()
+        image = Image.open(io.BytesIO(raw)).convert("RGB")
+        if image.width * image.height > 24000000:
+            return JsonResponse({"error": "Image dimensions too large"}, status=413)
+        try:
+            import easyocr
+            import numpy as np
+        except ImportError:
+            return JsonResponse({"error": "Install easyocr and numpy on the server"}, status=503)
+        if not hasattr(admin_image_text_ocr, "_reader"):
+            admin_image_text_ocr._reader = easyocr.Reader(["en"], gpu=False)
+        # OCR the whole page and overlapping tiles independently. Business-card
+        # headings can be too small relative to large decorative artwork.
+        # Tiling keeps the text at a readable scale without assuming a layout.
+        from PIL import ImageOps, ImageEnhance
+        reader = admin_image_text_ocr._reader
+        width, height = image.size
+        regions = [(0, 0, width, height)]
+        if width >= 300 and height >= 160:
+            regions += [
+                (int(width * .35), 0, width, height),
+                (0, 0, int(width * .65), height),
+                (0, 0, width, int(height * .65)),
+                (0, int(height * .35), width, height),
+            ]
+        lines = []
+        for x0, y0, x1, y1 in regions:
+            crop = image.crop((x0, y0, x1, y1))
+            # Two independent passes improve small, low-contrast lettering.
+            variants = [crop]
+            if crop.width <= 1800:
+                variants.append(ImageEnhance.Contrast(
+                    ImageOps.grayscale(crop).convert("RGB")).enhance(1.7))
+            for variant in variants:
+                scale = min(2.5, max(1.0, 1300 / max(variant.width, variant.height)))
+                if scale > 1.05:
+                    variant = variant.resize(
+                        (round(variant.width * scale), round(variant.height * scale)),
+                        Image.Resampling.LANCZOS)
+                else:
+                    scale = 1.0
+                try:
+                    results = reader.readtext(
+                        np.asarray(variant), detail=1, paragraph=False,
+                        decoder="greedy", mag_ratio=1.0)
+                except Exception:
+                    import logging
+                    logging.getLogger(__name__).exception("OCR region failed")
+                    continue
+                for quad, value, confidence in results:
+                    text = str(value).strip()
+                    if len(text) < 2 or float(confidence) < .25:
+                        continue
+                    xs = [float(pt[0]) / scale + x0 for pt in quad]
+                    ys = [float(pt[1]) / scale + y0 for pt in quad]
+                    box = {"x0": max(0, min(xs)), "y0": max(0, min(ys)),
+                           "x1": min(width, max(xs)), "y1": min(height, max(ys))}
+                    if box["x1"] <= box["x0"] or box["y1"] <= box["y0"]:
+                        continue
+                    lines.append({"text": text,
+                                  "confidence": round(float(confidence) * 100, 1),
+                                  "bbox": box})
+        # Prefer higher-confidence readings when tiled passes overlap.
+        lines.sort(key=lambda item: item["confidence"], reverse=True)
+        unique = []
+        for item in lines:
+            a = item["bbox"]
+            duplicate = False
+            for other in unique:
+                b = other["bbox"]
+                ix = max(0, min(a["x1"], b["x1"]) - max(a["x0"], b["x0"]))
+                iy = max(0, min(a["y1"], b["y1"]) - max(a["y0"], b["y0"]))
+                smaller = min((a["x1"]-a["x0"])*(a["y1"]-a["y0"]),
+                              (b["x1"]-b["x0"])*(b["y1"]-b["y0"]))
+                if smaller > 0 and ix*iy/smaller > .65:
+                    duplicate = True
+                    break
+            if not duplicate:
+                unique.append(item)
+        lines = sorted(unique, key=lambda item: (item["bbox"]["y0"], item["bbox"]["x0"]))
+        return JsonResponse({"lines": lines, "engine": "easyocr"})
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception("Admin artwork OCR failed")
+        return JsonResponse({"error": "OCR processing failed"}, status=500)
+

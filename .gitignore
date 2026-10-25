@@ -1,0 +1,37 @@
+# Python generated files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django collected static output
+staticfiles/
+
+# Development/temp files
+*.bak
+*.tmp
+*.log
+
+# Local reports
+external_dependency_audit.json
+localize_product_content_report.json
+encoding_report.txt
+push-error.txt
+push-debug.txt
+zenvibe_content_sync_failures.txt
+
+# Temporary archives
+designer/static/designer/js.zip
+designer/management/commands*.zip
+
+# Temporary workspace
+tmp/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+db.sqlite3
+
+*.sqlite3
+venv/

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#34463D" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="410.0,628.5 631.0,570.0 750.0,694.8 539.2,804.0" fill="#7C967F" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="461.0,960.0 573.2,687.0 750.0,772.8 658.2,960.0" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="437.2" y1="905.4" x2="716.0" y2="628.5" stroke="#B89A62" stroke-width="3" opacity="0.85"/>
+<text x="45" y="203" fill="#7C967F" font-family="Playfair Display" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">FINAL</tspan></text>
+<text x="50" y="302" fill="#F4F1E8" font-family="Playfair Display" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">CLEARANCE</tspan></text>
+<text x="55" y="493" fill="#F4F1E8" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Last pieces â€¢ Final prices</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#B89A62" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#7C967F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#34463D" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">SHOP CLEARANCE</tspan></text>
+<text x="730" y="684" fill="#F4F1E8" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#7C967F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">82</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

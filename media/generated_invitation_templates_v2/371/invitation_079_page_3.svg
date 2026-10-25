@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#18274b" opacity="1"/>
+<line x1="95" y1="110" x2="655" y2="110" stroke="#e7b841" stroke-width="3" opacity="1"/>
+<line x1="95" y1="930" x2="655" y2="930" stroke="#e7b841" stroke-width="3" opacity="1"/>
+<text x="375.0" y="200" text-anchor="middle" fill="#e7b841" font-size="15" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="375.0" dy="0">PLEASE REPLY</tspan></text>
+<text x="375.0" y="293" text-anchor="middle" fill="#fff4a8" font-size="58" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="375.0" dy="0">RSVP</tspan></text>
+<text x="375.0" y="373" text-anchor="middle" fill="#fff4a8" font-size="18" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="375.0" dy="0">Kindly respond by 10 October 2026</tspan></text>
+<text x="120" y="502" text-anchor="start" fill="#fff4a8" font-size="17" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="120" dy="0">Guest name: __________________________</tspan></text>
+<text x="120" y="571" text-anchor="start" fill="#fff4a8" font-size="16" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="120" dy="0">□ Joyfully accepts     □ Regretfully declines</tspan></text>
+<text x="120" y="641" text-anchor="start" fill="#fff4a8" font-size="16" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="120" dy="0">Dietary requirements: ___________________</tspan></text>
+<text x="375.0" y="772" text-anchor="middle" fill="#e7b841" font-size="17" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="375.0" dy="0">04XX XXX XXX</tspan><tspan x="375.0" dy="24.65">hello@example.com</tspan><tspan x="375.0" dy="24.65">www.example.com/rsvp</tspan></text>
+</svg>

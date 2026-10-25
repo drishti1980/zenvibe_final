@@ -1,0 +1,974 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ZenVibe Admin{% endblock %}</title>
+  {# Same Google Fonts used by the storefront home page. #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="{% static 'designer/multikart_admin/assets/css/vendors/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'designer/multikart_admin/assets/css/vendors/font-awesome.css' %}">
+  <link rel="stylesheet" href="{% static 'designer/multikart_admin/assets/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'designer/css/admin-ui.css' %}">
+  {% block extrastyle %}{% endblock %}
+  {% block extrahead %}{% endblock %}
+
+  <style id="zv-admin-font-unification">
+    /* Match the storefront UI without replacing icon glyph fonts. */
+    body.zv-mk-admin,
+    body.zv-mk-admin :is(p,span,label,a,button,input,select,textarea,th,td,small),
+    body.zv-mk-admin .sidebar-menu,
+    body.zv-mk-admin .page-body,
+    body.zv-mk-admin .form-control {
+      font-family:"Lato",Arial,sans-serif!important;
+    }
+    body.zv-mk-admin :is(h1,h2,h3,h4,h5,h6),
+    body.zv-mk-admin .page-header h3,
+    body.zv-mk-admin .card-header h5,
+    body.zv-mk-admin .sidebar-title {
+      font-family:"Montserrat",Arial,sans-serif!important;
+    }
+  </style>
+  <style id="zv-admin-sidebar-groups">
+    body.zv-mk-admin .zv-sidebar .sidebar-menu > li.zv-nav-section {
+      list-style:none!important;pointer-events:none;
+      padding:22px 20px 8px!important;margin:0!important;
+      color:#9eb7d2!important;
+      font:700 10px/1.4 "Montserrat",Arial,sans-serif!important;
+      letter-spacing:1.5px!important;text-transform:uppercase;
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    body.zv-mk-admin .zv-sidebar .sidebar-menu > li.zv-nav-section:first-child {
+      border-top:0;padding-top:14px!important;
+    }
+    body.zv-mk-admin .zv-sidebar .sidebar-menu > li.zv-nav-section + li {margin-top:4px!important;}
+  </style>
+  <style id="zv-admin-critical">
+    /* Make the selected navigation location unambiguous, including dashboard. */
+    body.zv-mk-admin .zv-sidebar .sidebar-menu > li.active > .sidebar-header,
+    body.zv-mk-admin .zv-sidebar .sidebar-menu > li.zv-menu-open.active > .sidebar-header {
+      background: #28466b !important;
+      color: #fff !important;
+      border-left: 4px solid #ff7038 !important;
+      padding-left: 16px !important;
+    }
+    body.zv-mk-admin .zv-sidebar .sidebar-menu .sidebar-submenu li.active > a {
+      color: #ff7038 !important;
+      font-weight: 700 !important;
+    }
+
+    /* Critical admin layout. /templates/admin is the single admin template source. */
+    body.zv-mk-admin .change-list #changelist-filter {
+      display: none !important;
+      position: static !important;
+      float: none !important;
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      overflow: hidden !important
+    }
+
+    body.zv-mk-admin .change-list #changelist {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important
+    }
+
+    body.zv-mk-admin .change-list .filtered .results,
+    body.zv-mk-admin .change-list .filtered .paginator,
+    body.zv-mk-admin .change-list .filtered .actions {
+      margin-right: 0 !important
+    }
+
+    body.zv-mk-admin .zv-list-tools {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid #e7ebf2;
+      border-radius: 10px
+    }
+
+    body.zv-mk-admin .zv-list-tools #toolbar {
+      display: block !important;
+      flex: 1 1 440px !important;
+      min-width: 260px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important
+    }
+
+    body.zv-mk-admin .zv-list-tools #changelist-search {
+      display: flex !important;
+      align-items: flex-end !important;
+      gap: 8px !important;
+      flex-wrap: nowrap !important;
+      margin: 0 !important;
+      padding: 0 !important
+    }
+
+    body.zv-mk-admin .zv-list-tools #changelist-search>div {
+      display: flex !important;
+      align-items: flex-end !important;
+      gap: 8px !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important
+    }
+
+    body.zv-mk-admin .zv-list-tools #changelist-search label {
+      flex: 1 1 auto !important;
+      min-width: 160px !important;
+      margin: 0 !important
+    }
+
+    body.zv-mk-admin .zv-list-tools #changelist-search input[type=text],
+    body.zv-mk-admin .zv-list-tools #changelist-search input[type=search] {
+      width: 100% !important;
+      height: 42px !important;
+      margin: 0 !important
+    }
+
+    body.zv-mk-admin .zv-list-tools #changelist-search input[type=submit] {
+      height: 42px !important;
+      margin: 0 !important;
+      white-space: nowrap !important
+    }
+
+    body.zv-mk-admin .zv-filterbar {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      flex: 1 1 520px;
+      min-width: 300px;
+      flex-wrap: wrap
+    }
+
+    body.zv-mk-admin .zv-filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 145px;
+      flex: 1 1 150px;
+      max-width: 220px
+    }
+
+    body.zv-mk-admin .zv-filter-item label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #65718a;
+      margin: 0
+    }
+
+    body.zv-mk-admin .zv-filter-item select {
+      height: 42px;
+      width: 100%;
+      padding: 0 34px 0 11px;
+      border: 1px solid #dce2eb;
+      border-radius: 8px;
+      background: #fff;
+      color: #26324a
+    }
+
+    body.zv-mk-admin .zv-clear-filter {
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      border: 1px solid #dce2eb;
+      border-radius: 8px;
+      background: #fff;
+      color: #34415a;
+      font-weight: 600;
+      white-space: nowrap;
+      text-decoration: none
+    }
+
+    body.zv-mk-admin .change-list .results {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: auto !important
+    }
+
+    /* ==========================================================
+       ZENVIBE ADMIN HEADER - SINGLE AUTHORITATIVE LAYOUT
+       This block is intentionally in base.html after admin-ui.css.
+       It overrides old Multikart/header rules without relying on
+       another patch at the bottom of admin-ui.css.
+       ========================================================== */
+    body.zv-mk-admin .page-main-header.zv-topbar {
+      position: absolute !important;
+      top: 0 !important;
+      left: 255px !important;
+      right: 0 !important;
+      width: auto !important;
+      height: 70px !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      background: #fff !important;
+      z-index: 1050 !important;
+    }
+
+    body.zv-mk-admin .zv-topbar-inner {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      gap: 14px !important;
+      width: 100% !important;
+      height: 70px !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 22px !important;
+      overflow: visible !important;
+    }
+
+    body.zv-mk-admin .zv-sidebar-toggle {
+      position: static !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex: 0 0 42px !important;
+      width: 42px !important;
+      min-width: 42px !important;
+      height: 42px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: none !important;
+    }
+
+    body.zv-mk-admin .zv-topbar .zv-admin-search {
+      position: static !important;
+      display: flex !important;
+      align-items: center !important;
+      flex: 1 1 auto !important;
+      width: auto !important;
+      max-width: 720px !important;
+      min-width: 180px !important;
+      height: 42px !important;
+      margin: 0 !important;
+      padding: 0 14px !important;
+      transform: none !important;
+      overflow: hidden !important;
+    }
+
+    body.zv-mk-admin .zv-topbar .zv-admin-search input {
+      position: static !important;
+      display: block !important;
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      height: 40px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      outline: 0 !important;
+      background: transparent !important;
+      transform: none !important;
+    }
+
+    body.zv-mk-admin .zv-top-actions {
+      position: static !important;
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      flex: 0 0 auto !important;
+      width: auto !important;
+      min-width: 184px !important;
+      height: 42px !important;
+      margin: 0 0 0 auto !important;
+      padding: 0 !important;
+      gap: 4px !important;
+      list-style: none !important;
+      float: none !important;
+      transform: none !important;
+      overflow: visible !important;
+      z-index: 20 !important;
+    }
+
+    body.zv-mk-admin .zv-top-actions > li {
+      position: relative !important;
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex: 0 0 42px !important;
+      width: 42px !important;
+      min-width: 42px !important;
+      height: 42px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      float: none !important;
+    }
+
+    body.zv-mk-admin .zv-header-icon,
+    body.zv-mk-admin .zv-top-actions a.zv-header-icon,
+    body.zv-mk-admin .zv-top-actions button.zv-header-icon {
+      position: relative !important;
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex: 0 0 42px !important;
+      width: 42px !important;
+      min-width: 42px !important;
+      height: 42px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      color: #40506a !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+    }
+
+    body.zv-mk-admin .zv-header-icon svg {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      width: 20px !important;
+      min-width: 20px !important;
+      height: 20px !important;
+      stroke: currentColor !important;
+    }
+
+    body.zv-mk-admin .zv-header-logout-form {
+      display: flex !important;
+      width: 42px !important;
+      height: 42px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    @media (max-width: 991px) {
+      body.zv-mk-admin .page-main-header.zv-topbar {
+        left: 0 !important;
+        width: 100% !important;
+      }
+
+      body.zv-mk-admin .zv-topbar-inner {
+        gap: 8px !important;
+        padding: 0 12px !important;
+      }
+
+      body.zv-mk-admin .zv-topbar .zv-admin-search {
+        min-width: 0 !important;
+        max-width: none !important;
+      }
+
+      body.zv-mk-admin .zv-top-actions {
+        min-width: 0 !important;
+        gap: 2px !important;
+      }
+    }
+
+    @media (max-width: 767px) {
+      body.zv-mk-admin .page-main-header.zv-topbar,
+      body.zv-mk-admin .zv-topbar-inner {
+        height: 60px !important;
+      }
+
+      body.zv-mk-admin .zv-topbar .zv-admin-search {
+        display: none !important;
+      }
+
+      body.zv-mk-admin .zv-top-actions > li,
+      body.zv-mk-admin .zv-header-icon,
+      body.zv-mk-admin .zv-top-actions a.zv-header-icon,
+      body.zv-mk-admin .zv-top-actions button.zv-header-icon {
+        flex-basis: 38px !important;
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body.zv-mk-admin .zv-topbar-inner {
+        gap: 4px !important;
+        padding: 0 8px !important;
+      }
+
+      body.zv-mk-admin .zv-top-actions {
+        margin-left: auto !important;
+      }
+    }
+
+    @media(max-width:991px) {
+
+      body.zv-mk-admin .zv-list-tools #toolbar,
+      body.zv-mk-admin .zv-filterbar {
+        flex: 1 1 100% !important;
+        min-width: 0 !important
+      }
+
+      .zv-filter-item {
+        max-width: none !important
+      }
+    }
+
+    @media(max-width:575px) {
+      body.zv-mk-admin .zv-list-tools #changelist-search>div {
+        display: grid !important;
+        grid-template-columns: 1fr !important
+      }
+
+      body.zv-mk-admin .zv-list-tools #changelist-search input[type=submit] {
+        width: 100% !important
+      }
+
+      body.zv-mk-admin .zv-filter-item {
+        flex: 1 1 100% !important;
+        max-width: none !important
+      }
+
+      .zv-clear-filter {
+        width: 100%;
+        justify-content: center
+      }
+    }
+  </style>
+  <style id="zv-admin-list-layout">
+    /* Django adds change-list to BODY, rather than a nested content wrapper. */
+    body.zv-mk-admin.change-list #changelist {
+      display:flex!important;flex-direction:column!important;gap:16px!important;
+      width:100%!important;min-width:0!important;max-width:100%!important;
+      padding:0!important;background:transparent!important;box-shadow:none!important;
+    }
+    body.zv-mk-admin.change-list #changelist .changelist-form-container,
+    body.zv-mk-admin.change-list #content-main,
+    body.zv-mk-admin.change-list #changelist-form {
+      display:block!important;float:none!important;width:100%!important;
+      min-width:0!important;max-width:100%!important;margin:0!important;
+    }
+    body.zv-mk-admin.change-list #changelist-form {
+      background:#fff!important;border:1px solid #e2e7ef!important;
+      border-radius:12px!important;box-shadow:0 2px 8px rgba(20,40,70,.04)!important;
+      overflow:hidden!important;
+    }
+    body.zv-mk-admin.change-list #changelist .zv-list-tools {
+      flex:0 0 auto!important;width:100%!important;min-width:0!important;
+      margin:0!important;padding:16px!important;box-sizing:border-box!important;
+    }
+    body.zv-mk-admin.change-list #changelist .zv-list-tools #toolbar {
+      flex:1 1 100%!important;width:100%!important;min-width:0!important;
+    }
+    body.zv-mk-admin.change-list #changelist-search,
+    body.zv-mk-admin.change-list #changelist-search > div {
+      display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+      width:100%!important;min-width:0!important;gap:10px!important;
+    }
+    body.zv-mk-admin.change-list #changelist-search label {
+      flex:0 0 auto!important;min-width:0!important;margin:0!important;
+    }
+    body.zv-mk-admin.change-list #changelist-search input[type=search],
+    body.zv-mk-admin.change-list #changelist-search input[type=text] {
+      flex:1 1 180px!important;width:auto!important;min-width:0!important;
+      height:42px!important;max-width:100%!important;
+    }
+    body.zv-mk-admin.change-list #changelist-search input[type=submit] {
+      flex:0 0 auto!important;width:auto!important;height:42px!important;margin:0!important;
+    }
+    body.zv-mk-admin.change-list #changelist-search .quiet {flex-basis:100%!important}
+    body.zv-mk-admin.change-list #changelist .zv-filterbar {
+      flex:1 1 100%!important;min-width:0!important;width:100%!important;
+      gap:12px!important;padding-top:4px!important;
+    }
+    body.zv-mk-admin.change-list #changelist .zv-filter-item {flex:1 1 165px!important;min-width:140px!important;max-width:260px!important}
+    body.zv-mk-admin.change-list #changelist .actions {
+      display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+      gap:10px!important;padding:14px 16px!important;margin:0!important;
+      border-bottom:1px solid #e2e7ef!important;background:#fff!important;
+    }
+    body.zv-mk-admin.change-list #changelist .actions label {display:flex!important;align-items:center!important;gap:8px!important;margin:0!important}
+    body.zv-mk-admin.change-list #changelist .actions select {width:auto!important;min-width:180px!important;max-width:100%!important;height:38px!important}
+    body.zv-mk-admin.change-list #changelist .actions .action-counter {margin-left:auto!important;white-space:nowrap!important}
+    body.zv-mk-admin.change-list #changelist .actions .all,
+    body.zv-mk-admin.change-list #changelist .actions .question,
+    body.zv-mk-admin.change-list #changelist .actions .clear {margin:0!important}
+    body.zv-mk-admin.change-list #changelist .results {
+      width:100%!important;max-width:100%!important;min-width:0!important;
+      margin:0!important;border:0!important;border-radius:0!important;
+      overflow-x:auto!important;overscroll-behavior-x:contain;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list {
+      table-layout:auto!important;width:100%!important;min-width:960px!important;
+      max-width:none!important;margin:0!important;border-collapse:collapse!important;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list th,
+    body.zv-mk-admin.change-list #changelist #result_list td {
+      padding:13px 16px!important;line-height:1.45!important;font-size:13px!important;
+      vertical-align:middle!important;white-space:nowrap!important;
+      word-break:normal!important;overflow-wrap:normal!important;
+      width:auto!important;max-width:none!important;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list thead th {
+      background:#f5f7fa!important;color:#53637b!important;font-weight:700!important;
+      border-bottom:1px solid #dfe6ef!important;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list tbody td,
+    body.zv-mk-admin.change-list #changelist #result_list tbody th {border-bottom:1px solid #edf0f5!important}
+    body.zv-mk-admin.change-list #changelist #result_list tbody tr:hover {background:#f8fafc!important}
+    body.zv-mk-admin.change-list #changelist #result_list :is(.field-name,.field-product_name,.field-product,.field-category) {
+      min-width:200px!important;max-width:340px!important;white-space:normal!important;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list :is(.column-action_checkbox,.action-checkbox-column,.action-checkbox) {min-width:44px!important;width:44px!important;text-align:center!important}
+    body.zv-mk-admin.change-list #changelist #result_list :is(input[type=text],input[type=number],select) {
+      width:112px!important;min-width:96px!important;max-width:180px!important;
+      height:36px!important;padding:6px 10px!important;box-sizing:border-box!important;
+    }
+    body.zv-mk-admin.change-list #changelist #result_list input[type=checkbox] {width:16px!important;height:16px!important;min-width:16px!important}
+    body.zv-mk-admin.change-list #changelist #result_list :is(a.button,.button) {white-space:nowrap!important;overflow-wrap:normal!important;padding:9px 12px!important}
+    body.zv-mk-admin.change-list #changelist .paginator {width:100%!important;margin:0!important;padding:16px!important;box-sizing:border-box!important;border-top:1px solid #e2e7ef!important}
+    body.zv-mk-admin.change-list #changelist .xfull {width:100%!important;margin:0!important;padding:12px 16px!important;box-sizing:border-box!important}
+    body.zv-mk-admin.zv-dark.change-list #changelist :is(.actions,.paginator),
+    body.zv-mk-admin.zv-dark-admin.change-list #changelist :is(.actions,.paginator),
+    body.zv-mk-admin.zv-dark.change-list #changelist-form,
+    body.zv-mk-admin.zv-dark-admin.change-list #changelist-form {background:#18273b!important;color:#e5edf7!important}
+    body.zv-mk-admin:is(.zv-dark,.zv-dark-admin).change-list #changelist .zv-list-tools {background:#18273b!important;border-color:#35465f!important}
+    body.zv-mk-admin:is(.zv-dark,.zv-dark-admin).change-list #changelist #result_list :is(th,td) {background:#18273b!important;color:#e3edf9!important;border-color:#35465f!important}
+    body.zv-mk-admin:is(.zv-dark,.zv-dark-admin).change-list #changelist #result_list thead th {background:#20324a!important;color:#d5e3f7!important}
+    body.zv-mk-admin:is(.zv-dark,.zv-dark-admin).change-list #changelist #result_list tbody tr:hover > * {background:#253952!important}
+    @media(max-width:600px) {
+      body.zv-mk-admin.change-list #changelist .zv-list-tools {padding:12px!important}
+      body.zv-mk-admin.change-list #changelist .zv-filter-item {min-width:0!important;flex-basis:calc(50% - 12px)!important;max-width:none!important}
+      body.zv-mk-admin.change-list #changelist .actions label {width:100%!important;flex-wrap:wrap!important}
+      body.zv-mk-admin.change-list #changelist .actions select {flex:1 1 140px!important;min-width:0!important}
+      body.zv-mk-admin.change-list #changelist .actions .action-counter {margin-left:0!important}
+    }
+  </style>
+<style id="zv-admin-date-time-widgets">
+/* Scope the date/time controls to this custom admin theme. */
+body.zv-mk-admin .datetimeshortcuts {display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;font-size:12px;color:#65758a}
+body.zv-mk-admin .datetimeshortcuts a {color:#102f50;text-decoration:none}
+body.zv-mk-admin .datetimeshortcuts a[id^=calendarlink],body.zv-mk-admin .datetimeshortcuts a[id^=clocklink] {display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid #dce2eb;border-radius:6px;background:#fff;vertical-align:middle}
+body.zv-mk-admin .datetimeshortcuts a:hover,body.zv-mk-admin .datetimeshortcuts a:focus-visible {background-color:#edf3fa;outline-offset:2px}
+body.zv-mk-admin .datetimeshortcuts :is(.date-icon,.clock-icon) {display:block!important;position:static!important;width:20px!important;height:20px!important;min-width:20px;overflow:hidden;background-repeat:no-repeat!important;background-position:center!important;background-size:20px 20px!important;border:0!important}
+body.zv-mk-admin .datetimeshortcuts .date-icon {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23102f50' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2M8 18h2'/%3E%3C/svg%3E")!important}
+body.zv-mk-admin .datetimeshortcuts .clock-icon {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23102f50' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E")!important}
+body.zv-mk-admin p.datetime {line-height:2.8;margin-bottom:0}
+body.zv-mk-admin .datetime :is(input.vDateField,input.vTimeField) {width:130px!important;min-width:0!important;max-width:45vw;height:38px;box-sizing:border-box;margin:3px 6px!important}
+body.zv-mk-admin :is(.calendarbox,.clockbox) {position:fixed!important;z-index:2147483000!important;width:300px!important;max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 24px);overflow:auto!important;margin:0!important;padding:0!important;background:#fff!important;color:#24364b!important;border:1px solid #dce2eb!important;border-radius:9px!important;box-shadow:0 12px 35px rgba(16,47,80,.22);font-size:13px;text-align:center;box-sizing:border-box}
+body.zv-mk-admin :is(.calendarbox,.clockbox) h2,body.zv-mk-admin .calendarbox caption {display:table-caption;caption-side:top!important;background:#102f50!important;color:#fff!important;font-size:14px!important;font-weight:700;text-align:center;margin:0!important;padding:12px 36px!important;line-height:22px!important}
+body.zv-mk-admin .clockbox h2 {display:block}
+body.zv-mk-admin .calendarbox .calendar {margin:0;padding:0}
+body.zv-mk-admin .calendarbox table {width:100%!important;margin:0!important;border-collapse:collapse;background:#fff;table-layout:fixed}
+body.zv-mk-admin .calendarbox th {padding:8px 0!important;background:#f3f6fa!important;color:#526178!important;text-align:center;font-size:12px;border:0}
+body.zv-mk-admin .calendarbox td {padding:0!important;height:36px;text-align:center;font-size:13px;border:0!important}
+body.zv-mk-admin .calendarbox td a {display:block;line-height:36px;padding:0!important;color:#24364b;text-decoration:none;border-radius:4px}
+body.zv-mk-admin .calendarbox td.selected a {background:#102f50!important;color:#fff!important}
+body.zv-mk-admin .calendarbox td.today a {font-weight:800;text-decoration:underline}
+body.zv-mk-admin :is(.calendarbox td a,.timelist a):is(:hover,:focus-visible) {background:#edf3fa!important;color:#102f50!important;outline-offset:-2px}
+body.zv-mk-admin .calendarbox .calendarnav-previous,body.zv-mk-admin .calendarbox .calendarnav-next {position:absolute;top:8px;display:block;width:30px;height:30px;background:none!important;text-decoration:none;text-indent:0!important;overflow:visible!important;font-size:0!important;color:#fff!important}
+body.zv-mk-admin .calendarbox .calendarnav-previous {left:8px;right:auto}
+body.zv-mk-admin .calendarbox .calendarnav-next {right:8px;left:auto}
+body.zv-mk-admin .calendarbox .calendarnav-previous::before {content:'‹';font:26px/28px Arial,sans-serif}
+body.zv-mk-admin .calendarbox .calendarnav-next::before {content:'›';font:26px/28px Arial,sans-serif}
+body.zv-mk-admin .calendar-shortcuts,body.zv-mk-admin .calendar-cancel {margin:0!important;padding:10px 6px!important;background:#f4f7fb!important;border-top:1px solid #e4e9f0;color:#526178;font-size:12px;line-height:20px}
+body.zv-mk-admin :is(.calendar-shortcuts,.calendar-cancel) a {color:#102f50;text-decoration:none}
+body.zv-mk-admin .timelist {display:block;list-style:none;margin:0!important;padding:6px!important}
+body.zv-mk-admin .timelist li {display:block;list-style:none;margin:0!important;padding:0!important}
+body.zv-mk-admin .timelist a {display:block;padding:10px!important;color:#24364b;text-decoration:none;border-radius:5px;font-size:13px}
+</style>
+
+<style id="zv-admin-content-scrolling">
+/* Keep scrolling inside the content that overflows, without resizing its fields. */
+body.zv-mk-admin .zv-admin-content,
+body.zv-mk-admin .zv-admin-content :is(#content-main,#changelist,.changelist-form-container,.inline-group,.card,.card-body,.zv-panel) {min-width:0!important;max-width:100%;box-sizing:border-box}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.zv-panel) {overflow:auto!important}
+body.zv-mk-admin .zv-admin-content .card-body {min-height:0}
+body.zv-mk-admin .zv-admin-content :is(.results,.table-responsive,.tabular > fieldset.module) {
+  display:block;min-width:0!important;max-width:100%!important;
+  max-height:min(70vh,720px);max-height:min(70dvh,720px);
+  overflow:auto!important;-webkit-overflow-scrolling:touch;
+}
+body.zv-mk-admin.change-list #changelist .results,
+body.zv-mk-admin #changelist .results {overflow-x:auto!important;overflow-y:auto!important;max-height:min(70vh,720px);max-height:min(70dvh,720px)}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.results,.table-responsive,.inline-group,.zv-panel,textarea),
+body.zv-mk-admin .zv-sidebar .sidebar {
+  scrollbar-width:auto;scrollbar-color:#8598af #edf1f6;
+}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.results,.table-responsive,.inline-group,.zv-panel,textarea)::-webkit-scrollbar,
+body.zv-mk-admin .zv-sidebar .sidebar::-webkit-scrollbar {width:12px;height:12px}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.results,.table-responsive,.inline-group,.zv-panel,textarea)::-webkit-scrollbar-thumb,
+body.zv-mk-admin .zv-sidebar .sidebar::-webkit-scrollbar-thumb {background:#8598af;border:3px solid #edf1f6;border-radius:8px}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.results,.table-responsive,.inline-group,.zv-panel,textarea)::-webkit-scrollbar-track,
+body.zv-mk-admin .zv-sidebar .sidebar::-webkit-scrollbar-track {background:#edf1f6}
+body.zv-mk-admin .zv-admin-content :is(.form-row,.module,.card,.card-body,.results,.table-responsive,.inline-group,.zv-panel,textarea)::-webkit-scrollbar-corner {background:#edf1f6}
+</style>
+
+</head>
+
+<body class="zv-mk-admin {% block bodyclass %}{% endblock %}">
+  <script>
+  (function () {
+    var login = "{{ request.user.pk }}:{{ request.user.last_login|date:'U' }}";
+    try {
+      if (sessionStorage.getItem('zenvibe-admin-login') !== login) {
+        localStorage.setItem('zenvibe-sidebar-collapsed', '1');
+        sessionStorage.setItem('zenvibe-admin-login', login);
+      }
+      if (innerWidth > 991 && localStorage.getItem('zenvibe-sidebar-collapsed') !== '0') {
+        document.body.classList.add('zv-sidebar-collapsed');
+      }
+    } catch (error) { if (innerWidth > 991) document.body.classList.add('zv-sidebar-collapsed'); }
+  })();
+  </script>
+  <div class="page-wrapper">
+    <div class="page-main-header zv-topbar">
+      <div class="zv-topbar-inner">
+        <button type="button" class="zv-icon-btn zv-sidebar-toggle" id="zvSidebarToggle"
+          aria-label="Toggle admin navigation"><i data-feather="align-left"></i></button>
+
+        <!-- <label class="zv-admin-search" for="zvAdminSearch">
+          <i data-feather="search"></i>
+          <input type="search" id="zvAdminSearch" placeholder="Search admin..." autocomplete="off">
+        </label> -->
+
+        <ul class="zv-top-actions">
+
+          <!-- View Website -->
+          <li>
+            <a href="{{ site_url|default:'/' }}" class="zv-header-icon" title="View Website" aria-label="View Website">
+              <i data-feather="external-link"></i>
+            </a>
+          </li>
+
+          <!-- Light / Dark Theme -->
+          <li>
+            <button type="button" class="zv-header-icon" id="zvThemeToggle" title="Light / Dark Theme"
+              aria-label="Light / Dark Theme">
+              <i data-feather="moon"></i>
+            </button>
+          </li>
+
+          <!-- Notifications -->
+          <li class="onhover-dropdown zv-notification-menu">
+
+            <button type="button" class="zv-header-icon" title="Notifications" aria-label="Notifications">
+
+              <i data-feather="bell"></i>
+
+              {% if zv_new_orders %}
+              <span class="zv-notification-count">
+                {{ zv_new_orders }}
+              </span>
+              {% endif %}
+
+            </button>
+
+            <ul class="notification-dropdown onhover-show-div p-0">
+
+              <li class="zv-notify-title">
+                Notifications
+              </li>
+
+              <li>
+                <a href="{% url 'admin:designer_order_changelist' %}">
+                  <i data-feather="shopping-bag"></i>
+                  New customer orders
+                  <b>{{ zv_new_orders|default:"0" }}</b>
+                </a>
+              </li>
+
+              <li>
+                <a href="{% url 'admin:designer_order_changelist' %}?payment_status__exact=pending">
+                  <i data-feather="credit-card"></i>
+                  Pending payments
+                  <b>{{ zv_pending_payments|default:"0" }}</b>
+                </a>
+              </li>
+
+            </ul>
+
+          </li>
+
+
+          {% if request.user.is_authenticated %}
+
+          <!-- Logout -->
+          <li>
+            <form method="post" action="{% url 'admin:logout' %}" class="zv-header-logout-form">
+
+              {% csrf_token %}
+
+              <button type="submit" class="zv-header-icon zv-logout-icon" title="Logout" aria-label="Logout">
+
+                <i data-feather="log-out"></i>
+
+              </button>
+
+            </form>
+          </li>
+
+          {% else %}
+
+          <!-- Login -->
+          <li>
+            <a href="{% url 'admin:login' %}" class="zv-header-icon" title="Login" aria-label="Login">
+
+              <i data-feather="log-in"></i>
+
+            </a>
+          </li>
+
+          {% endif %}
+
+        </ul>
+
+      </div>
+    </div>
+
+    <div class="page-body-wrapper">
+      <aside class="page-sidebar zv-sidebar" id="zvSidebar">
+        <div class="main-header-left"><a class="zv-admin-logo" href="{% url 'admin:index' %}"><span
+              class="zv-logo-mark">Z</span><span><b>ZenVibe</b><small>CORPORATE GIFTS</small></span></a></div>
+        <div class="sidebar custom-scrollbar">
+          <ul class="sidebar-menu">
+            <li class="zv-nav-section" role="presentation">OVERVIEW</li>
+            <li class="{% if request.path == '/admin/' %}active{% endif %}"><a class="sidebar-header" href="{% url 'admin:index' %}"><i
+                  data-feather="home"></i><span>Dashboard</span></a></li>
+            <li class="zv-nav-section" role="presentation">STORE MANAGEMENT</li>
+            <li><a class="sidebar-header" href="javascript:void(0)"><i
+                  data-feather="monitor"></i><span>Website Content</span><i
+                  class="fa fa-angle-right pull-right"></i></a>
+              <ul class="sidebar-submenu">
+                <li><a href="{% url 'admin:designer_homebanner_changelist' %}"><i class="fa fa-circle"></i> Home Page Banners</a></li>
+                <li><a href="{% url 'admin:designer_pagecontentblock_changelist' %}?page__exact=home"><i class="fa fa-circle"></i> Home Page Content</a></li>
+                <li><a href="{% url 'admin:designer_pagecontentblock_changelist' %}?page__exact=about"><i class="fa fa-circle"></i> About Us</a></li>
+                <li><a href="{% url 'admin:designer_pagecontentblock_changelist' %}?page__exact=our_work"><i class="fa fa-circle"></i> Our Work</a></li>
+                <li><a href="{% url 'admin:designer_pagecontentblock_changelist' %}?page__exact=contact"><i class="fa fa-circle"></i> Contact Us</a></li>
+              </ul>
+            </li>
+            <li><a class="sidebar-header" href="javascript:void(0)"><i data-feather="box"></i><span>Products</span><i
+                  class="fa fa-angle-right pull-right"></i></a>
+              <ul class="sidebar-submenu">
+                <li><a href="{% url 'admin:designer_product_changelist' %}"><i class="fa fa-circle"></i> Product
+                    List</a></li>
+                <li><a href="{% url 'admin:designer_product_add' %}"><i class="fa fa-circle"></i> Add Product</a></li>
+                <li><a href="{% url 'admin:designer_category_changelist' %}"><i class="fa fa-circle"></i> Categories</a>
+                </li>
+              </ul>
+            </li>
+            <li><a class="sidebar-header" href="javascript:void(0)"><i data-feather="archive"></i><span>Orders</span><i
+                  class="fa fa-angle-right pull-right"></i></a>
+              <ul class="sidebar-submenu">
+                <li><a href="{% url 'admin:designer_order_changelist' %}"><i class="fa fa-circle"></i> Order List</a>
+                </li>
+                <li><a href="{% url 'admin:designer_order_changelist' %}?status__exact=new"><i class="fa fa-circle"></i>
+                    New Orders</a></li>
+              </ul>
+            </li>
+            <li class="zv-nav-section" role="presentation">DESIGN & CONTENT</li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_designtemplate_changelist' %}"><i
+                  data-feather="layout"></i><span>Design Templates</span></a></li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_saveddesign_changelist' %}"><i
+                  data-feather="image"></i><span>Saved Designs</span></a></li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_blogpost_changelist' %}"><i
+                  data-feather="file-text"></i><span>Blog</span></a></li>
+            <li class="zv-nav-section" role="presentation">CUSTOMERS & INSIGHTS</li>
+            <li><a class="sidebar-header" href="{% url 'admin:auth_user_changelist' %}"><i
+                  data-feather="users"></i><span>Customers / Users</span></a></li>
+            <li><a class="sidebar-header" href="javascript:void(0)"><i
+                  data-feather="message-circle"></i><span>Chatbot</span><i class="fa fa-angle-right pull-right"></i></a>
+              <ul class="sidebar-submenu">
+                <li><a href="{% url 'admin:designer_chatbotknowledge_changelist' %}"><i class="fa fa-circle"></i> Train
+                    Questions</a></li>
+                <li><a href="{% url 'admin:designer_chatinquiry_changelist' %}"><i class="fa fa-circle"></i> Customer
+                    Inquiries</a></li>
+              </ul>
+            </li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_order_changelist' %}"><i
+                  data-feather="bar-chart-2"></i><span>Sales & Reports</span></a></li>
+            <li class="zv-nav-section" role="presentation">MARKETING</li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_discountcoupon_changelist' %}"><i data-feather="tag"></i><span>Discount Coupons</span></a></li>
+            <li class="zv-nav-section" role="presentation">STORE SETTINGS</li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_paymentsetup_changelist' %}"><i data-feather="credit-card"></i><span>Payment Setup</span></a></li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_storeemailaccount_changelist' %}"><i data-feather="mail"></i><span>Email Configuration</span></a></li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_storeemailtemplate_changelist' %}"><i data-feather="file-text"></i><span>Email Templates</span></a></li>
+            <li><a class="sidebar-header" href="{% url 'admin:designer_sitesettings_changelist' %}"><i
+                  data-feather="settings"></i><span>Settings</span></a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="page-body zv-page-body">
+
+        {% block breadcrumbs %}
+        {% endblock %}
+
+        {% if messages %}
+        <div class="zv-messages">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message|capfirst }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="container-fluid zv-admin-content">
+
+          {% block pretitle %}
+          {% endblock %}
+
+          {% block content_title %}
+          {% if title %}
+          <div class="page-header">
+            <div class="page-header-left">
+              <h3>
+                {{ title }}
+                {% if subtitle %}
+                <small>{{ subtitle }}</small>
+                {% endif %}
+              </h3>
+            </div>
+          </div>
+          {% endif %}
+          {% endblock %}
+
+          {% block content %}
+          {{ content }}
+          {% endblock %}
+
+        </div>
+    </div>
+  </div>
+  <script src="{% static 'designer/multikart_admin/assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'designer/multikart_admin/assets/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'designer/multikart_admin/assets/js/icons/feather-icon/feather.min.js' %}"></script>
+  <script src="{% static 'designer/js/admin-ui.js' %}?v=20261018-sidebar-position"></script>
+
+  <script id="zv-admin-filter-toolbar">
+    (function () {
+      function cleanLabel(text) {return (text || 'Filter').replace(/^\s*[â†“â†‘â†’]\s*/, '').replace(/^By\s+/i, '').trim();}
+      function groupsFromNative(native) {
+        var groups = [];
+        native.querySelectorAll('details').forEach(function (d) {
+          var summary = d.querySelector(':scope > summary');
+          var ul = d.querySelector(':scope > ul') || d.querySelector('ul');
+          if (summary && ul) groups.push({label: cleanLabel(summary.textContent), list: ul});
+        });
+        native.querySelectorAll(':scope > h3').forEach(function (h) {
+          var n = h.nextElementSibling; while (n && n.tagName !== 'UL' && n.tagName !== 'DETAILS') n = n.nextElementSibling;
+          if (n && n.tagName === 'UL') groups.push({label: cleanLabel(h.textContent), list: n});
+        });
+        return groups;
+      }
+      function buildTopFilters() {
+        var cl = document.getElementById('changelist'), native = document.getElementById('changelist-filter'), toolbar = document.getElementById('toolbar');
+        if (!cl || !toolbar || document.querySelector('.zv-list-tools')) return;
+        var shell = document.createElement('div'); shell.className = 'zv-list-tools';
+        toolbar.parentNode.insertBefore(shell, toolbar); shell.appendChild(toolbar);
+        if (!native) return;
+        var groups = groupsFromNative(native), bar = document.createElement('div'); bar.className = 'zv-filterbar';
+        groups.forEach(function (g, i) {
+          var links = [].slice.call(g.list.querySelectorAll('li a')); if (!links.length) return;
+          var item = document.createElement('div'); item.className = 'zv-filter-item';
+          var lab = document.createElement('label'); lab.textContent = g.label; lab.htmlFor = 'zv-filter-' + i;
+          var sel = document.createElement('select'); sel.id = 'zv-filter-' + i; sel.setAttribute('aria-label', g.label);
+          links.forEach(function (a) {var o = document.createElement('option'); o.value = a.href; o.textContent = (a.textContent || 'All').trim(); o.selected = !!a.closest('li.selected'); sel.appendChild(o);});
+          sel.addEventListener('change', function () {if (this.value) window.location.assign(this.value);});
+          item.appendChild(lab); item.appendChild(sel); bar.appendChild(item);
+        });
+        if (bar.children.length) {
+          var clear = document.createElement('a'); clear.className = 'zv-clear-filter'; clear.textContent = 'Clear filters';
+          var u = new URL(location.href), q = u.searchParams.get('q'); clear.href = location.pathname + (q ? '?q=' + encodeURIComponent(q) : '');
+          bar.appendChild(clear); shell.appendChild(bar);
+        }
+        native.remove();
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildTopFilters); else buildTopFilters();
+    })();
+  </script>
+  {% block extrajs %}{% endblock %}
+<script id="zv-admin-date-time-behavior">
+(function(){
+  function init(){
+    const shortcuts=window.DateTimeShortcuts;
+    if(!shortcuts||shortcuts.zvThemeReady)return;
+    shortcuts.zvThemeReady=true;
+    let active=null;
+    function links(){
+      document.querySelectorAll('.datetimeshortcuts a[id^="calendarlink"],.datetimeshortcuts a[id^="clocklink"]').forEach(link=>{
+        const calendar=link.id.startsWith('calendarlink'),index=link.id.replace(/\D/g,'');
+        link.setAttribute('aria-label',calendar?'Choose a date':'Choose a time');
+        link.setAttribute('aria-controls',(calendar?'calendarbox':'clockbox')+index);
+        link.setAttribute('aria-expanded',document.getElementById((calendar?'calendarbox':'clockbox')+index)?.style.display==='block'?'true':'false');
+      });
+    }
+    function closeAll(except){
+      shortcuts.calendarInputs.forEach((input,index)=>{if(except!=='calendarbox'+index)shortcuts.dismissCalendar(index)});
+      shortcuts.clockInputs.forEach((input,index)=>{if(except!=='clockbox'+index)shortcuts.dismissClock(index)});
+      if(!except)active=null;
+      links();
+    }
+    function position(){
+      if(!active)return;
+      const {box,link}=active;
+      if(box.style.display==='none'){active=null;links();return}
+      const anchor=link.getBoundingClientRect(),rect=box.getBoundingClientRect();
+      const left=Math.max(12,Math.min(anchor.left,window.innerWidth-rect.width-12));
+      const below=anchor.bottom+6;
+      const top=below+rect.height<=window.innerHeight-12?below:Math.max(12,anchor.top-rect.height-6);
+      box.style.left=left+'px';box.style.top=top+'px';
+    }
+    const observed=new WeakSet();
+    function observe(box){
+      if(observed.has(box))return;
+      observed.add(box);
+      new MutationObserver(()=>{if(active?.box===box&&box.style.display==='none')active=null;links()}).observe(box,{attributes:true,attributeFilter:['style']});
+    }
+    ['Calendar','Clock'].forEach(kind=>{
+      const original=shortcuts['open'+kind];
+      shortcuts['open'+kind]=function(index){
+        const prefix=kind==='Calendar'?'calendar':'clock',id=prefix+'box'+index;
+        closeAll(id);
+        original.call(shortcuts,index);
+        const box=document.getElementById(id),link=document.getElementById(prefix+'link'+index);
+        if(!box||!link)return;
+        box.setAttribute('role','dialog');box.setAttribute('aria-label',kind==='Calendar'?'Choose a date':'Choose a time');
+        observe(box);active={box,link};position();links();
+      };
+    });
+    document.addEventListener('click',event=>{
+      if(active&&!active.box.contains(event.target)&&!event.target.closest('.datetimeshortcuts'))closeAll();
+      else links();
+    });
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&active){const link=active.link;closeAll();link.focus();event.preventDefault()}
+    });
+    window.addEventListener('resize',position);
+    let scrollFrame=0;
+    document.addEventListener('scroll',()=>{if(active&&!scrollFrame)scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;position()})},true);
+    links();
+  }
+  if(document.readyState==='complete')init();else window.addEventListener('load',init);
+})();
+</script>
+
+</body>
+
+</html>
+

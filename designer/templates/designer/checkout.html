@@ -1,0 +1,263 @@
+{% extends 'designer/base.html' %}
+{% block title %}Checkout | Zenvibe{% endblock %}
+{% block content %}
+
+<section class="page-hero compact">
+    <div class="container narrow">
+        <span class="kicker">Secure order</span>
+        <h1>Place your order</h1>
+        <p>Confirm your quantity and delivery details before placing your order.</p>
+    </div>
+</section>
+
+<section class="section pt-small">
+    <div class="container checkout-grid">
+
+        <form method="post" class="summary-card" id="zv-checkout-form">
+            {% csrf_token %}
+
+            <div class="summary-head">
+                <div>
+                    <small>ORDER DETAILS</small>
+                    <h2>{{ design.product.name }}</h2>
+                </div>
+                <span class="status-chip" id="zv-status-qty">{{ design.quantity }} items</span>
+            </div>
+
+            {% if error %}
+            <p class="zv-error">{{ error }}</p>
+            {% endif %}
+
+            <div class="zv-order-summary">
+                <div>
+                    <span>Unit price</span>
+                    <strong>${{ unit_price }}</strong>
+                </div>
+
+                <div class="zv-checkout-quantity-row">
+                    <span>Quantity</span>
+
+                    <div class="zv-checkout-qty">
+                        <button type="button" id="zv-checkout-minus" aria-label="Decrease quantity">−</button>
+
+                        <input
+                            type="number"
+                            id="zv-checkout-quantity"
+                            name="quantity"
+                            value="{{ design.quantity }}"
+                            min="{{ minimum_quantity|default:1 }}"
+                            max="{{ maximum_quantity|default:9999 }}"
+                            step="1"
+                            inputmode="numeric"
+                            autocomplete="off"
+                        >
+
+                        <button type="button" id="zv-checkout-plus" aria-label="Increase quantity">+</button>
+                    </div>
+
+                    <small>
+                        Minimum order: {{ minimum_quantity|default:1 }}
+                        {% if design.product.maximum_quantity %}
+                            · Maximum: {{ design.product.maximum_quantity }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <div>
+                    <span>Current total</span>
+                    <strong>${{ total }}</strong>
+                    <small>Final total is recalculated when you submit the order.</small>
+                </div>
+            </div>
+
+            <h3 class="zv-delivery-title">Delivery details</h3>
+
+            <div class="zv-checkout-fields">
+                <input name="customer_name" required placeholder="Full name *" value="{{ request.POST.customer_name }}">
+                <input type="email" name="customer_email" required placeholder="Email *" value="{{ request.POST.customer_email }}">
+                <input name="customer_phone" placeholder="Phone" value="{{ request.POST.customer_phone }}">
+                <input name="company" placeholder="Company" value="{{ request.POST.company }}">
+                <input class="wide" name="address" required placeholder="Street address *" value="{{ request.POST.address }}">
+                <input name="city" required placeholder="City *" value="{{ request.POST.city }}">
+                <input name="province" required placeholder="Province / State *" value="{{ request.POST.province }}">
+                <input name="postal_code" required placeholder="Postal code *" value="{{ request.POST.postal_code }}">
+                <textarea class="wide" name="customer_notes" placeholder="Order notes">{{ request.POST.customer_notes }}</textarea>
+            </div>
+
+            <div class="zv-payment-note">
+                {% if payment_mode == "stripe" %}
+                    <strong>Secure payment by Stripe</strong>
+                    <span>You will be redirected to Stripe Checkout after confirming these details.</span>
+                {% else %}
+                    <strong>Payment bypass mode</strong>
+                    <span>Stripe is prepared but disabled until the client keys are configured. Your order will still be created normally.</span>
+                {% endif %}
+            </div>
+
+            <div class="summary-actions">
+                <a class="btn btn-secondary" href="{% url 'designer:cart_preview' design.id %}">Back</a>
+                <button class="btn btn-primary" type="submit">
+                    {% if payment_mode == "stripe" %}
+                        Continue to secure payment →
+                    {% else %}
+                        Place order →
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+
+        <div class="preview-card">
+            {% if design.preview_png %}
+                <img src="{{ design.preview_png }}" alt="Design preview">
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+<style>
+.zv-checkout-fields{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:18px 0;
+}
+.zv-checkout-fields input,
+.zv-checkout-fields textarea{
+    padding:13px;
+    border:1px solid #dce2eb;
+    border-radius:9px;
+    font:inherit;
+}
+.zv-checkout-fields .wide{grid-column:1/-1}
+.zv-checkout-fields textarea{min-height:90px}
+.zv-payment-note{
+    margin:16px 0;
+    padding:14px 16px;
+    border-radius:10px;
+    background:#f4f7ff;
+    border:1px solid #dce5ff;
+}
+.zv-payment-note strong,
+.zv-payment-note span{display:block}
+.zv-payment-note strong{color:#081f5c}
+.zv-payment-note span{font-size:12px;color:#667085;margin-top:4px}
+.zv-error{color:#c62828;font-weight:700}
+.zv-order-summary{
+    display:grid;
+    gap:14px;
+    margin:18px 0 24px;
+    padding:18px;
+    border:1px solid #e7eaf0;
+    border-radius:12px;
+    background:#fafbfc;
+}
+.zv-order-summary > div{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+}
+.zv-order-summary span{font-weight:600}
+.zv-order-summary small{color:#667085}
+.zv-checkout-quantity-row{flex-wrap:wrap}
+.zv-checkout-qty{
+    display:flex;
+    align-items:center;
+    border:1px solid #d7dce5;
+    background:#fff;
+}
+.zv-checkout-qty button{
+    width:46px;
+    height:46px;
+    border:0;
+    background:#fff;
+    font-size:24px;
+    cursor:pointer;
+}
+.zv-checkout-qty input{
+    width:76px;
+    height:46px;
+    border:0;
+    border-left:1px solid #d7dce5;
+    border-right:1px solid #d7dce5;
+    text-align:center;
+    font-size:17px;
+    outline:none;
+    appearance:textfield;
+    -moz-appearance:textfield;
+}
+.zv-checkout-qty input::-webkit-inner-spin-button,
+.zv-checkout-qty input::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+}
+.zv-delivery-title{margin:24px 0 6px}
+@media(max-width:767px){
+    .zv-checkout-fields{grid-template-columns:1fr}
+    .zv-checkout-fields .wide{grid-column:auto}
+    .zv-order-summary > div{align-items:flex-start;flex-direction:column}
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("zv-checkout-quantity");
+    const minus = document.getElementById("zv-checkout-minus");
+    const plus = document.getElementById("zv-checkout-plus");
+    const status = document.getElementById("zv-status-qty");
+
+    if (!input) return;
+
+    const minQty = Math.max(1, parseInt(input.min || "1", 10) || 1);
+    const maxQty = Math.max(minQty, parseInt(input.max || "9999", 10) || 9999);
+
+    function showQty() {
+        const raw = input.value.trim();
+        if (raw === "") {
+            if (status) status.textContent = "— items";
+            return;
+        }
+        const qty = parseInt(raw, 10);
+        if (Number.isFinite(qty) && status) {
+            status.textContent = qty + (qty === 1 ? " item" : " items");
+        }
+    }
+
+    function normalise() {
+        let qty = parseInt(input.value, 10);
+        if (!Number.isFinite(qty)) qty = minQty;
+        qty = Math.max(minQty, Math.min(maxQty, qty));
+        input.value = qty;
+        showQty();
+        return qty;
+    }
+
+    input.addEventListener("input", function () {
+        this.value = this.value.replace(/[^\d]/g, "");
+        showQty();
+    });
+
+    input.addEventListener("blur", normalise);
+
+    minus.addEventListener("click", function () {
+        let qty = parseInt(input.value, 10);
+        if (!Number.isFinite(qty)) qty = minQty;
+        input.value = Math.max(minQty, qty - 1);
+        showQty();
+    });
+
+    plus.addEventListener("click", function () {
+        let qty = parseInt(input.value, 10);
+        if (!Number.isFinite(qty)) qty = minQty;
+        input.value = Math.min(maxQty, qty + 1);
+        showQty();
+    });
+
+    document.getElementById("zv-checkout-form").addEventListener("submit", function () {
+        normalise();
+    });
+});
+</script>
+
+{% endblock %}

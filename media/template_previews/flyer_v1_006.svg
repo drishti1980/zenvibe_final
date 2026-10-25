@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3F0E7" stroke="none" stroke-width="0" opacity="1"/>
+<ellipse cx="590.0" cy="455.2" rx="96.0" ry="31.2" fill="#173F35" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 590.0 455.2)"/>
+<rect x="500.4" y="164.0" width="179.20000000000002" height="270.40000000000003" rx="24" ry="24" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="538.8" y="122.4" width="102.4" height="301.59999999999997" rx="26" ry="26" fill="#173F35" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="558.0" y1="174.4" x2="622.0" y2="174.4" stroke="#B89555" stroke-width="3" opacity="1"/>
+<text x="60" y="78" fill="#2E6A56" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#173F35" font-family="Poppins" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">DESIGNED FOR</tspan><tspan x="60" dy="71.76">BETTER LIVING</tspan></text>
+<text x="62" y="414" fill="#173F35" font-family="Inter" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Interiors â€¢ Styling â€¢ Space Planning</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#B89555" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#173F35" font-family="Inter" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#8FB8A1" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#173F35" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2E6A56" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3F0E7" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK A CONSULT</tspan></text>
+<text x="954" y="69" fill="#2E6A56" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">06</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

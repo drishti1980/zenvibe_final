@@ -1,0 +1,154 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}Blog | ZenVibe Corporate Gifts{% endblock %}
+
+{% block content %}
+
+<!-- Multikart-style breadcrumb -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>Blog</h2>
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Blog</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Multikart-style blog listing -->
+<section class="blog-page section-b-space ratio2_3">
+    <div class="container">
+        <div class="row g-sm-4 g-3">
+
+            {% for post in posts %}
+            <div class="col-sm-6 col-xxl-4">
+                <div class="blog-box">
+
+                    <div class="blog-image">
+                        <a href="{% url 'designer:blog_detail' post.slug %}">
+                            {% if post.image %}
+                            <img
+                                src="{{ post.image.url }}"
+                                class="img-fluid blur-up lazyload"
+                                alt="{{ post.image_alt|default:post.title }}"
+                                loading="lazy"
+                            >
+                            {% else %}
+                            <div class="zv-blog-placeholder">Z</div>
+                            {% endif %}
+                        </a>
+                    </div>
+
+                    <div class="blog-contain">
+
+                        <a href="{% url 'designer:blog_detail' post.slug %}">
+                            <h3>{{ post.title }}</h3>
+                        </a>
+
+                        <div class="blog-label">
+                            {% if post.published_at %}
+                            <span class="time">
+                                <i class="ri-time-line"></i>
+                                <span>{{ post.published_at|date:"d M Y" }}</span>
+                            </span>
+                            {% endif %}
+
+                            {% if post.author_name %}
+                            <span class="super">
+                                <i class="ri-user-line"></i>
+                                <span>{{ post.author_name }}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <p>
+                            {% if post.excerpt %}
+                                {{ post.excerpt|striptags|truncatewords:35 }}
+                            {% else %}
+                                {{ post.body|striptags|truncatewords:35 }}
+                            {% endif %}
+                        </p>
+
+                        <a class="blog-button"
+                           href="{% url 'designer:blog_detail' post.slug %}">
+                            Read More <i class="ri-arrow-right-line"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h3>No articles yet</h3>
+                    <p>New ZenVibe product guides and articles will be added soon.</p>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+<style>
+/* Keep ZenVibe data but match the Multikart blog-card layout */
+.blog-page .blog-box {
+    height: 100%;
+}
+
+.blog-page .blog-image {
+    width: 100%;
+    overflow: hidden;
+}
+
+.blog-page .blog-image a {
+    display: block;
+    width: 100%;
+}
+
+.blog-page .blog-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+}
+
+.blog-page .blog-contain h3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.blog-page .blog-contain p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+}
+
+.zv-blog-placeholder {
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    font-size: 64px;
+    font-weight: 700;
+}
+
+@media (max-width: 575px) {
+    .zv-blog-placeholder {
+        min-height: 220px;
+    }
+}
+</style>
+
+{% endblock %}
+

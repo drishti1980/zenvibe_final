@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F6FA" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#0B2C63" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#F4F6FA" font-family="Inter" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<ellipse cx="577.5" cy="374.0" rx="223.5" ry="24.0" fill="#0B2C63" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 577.5 374.0)"/>
+<rect x="368.9" y="150.0" width="417.20000000000005" height="208.0" rx="24" ry="24" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="458.3" y="118.0" width="238.4" height="231.99999999999997" rx="26" ry="26" fill="#0B2C63" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="503.0" y1="158.0" x2="652.0" y2="158.0" stroke="#C8A055" stroke-width="3" opacity="1"/>
+<text x="205" y="605" fill="#0B2C63" font-family="Poppins" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">DESIGN BETTER</tspan><tspan x="205" dy="65.8">EXPERIENCES</tspan></text>
+<text x="205" y="772" fill="#0B2C63" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Research â€¢ UX â€¢ Product design</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#94B3FF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#0B2C63" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#1746D1" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F6FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">WORK WITH US</tspan></text>
+<text x="954" y="69" fill="#1746D1" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">56</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A055" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

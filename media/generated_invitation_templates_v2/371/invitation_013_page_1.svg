@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#76558d" opacity="1"/>
+<polygon points="0,0 750,0 750,250 0,390" fill="#fffaff" opacity="1"/>
+<rect x="505" y="110" width="190" height="72" rx="2" fill="#d8d2e7" opacity="0.95" transform="rotate(-6 505 110)"/>
+<rect x="533.5" y="110" width="24.7" height="72" rx="2" fill="#ffffff" opacity="0.14" transform="rotate(-6 533.5 110)"/>
+<polygon points="660.8,182 695,164.72 695,197.84 641.8,182" fill="#eee6f4" opacity="0.9"/>
+<text x="385.0" y="315" text-anchor="middle" fill="#d8d2e7" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="385.0" dy="0">CLIENT APPRECIATION RECEPTION</tspan></text>
+<text x="385.0" y="406" text-anchor="middle" fill="#fffaff" font-size="52" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="385.0" dy="0">AN EVENING WITH ZENVIBE</tspan></text>
+<text x="385.0" y="523" text-anchor="middle" fill="#fffaff" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="385.0" dy="0">THURSDAY · 29 OCTOBER 2026</tspan></text>
+<text x="385.0" y="563" text-anchor="middle" fill="#fffaff" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="385.0" dy="0">WATERFRONT PAVILION · 6:00 PM</tspan></text>
+<text x="385.0" y="637" text-anchor="middle" fill="#d8d2e7" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="385.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#eee6f4" opacity="0.025"/>
+</svg>

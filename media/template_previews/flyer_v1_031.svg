@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0.0,0.0 1000.0,0.0 1000.0,500.0 0.0,720.0" fill="#5A1E37" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="360" y="324.5" width="30.400000000000002" height="150.5" rx="0" ry="0" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="398.4" y="268.6" width="45.6" height="206.4" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="452.0" y="212.7" width="26.6" height="262.3" rx="0" ry="0" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="486.6" y="156.8" width="57.0" height="318.2" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="551.6" y="324.5" width="34.199999999999996" height="150.5" rx="0" ry="0" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="593.8000000000001" y="268.6" width="41.8" height="206.4" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="60" y="192" fill="#F8EDEF" font-family="Poppins" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">IMAGINE</tspan><tspan x="60" dy="67.67999999999999">WHAT'S NEXT</tspan></text>
+<text x="62" y="384" fill="#F8EDEF" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Science â€¢ Robotics â€¢ Discovery</tspan></text>
+<text x="60" y="792" fill="#5A1E37" font-family="Inter" font-size="32" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">DESIGNED</tspan><tspan x="60" dy="33.6">FOR IMPACT</tspan></text>
+<line x1="60" y1="875" x2="350" y2="875" stroke="#B73C6C" stroke-width="6" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#E7B5C5" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#5A1E37" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8EDEF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">REGISTER</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">31</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

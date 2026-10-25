@@ -1,0 +1,1847 @@
+﻿{% extends 'designer/base.html' %}
+{% load static %}
+
+{% block title %}ZenVibe Corporate Gifts Canada | Custom Promotional Products{% endblock %}
+
+{% block content %}
+
+
+<!-- =========================================================
+     HOME SLIDER - ADMIN CONTROLLED
+========================================================= -->
+
+<section class="p-0">
+    <div class="slide-1 home-slider">
+
+        {% if home_banners %}
+            {% for banner in home_banners %}
+            <div>
+                <a class="home zv-home-slide zv-admin-home-banner"
+                   href="{{ banner.button_url|default:'#' }}"
+                   data-text-align="{{ banner.text_alignment|default:'left'|lower }}">
+
+                    {% if banner.image %}
+                    <picture>
+                        {% if banner.mobile_image %}
+                        <source media="(max-width: 767px)" srcset="{{ banner.mobile_image.url }}">
+                        {% endif %}
+                        <img src="{{ banner.image.url }}"
+                             alt="{{ banner.title|default:'ZenVibe' }}"
+                             class="bg-img blur-up lazyload">
+                    </picture>
+                    {% endif %}
+
+                    <div class="zv-hero-copy zv-align-{{ banner.text_alignment|default:'left'|lower }}">
+                        {% if banner.title %}
+                        <h1 class="zv-hero-title">{{ banner.title }}</h1>
+                        {% endif %}
+
+                        {% if banner.subtitle %}
+                        <div class="zv-hero-subtitle">{{ banner.subtitle }}</div>
+                        {% endif %}
+
+                        
+                        {% if banner.button_text %}
+                        <span class="btn btn-solid zv-hero-button">
+                            {{ banner.button_text }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                </a>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            {# Safe fallback if there are no active HomeBanner records. #}
+            {% for p in products|slice:':2' %}
+            <div>
+                <a class="home zv-home-slide"
+                   href="{% url 'designer:choose_design' p.id %}">
+                    {% if p.image %}
+                    <img src="{{ p.image.url }}"
+                         alt="{{ p.name }}"
+                         class="bg-img blur-up lazyload">
+                    {% endif %}
+                </a>
+            </div>
+            {% empty %}
+            <div>
+                <a class="home zv-home-slide zv-admin-home-banner"
+                   href="{% url 'designer:start_designing' %}">
+                    <div class="zv-hero-copy zv-align-left">
+                        <div class="zv-hero-subtitle">ZenVibe</div>
+                        <h1 class="zv-hero-title">Custom Products</h1>
+                        <span class="btn btn-solid zv-hero-button">Shop Now</span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</section>
+
+
+<!-- =========================================================
+     COLLECTION BANNERS
+========================================================= -->
+
+<section class="pb-0 banner-section">
+
+    <div class="container">
+
+        <div class="row partition2">
+
+            {% for c in categories|slice:':2' %}
+
+            <div class="col-md-6">
+
+                <a class="collection-banner zv-clean-collection {% if forloop.first %}zv-clean-business{% else %}zv-clean-invitation{% endif %}"
+                   href="{% url 'designer:category_detail' c.slug %}">
+
+                    <div class="zv-clean-copy">
+
+                        <span class="zv-clean-eyebrow">
+                            {% if forloop.first %}
+                                PROFESSIONAL PRINTING
+                            {% else %}
+                                MADE FOR SPECIAL MOMENTS
+                            {% endif %}
+                        </span>
+
+                        <h2>{{ c.name }}</h2>
+
+                        <p>
+                            {% if forloop.first %}
+                                Premium custom cards designed to make your brand look polished and memorable.
+                            {% else %}
+                                Beautiful custom invitations for weddings, events, celebrations and more.
+                            {% endif %}
+                        </p>
+
+                        <span class="zv-clean-link">
+                            Shop Collection
+                            <i class="ri-arrow-right-line"></i>
+                        </span>
+
+                    </div>
+
+                    <div class="zv-clean-image">
+
+                        {% if c.image %}
+                        <img src="{{ c.image.url }}"
+                             alt="{{ c.name }}"
+                             class="img-fluid blur-up lazyload">
+                        {% endif %}
+
+                    </div>
+
+                    <span class="zv-clean-accent"></span>
+
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TOP COLLECTION TITLE
+========================================================= -->
+
+<div class="title1 section-t-space">
+    <h4>Special Offer</h4>
+    <h2 class="title-inner1">Top Collection</h2>
+</div>
+
+
+<!-- =========================================================
+     TOP COLLECTION PRODUCTS
+========================================================= -->
+
+<section class="section-b-space pt-0 ratio_asos">
+
+    <div class="container">
+
+        <div class="g-3 g-md-4 row row-cols-2 row-cols-md-3 row-cols-xl-4">
+
+            {% for product in products|slice:':4' %}
+
+            <div>
+
+                <div class="basic-product theme-product-1">
+
+                    <div class="overflow-hidden">
+
+                        <!-- PRODUCT IMAGE -->
+                        <div class="img-wrapper position-relative">
+
+
+                            <!-- EXCLUSIVE RIBBON -->
+                             {% if forloop.counter <= 2 %}
+                            <div class="zv-exclusive-ribbon">
+                                <span>Exclusive</span>
+                            </div>
+                            {% endif %}
+
+
+                            <!-- SALE RIBBON -->
+                            {% if product.is_on_sale %}
+                            <div class="ribbon">
+                                <span>Sale</span>
+                            </div>
+                            {% endif %}
+
+
+                            <!-- IMAGE -->
+                            <a href="{% url 'designer:choose_design' product.id %}">
+
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}"
+                                     class="img-fluid zv-product-img"
+                                     alt="{{ product.name }}">
+                                {% endif %}
+
+                            </a>
+
+
+                            <!-- RATING -->
+                            <!-- <div class="rating-label">
+                                <i class="ri-star-fill"></i>
+                                <span>4.5</span>
+                            </div> -->
+
+
+                            <!-- HOVER ACTIONS -->
+                            <div class="cart-info">
+
+                                <!-- Wishlist -->
+                                <!-- <a href="#!"
+                                   class="wishlist-icon"
+                                   data-wishlist
+                                   data-id="{{ product.id }}"
+                                   data-name="{{ product.name|escape }}"
+                                   data-price="{{ product.sale_price|default:product.price }}"
+                                   data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                   data-url="{% url 'designer:choose_design' product.id %}"
+                                   title="Add to Wishlist">
+
+                                    <i class="ri-heart-line"></i>
+
+                                </a> -->
+
+
+                                <!-- Add To Cart -->
+                                <button type="button"
+                                        data-add-cart
+                                        data-product-id="{{ product.id }}"
+                                        data-product-name="{{ product.name|escape }}"
+                                        data-product-price="{{ product.sale_price|default:product.price }}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-url="{% url 'designer:choose_design' product.id %}" data-cart-url="{% url 'designer:add_to_cart' product.id %}"
+                                        title="Add to Cart">
+
+                                    <i class="ri-shopping-cart-line"></i>
+
+                                </button>
+
+
+                                <!-- Quick View -->
+                                <a href="#!"
+                                   data-quick-view
+                                   data-id="{{ product.id }}"
+                                   data-name="{{ product.name|escape }}"
+                                   data-description="{{ product.short_description|striptags|escape }}"
+                                   data-price="{{ product.sale_price|default:product.price }}"
+                                   data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                   data-url="{% url 'designer:choose_design' product.id %}"
+                                   data-cart-url="{% url 'designer:add_to_cart' product.id %}"
+                                   title="Quick View">
+
+                                    <i class="ri-eye-line"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PRODUCT INFORMATION -->
+                        <div class="product-detail">
+
+                            <div>
+
+                                <div class="brand-w-color">
+
+                                    <a class="product-title"
+                                       href="{% url 'designer:choose_design' product.id %}">
+
+                                        {{ product.name }}
+
+                                    </a>
+
+                                </div>
+
+
+                                <h6>
+                                    {{ product.category.name }}
+                                </h6>
+
+
+                                <!-- PRICE -->
+                                <h4 class="price">
+
+                                    {% if product.is_on_sale and product.sale_price %}
+
+                                        ${{ product.sale_price }}
+
+                                        <del>
+                                            ${{ product.price }}
+                                        </del>
+
+                                    {% else %}
+
+                                        ${{ product.price }}
+
+                                    {% endif %}
+
+                                </h4>
+
+                            </div>
+
+
+                            <!-- ONE BUTTON ONLY -->
+                            <div class="zv-one-action">
+
+                                <a href="{% url 'designer:choose_design' product.id %}"
+                                   class="btn btn-solid">
+
+                                    Customize &amp; Add to Cart
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-12 text-center py-5">
+                <h4>No products available.</h4>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     PROMOTIONAL BANNER
+========================================================= -->
+
+<section class="pt-0">
+
+    <a href="{% url 'designer:start_designing' %}"
+       class="zv-full-banner">
+
+        <div>
+            <h4>Custom Products for Every Occasion</h4>
+            <h2>Make Your Brand Stand Out</h2>
+
+            <span class="btn btn-solid">
+                Shop Collection
+            </span>
+        </div>
+
+    </a>
+
+</section>
+
+
+<!-- =========================================================
+     SPECIAL PRODUCTS TITLE
+========================================================= -->
+
+<div class="title1 section-t-space">
+    <h4>Exclusive Products</h4>
+    <h2 class="title-inner1">Special Products</h2>
+</div>
+
+
+<!-- =========================================================
+     FEATURED / POPULAR / SALE
+========================================================= -->
+
+<section class="section-b-space pt-0 ratio_asos">
+
+    <div class="container">
+
+        <div class="theme-tab">
+
+            <ul class="tabs tab-title">
+
+                <!-- <li class="current">
+                    <a href="tab-z1">
+                        FEATURED
+                    </a>
+                </li> -->
+
+                <li>
+                    <a href="tab-z2">
+                        POPULAR
+                    </a>
+                </li>
+
+                <!-- <li>
+                    <a href="tab-z3">
+                        SALE
+                    </a>
+                </li> -->
+
+            </ul>
+
+
+            <div class="tab-content-cls">
+
+
+                <!-- =============================================
+                     FEATURED TAB
+                ============================================== -->
+
+                <div id="tab-z1"
+                     class="tab-content active default">
+
+                    <div class="g-3 g-md-4 row row-cols-2 row-cols-md-3 row-cols-xl-4">
+
+                        {% for product in products|slice:':4' %}
+
+                        <div>
+
+                            <div class="basic-product theme-product-1">
+
+                                <div class="overflow-hidden">
+
+                                    <div class="img-wrapper position-relative">
+
+
+                                        <!-- EXCLUSIVE -->
+                                        {% if forloop.counter <= 2 %}
+                                        <div class="zv-exclusive-ribbon">
+                                            <span>Exclusive</span>
+                                        </div>
+                                        {% endif %}
+
+
+                                        <!-- SALE -->
+                                        {% if product.is_on_sale %}
+                                        <div class="ribbon">
+                                            <span>Sale</span>
+                                        </div>
+                                        {% endif %}
+
+
+                                        <a href="{% url 'designer:choose_design' product.id %}">
+
+                                            {% if product.image %}
+                                            <img src="{{ product.image.url }}"
+                                                 class="img-fluid zv-product-img"
+                                                 alt="{{ product.name }}">
+                                            {% endif %}
+
+                                        </a>
+
+
+                                        <!-- <div class="rating-label">
+                                            <i class="ri-star-fill"></i>
+                                            <span>4.5</span>
+                                        </div> -->
+
+
+                                        <div class="cart-info">
+
+                                            <!-- <a href="#!"
+                                               class="wishlist-icon"
+                                               data-wishlist
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}">
+
+                                                <i class="ri-heart-line"></i>
+
+                                            </a> -->
+
+
+                                            <button type="button"
+                                                    data-add-cart
+                                                    data-product-id="{{ product.id }}"
+                                                    data-product-name="{{ product.name|escape }}"
+                                                    data-product-price="{{ product.sale_price|default:product.price }}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-url="{% url 'designer:choose_design' product.id %}" data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-shopping-cart-line"></i>
+
+                                            </button>
+
+
+                                            <a href="#!"
+                                               data-quick-view
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-description="{{ product.short_description|striptags|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}"
+                                               data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-eye-line"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="product-detail">
+
+                                        <div>
+
+                                            <div class="brand-w-color">
+
+                                                <a class="product-title"
+                                                   href="{% url 'designer:choose_design' product.id %}">
+
+                                                    {{ product.name }}
+
+                                                </a>
+
+                                            </div>
+
+
+                                            <h6>
+                                                {{ product.category.name }}
+                                            </h6>
+
+
+                                            <h4 class="price">
+
+                                                {% if product.is_on_sale and product.sale_price %}
+
+                                                    ${{ product.sale_price }}
+
+                                                    <del>
+                                                        ${{ product.price }}
+                                                    </del>
+
+                                                {% else %}
+
+                                                    ${{ product.price }}
+
+                                                {% endif %}
+
+                                            </h4>
+
+                                        </div>
+
+
+                                        <div class="zv-one-action">
+
+                                            <a href="{% url 'designer:choose_design' product.id %}"
+                                               class="btn btn-solid">
+
+                                                Customize &amp; Add to Cart
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     POPULAR TAB
+                ============================================== -->
+
+                <div id="tab-z2"
+                     class="tab-content">
+
+                    <div class="g-3 g-md-4 row row-cols-2 row-cols-md-3 row-cols-xl-4">
+
+                        {% for product in products|slice:':4' %}
+
+                        <div>
+
+                            <div class="basic-product theme-product-1">
+
+                                <div class="overflow-hidden">
+
+                                    <div class="img-wrapper position-relative">
+
+
+                                        {% if product.is_featured %}
+                                        <div class="zv-exclusive-ribbon">
+                                            <span>Exclusive</span>
+                                        </div>
+                                        {% endif %}
+
+
+                                        {% if product.is_on_sale %}
+                                        <div class="ribbon">
+                                            <span>Sale</span>
+                                        </div>
+                                        {% endif %}
+
+
+                                        <a href="{% url 'designer:choose_design' product.id %}">
+
+                                            {% if product.image %}
+                                            <img src="{{ product.image.url }}"
+                                                 class="img-fluid zv-product-img"
+                                                 alt="{{ product.name }}">
+                                            {% endif %}
+
+                                        </a>
+
+
+                                        <!-- <div class="rating-label">
+                                            <i class="ri-star-fill"></i>
+                                            <span>4.5</span>
+                                        </div> -->
+
+
+                                        <div class="cart-info">
+<!-- 
+                                            <a href="#!"
+                                               class="wishlist-icon"
+                                               data-wishlist
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}">
+
+                                                <i class="ri-heart-line"></i>
+
+                                            </a> -->
+
+
+                                            <button type="button"
+                                                    data-add-cart
+                                                    data-product-id="{{ product.id }}"
+                                                    data-product-name="{{ product.name|escape }}"
+                                                    data-product-price="{{ product.sale_price|default:product.price }}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-url="{% url 'designer:choose_design' product.id %}" data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-shopping-cart-line"></i>
+
+                                            </button>
+
+
+                                            <a href="#!"
+                                               data-quick-view
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-description="{{ product.short_description|striptags|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}"
+                                               data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-eye-line"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="product-detail">
+
+                                        <div>
+
+                                            <div class="brand-w-color">
+
+                                                <a class="product-title"
+                                                   href="{% url 'designer:choose_design' product.id %}">
+
+                                                    {{ product.name }}
+
+                                                </a>
+
+                                            </div>
+
+
+                                            <h6>
+                                                {{ product.category.name }}
+                                            </h6>
+
+
+                                            <h4 class="price">
+
+                                                {% if product.is_on_sale and product.sale_price %}
+
+                                                    ${{ product.sale_price }}
+
+                                                    <del>
+                                                        ${{ product.price }}
+                                                    </del>
+
+                                                {% else %}
+
+                                                    ${{ product.price }}
+
+                                                {% endif %}
+
+                                            </h4>
+
+                                        </div>
+
+
+                                        <div class="zv-one-action">
+
+                                            <a href="{% url 'designer:choose_design' product.id %}"
+                                               class="btn btn-solid">
+
+                                                Customize &amp; Add to Cart
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     SALE TAB
+                ============================================== -->
+
+                <div id="tab-z3"
+                     class="tab-content">
+
+                    <div class="g-3 g-md-4 row row-cols-2 row-cols-md-3 row-cols-xl-4">
+
+                        {% for product in products|slice:':4' %}
+
+                        <div>
+
+                            <div class="basic-product theme-product-1">
+
+                                <div class="overflow-hidden">
+
+                                    <div class="img-wrapper position-relative">
+
+
+                                        <!-- EXCLUSIVE -->
+                                        {% if product.is_featured %}
+                                        <div class="zv-exclusive-ribbon">
+                                            <span>Exclusive</span>
+                                        </div>
+                                        {% endif %}
+
+
+                                        <!-- SALE -->
+                                        <div class="ribbon">
+                                            <span>Sale</span>
+                                        </div>
+
+
+                                        <a href="{% url 'designer:choose_design' product.id %}">
+
+                                            {% if product.image %}
+                                            <img src="{{ product.image.url }}"
+                                                 class="img-fluid zv-product-img"
+                                                 alt="{{ product.name }}">
+                                            {% endif %}
+
+                                        </a>
+
+
+                                        <!-- <div class="rating-label">
+                                            <i class="ri-star-fill"></i>
+                                            <span>4.5</span>
+                                        </div> -->
+
+
+                                        <div class="cart-info">
+
+                                            <!-- <a href="#!"
+                                               class="wishlist-icon"
+                                               data-wishlist
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}">
+
+                                                <i class="ri-heart-line"></i>
+
+                                            </a> -->
+
+
+                                            <button type="button"
+                                                    data-add-cart
+                                                    data-product-id="{{ product.id }}"
+                                                    data-product-name="{{ product.name|escape }}"
+                                                    data-product-price="{{ product.sale_price|default:product.price }}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-url="{% url 'designer:choose_design' product.id %}" data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-shopping-cart-line"></i>
+
+                                            </button>
+
+
+                                            <a href="#!"
+                                               data-quick-view
+                                               data-id="{{ product.id }}"
+                                               data-name="{{ product.name|escape }}"
+                                               data-description="{{ product.short_description|striptags|escape }}"
+                                               data-price="{{ product.sale_price|default:product.price }}"
+                                               data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                               data-url="{% url 'designer:choose_design' product.id %}"
+                                               data-cart-url="{% url 'designer:add_to_cart' product.id %}">
+
+                                                <i class="ri-eye-line"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="product-detail">
+
+                                        <div>
+
+                                            <div class="brand-w-color">
+
+                                                <a class="product-title"
+                                                   href="{% url 'designer:choose_design' product.id %}">
+
+                                                    {{ product.name }}
+
+                                                </a>
+
+                                            </div>
+
+
+                                            <h6>
+                                                {{ product.category.name }}
+                                            </h6>
+
+
+                                            <h4 class="price">
+
+                                                {% if product.sale_price %}
+
+                                                    ${{ product.sale_price }}
+
+                                                    <del>
+                                                        ${{ product.price }}
+                                                    </del>
+
+                                                {% else %}
+
+                                                    ${{ product.price }}
+
+                                                {% endif %}
+
+                                            </h4>
+
+                                        </div>
+
+
+                                        <div class="zv-one-action">
+
+                                            <a href="{% url 'designer:choose_design' product.id %}"
+                                               class="btn btn-solid">
+
+                                                Customize &amp; Add to Cart
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {% empty %}
+
+                        <div class="col-12 text-center py-5">
+                            <h4>No sale products available.</h4>
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     SERVICES
+========================================================= -->
+
+<section class="service border-section small-section">
+
+    <div class="row">
+
+        <div class="col-md-4 service-block">
+
+            <div class="media">
+
+                <i class="ri-truck-line zv-service-icon"></i>
+
+                <div class="media-body">
+                    <h4>Canada-wide Delivery</h4>
+                    <p>Reliable nationwide service</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 service-block">
+
+            <div class="media">
+
+                <i class="ri-shield-check-line zv-service-icon"></i>
+
+                <div class="media-body">
+                    <h4>Free Digital Proof</h4>
+                    <p>Review artwork before production</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 service-block">
+
+            <div class="media">
+
+                <i class="ri-customer-service-2-line zv-service-icon"></i>
+
+                <div class="media-body">
+                    <h4>Design Support</h4>
+                    <p>Help from idea to delivery</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     SHOP BY CATEGORY
+     Uses Multikart's exact "Fashion for you" classic-effect
+     + slide-3 Slick structure
+========================================================= -->
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="title1 section-t-space">
+                <h4>Shop by Category</h4>
+                <h2 class="title-inner1">Find Your Perfect Product</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="blog pt-0 ratio2_3 zv-category-fashion-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+
+                <!-- Same slider classes used by Multikart "Fashion for you" -->
+                <div class="slide-3 no-arrow slick-default-margin zv-category-fashion-slider">
+
+                    {% for c in categories|slice:':10' %}
+
+                    <div class="col-md-12">
+
+                        <a href="{% url 'designer:category_detail' c.slug %}"
+                           class="zv-fashion-category-card">
+
+                            <!-- Exact Multikart classic-effect structure -->
+                            <div class="classic-effect zv-category-classic-effect">
+
+                                <div class="zv-category-fashion-image">
+
+                                    {% if c.image %}
+
+                                    <img
+                                        src="{{ c.image.url }}"
+                                        class="img-fluid blur-up lazyload"
+                                        alt="{{ c.name }}">
+
+                                    {% else %}
+
+                                        {% with p=c.products.first %}
+
+                                            {% if p.image %}
+
+                                            <img
+                                                src="{{ p.image.url }}"
+                                                class="img-fluid blur-up lazyload"
+                                                alt="{{ c.name }}">
+
+                                            {% else %}
+
+                                            <div class="zv-category-placeholder">
+                                                <span>{{ c.name|slice:":1" }}</span>
+                                            </div>
+
+                                            {% endif %}
+
+                                        {% endwith %}
+
+                                    {% endif %}
+
+                                </div>
+
+                                <!-- Required by Multikart classic-effect.
+                                     Its ::before and ::after create the
+                                     3rd and 4th animated overlay panels. -->
+                                <span></span>
+
+                            </div>
+
+                        </a>
+
+
+                        <div class="blog-details zv-category-fashion-details">
+
+                            <h4>Custom Collection</h4>
+
+                            <a href="{% url 'designer:category_detail' c.slug %}">
+                                <p>{{ c.name }}</p>
+                            </a>
+<!-- 
+                            <hr class="style1">
+
+                            <h6>Explore Products</h6> -->
+                        </br>
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     TESTIMONIALS - ADMIN CONTROLLED
+========================================================= -->
+<section class="zv-testimonials-section">
+  <div class="container">
+    <div class="zv-testimonials-heading text-center">
+      <h2>Testimonials</h2>
+      <p>What our customers say about ZenVibe</p>
+    </div>
+    {% if testimonials %}
+    <div class="row g-4 justify-content-center">
+      {% for testimonial in testimonials %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <article class="zv-testimonial-card">
+          <div class="zv-testimonial-quote" aria-hidden="true">&#8220;</div>
+          <div class="zv-testimonial-stars">
+            {% with rating=testimonial.rating|default:5 %}
+            {% for i in "12345" %}
+              {% if forloop.counter <= rating %}<i class="ri-star-fill"></i>{% else %}<i class="ri-star-line"></i>{% endif %}
+            {% endfor %}
+            {% endwith %}
+          </div>
+          <p class="zv-testimonial-review">{{ testimonial.review }}</p>
+          <div class="zv-testimonial-customer">
+            <div class="zv-testimonial-avatar">{{ testimonial.customer_name|first|upper }}</div>
+            <div class="zv-testimonial-person">
+              <strong>{{ testimonial.customer_name }}</strong>
+              {% if testimonial.company %}<span>{{ testimonial.company }}</span>{% endif %}
+            </div>
+          </div>
+        </article>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="zv-home-empty text-center"><p>No testimonials have been added yet.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- =========================================================
+     TRUSTED BRAND LOGOS - ADMIN CONTROLLED
+========================================================= -->
+<section class="zv-brands-section">
+  <div class="container">
+    <div class="zv-brands-heading text-center">
+      <h2>Trusted by Businesses Across Canada</h2>
+      <p>From local businesses to national organizations, ZenVibe delivers high-quality custom apparel, awards, signage, and promotional products with fast turnaround and reliable service.</p>
+    </div>
+    {% if brand_logos %}
+    <div class="zv-brand-grid">
+      {% for brand in brand_logos %}
+        {% if brand.website_url %}
+        <a class="zv-brand-card" href="{{ brand.website_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ brand.name }}">
+          {% if brand.image %}<img src="{{ brand.image.url }}" alt="{{ brand.name }}" loading="lazy">{% endif %}
+        </a>
+        {% else %}
+        <div class="zv-brand-card" aria-label="{{ brand.name }}">
+          {% if brand.image %}<img src="{{ brand.image.url }}" alt="{{ brand.name }}" loading="lazy">{% endif %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="zv-home-empty text-center"><p>No brand logos have been added yet.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- =========================================================
+     EXCLUSIVE RIBBON CSS
+     Kept here because you requested ONE home.html
+========================================================= -->
+
+<style id="zv-admin-home-banner-layout">
+/* =========================================================
+   ADMIN HOME BANNER
+   Uses HomeBanner.text_alignment: Left / Center / Right
+========================================================= */
+
+.home-slider .zv-admin-home-banner {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.home-slider .zv-admin-home-banner picture {
+    display: block !important;
+    width: 100% !important;
+}
+
+.home-slider .zv-admin-home-banner picture img,
+.home-slider .zv-admin-home-banner > img.bg-img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+}
+
+/* Common copy layout */
+.home-slider .zv-admin-home-banner .zv-hero-copy {
+    position: absolute !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 5 !important;
+
+    width: 42% !important;
+    max-width: 650px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+
+    color: #fff !important;
+}
+
+/* LEFT selected in admin */
+.home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-left {
+    left: 10.5% !important;
+    right: auto !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+/* CENTER selected in admin */
+.home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-center {
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+/* RIGHT selected in admin */
+.home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-right {
+    left: auto !important;
+    right: 10.5% !important;
+    align-items: flex-end !important;
+    text-align: right !important;
+}
+
+/* Subtitle */
+.home-slider .zv-admin-home-banner .zv-hero-subtitle {
+    width: 100% !important;
+    margin: 0 0 20px !important;
+
+    color: #fff !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-size: clamp(14px, 1.35vw, 25px) !important;
+    line-height: 1.25 !important;
+    font-weight: 400 !important;
+    letter-spacing: 3.5px !important;
+    text-transform: uppercase !important;
+
+    text-shadow: 0 2px 8px rgba(0,0,0,.28) !important;
+}
+
+/* Title */
+.home-slider .zv-admin-home-banner .zv-hero-title {
+    width: 100% !important;
+    max-width: 620px !important;
+    margin: 0 0 26px !important;
+    padding: 0 !important;
+
+    color: #fff !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-size: clamp(38px, 4.15vw, 70px) !important;
+    line-height: 1.08 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    text-transform: uppercase !important;
+
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,.28) !important;
+}
+
+/* Make actual text follow admin alignment too. */
+.home-slider .zv-admin-home-banner .zv-align-left .zv-hero-subtitle,
+.home-slider .zv-admin-home-banner .zv-align-left .zv-hero-title {
+    text-align: left !important;
+}
+
+.home-slider .zv-admin-home-banner .zv-align-center .zv-hero-subtitle,
+.home-slider .zv-admin-home-banner .zv-align-center .zv-hero-title {
+    text-align: center !important;
+}
+
+.home-slider .zv-admin-home-banner .zv-align-right .zv-hero-subtitle,
+.home-slider .zv-admin-home-banner .zv-align-right .zv-hero-title {
+    text-align: right !important;
+}
+
+/* CTA */
+.home-slider .zv-admin-home-banner .zv-hero-button {
+    margin: 0 !important;
+    min-width: 280px !important;
+    min-height: 54px !important;
+    padding: 15px 30px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: #fff !important;
+    font-size: 18px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    .home-slider .zv-admin-home-banner .zv-hero-copy {
+        width: 46% !important;
+        max-width: 520px !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-left {
+        left: 7% !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-right {
+        right: 7% !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-subtitle {
+        margin-bottom: 14px !important;
+        letter-spacing: 2px !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-title {
+        margin-bottom: 20px !important;
+        font-size: clamp(32px, 5vw, 52px) !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-button {
+        min-width: 210px !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .home-slider .zv-admin-home-banner .zv-hero-copy {
+        width: 72% !important;
+        max-width: none !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-left {
+        left: 6% !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-copy.zv-align-right {
+        right: 6% !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-subtitle {
+        margin-bottom: 9px !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        letter-spacing: 1.3px !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-title {
+        margin-bottom: 15px !important;
+        font-size: clamp(25px, 7.5vw, 40px) !important;
+        line-height: 1.06 !important;
+    }
+
+    .home-slider .zv-admin-home-banner .zv-hero-button {
+        min-width: 0 !important;
+        min-height: 42px !important;
+        padding: 10px 17px !important;
+        font-size: 13px !important;
+    }
+}
+</style>
+
+<style>
+
+.img-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Multikart-style Exclusive corner */
+
+.zv-exclusive-ribbon {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100px;
+    height: 100px;
+
+    overflow: hidden;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+
+.zv-exclusive-ribbon span {
+    position: absolute;
+
+    width: 145px;
+
+    top: 22px;
+    left: -42px;
+
+    transform: rotate(-45deg);
+
+    background: #f68b4a;
+
+    color: #ffffff;
+
+    padding: 7px 0;
+
+    text-align: center;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 12px;
+
+    line-height: 1;
+
+    font-weight: 600;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+}
+
+
+/* Keep all product images equal */
+
+.zv-product-img {
+    display: block;
+
+    width: 100% !important;
+    height: 320px !important;
+
+    object-fit: contain !important;
+
+    background: #ffffff;
+}
+
+
+/* Keep product cards equal */
+
+.basic-product {
+    height: 100%;
+}
+
+
+.basic-product > .overflow-hidden {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.basic-product .product-detail {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+}
+
+
+/* Product button */
+
+.zv-one-action {
+    margin-top: 15px;
+}
+
+
+.zv-one-action .btn {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+
+/* =========================================================
+   SHOP BY CATEGORY - EXACT MULTIKART "FASHION FOR YOU" LOOK
+   Animation itself comes from Multikart .classic-effect CSS.
+========================================================= */
+
+.zv-category-fashion-section .slick-slide {
+    padding: 0 12px;
+}
+
+.zv-fashion-category-card {
+    display: block;
+    text-decoration: none;
+}
+
+.zv-category-classic-effect {
+    background: #f7f7f7;
+    width: 100%;
+}
+
+.zv-category-fashion-image {
+    width: 100%;
+    height: 320px;
+    background: #f7f7f7;
+    overflow: hidden;
+}
+
+.zv-category-fashion-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform .45s ease;
+}
+
+.zv-fashion-category-card:hover .zv-category-fashion-image img {
+    transform: scale(1.04);
+}
+
+.zv-category-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: #f5f5f5;
+    color: var(--theme-color, #0758b8);
+    font: 700 64px "Montserrat", sans-serif;
+}
+
+.zv-category-fashion-details {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.zv-category-fashion-details h4 {
+    color: var(--theme-color2, #f6a329);
+}
+
+.zv-category-fashion-details p {
+    min-height: 54px;
+}
+
+/* Keep the original Multikart four-panel classic effect,
+   but use ZenVibe logo colors. */
+.zv-category-classic-effect::before,
+.zv-category-classic-effect::after,
+.zv-category-classic-effect span::before,
+.zv-category-classic-effect span::after {
+    background: var(--theme-color, #0758b8);
+}
+
+
+/* Mobile */
+
+@media (max-width: 767px) {
+
+    .zv-product-img {
+        height: 230px !important;
+    }
+
+    .zv-exclusive-ribbon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .zv-exclusive-ribbon span {
+        width: 120px;
+
+        top: 18px;
+        left: -36px;
+
+        font-size: 10px;
+    }
+
+}
+
+
+
+
+
+/* =========================================================
+   TESTIMONIALS + TRUSTED BRANDS
+========================================================= */
+.zv-testimonials-section{position:relative;margin-top:35px;padding:70px 0;background:#073f7f;overflow:hidden}
+.zv-testimonials-heading{margin-bottom:40px}
+.zv-testimonials-heading h2{margin:0 0 10px!important;color:#fff!important;font-family:"Montserrat",sans-serif!important;font-size:34px!important;line-height:1.2!important;font-weight:700!important;text-transform:none!important}
+.zv-testimonials-heading p{margin:0!important;color:rgba(255,255,255,.88)!important;font-size:15px!important}
+.zv-testimonial-card{position:relative;height:100%;min-height:260px;padding:28px;display:flex;flex-direction:column;background:#fff;border:1px solid rgba(255,255,255,.3);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.13);transition:transform .25s ease,box-shadow .25s ease}
+.zv-testimonial-card:hover{transform:translateY(-5px);box-shadow:0 16px 38px rgba(0,0,0,.18)}
+.zv-testimonial-quote{position:absolute;top:12px;right:22px;color:rgba(7,63,127,.09);font-family:Georgia,serif;font-size:70px;line-height:1;pointer-events:none}
+.zv-testimonial-stars{position:relative;z-index:2;margin-bottom:18px;color:#f5b301;font-size:17px;letter-spacing:2px}
+.zv-testimonial-review{position:relative;z-index:2;flex:1;margin:0 0 24px!important;color:#4b5563!important;font-size:14px!important;line-height:1.75!important}
+.zv-testimonial-customer{display:flex;align-items:center;gap:13px;padding-top:18px;border-top:1px solid #eceff3}
+.zv-testimonial-avatar{width:46px;height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#073f7f;color:#fff;font-size:17px;font-weight:700}
+.zv-testimonial-person{text-align:left}
+.zv-testimonial-person strong{display:block;margin:0;color:#172033;font-size:14px;font-weight:700}
+.zv-testimonial-person span{display:block;margin-top:3px;color:#7a8290;font-size:12px}
+.zv-brands-section{padding:75px 0 85px;background:#fff}
+.zv-brands-heading{max-width:1000px;margin:0 auto 50px}
+.zv-brands-heading h2{margin:0 0 16px!important;color:#4e4e4e!important;font-family:"Montserrat",sans-serif!important;font-size:clamp(32px,3vw,50px)!important;line-height:1.2!important;font-weight:600!important;text-transform:none!important;letter-spacing:0!important}
+.zv-brands-heading p{max-width:950px;margin:0 auto!important;color:#666!important;font-size:17px!important;line-height:1.7!important}
+.zv-brand-grid{width:100%;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.zv-brand-card{width:100%;height:220px;padding:25px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #eee;border-radius:12px;box-shadow:0 7px 24px rgba(0,0,0,.10);text-decoration:none!important;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.zv-brand-card:hover{transform:translateY(-5px);border-color:#ddd;box-shadow:0 14px 32px rgba(0,0,0,.15)}
+.zv-brand-card img{display:block;width:100%;height:100%;max-width:190px;max-height:150px;object-fit:contain!important;object-position:center!important}
+.zv-home-empty{padding:30px}
+.zv-testimonials-section .zv-home-empty p{color:rgba(255,255,255,.8)}
+.zv-brands-section .zv-home-empty p{color:#777}
+@media(max-width:991px){.zv-testimonials-section{padding:55px 0}.zv-brand-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.zv-brand-card{height:180px}.zv-brand-card img{max-width:155px;max-height:120px}}
+@media(max-width:767px){.zv-testimonials-section{padding:45px 0}.zv-testimonials-heading{margin-bottom:28px}.zv-testimonials-heading h2{font-size:28px!important}.zv-testimonial-card{min-height:auto;padding:22px}.zv-brands-section{padding:50px 0}.zv-brands-heading{margin-bottom:32px}.zv-brands-heading h2{font-size:28px!important}.zv-brands-heading p{font-size:14px!important;line-height:1.6!important}.zv-brand-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.zv-brand-card{height:145px;padding:15px}.zv-brand-card img{max-width:130px;max-height:100px}}
+@media(max-width:420px){.zv-brand-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.zv-brand-card{height:125px;padding:12px}.zv-brand-card img{max-width:115px;max-height:90px}}
+
+/* =========================================================
+   CLEAN MULTIKART-STYLE BUSINESS CARD + INVITATION BANNERS
+========================================================= */
+
+.zv-clean-collection {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 46% 54%;
+    align-items: center;
+    min-height: 320px;
+    overflow: hidden;
+    background: #f7f8fa !important;
+    border: 1px solid #eeeeee;
+    text-decoration: none !important;
+    transition: box-shadow .35s ease, transform .35s ease;
+}
+
+.zv-clean-collection:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(22, 42, 76, .12);
+}
+
+.zv-clean-business {
+    background:
+        linear-gradient(110deg, #f4f8ff 0%, #ffffff 58%) !important;
+}
+
+.zv-clean-invitation {
+    background:
+        linear-gradient(110deg, #fff9ef 0%, #ffffff 58%) !important;
+}
+
+.zv-clean-copy {
+    position: relative;
+    z-index: 2;
+    padding: 42px 18px 42px 38px;
+    text-align: left;
+}
+
+.zv-clean-eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: var(--theme-color, #0758b8);
+    font-family: "Montserrat", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.15px;
+}
+
+.zv-clean-invitation .zv-clean-eyebrow {
+    color: var(--theme-color2, #f6a329);
+}
+
+.zv-clean-copy h2 {
+    margin: 0 0 12px !important;
+    color: #1f2937 !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-size: 31px !important;
+    line-height: 1.15 !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+}
+
+.zv-clean-copy p {
+    margin: 0 0 18px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.zv-clean-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--theme-color, #0758b8);
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    transition: gap .25s ease;
+}
+
+.zv-clean-invitation .zv-clean-link {
+    color: #c47a09;
+}
+
+.zv-clean-collection:hover .zv-clean-link {
+    gap: 12px;
+}
+
+.zv-clean-image {
+    height: 320px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.zv-clean-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    transition: transform .55s ease;
+}
+
+.zv-clean-collection:hover .zv-clean-image img {
+    transform: scale(1.055);
+}
+
+.zv-clean-accent {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 76px;
+    height: 4px;
+    background: var(--theme-color, #0758b8);
+}
+
+.zv-clean-invitation .zv-clean-accent {
+    background: var(--theme-color2, #f6a329);
+}
+
+@media (max-width: 991px) {
+    .zv-clean-collection {
+        grid-template-columns: 48% 52%;
+        min-height: 290px;
+    }
+
+    .zv-clean-image {
+        height: 290px;
+    }
+
+    .zv-clean-copy {
+        padding: 30px 14px 30px 26px;
+    }
+
+    .zv-clean-copy h2 {
+        font-size: 26px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .zv-clean-collection {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        margin-bottom: 18px;
+    }
+
+    .zv-clean-copy {
+        padding: 28px 26px 10px;
+    }
+
+    .zv-clean-image {
+        height: 240px;
+        padding: 8px 20px 22px;
+    }
+}
+
+</style>
+
+
+
+
+<!-- <script id="zv-home-popup-every-refresh">
+document.addEventListener("DOMContentLoaded", function () {
+    const popup = document.getElementById("exampleModal");
+    if (!popup) return;
+
+    // Show the popup every time the page is loaded/refreshed.
+    setTimeout(function () {
+        try {
+            const modal = bootstrap.Modal.getOrCreateInstance(popup);
+            modal.show();
+        } catch (e) {}
+    }, 1800);
+});
+</script> -->
+
+
+{% endblock %}
+
+<style id="zv-home-product-image-fix">
+/* Restore visible image areas in homepage product cards */
+.basic-product .img-wrapper {
+    display: block !important;
+    position: relative;
+    width: 100%;
+    min-height: 240px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f8f9fb;
+}
+
+.basic-product .img-wrapper > a {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+}
+
+.basic-product .img-wrapper img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 360px;
+    object-fit: contain !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+}
+
+@media (max-width: 767px) {
+    .basic-product .img-wrapper,
+    .basic-product .img-wrapper > a {
+        min-height: 160px;
+    }
+}
+</style>

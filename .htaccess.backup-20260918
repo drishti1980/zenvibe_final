@@ -1,0 +1,16 @@
+RewriteEngine On
+# Serve static files
+RewriteRule ^static/(.*)$ static/$1 [L]
+# Serve media files
+RewriteRule ^media/(.*)$ zenvibe_site/media/$1 [L]
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/utwsig55/public_html/demo_portal/zenvibe"
+PassengerBaseURI "/zenvibe"
+PassengerPython "/home/utwsig55/virtualenv/public_html/demo_portal/zenvibe/3.10/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+SetEnv ZENVIBE_URL_PREFIX zenvibe
+SetEnv DEMO_PORTAL_MODE 1
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END

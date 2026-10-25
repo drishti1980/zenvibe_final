@@ -1,0 +1,3222 @@
+{% extends 'designer/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ product.name }} | ZenVibe Corporate Gifts
+{% endblock %}
+
+{% block head %}
+<style>
+    /* Keep inline download icons in product content at icon size.
+       Some imported descriptions contain unbounded SVGs, which otherwise
+       expand to the width of the product tab. */
+    .zv-db-richtext svg.feather-download,
+    .zv-db-richtext svg[data-feather="download"],
+    .zv-short-description svg.feather-download,
+    .zv-short-description svg[data-feather="download"],
+    .product-tab-description svg.feather-download,
+    .product-tab-description svg[data-feather="download"] {
+        width: 24px !important;
+        height: 24px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
+        display: inline-block !important;
+        vertical-align: middle;
+        flex: 0 0 24px;
+    }
+
+    /* Imported product HTML may contain bare inline SVG download arrows with
+       no Feather class. Scope sizing to rich-text icons, not product artwork. */
+    .zv-product-content-tabs .zv-db-richtext svg,
+    .zv-product-content-tabs .product-tab-description svg,
+    .zv-short-description svg {
+        width: 24px !important;
+        height: 24px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        flex: 0 0 24px !important;
+    }
+    .zv-product-content-tabs .zv-db-richtext img[src*="arrow-down"],
+    .zv-product-content-tabs .zv-db-richtext img[src*="download"],
+    .zv-short-description img[src*="arrow-down"],
+    .zv-short-description img[src*="download"] {
+        width: 24px !important;
+        height: 24px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
+        object-fit: contain !important;
+        display: inline-block !important;
+    }
+
+    /* ZENVIBE: product tab content uses the same typography as the website.
+   Admin/pasted font-family, font-size and colours must not override the theme. */
+    .zv-db-richtext,
+    .zv-db-richtext p,
+    .zv-db-richtext div,
+    .zv-db-richtext span,
+    .zv-db-richtext li,
+    .zv-db-richtext a,
+    .zv-db-richtext strong,
+    .zv-db-richtext b,
+    .zv-db-richtext em,
+    .zv-db-richtext i,
+    .zv-db-richtext table,
+    .zv-db-richtext th,
+    .zv-db-richtext td {
+        font-family: inherit !important;
+        font-size: inherit !important;
+        line-height: inherit !important;
+        color: inherit !important;
+    }
+
+    .zv-db-richtext h1,
+    .zv-db-richtext h2,
+    .zv-db-richtext h3,
+    .zv-db-richtext h4,
+    .zv-db-richtext h5,
+    .zv-db-richtext h6 {
+        font-family: inherit !important;
+        color: inherit !important;
+        line-height: 1.35 !important;
+        font-weight: 600 !important;
+    }
+
+    .zv-db-richtext h1 {
+        font-size: 28px !important;
+        margin: 20px 0 12px !important;
+    }
+
+    .zv-db-richtext h2 {
+        font-size: 24px !important;
+        margin: 18px 0 10px !important;
+    }
+
+    .zv-db-richtext h3 {
+        font-size: 20px !important;
+        margin: 16px 0 9px !important;
+    }
+
+    .zv-db-richtext h4,
+    .zv-db-richtext h5,
+    .zv-db-richtext h6 {
+        font-size: 17px !important;
+        margin: 14px 0 8px !important;
+    }
+
+    .zv-db-richtext p {
+        margin: 0 0 10px !important;
+    }
+
+    .zv-db-richtext ul,
+    .zv-db-richtext ol {
+        padding-left: 22px !important;
+        margin: 8px 0 12px !important;
+    }
+
+    .zv-db-richtext table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+    }
+
+    .zv-db-richtext th,
+    .zv-db-richtext td {
+        padding: 10px 12px;
+        border: 1px solid #e5e5e5;
+        vertical-align: top;
+    }
+
+    /* =========================================================
+   ZENVIBE PRODUCT CONTENT — FINAL LIST / CONTENT FIX
+========================================================= */
+
+    .zv-product-content-tabs .zv-db-richtext {
+        display: block !important;
+        width: 100% !important;
+        white-space: normal !important;
+    }
+
+    /* Normal paragraphs */
+    .zv-product-content-tabs .zv-db-richtext p {
+        display: block !important;
+        margin: 0 0 14px !important;
+        padding: 0 !important;
+        line-height: 1.7 !important;
+    }
+
+    /* REAL BULLET LIST */
+    .zv-product-content-tabs .zv-db-richtext ul {
+        display: block !important;
+        list-style-type: disc !important;
+        list-style-position: outside !important;
+
+        margin: 12px 0 20px 0 !important;
+        padding-left: 34px !important;
+    }
+
+    /* REAL NUMBERED LIST */
+    .zv-product-content-tabs .zv-db-richtext ol {
+        display: block !important;
+        list-style-type: decimal !important;
+        list-style-position: outside !important;
+
+        margin: 12px 0 20px 0 !important;
+        padding-left: 34px !important;
+    }
+
+    /* IMPORTANT — theme is overriding LI */
+    .zv-product-content-tabs .zv-db-richtext ul>li,
+    .zv-product-content-tabs .zv-db-richtext ol>li {
+        display: list-item !important;
+        float: none !important;
+        position: static !important;
+
+        width: auto !important;
+        height: auto !important;
+
+        margin: 0 0 8px 0 !important;
+        padding: 0 !important;
+
+        line-height: 1.65 !important;
+        text-align: left !important;
+    }
+
+    /* Restore markers if theme disables them */
+    .zv-product-content-tabs .zv-db-richtext ul>li {
+        list-style-type: disc !important;
+    }
+
+    .zv-product-content-tabs .zv-db-richtext ol>li {
+        list-style-type: decimal !important;
+    }
+
+    /* Nested lists */
+    .zv-product-content-tabs .zv-db-richtext li>ul,
+    .zv-product-content-tabs .zv-db-richtext li>ol {
+        margin-top: 7px !important;
+        margin-bottom: 7px !important;
+    }
+
+    /* Headings */
+    .zv-product-content-tabs .zv-db-richtext h2 {
+        display: block !important;
+        margin: 26px 0 14px !important;
+        padding: 0 !important;
+        font-size: 24px !important;
+        line-height: 1.35 !important;
+    }
+
+    .zv-product-content-tabs .zv-db-richtext h3 {
+        display: block !important;
+        margin: 22px 0 12px !important;
+        padding: 0 !important;
+        font-size: 20px !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Remove bad inherited flex/grid behaviour */
+    .zv-product-content-tabs .zv-db-richtext ul,
+    .zv-product-content-tabs .zv-db-richtext ol,
+    .zv-product-content-tabs .zv-db-richtext li {
+        flex: none !important;
+        grid-template-columns: none !important;
+    }
+
+    /* FAQ spacing */
+    .zv-product-content-tabs #faq-pane .zv-db-richtext p {
+        margin-bottom: 14px !important;
+    }
+
+    .zv-product-content-tabs #faq-pane .zv-db-richtext h2,
+    .zv-product-content-tabs #faq-pane .zv-db-richtext h3,
+    .zv-product-content-tabs #faq-pane .zv-db-richtext h4 {
+        margin-top: 20px !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* =========================================================
+   FINAL DATABASE RICH TEXT LIST FIX
+========================================================= */
+
+    .tab-product .zv-db-richtext ul {
+        display: block !important;
+        list-style: disc outside !important;
+        margin: 12px 0 20px 0 !important;
+        padding-left: 32px !important;
+    }
+
+    .tab-product .zv-db-richtext ol {
+        display: block !important;
+        list-style: decimal outside !important;
+        margin: 12px 0 20px 0 !important;
+        padding-left: 32px !important;
+    }
+
+    .tab-product .zv-db-richtext ul>li,
+    .tab-product .zv-db-richtext ol>li {
+        display: list-item !important;
+        float: none !important;
+        width: auto !important;
+        height: auto !important;
+        position: static !important;
+        margin: 0 0 7px 0 !important;
+        padding: 0 !important;
+        text-align: left !important;
+        line-height: 1.65 !important;
+    }
+
+    .tab-product .zv-db-richtext ul>li {
+        list-style-type: disc !important;
+    }
+
+    .tab-product .zv-db-richtext ol>li {
+        list-style-type: decimal !important;
+    }
+
+    .tab-product .zv-db-richtext li::marker {
+        color: #333 !important;
+        font-size: 14px !important;
+    }
+
+    /* Keep headings separated from preceding content */
+    .tab-product .zv-db-richtext h2,
+    .tab-product .zv-db-richtext h3,
+    .tab-product .zv-db-richtext h4 {
+        clear: both !important;
+        display: block !important;
+    }
+
+    /* FAQ accordion stored as <details> */
+    .tab-product .zv-db-richtext details {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 10px !important;
+        padding: 12px 15px !important;
+        border: 1px solid #e8e8e8 !important;
+        background: #fff !important;
+    }
+
+    .tab-product .zv-db-richtext summary {
+        display: list-item !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+        font-weight: 600 !important;
+        color: #222 !important;
+    }
+
+    .tab-product .zv-db-richtext details>p {
+        margin: 12px 0 0 !important;
+        padding: 0 !important;
+    }
+
+    /* =========================================================
+       PER-PRODUCT FASTEST DELIVERY
+       Dates are supplied by Django from each product's Admin config.
+    ========================================================= */
+    .zv-fastest-delivery {
+        width: 100%;
+        margin: 18px 0 22px;
+        padding: 13px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #0b20f5;
+        border: 1px solid #111b77;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        line-height: 1.35;
+        font-weight: 500;
+        text-align: center;
+        box-shadow: none;
+    }
+
+    .zv-fastest-delivery i {
+        flex: 0 0 auto;
+        color: #ff9d2e;
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .zv-fastest-delivery strong {
+        color: inherit;
+        font-weight: 600;
+    }
+
+    @media (max-width: 575px) {
+        .zv-fastest-delivery {
+            padding: 12px 13px;
+            font-size: 14px;
+        }
+    }
+
+</style>
+<script src="{% static 'designer/js/product-360-viewer.js' %}"></script>
+<style>
+    /* Keep only small ZenVibe-specific sizing; Multikart classes do the rest */
+    .zv-product-accordian .product-slick img {
+        width: 100%;
+        height: 520px;
+        object-fit: contain;
+        background: #f8f8f8;
+    }
+
+    .zv-product-accordian .slider-nav img {
+        width: 100%;
+        height: 95px;
+        object-fit: contain;
+        background: #f8f8f8;
+        padding: 6px;
+    }
+
+    .zv-product-accordian .product-form-box {
+        height: 100%;
+    }
+
+    .zv-product-accordian .zv-action-btn {
+        width: 100%;
+    }
+
+    .zv-product-accordian .zv-action-btn .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .zv-product-accordian .zv-buy-now {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .zv-product-accordian .zv-benefits {
+        width: 100%;
+    }
+
+    .zv-product-accordian .zv-benefits li {
+        padding: 8px 0;
+        border-bottom: 1px dashed #ddd;
+    }
+
+    .zv-template-thumb img {
+        width: 100%;
+        height: 240px;
+        object-fit: contain;
+    }
+
+    @media(max-width:991px) {
+        .zv-product-accordian .product-slick img {
+            height: 420px
+        }
+    }
+
+    @media(max-width:575px) {
+        .zv-product-accordian .product-slick img {
+            height: 320px
+        }
+    }
+
+
+    /* =========================================================
+   PRINTING GUIDELINES
+   Added only for product printing information.
+========================================================= */
+
+    .zv-print-guidelines {
+        width: 100%;
+    }
+
+    .zv-print-guide-list {
+        margin: 0 0 20px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .zv-print-guide-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 6px 0;
+        color: #666;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .zv-print-guide-list li i {
+        margin-top: 2px;
+        color: #0758b8;
+    }
+
+    .zv-print-spec-card {
+        margin-top: 20px;
+        padding: 18px;
+        border: 1px solid #e9e9e9;
+        background: #fafafa;
+    }
+
+    .zv-print-spec-head {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .zv-print-spec-head h5 {
+        margin: 0 0 4px;
+        color: #222;
+        font-family: "Montserrat", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .zv-print-spec-head p {
+        margin: 0;
+        color: #888;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .zv-print-spec-head>span {
+        padding: 5px 9px;
+        background: #0758b8;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .zv-print-spec-grid {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border: 1px solid #e7e7e7;
+        background: #fff;
+    }
+
+    .zv-print-spec-grid>div {
+        padding: 11px 12px;
+        border-right: 1px solid #e7e7e7;
+        border-bottom: 1px solid #e7e7e7;
+    }
+
+    .zv-print-spec-grid>div:nth-child(2n) {
+        border-right: 0;
+    }
+
+    .zv-print-spec-grid>div:nth-last-child(-n+2) {
+        border-bottom: 0;
+    }
+
+    .zv-print-spec-grid span {
+        display: block;
+        margin-bottom: 3px;
+        color: #999;
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+
+    .zv-print-spec-grid strong {
+        color: #333;
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+
+    /* Banner frame */
+    .zv-print-frame-banner {
+        width: 100%;
+        aspect-ratio: 3 / 1;
+        padding: 8px;
+        border: 2px solid #555;
+        background: #fff;
+    }
+
+    .zv-print-safe-area {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #f6a329;
+        color: #777;
+        font-size: 11px;
+        letter-spacing: .8px;
+    }
+
+
+    /* Canopy frame */
+    .zv-canopy-frame {
+        position: relative;
+        width: 220px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .zv-canopy-roof {
+        width: 190px;
+        height: 82px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        clip-path: polygon(12% 100%, 25% 15%, 75% 15%, 88% 100%);
+        background: #eef5ff;
+        border: 2px solid #0758b8;
+        color: #0758b8;
+        font-size: 9px;
+        font-weight: 600;
+    }
+
+    .zv-canopy-valance {
+        width: 168px;
+        height: 27px;
+        margin: -2px auto 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #0758b8;
+        background: #fff;
+        color: #666;
+        font-size: 8px;
+        font-weight: 600;
+    }
+
+    .zv-canopy-legs {
+        width: 168px;
+        height: 42px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .zv-canopy-legs i {
+        width: 3px;
+        height: 42px;
+        background: #555;
+    }
+
+
+    /* T-shirt frame */
+    .zv-shirt-frame {
+        display: flex;
+        justify-content: center;
+        padding: 4px 0;
+    }
+
+    .zv-shirt-body {
+        position: relative;
+        width: 180px;
+        height: 205px;
+        clip-path: polygon(25% 0,
+                38% 0,
+                42% 10%,
+                58% 10%,
+                62% 0,
+                75% 0,
+                100% 22%,
+                87% 38%,
+                75% 30%,
+                75% 100%,
+                25% 100%,
+                25% 30%,
+                13% 38%,
+                0 22%);
+        background: #e9edf2;
+    }
+
+    .zv-shirt-neck {
+        position: absolute;
+        top: -1px;
+        left: 50%;
+        width: 42px;
+        height: 25px;
+        transform: translateX(-50%);
+        border-radius: 0 0 25px 25px;
+        background: #fff;
+    }
+
+    .zv-shirt-print-zone {
+        position: absolute;
+        top: 55px;
+        left: 50%;
+        width: 76px;
+        height: 102px;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #f6a329;
+        background: rgba(255, 255, 255, .75);
+        color: #0758b8;
+        text-align: center;
+    }
+
+    .zv-shirt-print-zone span {
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .zv-shirt-print-zone small {
+        margin-top: 3px;
+        color: #777;
+        font-size: 7px;
+        letter-spacing: .5px;
+    }
+
+    .zv-print-general-note {
+        margin-top: 16px;
+        padding: 13px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        background: #f7f7f7;
+        color: #777;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .zv-print-general-note i {
+        margin-top: 1px;
+        color: #0758b8;
+        font-size: 16px;
+    }
+
+    @media(max-width:575px) {
+        .zv-print-spec-card {
+            padding: 14px;
+        }
+
+        .zv-print-spec-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .zv-print-spec-grid>div {
+            border-right: 0;
+            border-bottom: 1px solid #e7e7e7 !important;
+        }
+
+        .zv-print-spec-grid>div:last-child {
+            border-bottom: 0 !important;
+        }
+
+        .zv-canopy-frame {
+            width: 190px;
+            transform: scale(.9);
+            transform-origin: center top;
+            margin-bottom: -12px;
+        }
+    }
+</style>
+
+<style id="zv-bottom-layout-fix">
+    /* =========================================================
+   FIX MULTIKART BOTTOM SECTION SPACING / OVERLAP
+========================================================= */
+
+    /* remove excessive vertical whitespace before tabs */
+    .zv-product-accordian {
+        padding-bottom: 28px !important;
+    }
+
+    .tab-product {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 35px !important;
+    }
+
+    /* clean tab shell */
+    .tab-product .container {
+        padding-top: 0 !important;
+    }
+
+    .tab-product .nav-tabs {
+        margin: 0 !important;
+        padding: 15px 15px 0 !important;
+        min-height: auto !important;
+    }
+
+    .tab-product .tab-content {
+        position: relative !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 24px 18px 26px !important;
+        overflow: visible !important;
+    }
+
+    .tab-product .tab-pane {
+        position: relative !important;
+        min-height: 0 !important;
+        height: auto !important;
+    }
+
+    .tab-product .product-tab-description {
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0 !important;
+    }
+
+    .tab-product .product-tab-description .part {
+        margin-bottom: 18px !important;
+    }
+
+    .tab-product .product-tab-description .part:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    .tab-product .product-tab-description p {
+        margin-bottom: 0 !important;
+        line-height: 1.7 !important;
+    }
+
+    /* Related Products must start after tab box, never overlap */
+    section.section-b-space.ratio_asos {
+        clear: both !important;
+        position: relative !important;
+        margin-top: 0 !important;
+        padding-top: 35px !important;
+        padding-bottom: 55px !important;
+        background: #fff !important;
+    }
+
+    .product-related {
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 22px !important;
+        padding: 0 !important;
+        clear: both !important;
+    }
+
+    .product-related h2 {
+        margin: 0 !important;
+        padding-bottom: 18px !important;
+        border-bottom: 1px solid #eee !important;
+        font-size: 25px !important;
+        line-height: 1.3 !important;
+    }
+
+    /* Related product carousel/card height */
+    .product-5 {
+        margin-top: 0 !important;
+    }
+
+    .product-5 .basic-product {
+        height: 100% !important;
+    }
+
+    .product-5 .basic-product .overflow-hidden {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .product-5 .img-wrapper {
+        height: 285px !important;
+        min-height: 285px !important;
+    }
+
+    .product-5 .product-detail {
+        flex: 1 !important;
+        padding-top: 12px !important;
+    }
+
+    .product-5 .product-detail h6 {
+        min-height: 18px !important;
+    }
+
+    /* Prevent sticky bottom cart from covering content */
+    .sticky-bottom-cart {
+        z-index: 1050 !important;
+    }
+
+
+    @media(max-width:991px) {
+        .tab-product {
+            padding-bottom: 28px !important;
+        }
+
+        section.section-b-space.ratio_asos {
+            padding-top: 28px !important;
+        }
+
+        .product-5 .img-wrapper {
+            height: 245px !important;
+            min-height: 245px !important;
+        }
+    }
+
+    @media(max-width:575px) {
+        .tab-product .nav-tabs {
+            padding: 10px 8px 0 !important;
+        }
+
+        .tab-product .nav-tabs .nav-link {
+            padding: 10px 12px !important;
+            font-size: 13px !important;
+        }
+
+        .tab-product .tab-content {
+            padding: 18px 12px 20px !important;
+        }
+
+        section.section-b-space.ratio_asos {
+            padding-top: 22px !important;
+            padding-bottom: 35px !important;
+        }
+
+        .product-related h2 {
+            font-size: 21px !important;
+        }
+
+        .product-5 .img-wrapper {
+            height: 210px !important;
+            min-height: 210px !important;
+        }
+
+        body {
+            padding-bottom: 120px;
+        }
+    }
+</style>
+
+
+<style id="zv-database-product-options">
+    .zv-color-swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px
+    }
+
+    .zv-color-swatch {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 7px 10px;
+        border-radius: 4px
+    }
+
+    .zv-color-swatch span {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, .15)
+    }
+
+    .zv-color-swatch.active {
+        border-color: #0b5fc1;
+        box-shadow: 0 0 0 1px #0b5fc1
+    }
+
+    .zv-price-table tr.zv-active-tier {
+        background: #f3e0f0;
+        font-weight: 600
+    }
+
+    .zv-db-richtext,
+    .zv-db-richtext * {
+        font-family: inherit !important;
+        color: inherit
+    }
+
+    .zv-db-richtext p,
+    .zv-db-richtext li {
+        font-size: 14px !important;
+        line-height: 1.75 !important
+    }
+
+    .zv-db-richtext ul,
+    .zv-db-richtext ol {
+        margin: 12px 0 18px;
+        padding-left: 24px
+    }
+
+    .zv-db-richtext h1,
+    .zv-db-richtext h2,
+    .zv-db-richtext h3,
+    .zv-db-richtext h4,
+    .zv-db-richtext h5,
+    .zv-db-richtext h6 {
+        font-family: inherit !important;
+        margin: 18px 0 10px
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<script>
+/* Zenvibe: hide internal 3D metadata from the customer-facing product UI only. */
+(function () {
+    "use strict";
+    const internalFields = new Set(["generated_3d_model", "generated_3d_method"]);
+    function hide3dMetadata() {
+        document.querySelectorAll("label, dt, th, strong, b").forEach(function (node) {
+            const label = (node.textContent || "").trim().replace(/:$/, "").toLowerCase();
+            if (!internalFields.has(label)) return;
+            const wrapper = node.closest("tr, .form-row, .form-group, .field-row, .product-attribute, .product-detail-row, .attribute-row, .field-box, .zv-option-block");
+            if (wrapper) wrapper.hidden = true;
+            else if (node.parentElement && node.parentElement.children.length <= 2) node.parentElement.hidden = true;
+        });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hide3dMetadata);
+    else hide3dMetadata();
+    new MutationObserver(hide3dMetadata).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+
+
+<!-- =========================================================
+     BREADCRUMB â€” SAME MULTIKART STRUCTURE
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{{ product.name }}</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:category_detail' product.category.slug %}">
+                        {{ product.category.name }}
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    {{ product.name }}
+                </li>
+
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+
+<style id="zv-two-column-product-ui">
+    /* ZenVibe product detail refresh: 2 columns + 4 bottom tabs */
+    .zv-product-two-col {
+        padding: 38px 0 34px !important;
+        background: #fff
+    }
+
+    .zv-gallery-card,
+    .zv-product-info-card {
+        background: #fff;
+        border: 1px solid #ececec;
+        border-radius: 4px;
+        padding: 24px;
+        height: 100%
+    }
+
+    .zv-gallery-card .product-slick img {
+        width: 100%;
+        max-height: 560px;
+        object-fit: contain;
+        background: #fafafa
+    }
+
+    .zv-product-thumbs {
+        margin-top: 18px
+    }
+
+    .zv-product-thumbs img {
+        height: 78px;
+        width: 78px;
+        object-fit: cover;
+        border: 1px solid #eee;
+        padding: 4px
+    }
+
+    .zv-product-info-card {
+        display: block !important;
+        align-items: initial !important
+    }
+
+    .zv-product-info-card .main-title {
+        font-size: 30px;
+        line-height: 1.25;
+        margin: 8px 0 12px
+    }
+
+    .zv-main-price {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 16px;
+        margin-bottom: 16px
+    }
+
+    .zv-main-price h3 {
+        color: #0b5fc1;
+        margin: 0
+    }
+
+    .zv-short-description {
+        font-size: 15px;
+        line-height: 1.75;
+        color: #666;
+        margin-bottom: 20px
+    }
+
+    .zv-option-block {
+        padding: 15px 0;
+        border-top: 1px solid #f0f0f0
+    }
+
+    .zv-option-block label {
+        margin-bottom: 8px
+    }
+
+    .zv-purchase-row {
+        padding: 16px 0
+    }
+
+    .zv-qty-wrap {
+        max-width: 220px
+    }
+
+    .zv-qty-wrap label {
+        display: block;
+        margin-bottom: 8px
+    }
+
+    .zv-qty-wrap small {
+        display: block;
+        margin-top: 7px;
+        color: #777
+    }
+
+    .zv-qty-wrap .input-group {
+        flex-wrap: nowrap
+    }
+
+    .zv-qty-wrap .form-control {
+        text-align: center;
+        min-width: 70px
+    }
+
+    .zv-action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 5px
+    }
+
+    .zv-action-grid .btn,
+    .zv-customize-btn {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 0 !important
+    }
+
+    /* =========================================================
+   PRODUCT ACTION BUTTONS - SOLID FULL BACKGROUND
+   Prevent Multikart diagonal / sliding hover animation
+========================================================= */
+
+    .zv-action-grid .btn,
+    .zv-customize-wrap .zv-customize-btn {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        min-height: 48px !important;
+
+        background: #0b5fc1 !important;
+        background-color: #0b5fc1 !important;
+        background-image: none !important;
+
+        border: 2px solid #0b5fc1 !important;
+        color: #ffffff !important;
+
+        overflow: hidden !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Kill Multikart animated diagonal layers */
+    .zv-action-grid .btn::before,
+    .zv-action-grid .btn::after,
+    .zv-customize-wrap .zv-customize-btn::before,
+    .zv-customize-wrap .zv-customize-btn::after {
+        content: none !important;
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+        transform: none !important;
+    }
+
+    /* Full button hover */
+    .zv-action-grid .btn:hover,
+    .zv-action-grid .btn:focus,
+    .zv-action-grid .btn:active,
+    .zv-customize-wrap .zv-customize-btn:hover,
+    .zv-customize-wrap .zv-customize-btn:focus,
+    .zv-customize-wrap .zv-customize-btn:active {
+        background: #084f9f !important;
+        background-color: #084f9f !important;
+        background-image: none !important;
+
+        border-color: #084f9f !important;
+        color: #ffffff !important;
+
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Icons */
+    .zv-action-grid .btn i {
+        position: relative !important;
+        z-index: 2 !important;
+        margin-right: 8px;
+        color: #ffffff !important;
+    }
+
+    .zv-customize-wrap {
+        margin-top: 12px
+    }
+
+    .zv-customize-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600
+    }
+
+    .zv-benefits {
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 15px
+    }
+
+    .zv-benefits ul {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none
+    }
+
+    .zv-benefits li {
+        font-size: 13px;
+        color: #555
+    }
+
+    .zv-benefits i,
+    .zv-guideline-list i {
+        color: #0b5fc1
+    }
+
+    .zv-four-tabs {
+        clear: both !important;
+        padding: 18px 0 30px !important
+    }
+
+    .zv-four-tabs .nav-tabs {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        height: auto !important;
+        overflow: visible !important;
+        border: 1px solid #e8e8e8;
+        background: #f7f7f7;
+        padding: 0 !important
+    }
+
+    .zv-four-tabs .nav-item {
+        margin: 0 !important
+    }
+
+    .zv-four-tabs .nav-link {
+        border: 0 !important;
+        border-radius: 0 !important;
+        padding: 16px 24px !important;
+        font-weight: 600 !important;
+        color: #222 !important;
+        background: transparent !important
+    }
+
+    .zv-four-tabs .nav-link.active {
+        background: #0b5fc1 !important;
+        color: #fff !important
+    }
+
+    .zv-four-tabs .tab-content {
+        border: 1px solid #e8e8e8 !important;
+        border-top: 0 !important;
+        padding: 26px !important;
+        min-height: 180px !important;
+        height: auto !important;
+        overflow: visible !important
+    }
+
+    .zv-four-tabs .tab-pane {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important
+    }
+
+    .zv-guideline-list {
+        padding: 0;
+        margin: 0;
+        list-style: none
+    }
+
+    .zv-guideline-list li {
+        margin: 0 0 11px
+    }
+
+    .zv-guideline-list i {
+        margin-right: 8px
+    }
+
+    .zv-info-table {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 35px
+    }
+
+    .zv-info-table .part {
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #eee !important
+    }
+
+    @media(max-width:991px) {
+        .zv-product-two-col {
+            padding-top: 24px !important
+        }
+
+        .zv-gallery-card,
+        .zv-product-info-card {
+            padding: 18px
+        }
+
+        .zv-product-info-card .main-title {
+            font-size: 25px
+        }
+
+        .zv-four-tabs .nav-link {
+            padding: 13px 16px !important
+        }
+    }
+
+    @media(max-width:575px) {
+        .zv-action-grid {
+            grid-template-columns: 1fr
+        }
+
+        .zv-four-tabs .nav-tabs {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr
+        }
+
+        .zv-four-tabs .nav-link {
+            width: 100%;
+            text-align: center;
+            font-size: 13px
+        }
+
+        .zv-four-tabs .tab-content {
+            padding: 18px !important
+        }
+
+        .zv-info-table {
+            grid-template-columns: 1fr
+        }
+    }
+
+    /* FINAL SOLID ACTION BUTTON OVERRIDE */
+    .zv-action-grid .btn, .zv-customize-wrap .zv-customize-btn { background:#0b5fc1 !important; background-image:none !important; border:2px solid #0b5fc1 !important; color:#fff !important; overflow:hidden !important; }
+    .zv-action-grid .btn::before, .zv-action-grid .btn::after, .zv-customize-wrap .zv-customize-btn::before, .zv-customize-wrap .zv-customize-btn::after { content:none !important; display:none !important; }
+    .zv-action-grid .btn:hover, .zv-action-grid .btn:focus, .zv-action-grid .btn:active, .zv-customize-wrap .zv-customize-btn:hover, .zv-customize-wrap .zv-customize-btn:focus, .zv-customize-wrap .zv-customize-btn:active { background:#084f9f !important; background-image:none !important; border-color:#084f9f !important; color:#fff !important; }
+    .zv-delivery-information h3 { margin:0 0 14px !important; font-size:22px !important; color:#222 !important; }
+    .zv-delivery-information h4 { margin:22px 0 10px !important; padding-top:18px !important; border-top:1px solid #eee; font-size:16px !important; color:#222 !important; }
+    .zv-delivery-information p, .zv-delivery-information li { font-size:14px !important; line-height:1.7 !important; color:#666 !important; }
+    .zv-delivery-information ul { display:block !important; list-style:disc outside !important; padding-left:28px !important; margin:8px 0 16px !important; }
+    .zv-delivery-information li { display:list-item !important; margin:0 0 7px !important; }
+    @media(max-width:575px){ .zv-four-tabs .nav-tabs{display:grid !important;grid-template-columns:1fr 1fr !important}.zv-four-tabs .nav-item,.zv-four-tabs .nav-link{width:100% !important}.zv-four-tabs .nav-link{white-space:normal !important;text-align:center !important} }
+</style>
+<!-- =========================================================
+     PRODUCT SECTION — CLEAN 2-COLUMN PRODUCT DETAIL LAYOUT
+========================================================= -->
+<section class="zv-product-accordian zv-product-two-col">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+
+                <!-- LEFT: PRODUCT IMAGE / GALLERY -->
+                <div class="col-lg-6">
+                    <div class="zv-gallery-card">
+                        <div class="product-slick" id="productPreviewMount">
+                            {% for image in product_gallery_images %}
+                            <div><img src="{{ image.url }}" {% if forloop.first %}id="productMainImage"{% endif %} alt="{{ image.label }}"
+                                    class="w-100 img-fluid blur-up lazyload"></div>
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav zv-product-thumbs">
+                            {% for image in product_gallery_images %}
+                            <div data-preview-url="{{ image.url }}" data-preview-frame="{{ image.frame }}"><img src="{{ image.url }}"
+                                    alt="{{ image.label }}" class="img-fluid blur-up lazyload"></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PRODUCT INFORMATION + PURCHASE ACTIONS -->
+                <div class="col-lg-6">
+                    <div class="product-page-details zv-product-info-card mt-0">
+                        <div class="trending-text"><i class="ri-fire-fill"></i>
+                            <h5>Popular custom product</h5>
+                        </div>
+                        <h2 class="main-title">{{ product.name }}</h2>
+
+                        <div class="price-text zv-main-price">
+                            <h3><span class="fw-normal">Price:</span>
+                                <span id="zvUnitPrice">{% if product.min_price and product.max_price and product.min_price != product.max_price %}${{ product.min_price }} – ${{ product.max_price }}{% else %}${{ product.sale_price|default:product.price }}{% endif %}</span>
+                                {% if product.is_on_sale and product.sale_price %}<del>${{ product.price }}</del>{% endif %}
+                            </h3>
+                            {% if product.is_on_sale %}<span>Special promotional price</span>{% endif %}
+                            {% if product.min_price and product.max_price and product.min_price != product.max_price %}
+                            <div class="zv-price-range-note">Price varies by quantity / selected option. Range: ${{ product.min_price }} – ${{ product.max_price }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if product.short_description %}<div class="zv-short-description">{{ product.short_description|safe }}</div>{% endif %}
+
+                        <form method="post" action="{% url 'designer:add_to_cart' product.id %}" id="zvAddCartForm">
+                            {% csrf_token %}
+                            {% if editing_cart_key %}<input type="hidden" name="edit_cart_key" value="{{ editing_cart_key }}">{% endif %}
+                            <input type="hidden" name="color_key" id="zvSelectedColor"
+                                value="{{ selected_color_key }}">
+
+                            {% if size_variants %}
+                            <div class="form-group w-100 zv-option-block">
+                                <label for="zvProductSize"><strong>Product Size</strong></label>
+                                <select id="zvProductSize" name="size_key" class="form-control">
+                                    {% for size in size_variants %}<option value="{{ size.size_key }}"{% if size.size_key == selected_size_key %} selected{% endif %}>{{ size.name }}
+                                    </option>{% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+
+                            {% if color_variants %}
+                            <div class="zv-option-block w-100">
+                                <strong>Color</strong>
+                                <div class="zv-color-swatches mt-2" id="zvColorSwatches">
+                                    {% for color in color_variants %}<button type="button"
+                                        class="zv-color-swatch{% if forloop.first %} active{% endif %}"
+                                        data-color-key="{{ color.color_key }}" title="{{ color.name }}"><span
+                                            style="background:{{ color.hex_value|default:'#ddd' }}"></span>{{ color.name }}</button>{% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% for group in option_groups %}
+                            <div class="form-group w-100 zv-option-block">
+                                <label for="zvOption{{ forloop.counter }}"><strong>{{ group.label }}</strong></label>
+                                <select id="zvOption{{ forloop.counter }}" name="option_{{ group.key }}"
+                                    class="form-control zv-generic-option" data-option-key="{{ group.key }}">
+                                    {% for value in group.values %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            {% endfor %}
+
+                            {% if price_tier_rows %}
+                            <div class="zv-option-block w-100">
+                                <strong id="zvPriceListTitle">Quantity Pricing</strong>
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-sm mb-0 zv-price-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>{% for row in price_tier_rows %}<tr data-price-tier
+                                                data-min="{{ row.min_quantity }}"
+                                                data-max="{{ row.max_quantity|default:'' }}"
+                                                data-price="{{ row.unit_price }}" data-variant="{{ row.variant_key }}">
+                                                <td>{{ row.min_quantity }}{% if row.max_quantity %} – {{ row.max_quantity }}{% else %}+{% endif %}</td>
+                                                <td>${{ row.unit_price }}</td>
+                                            </tr>{% endfor %}</tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if fastest_delivery %}
+                        <div class="zv-fastest-delivery" role="status" aria-label="Fastest delivery estimate">
+                            <i class="ri-flashlight-fill" aria-hidden="true"></i>
+                            <span>Fastest Delivery between <strong>{{ fastest_delivery.start_label }}</strong> - <strong>{{ fastest_delivery.end_label }}</strong></span>
+                        </div>
+                        {% endif %}
+
+                        <div class="zv-purchase-row">
+                                <div class="zv-qty-wrap">
+                                    <label><strong>Quantity</strong></label>
+                                    <div class="qty-box">
+                                        <div class="input-group">
+                                            <span class="input-group-prepend"><button type="button"
+                                                    class="btn zv-qty-minus" id="zvQtyMinus"><i
+                                                        class="ri-subtract-line"></i></button></span>
+                                            <input type="number" inputmode="numeric" step="1" id="zvProductQty"
+                                                name="quantity" class="form-control input-number"
+                                                value="{{ initial_quantity|default:1 }}"
+                                                min="{{ effective_minimum_quantity|default:1 }}" {% if product.maximum_quantity %} max="{{ product.maximum_quantity }}" {% endif %}>
+                                            <span class="input-group-prepend"><button type="button"
+                                                    class="btn zv-qty-plus" id="zvQtyPlus"><i
+                                                        class="ri-add-line"></i></button></span>
+                                        </div>
+                                    </div>
+                                    <small>Minimum order: <span id="zvMinimumOrder">{{ effective_minimum_quantity|default:1 }}</span>{% if product.maximum_quantity %} &nbsp;|&nbsp; Maximum order: {{ product.maximum_quantity }}{% endif %}</small>
+                                </div>
+                            </div>
+
+                            <div class="zv-action-grid">
+                                <button class="btn btn-solid scroll-button" type="submit" id="zvAddToCart">
+                                    <i class="ri-shopping-cart-line"></i> {% if editing_cart_key %}Update Cart{% else %}Add To Cart{% endif %}
+                                </button>
+                                <button class="btn btn-solid zv-buy-now" type="submit" id="zvBuyNow" name="cart_action" value="buy_now"><i
+                                        class="ri-flashlight-line"></i> Buy Now</button>
+                            </div>
+                        </form>
+
+                        {% if product.source_attributes.show_customize_button != False %}
+                        <div class="zv-customize-wrap">
+                            {% if templates %}
+                                {% with first_template=templates.0 %}
+                                    <a class="btn btn-solid zv-customize-btn"
+                                       href="{% url 'designer:editor' product.id %}?template={{ first_template.id }}">Customize</a>
+                                {% endwith %}
+                            {% else %}
+                                <a class="btn btn-solid zv-customize-btn"
+                                   href="{% url 'designer:editor' product.id %}">Customize</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="zv-benefits">
+                            <ul>
+                                <li><i class="ri-checkbox-circle-line"></i> Free digital proof</li>
+                                <li><i class="ri-truck-line"></i> Canada-wide delivery</li>
+                                <li><i class="ri-palette-line"></i> Easy artwork customization</li>
+                            </ul>
+                        </div>
+
+                        <div class="buy-box justify-content-start mt-3"><a href="#!" data-wishlist
+                                data-id="{{ product.id }}" data-name="{{ product.name|escape }}"
+                                data-price="{{ product.sale_price|default:product.price }}"
+                                data-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                data-url="{% url 'designer:choose_design' product.id %}"><i
+                                    class="ri-heart-line"></i><span>Add To Wishlist</span></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     PRODUCT TABS — ZENVIBE PRODUCT INFORMATION
+     Delivery Information is global and appears for ALL products.
+========================================================= -->
+<section class="tab-product zv-four-tabs zv-product-content-tabs m-0">
+    <div class="container"><div class="row"><div class="col-12">
+        <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+            {% if product.description %}<li class="nav-item"><a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description-pane" role="tab">Product Description</a></li>{% endif %}
+            {% if product.printing_guidelines %}<li class="nav-item"><a class="nav-link{% if not product.description %} active{% endif %}" id="printing-tab" data-bs-toggle="tab" href="#printing-pane" role="tab">Printing Guidelines</a></li>{% endif %}
+            {% if product.product_information %}<li class="nav-item"><a class="nav-link{% if not product.description and not product.printing_guidelines %} active{% endif %}" id="information-tab" data-bs-toggle="tab" href="#information-pane" role="tab">Information</a></li>{% endif %}
+            <li class="nav-item"><a class="nav-link{% if not product.description and not product.printing_guidelines and not product.product_information %} active{% endif %}" id="delivery-tab" data-bs-toggle="tab" href="#delivery-pane" role="tab">Delivery Information</a></li>
+            {% if product.faqs %}<li class="nav-item"><a class="nav-link" id="faq-tab" data-bs-toggle="tab" href="#faq-pane" role="tab">FAQ</a></li>{% endif %}
+        </ul>
+        <div class="tab-content nav-material" id="top-tabContent">
+            {% if product.description %}<div class="tab-pane fade show active" id="description-pane" role="tabpanel"><div class="product-tab-description zv-db-richtext">{{ product.description|safe }}</div></div>{% endif %}
+            {% if product.printing_guidelines %}<div class="tab-pane fade{% if not product.description %} show active{% endif %}" id="printing-pane" role="tabpanel"><div class="product-tab-description zv-db-richtext">{{ product.printing_guidelines|safe }}</div></div>{% endif %}
+            {% if product.product_information %}<div class="tab-pane fade{% if not product.description and not product.printing_guidelines %} show active{% endif %}" id="information-pane" role="tabpanel"><div class="product-tab-description zv-db-richtext">{{ product.product_information|safe }}</div></div>{% endif %}
+            <div class="tab-pane fade{% if not product.description and not product.printing_guidelines and not product.product_information %} show active{% endif %}" id="delivery-pane" role="tabpanel">
+                <div class="product-tab-description zv-db-richtext zv-delivery-information">
+                    <h3>Delivery Information</h3>
+                    <p>We offer reliable delivery across Canada for custom promotional products, corporate gifts and printed merchandise. Delivery times vary depending on the product, quantity, customization requirements and delivery location.</p>
+                    <h4>Production &amp; Processing Time</h4><ul><li>Production begins after your artwork and digital proof have been approved.</li><li>Customized and printed products require production time before dispatch.</li><li>Production time varies by product type, quantity and customization requirements.</li><li>Large or bulk orders may require additional production time.</li></ul>
+                    <h4>Shipping Across Canada</h4><ul><li>Delivery is available to locations across Canada.</li><li>Shipping time depends on the delivery address and available shipping service.</li><li>Remote and regional locations may require additional transit time.</li><li>Orders containing multiple products may be dispatched separately where required.</li></ul>
+                    <h4>Estimated Delivery Time</h4><p>Total turnaround includes production and shipping time. For an event or fixed deadline, allow sufficient time for artwork approval, production and delivery.</p>
+                    <h4>Artwork Approval</h4><p>Where a digital proof is required, production begins after artwork approval. Approval delays may affect the estimated delivery timeframe.</p>
+                    <h4>Bulk &amp; Large Orders</h4><p>Large corporate orders may require additional production and handling time. Delivery arrangements can vary based on shipment size and weight.</p>
+                    <h4>Delivery Address</h4><p>Please ensure your delivery address, postal code and contact details are correct. Incorrect or incomplete information may result in delays.</p>
+                    <h4>Order Tracking</h4><p>Where tracking is available, tracking information will be provided after dispatch.</p>
+                    <h4>Urgent Orders</h4><p>If you require products by a specific date, please contact the ZenVibe team before ordering so production and delivery timing can be confirmed.</p>
+                    <h4>Delivery Delays</h4><p>Delivery estimates may be affected by carrier delays, weather, public holidays, remote locations or circumstances outside normal production and shipping schedules.</p>
+                </div>
+            </div>
+            {% if product.faqs %}<div class="tab-pane fade" id="faq-pane" role="tabpanel"><div class="product-tab-description zv-db-richtext">{{ product.faqs|safe }}</div></div>{% endif %}
+        </div>
+    </div></div></div>
+</section>
+
+<!-- =========================================================
+     RELATED PRODUCTS â€” SAME MULTIKART STRUCTURE
+========================================================= -->
+<section class="section-b-space ratio_asos">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-12 product-related">
+                <h2>Related Products</h2>
+            </div>
+
+        </div>
+
+
+        <div class="product-5 product-m no-arrow">
+
+            {% for rp in product.category.products.all|slice:':6' %}
+
+            {% if rp.id != product.id %}
+
+            <div class="basic-product theme-product-1">
+
+                <div class="overflow-hidden">
+
+                    <div class="img-wrapper">
+
+                        <a href="{% url 'designer:choose_design' rp.id %}">
+
+                            {% if rp.image %}
+                            <img src="{{ rp.image.url }}" class="img-fluid blur-up lazyload" alt="{{ rp.name }}">
+                            {% endif %}
+
+                        </a>
+
+
+                        {% if rp.is_on_sale %}
+                        <div class="ribbon">
+                            <span>Sale</span>
+                        </div>
+                        {% endif %}
+
+
+                        <div class="cart-info">
+
+                            <ul class="hover-action">
+
+                                <li>
+                                    <button class="btn btn-solid" type="button" title="Add to cart" data-add-cart
+                                        data-product-id="{{ rp.id }}" data-product-name="{{ rp.name|escape }}"
+                                        data-product-price="{{ rp.sale_price|default:rp.price }}"
+                                        data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}"
+                                        data-product-url="{% url 'designer:choose_design' rp.id %}"
+                                        data-cart-url="{% url 'designer:add_to_cart' rp.id %}">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <a href="#!" title="Add to Wishlist" data-wishlist data-id="{{ rp.id }}"
+                                        data-name="{{ rp.name|escape }}"
+                                        data-price="{{ rp.sale_price|default:rp.price }}"
+                                        data-image="{% if rp.image %}{{ rp.image.url }}{% endif %}"
+                                        data-url="{% url 'designer:choose_design' rp.id %}">
+                                        <i class="ri-heart-line"></i>
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="product-detail">
+
+                        <div>
+
+                            <div class="brand-w-color">
+
+                                <a class="product-title" href="{% url 'designer:choose_design' rp.id %}">
+                                    {{ rp.name }}
+                                </a>
+
+                            </div>
+
+
+                            <h6>
+                                {{ rp.category.name }}
+                            </h6>
+
+
+                            <h4 class="price">
+
+                                {% if rp.is_on_sale and rp.sale_price %}
+
+                                ${{ rp.sale_price }}
+
+                                <del>
+                                    ${{ rp.price }}
+                                </del>
+
+                                <span class="discounted-price">
+                                    Sale
+                                </span>
+
+                                {% else %}
+
+                                ${{ rp.price }}
+
+                                {% endif %}
+
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            {% empty %}
+
+            <div class="text-center py-4">
+                <p>No related products available.</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<style id="zv-multikart-bottom-css">
+    /* Tabs exactly in Multikart-style box */
+    .tab-product {
+        margin-top: 45px !important;
+    }
+
+    .tab-product .nav-material {
+        background: #fafafa;
+    }
+
+    .tab-product .nav-tabs {
+        padding: 15px 15px 0;
+        border: 1px solid #eee;
+        border-bottom: 0;
+    }
+
+    .tab-product .nav-tabs .nav-link {
+        margin-right: 12px;
+        padding: 14px 24px;
+        border: 1px solid #eee;
+        background: #fff;
+        color: #222;
+    }
+
+    .tab-product .nav-tabs .nav-link.active {
+        background: #0758b8;
+        border-color: #0758b8;
+        color: #fff;
+    }
+
+    .tab-product .tab-content {
+        padding: 22px 18px;
+        border: 1px solid #eee;
+        background: #fff;
+    }
+
+
+    /* Related products */
+    .product-related h2 {
+        margin-bottom: 25px;
+        text-transform: capitalize;
+    }
+
+    .product-5 .basic-product {
+        margin: 0 8px;
+    }
+
+    .product-5 .img-wrapper {
+        height: 300px;
+        background: #f5f5f5;
+    }
+
+    .product-5 .img-wrapper>a {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .product-5 .img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+
+    /* Sticky cart */
+    .sticky-bottom-cart .product-image>img {
+        width: 75px;
+        height: 75px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    .sticky-bottom-cart .add-btn button {
+        min-width: 145px;
+    }
+
+    @media(max-width:767px) {
+        .tab-product .nav-tabs .nav-link {
+            padding: 10px 14px;
+            margin-right: 5px;
+        }
+
+        .product-5 .img-wrapper {
+            height: 230px;
+        }
+    }
+</style>
+
+
+
+{% if templates and not invitation_templates and not bc_pack_templates %}
+<section class="section-b-space zv-generic-template-section" id="productTemplates">
+    <div class="container">
+        <div class="title1">
+            <h2 class="title-inner1">Choose a {{ product.name }} Template</h2>
+            <p>Choose a design, then customize all editable text, shapes, colors and image areas in the ZenVibe
+                designer.</p>
+        </div>
+
+        <div class="zv-generic-filter-row">
+            <input id="zvTemplateSearch" type="search" placeholder="Search templates..." aria-label="Search templates">
+        </div>
+
+        <div class="zv-generic-grid" id="zvTemplateGrid">
+            {% for card in templates %}
+            <article class="zv-generic-card" data-search="{{ card.name|lower }}" {% if product.id == 415 %}data-coaster-shape="{{ selected_shape|default:'square' }}"{% endif %}>
+                <a class="zv-generic-preview" href="{% url 'designer:editor' product.id %}?template={{ card.id }}{% if product.id == 415 %}&shape={{ selected_shape|default:'square' }}{% endif %}">
+                    {% if card.json_data.templateType == "editable-master" or card.json_data.editorNative or card.json_data.generator == "zenvibe-promotional-luxury-v38" or card.json_data.generator == "zenvibe-promotional-editable-v2" %}
+                    <canvas class="zv-template-json-preview" width="420" height="300" data-product-id="{{ product.id }}"></canvas>
+                    {{ card.json_data|json_script:card.id }}
+                    {% elif card.preview %}
+                    <img src="{{ card.preview.url }}" alt="{{ card.name }}" loading="lazy"
+                        onerror="this.onerror=null;this.style.display='none';">
+                    {% else %}
+                    <div class="zv-template-preview-placeholder">{{ card.name }}</div>
+                    {% endif %}
+                    {% if card.json_data.zvFinish %}
+                    <span class="zv-template-finish">{{ card.json_data.zvFinish }}</span>
+                    {% endif %}
+                </a>
+
+                <div class="zv-generic-info">
+                    {% if card.json_data.zvCategory %}
+                    <span>{{ card.json_data.zvCategory }}</span>
+                    {% else %}
+                    <span>{{ product.category.name }}</span>
+                    {% endif %}
+                    <h5>{{ card.name }}</h5>
+                    <a class="btn btn-solid btn-sm"
+                        href="{% url 'designer:editor' product.id %}?template={{ card.id }}{% if product.id == 415 %}&shape={{ selected_shape|default:'square' }}{% endif %}">Customize</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if product.id == 416 %}
+<style id="zv-bottle-opener-template-outline">
+  /* Bottle opener 416 only: visually define the printable face in each preview. */
+  #zvTemplateGrid .zv-generic-card .zv-generic-preview {
+    aspect-ratio: 21 / 13.8 !important;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+  #zvTemplateGrid .zv-generic-card .zv-generic-preview::after {
+    content: "";
+    position: absolute;
+    left: 31.5%;
+    top: 43.8%;
+    width: 36%;
+    height: 8.5%;
+    border: 2px dashed #475569;
+    background: rgba(255,255,255,.06);
+    border-radius: 5px;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+  #zvTemplateGrid .zv-generic-card:hover .zv-generic-preview::after {
+    border-color: #4338ca;
+  }
+  #zvTemplateGrid .zv-generic-card .zv-template-json-preview {
+    background: #f8fafc;
+  }
+</style>
+{% endif %}
+<style id="zv-gallery-clarity-fix">
+#zvTemplateGrid .zv-generic-card{border:1px solid #cbd5e1;box-shadow:0 3px 14px rgba(15,23,42,.08);transition:border-color .18s,box-shadow .18s}
+#zvTemplateGrid .zv-generic-card:hover{border-color:#2563eb;box-shadow:0 9px 24px rgba(15,23,42,.13)}
+#zvTemplateGrid .zv-generic-preview{background:#eef2f7;border-bottom:1px solid #d5deea}
+#zvTemplateGrid .zv-template-json-preview{background:#eef2f7}
+#zvTemplateGrid .zv-generic-info h5{color:#172b4d;font-size:14px;font-weight:700;line-height:1.4}
+@media(max-width:767px){#zvTemplateGrid.zv-generic-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+@media(max-width:380px){#zvTemplateGrid.zv-generic-grid{grid-template-columns:1fr}}
+</style>
+<style id="zv-generic-template-gallery-v2">
+    .zv-generic-template-section {
+        padding: 42px 0
+    }
+
+    .zv-generic-template-section .title1 {
+        text-align: center;
+        margin-bottom: 22px
+    }
+
+    .zv-generic-filter-row {
+        max-width: 620px;
+        margin: 0 auto 25px
+    }
+
+    .zv-generic-filter-row input {
+        width: 100%;
+        height: 46px;
+        padding: 0 16px;
+        border: 1px solid #d8dee8;
+        border-radius: 10px;
+        background: #fff
+    }
+
+    .zv-template-json-preview{display:block;width:100%;height:100%;object-fit:contain;background:#fff}
+    .zv-generic-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 22px
+    }
+
+    .zv-generic-card {
+        min-width: 0;
+        border: 1px solid #e6e9ef;
+        border-radius: 14px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .06)
+    }
+
+    .zv-generic-preview {
+        position: relative;
+        display: block;
+        aspect-ratio: 8.5/11;
+        background: #f6f7f9;
+        overflow: hidden
+    }
+
+    .zv-generic-card:has(canvas[data-product-id="205"]) .zv-generic-preview,\n    .zv-generic-card:has(canvas[data-product-id="415"]) .zv-generic-preview,\n    .zv-generic-card:has(canvas[data-product-id="427"]) .zv-generic-preview { aspect-ratio: 1/1; }
+    .zv-generic-card:has(canvas[data-product-id="205"]) .zv-template-json-preview,\n    .zv-generic-card:has(canvas[data-product-id="415"]) .zv-template-json-preview { background:#f7f7f8; }
+    .zv-generic-card[data-coaster-shape="circle"] .zv-generic-preview { border-radius:50%; }
+    .zv-generic-card[data-coaster-shape="circle"] .zv-template-json-preview { border-radius:50%; }
+    .zv-generic-card[data-coaster-shape="square"] .zv-template-json-preview { border-radius:7%; }
+
+    .zv-generic-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain
+    }
+
+    .zv-template-finish {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: rgba(17, 17, 17, .86);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em
+    }
+
+    .zv-generic-info {
+        padding: 14px
+    }
+
+    .zv-generic-info>span {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #64748b
+    }
+
+    .zv-generic-info h5 {
+        font-size: 14px;
+        line-height: 1.35;
+        margin: 6px 0 12px;
+        min-height: 38px
+    }
+
+    @media(max-width:1199px) {
+        .zv-generic-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr))
+        }
+    }
+
+    @media(max-width:767px) {
+        .zv-generic-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+        }
+    }
+
+    @media(max-width:480px) {
+        .zv-generic-grid {
+            grid-template-columns: 1fr
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const q = document.getElementById('zvTemplateSearch');
+        if (!q) return;
+        q.addEventListener('input', function () {
+            const term = q.value.trim().toLowerCase();
+            document.querySelectorAll('#zvTemplateGrid .zv-generic-card').forEach(function (card) {
+                card.style.display = (!term || (card.dataset.search || '').includes(term)) ? '' : 'none';
+            });
+        });
+    });
+</script>
+<script>
+(function(){
+    function drawFabricLike(ctx, obj, sx, sy) {
+        const x=(Number(obj.left)||0)*sx, y=(Number(obj.top)||0)*sy;
+        const w=(Number(obj.width)||0)*sx, h=(Number(obj.height)||0)*sy;
+        const ox=obj.originX==='center' ? w/2 : 0, oy=obj.originY==='center' ? h/2 : 0;
+        ctx.save();
+        ctx.globalAlpha = obj.opacity == null ? 1 : Number(obj.opacity);
+        ctx.translate(x,y);
+        if(obj.angle) ctx.rotate(Number(obj.angle)*Math.PI/180);
+        ctx.translate(-ox,-oy);
+        if(obj.type==='rect'){
+            if(obj.fill && obj.fill!=='rgba(0,0,0,0)'){ctx.fillStyle=obj.fill;ctx.fillRect(0,0,w,h);}
+            if(obj.stroke){ctx.strokeStyle=obj.stroke;ctx.lineWidth=(Number(obj.strokeWidth)||1)*Math.min(sx,sy);ctx.strokeRect(0,0,w,h);}
+        } else if(obj.type==='circle'){
+            const r=(Number(obj.radius)||0)*Math.min(sx,sy);
+            ctx.beginPath();ctx.arc(ox||r,oy||r,r,0,Math.PI*2);
+            if(obj.fill){ctx.fillStyle=obj.fill;ctx.fill();}
+            if(obj.stroke){ctx.strokeStyle=obj.stroke;ctx.stroke();}
+        } else if(obj.type==='line'){
+            ctx.beginPath();ctx.moveTo((Number(obj.x1)||0)*sx-x,(Number(obj.y1)||0)*sy-y);
+            ctx.lineTo((Number(obj.x2)||0)*sx-x,(Number(obj.y2)||0)*sy-y);
+            ctx.strokeStyle=obj.stroke||'#111';ctx.lineWidth=(Number(obj.strokeWidth)||2)*Math.min(sx,sy);ctx.stroke();
+        } else if(obj.type==='textbox' || obj.type==='text' || obj.type==='i-text'){
+            // Respect Fabric's font and dimensions. Avoid the 7px minimum that
+            // previously enlarged small text while squeezing it into a tiny width.
+            const fs=Math.max(2,(Number(obj.fontSize)||24)*sy);
+            const weight=String(obj.fontWeight||'400');
+            ctx.fillStyle=(typeof obj.fill==='string'&&obj.fill!=='transparent')?obj.fill:'#172b4d';
+            ctx.font=weight+' '+fs+'px '+(obj.fontFamily||'Arial');
+            ctx.textAlign=obj.textAlign||'left';ctx.textBaseline='top';
+            const tx=obj.textAlign==='center'?w/2:(obj.textAlign==='right'?w:0);
+            const lines=String(obj.text||'').replace(/\\n/g,'\n').split('\n');
+            lines.forEach((line,i)=>{
+                if(w>1)ctx.fillText(line,tx,i*fs*(Number(obj.lineHeight)||1.15),w);
+                else ctx.fillText(line,tx,i*fs*(Number(obj.lineHeight)||1.15));
+            });
+        }
+        ctx.restore();
+    }
+    document.querySelectorAll('.zv-template-json-preview').forEach(function(canvas){
+        try{
+            const dataNode=canvas.nextElementSibling;
+            const data=(dataNode && dataNode.type==='application/json')
+                ? JSON.parse(dataNode.textContent||'{}') : {};
+            const page=(data.pages&&data.pages[0])||data;
+            const objects=page.objects||data.objects||[];
+            const doc=data.document||{};
+            const cw=Number(page.width||doc.width||data.width||data.canvasWidth||1000);
+            const ch=Number(page.height||doc.height||data.height||data.canvasHeight||700);
+            const ctx=canvas.getContext('2d');
+            // Preserve the real template aspect ratio. Keychain artwork is very
+            // wide (1000 x 208); independent X/Y scaling distorted gallery cards.
+            const pad=18;
+            const scale=Math.min((canvas.width-pad*2)/cw,(canvas.height-pad*2)/ch);
+            const drawW=cw*scale, drawH=ch*scale;
+            const ox=(canvas.width-drawW)/2, oy=(canvas.height-drawH)/2;
+            ctx.fillStyle='#f7f7f8';ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.save();
+            ctx.translate(ox,oy);
+            // Gallery-only page outline: makes light artwork and white designs
+            // visibly bounded without adding objects to editable templates.
+            ctx.fillStyle=(typeof page.background==='string'&&/^#[0-9a-f]{3,8}$/i.test(page.background))?page.background:'#fff';
+            ctx.fillRect(0,0,drawW,drawH);
+            ctx.strokeStyle='#a6b3c5';
+            ctx.lineWidth=Math.max(1,1.6/Math.max(scale,.01));
+            ctx.strokeRect(0,0,drawW,drawH);
+            // Product 416: render a close-up of the actual printable face.
+            // A 21 x 13.8 inch workspace preview makes tiny logos unreadable.
+            // Gallery-only drawing; every source template object remains editable.
+            if(canvas.dataset.productId==='416'){
+                ctx.restore();
+                ctx.fillStyle='#f1f5f9';ctx.fillRect(0,0,canvas.width,canvas.height);
+                const faceX=28,faceY=108,faceW=canvas.width-85,faceH=84;
+                ctx.save();
+                ctx.shadowColor='rgba(15,23,42,.18)';ctx.shadowBlur=14;ctx.shadowOffsetY=6;
+                ctx.fillStyle='#e5e7eb';ctx.beginPath();
+                ctx.roundRect(faceX,faceY,faceW,faceH,12);ctx.fill();
+                ctx.restore();
+                ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;ctx.beginPath();
+                ctx.roundRect(faceX,faceY,faceW,faceH,12);ctx.stroke();
+                ctx.beginPath();ctx.arc(faceX+faceW+21,faceY+faceH/2,24,0,Math.PI*2);
+                ctx.strokeStyle='#94a3b8';ctx.lineWidth=6;ctx.stroke();
+                ctx.save();
+                ctx.beginPath();ctx.rect(faceX+10,faceY+7,faceW-20,faceH-14);ctx.clip();
+                // Map editable artwork from its narrow native print region to
+                // the large visible face without altering stored coordinates.
+                const source={x:375,y:333,w:405,h:82};
+                const sx=(faceW-22)/source.w,sy=(faceH-16)/source.h;
+                ctx.translate(faceX+11-source.x*sx,faceY+8-source.y*sy);
+                objects.forEach(o=>drawFabricLike(ctx,o,sx,sy));
+                ctx.restore();
+                return;
+            }
+            // Name Badge (427): show the physical circular badge clearly in the
+            // gallery. Template JSON is editable artwork only, so without this
+            // locked product silhouette the design looks like tiny floating text.
+            if(canvas.dataset.productId==='427'){
+                // Product 427 uses a 10x10 workspace but the actual front badge
+                // is centred at 585/525 with radius 205. Crop the gallery preview
+                // to that physical badge so editable text/clipart stays readable.
+                const bx=585, by=525, br=205, crop=br*2.34;
+                const badgeScale=Math.min(canvas.width,canvas.height)/crop;
+                const badgeOx=canvas.width/2-bx*badgeScale;
+                const badgeOy=canvas.height/2-by*badgeScale;
+                ctx.restore();
+                ctx.fillStyle='#f7f7f8';ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.save();ctx.translate(badgeOx,badgeOy);
+                ctx.save();ctx.scale(badgeScale,badgeScale);
+                ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);
+                ctx.fillStyle='#ffffff';ctx.fill();
+                ctx.strokeStyle='#2f66c9';ctx.lineWidth=10;ctx.stroke();
+                ctx.beginPath();ctx.arc(bx,by,br*.93,0,Math.PI*2);
+                ctx.strokeStyle='rgba(47,102,201,.25)';ctx.lineWidth=4;ctx.stroke();
+                ctx.restore();
+                objects.forEach(o=>drawFabricLike(ctx,o,badgeScale,badgeScale));
+                ctx.restore();
+                return;
+            }
+            // Golf Ball gallery: show the physical ball plus the editable artwork.
+            // The generated JSON contains artwork only; without a product silhouette
+            // the cards look empty even though the template is valid.
+            const isGolfBall=(data.profile==='promotional-golf-ball') ||
+                String(data.designName||'').toLowerCase().startsWith('golf ball ');
+            if(isGolfBall){
+                // Golf Ball cards: draw a readable product silhouette, then fit
+                // the actual editable objects by their real object bounds. This
+                // avoids depending on stale document/print-area coordinates.
+                const ballR=Math.min(canvas.width,canvas.height)*.37;
+                const ballX=canvas.width/2, ballY=canvas.height/2;
+                ctx.restore();
+                ctx.fillStyle='#f7f7f8';ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.save();
+                ctx.beginPath();ctx.arc(ballX,ballY,ballR,0,Math.PI*2);
+                ctx.fillStyle='#fff';ctx.fill();
+                ctx.strokeStyle='#94a3b8';ctx.lineWidth=4;ctx.stroke();
+                ctx.save();ctx.clip();
+                ctx.fillStyle='#e2e8f0';
+                for(let yy=-3;yy<=3;yy++)for(let xx=-3;xx<=3;xx++){
+                    if(xx*xx+yy*yy>8)continue;
+                    ctx.beginPath();ctx.arc(ballX+xx*ballR*.20,ballY+yy*ballR*.20,Math.max(2,ballR*.027),0,Math.PI*2);ctx.fill();
+                }
+                if(objects.length){
+                    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+                    objects.forEach(o=>{
+                        let x=Number(o.left)||0,y=Number(o.top)||0,w=Number(o.width)||0,h=Number(o.height)||0;
+                        if(o.type==='circle'){const r=Number(o.radius)||0;w=h=r*2;if(o.originX==='center')x-=r;if(o.originY==='center')y-=r;}
+                        else {if(o.originX==='center')x-=w/2;if(o.originY==='center')y-=h/2;}
+                        if(o.type==='line'){x=Math.min(Number(o.x1)||0,Number(o.x2)||0);y=Math.min(Number(o.y1)||0,Number(o.y2)||0);w=Math.abs((Number(o.x2)||0)-(Number(o.x1)||0));h=Math.abs((Number(o.y2)||0)-(Number(o.y1)||0));}
+                        minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x+Math.max(w,1));maxY=Math.max(maxY,y+Math.max(h,1));
+                    });
+                    const bw=Math.max(1,maxX-minX),bh=Math.max(1,maxY-minY);
+                    const fit=Math.min((ballR*1.42)/bw,(ballR*1.30)/bh);
+                    const tx=ballX-(minX+bw/2)*fit,ty=ballY-(minY+bh/2)*fit;
+                    ctx.translate(tx,ty);
+                    objects.forEach(o=>drawFabricLike(ctx,o,fit,fit));
+                }
+                ctx.restore();ctx.restore();
+                return;
+            }
+            // Umbrella gallery cards must read as umbrellas, not floating artwork.
+            // Draw the locked top-view canopy silhouette/ribs first, then overlay
+            // the editable template JSON exactly as the editor does.
+            if(canvas.dataset.productId==='205'){
+                ctx.save();
+                ctx.scale(scale,scale);
+                ctx.beginPath();
+                [[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]].forEach(function(p,n){n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);});
+                ctx.closePath();ctx.fillStyle='#202020';ctx.fill();ctx.strokeStyle='#101010';ctx.lineWidth=5;ctx.stroke();
+                [[525,55],[842,178],[1000,445],[946,742],[720,945],[330,945],[104,742],[50,445],[208,178]].forEach(function(p){
+                    ctx.beginPath();ctx.moveTo(525,500);ctx.lineTo(p[0],p[1]);ctx.strokeStyle='#0b0b0b';ctx.lineWidth=4;ctx.stroke();
+                });
+                ctx.beginPath();ctx.arc(525,500,23,0,Math.PI*2);ctx.fillStyle='#292929';ctx.fill();ctx.strokeStyle='#080808';ctx.stroke();
+                ctx.restore();
+            }
+            // Coaster preview follows the selected product shape. The artwork
+            // library stays identical; Circle simply clips the same editable design.
+            if(canvas.dataset.productId==='415'){
+                const card=canvas.closest('.zv-generic-card');
+                if((card?.dataset.coasterShape||'square')==='circle'){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(cw/2*scale,ch/2*scale,Math.min(cw,ch)*.49*scale,0,Math.PI*2);
+                    ctx.clip();
+                    objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
+                    ctx.restore();
+                }else{
+                    objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
+                }
+            }else{
+                objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
+            }
+            ctx.restore();
+        }catch(e){canvas.style.background='#f6f7f9';}
+    });
+})();
+</script>
+{% endif %}
+
+{% if invitation_templates %}
+<section class="section-b-space zv-inv-template-section" id="invitationTemplates">
+    <div class="container">
+        <div class="title1">
+            <h2 class="title-inner1">Choose an Invitation Template</h2>
+            <p>Choose a design, then edit every page in the ZenVibe designer.</p>
+        </div>
+        <div class="zv-inv-filter-row">
+            <input id="zvInvSearch" type="search" placeholder="Search invitation templates...">
+            <select id="zvInvPages">
+                <option value="">All page counts</option>
+                <option value="1">1 page</option>
+                <option value="2">2 pages</option>
+                <option value="3plus">3+ pages</option>
+            </select>
+        </div>
+        <div class="zv-inv-grid" id="zvInvGrid">
+            {% for card in invitation_templates %}
+            <article class="zv-inv-card" data-search="{{ card.name|lower }} {{ card.category|lower }}"
+                data-pages="{{ card.page_count }}">
+                <a class="zv-inv-preview" href="{{ card.url }}">
+                    {% if card.preview %}<img src="{{ card.preview }}" alt="{{ card.name }}" loading="lazy">
+                    {% else %}<div class="zv-inv-placeholder"><strong>{{ card.name }}</strong><span>{{ card.category }}</span></div>{% endif %}
+                    <span class="zv-inv-page-badge">{{ card.page_count }} page{% if card.page_count != 1 %}s{% endif %}</span>
+                </a>
+                <div class="zv-inv-info"><span>{{ card.category }}</span>
+                    <h5>{{ card.name }}</h5><a class="btn btn-solid btn-sm" href="{{ card.url }}">Customize</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<style id="zv-invitation-gallery-v1">
+    .zv-inv-template-section {
+        padding: 42px 0
+    }
+
+    .zv-inv-filter-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 0 0 22px
+    }
+
+    .zv-inv-filter-row input,
+    .zv-inv-filter-row select {
+        height: 44px;
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 0 14px
+    }
+
+    .zv-inv-filter-row input {
+        flex: 1;
+        min-width: 240px
+    }
+
+    .zv-inv-filter-row select {
+        min-width: 170px
+    }
+
+    .zv-inv-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 22px
+    }
+
+    .zv-inv-card {
+        border: 1px solid #e7e7e7;
+        background: #fff;
+        overflow: hidden
+    }
+
+    .zv-inv-preview {
+        position: relative;
+        display: block;
+        background: #f7f5f1;
+        aspect-ratio: 5/7;
+        overflow: hidden
+    }
+
+    .zv-inv-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block
+    }
+
+    .zv-inv-page-badge {
+        position: absolute;
+        right: 9px;
+        top: 9px;
+        background: #111;
+        color: #fff;
+        padding: 5px 8px;
+        font-size: 11px
+    }
+
+    .zv-inv-info {
+        padding: 14px
+    }
+
+    .zv-inv-info>span {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #777;
+        letter-spacing: .7px
+    }
+
+    .zv-inv-info h5 {
+        font-size: 14px;
+        margin: 6px 0 12px;
+        min-height: 34px
+    }
+
+    .zv-inv-placeholder {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        text-align: center;
+        color: #333
+    }
+
+    @media(max-width:1199px) {
+        .zv-inv-grid {
+            grid-template-columns: repeat(3, 1fr)
+        }
+    }
+
+    @media(max-width:767px) {
+        .zv-inv-grid {
+            grid-template-columns: repeat(2, 1fr)
+        }
+    }
+
+    @media(max-width:480px) {
+        .zv-inv-grid {
+            grid-template-columns: 1fr
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const q = document.getElementById('zvInvSearch'), p = document.getElementById('zvInvPages');
+        function filter() {
+            const term = (q?.value || '').toLowerCase().trim(), pages = p?.value || '';
+            document.querySelectorAll('#zvInvGrid .zv-inv-card').forEach(function (card) {
+                const n = parseInt(card.dataset.pages || '1', 10);
+                const okp = !pages || (pages === '3plus' ? n >= 3 : n === parseInt(pages, 10)); const okt = !term || (card.dataset.search || '').includes(term); card.style.display = (okp && okt) ? '' : 'none';
+            });
+        }
+        q?.addEventListener('input', filter); p?.addEventListener('change', filter);
+    });
+</script>
+{% endif %}
+
+{% if bc_pack_templates %}
+<section class="section-b-space zv-bc-template-section" id="businessCardTemplates">
+    <div class="container">
+        <div class="title1">
+            <h2 class="title-inner1">Choose a Business Card Template</h2>
+            <p>Choose a design, then edit the front and back in the ZenVibe designer.</p>
+        </div>
+        <div class="zv-bc-filter-row">
+            <input id="zvBcSearch" type="search" placeholder="Search business card templates..."
+                aria-label="Search business card templates">
+        </div>
+        <div class="zv-bc-grid" id="zvBcGrid">
+            {% for card in bc_pack_templates %}
+            <article class="zv-bc-card" data-search="{{ card.name|lower }} {{ card.category|lower }}">
+                <a class="zv-bc-preview" href="{{ card.url }}">
+                    <img src="{{ card.preview_front }}" alt="{{ card.name }} front" loading="lazy">
+                    <span class="zv-bc-back"><img src="{{ card.preview_back }}" alt="{{ card.name }} back"
+                            loading="lazy"></span>
+                </a>
+                <div class="zv-bc-info"><span>{{ card.category }}</span>
+                    <h5>{{ card.name }}</h5>
+                    <a class="btn btn-solid btn-sm" href="{{ card.url }}">Customize</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<style>
+    .zv-bc-template-section {
+        padding: 42px 0
+    }
+
+    .zv-bc-filter-row {
+        max-width: 620px;
+        margin: 0 auto 24px
+    }
+
+    .zv-bc-filter-row input {
+        width: 100%;
+        padding: 13px 16px;
+        border: 1px solid #d8dee8;
+        border-radius: 10px
+    }
+
+    .zv-bc-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px
+    }
+
+    .zv-bc-card {
+        border: 1px solid #e6e9ef;
+        border-radius: 14px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .06)
+    }
+
+    .zv-bc-preview {
+        display: block;
+        position: relative;
+        background: #f6f7f9;
+        aspect-ratio: 1.75;
+        overflow: hidden
+    }
+
+    .zv-bc-preview>img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain
+    }
+
+    .zv-bc-back {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        width: 34%;
+        background: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .12)
+    }
+
+    .zv-bc-back img {
+        display: block;
+        width: 100%
+    }
+
+    .zv-bc-info {
+        padding: 14px
+    }
+
+    .zv-bc-info span {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #64748b
+    }
+
+    .zv-bc-info h5 {
+        margin: 5px 0 12px;
+        font-size: 15px
+    }
+
+    @media(max-width:991px) {
+        .zv-bc-grid {
+            grid-template-columns: repeat(2, 1fr)
+        }
+    }
+
+    @media(max-width:575px) {
+        .zv-bc-grid {
+            grid-template-columns: 1fr
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () { const q = document.getElementById('zvBcSearch'); if (!q) return; q.addEventListener('input', function () { const term = q.value.trim().toLowerCase(); document.querySelectorAll('#zvBcGrid .zv-bc-card').forEach(function (card) { card.style.display = !term || card.dataset.search.includes(term) ? '' : 'none'; }); }); });
+</script>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* 360 viewer */
+        var urls = {{ angle_image_urls_json| safe }};
+
+    if (window.ZenVibe360 && urls && urls.length > 1) {
+
+        var mount = document.getElementById('productPreviewMount');
+
+        if (mount) {
+            var thumbs = document.querySelector('.zv-product-thumbs');
+            // Keep Slick's existing thumbnail scrolling, but route selection to
+            // the rotation viewer instead of its replaced main slider.
+            if (window.jQuery && thumbs && window.jQuery(thumbs).hasClass('slick-initialized')) {
+                window.jQuery(thumbs).slick('slickSetOption', 'asNavFor', null, false);
+            }
+            if (window.jQuery && window.jQuery(mount).hasClass('slick-initialized')) {
+                window.jQuery(mount).slick('unslick');
+            }
+            var viewer = window.ZenVibe360.mount(mount, urls);
+            if (thumbs && viewer) {
+                thumbs.addEventListener('click', function (event) {
+                    var thumbnail = event.target.closest('[data-preview-url]');
+                    if (!thumbnail || !thumbs.contains(thumbnail)) return;
+                    var frame = parseInt(thumbnail.dataset.previewFrame, 10);
+                    if (frame >= 0) viewer.setFrame(frame);
+                    else mount.querySelector('img').src = thumbnail.dataset.previewUrl;
+                });
+            }
+        }
+
+    }
+
+
+    /* Quantity */
+    const qty = document.getElementById("zvProductQty");
+    const minus = document.getElementById("zvQtyMinus");
+    const plus = document.getElementById("zvQtyPlus");
+    const sizeSelect = document.getElementById("zvProductSize");
+
+    minus?.addEventListener("click", function () {
+
+        let value = parseInt(qty.value || "1", 10);
+
+        qty.value = Math.max(parseInt(qty.min || "1", 10), value - 1);
+        syncCommerceUI();
+
+    });
+
+
+    plus?.addEventListener("click", function () {
+
+        let value = parseInt(qty.value || "1", 10);
+
+        qty.value = value + 1;
+        syncCommerceUI();
+
+    });
+
+
+
+    const colorButtons = document.querySelectorAll('[data-color-key]');
+    const genericOptions = document.querySelectorAll('.zv-generic-option');
+    let selectedColor = "{{ selected_color_key|escapejs }}" || (colorButtons.length ? colorButtons[0].dataset.colorKey : '');
+    colorButtons.forEach(button => button.classList.toggle('active', button.dataset.colorKey === selectedColor));
+
+    function effectivePriceRows() {
+        const sizeKey = sizeSelect?.value || '';
+        const allRows = Array.from(document.querySelectorAll('[data-price-tier]'));
+        const variantRows = sizeKey
+            ? allRows.filter(row => (row.dataset.variant || '') === sizeKey)
+            : [];
+        const rows = variantRows.length
+            ? variantRows
+            : allRows.filter(row => !(row.dataset.variant || ''));
+
+        allRows.forEach(row => {
+            row.hidden = !rows.includes(row);
+            row.classList.remove('zv-active-tier');
+        });
+
+        const title = document.getElementById('zvPriceListTitle');
+        if (title) {
+            const selectedName = sizeSelect?.options[sizeSelect.selectedIndex]?.text || '';
+            title.textContent = variantRows.length && selectedName
+                ? 'Quantity Pricing — ' + selectedName
+                : 'Quantity Pricing';
+        }
+        return rows;
+    }
+
+    function currentTier() {
+        const value = Math.max(1, parseInt(qty?.value || '1', 10));
+        let selected = null;
+
+        effectivePriceRows().forEach(function (row) {
+            const min = parseInt(row.dataset.min || '1', 10);
+            const max = row.dataset.max ? parseInt(row.dataset.max, 10) : null;
+            const matches = value >= min && (max === null || value <= max);
+            row.classList.toggle('zv-active-tier', matches);
+            if (matches) selected = row;
+        });
+        return selected;
+    }
+
+    function syncSelectedPriceRange() {
+        const rows = effectivePriceRows();
+        const prices = rows
+            .map(row => Number(row.dataset.price))
+            .filter(price => Number.isFinite(price));
+
+        const priceNode = document.getElementById('zvUnitPrice');
+        if (!priceNode || !prices.length) return;
+
+        const low = Math.min(...prices);
+        const high = Math.max(...prices);
+
+        if (low !== high) {
+            priceNode.textContent = '$' + low.toFixed(2) + ' – $' + high.toFixed(2);
+        } else {
+            priceNode.textContent = '$' + low.toFixed(2);
+        }
+    }
+
+    function syncCommerceUI() {
+        if (!qty) return;
+        let value = parseInt(qty.value || qty.min || '1', 10);
+        const min = parseInt(qty.min || '1', 10);
+        const max = parseInt(qty.max || '0', 10);
+        value = Math.max(min, value);
+        if (max) value = Math.min(max, value);
+        qty.value = value;
+        const minimumLabel = document.getElementById('zvMinimumOrder');
+        if (minimumLabel) minimumLabel.textContent = min;
+        document.querySelectorAll('a[href*="customizer"], a[href*="editor"]').forEach(function (link) {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('quantity', value);
+            {% if editing_cart_key %}url.searchParams.set('cart_key', "{{ editing_cart_key|escapejs }}");{% endif %}
+            link.href = url.pathname + url.search;
+        });
+        const tier = currentTier();
+        const price = tier?.dataset.price;
+        const priceNode = document.getElementById('zvUnitPrice');
+        if (price && priceNode) {
+            priceNode.textContent = '$' + Number(price).toFixed(2);
+        } else if (priceNode) {
+            {% if product.min_price and product.max_price and product.min_price != product.max_price %}
+            priceNode.textContent = '${{ product.min_price }} – ${{ product.max_price }}';
+            {% else %}
+            priceNode.textContent = '${{ product.sale_price|default:product.price }}';
+            {% endif %}
+        }
+        document.querySelectorAll('[data-add-cart]').forEach(function (button) {
+            button.dataset.productPrice = price || "{{ product.sale_price|default:product.price }}";
+        });
+    }
+
+    colorButtons.forEach(function (button) { button.addEventListener('click', function () { selectedColor = this.dataset.colorKey || ''; const hiddenColor = document.getElementById('zvSelectedColor'); if (hiddenColor) hiddenColor.value = selectedColor; colorButtons.forEach(b => b.classList.toggle('active', b === this)); document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set('color', selectedColor); link.href = url.pathname + url.search; }); }); });
+    genericOptions.forEach(function (select) { select.addEventListener('change', function () { document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set(select.dataset.optionKey, select.value); link.href = url.pathname + url.search; }); }); });
+    qty?.addEventListener('input', function () { if (qty.value !== '') currentTier(); });
+    qty?.addEventListener('change', syncCommerceUI);
+
+    /* Add To Cart and Buy Now use the native Django POST form above. */
+
+
+    const cartForm = document.getElementById('zvAddCartForm');
+    cartForm?.addEventListener('submit', function (event) {
+        if (!qty) return;
+        let value = parseInt(qty.value, 10);
+        const minimum = parseInt(qty.min || '1', 10);
+        const maximum = parseInt(qty.max || '0', 10);
+        if (!Number.isFinite(value)) value = minimum;
+        value = Math.max(minimum, value);
+        if (maximum) value = Math.min(maximum, value);
+        qty.value = value;
+        const hiddenColor = document.getElementById('zvSelectedColor');
+        if (hiddenColor) hiddenColor.value = selectedColor || hiddenColor.value || '';
+    });
+
+    function syncSelectedSize() {
+        if (!qty) return;
+        const configuredMinimum = parseInt("{{ product.minimum_quantity|default:1 }}", 10) || 1;
+        const matchingMins = effectivePriceRows()
+            .map(row => parseInt(row.dataset.min || "0", 10))
+            .filter(Number.isFinite);
+        const tierMinimum = matchingMins.length ? Math.min(...matchingMins) : configuredMinimum;
+        const minimum = Math.max(configuredMinimum, tierMinimum);
+        qty.min = minimum;
+        qty.value = Math.max(minimum, parseInt(qty.value || minimum, 10));
+        if (sizeSelect) {
+            document.querySelectorAll('a[href*="customizer"], a[href*="editor"]').forEach(function (link) {
+                const url = new URL(link.href, window.location.origin);
+                url.searchParams.set('size', sizeSelect.value);
+                link.href = url.pathname + url.search;
+            });
+        }
+        syncSelectedPriceRange();
+        syncCommerceUI();
+    }
+    sizeSelect?.addEventListener('change', syncSelectedSize);
+    syncSelectedSize();
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('a[href*="customizer"], a[href*="editor"]')) syncCommerceUI();
+    }, true);
+
+});
+</script>
+
+
+
+<style id="zv-reference-video-action-animation">
+/* Reference animation: BLUE -> complete WHITE diagonal wipe -> BLUE content */
+.zv-action-grid .btn[data-zv-ref-anim="1"],
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] {
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    background: #0b63c9 !important;
+    background-color: #0b63c9 !important;
+    background-image: none !important;
+    border: 1px solid #0b63c9 !important;
+    color: #fff !important;
+}
+
+/* Oversized wipe: intentionally much wider than the button.
+   This removes the small blue/white triangular remainder at the end. */
+.zv-action-grid .btn[data-zv-ref-anim="1"] > .zv-ref-wipe,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] > .zv-ref-wipe {
+    display: block !important;
+    position: absolute !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    top: -70% !important;
+    right: -220% !important;
+    width: 210% !important;
+    height: 240% !important;
+    background: #fff !important;
+    transform: skewX(-27deg) !important;
+    transform-origin: center !important;
+    transition: right .46s cubic-bezier(.22,.61,.36,1) !important;
+}
+
+/* Content stays over the wipe. */
+.zv-action-grid .btn[data-zv-ref-anim="1"] > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] > :not(.zv-ref-wipe) {
+    position: relative !important;
+    z-index: 3 !important;
+}
+
+/* Hover ends with wipe extending beyond BOTH edges = complete white box. */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover > .zv-ref-wipe,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible > .zv-ref-wipe,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover > .zv-ref-wipe,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible > .zv-ref-wipe {
+    right: -35% !important;
+}
+
+/* Force button AND every visible child/icon to blue on the final white state. */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible {
+    color: #0b63c9 !important;
+    border-color: #0b63c9 !important;
+}
+
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover > :not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover span:not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible > :not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible span:not(.zv-ref-wipe) {
+    color: #0b63c9 !important;
+}
+
+/* Normal state content remains white. */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) span:not(.zv-ref-wipe) {
+    color: #fff !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zv-action-grid .btn[data-zv-ref-anim="1"] > .zv-ref-wipe,
+    .zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] > .zv-ref-wipe {
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+
+<script id="zv-reference-video-action-animation-js">
+(function () {
+    "use strict";
+
+    function installReferenceButtonAnimation() {
+        var selector =
+            ".zv-action-grid .btn, " +
+            ".zv-customize-wrap .zv-customize-btn";
+
+        document.querySelectorAll(selector).forEach(function (button) {
+            if (button.dataset.zvRefAnim === "1") return;
+
+            /* IMPORTANT:
+               Add To Cart / Buy Now labels are raw text nodes in the template.
+               Wrap them so their colour can be controlled independently. */
+            Array.from(button.childNodes).forEach(function (node) {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                    var label = document.createElement("span");
+                    label.className = "zv-ref-button-label";
+                    label.textContent = node.textContent.trim();
+                    button.replaceChild(label, node);
+                }
+            });
+
+            button.dataset.zvRefAnim = "1";
+
+            var wipe = document.createElement("span");
+            wipe.className = "zv-ref-wipe";
+            wipe.setAttribute("aria-hidden", "true");
+            button.insertBefore(wipe, button.firstChild);
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            installReferenceButtonAnimation,
+            { once: true }
+        );
+    } else {
+        installReferenceButtonAnimation();
+    }
+})();
+</script>
+
+
+
+<style id="zv-reference-animation-text-color-final">
+/* FINAL text/icon colors for the reference-video button animation.
+   This block must remain after all older Multikart/button CSS. */
+
+/* Hover/focus completed state: WHITE wipe + BLUE text/icon */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover > :not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover span:not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible > :not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible span:not(.zv-ref-wipe) {
+    color: #0b63c9 !important;
+    -webkit-text-fill-color: #0b63c9 !important;
+}
+
+/* Normal state: BLUE button + WHITE text/icon */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) > :not(.zv-ref-wipe),
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) span:not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:not(:hover):not(:focus-visible) span:not(.zv-ref-wipe) {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* The animated white layer is visual only. */
+.zv-action-grid .btn[data-zv-ref-anim="1"] > .zv-ref-wipe,
+.zv-action-grid .btn[data-zv-ref-anim="1"] > .zv-ref-wipe *,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] > .zv-ref-wipe,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] > .zv-ref-wipe * {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+</style>
+
+
+<style id="zv-button-label-colour-definitive-fix">
+/* Raw button labels are now wrapped as .zv-ref-button-label. */
+.zv-action-grid .btn[data-zv-ref-anim="1"] .zv-ref-button-label,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"] .zv-ref-button-label {
+    position: relative !important;
+    z-index: 10 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* White hover state -> blue label AND blue icon. */
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover .zv-ref-button-label,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible .zv-ref-button-label,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:hover i,
+.zv-action-grid .btn[data-zv-ref-anim="1"]:focus-visible i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover .zv-ref-button-label,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible .zv-ref-button-label,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover i,
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible i {
+    color: #0b63c9 !important;
+    -webkit-text-fill-color: #0b63c9 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Existing Customize text may already be inside another span/element. */
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:hover > :not(.zv-ref-wipe),
+.zv-customize-wrap .zv-customize-btn[data-zv-ref-anim="1"]:focus-visible > :not(.zv-ref-wipe) {
+    color: #0b63c9 !important;
+    -webkit-text-fill-color: #0b63c9 !important;
+}
+</style>
+
+
+<script id="zv-shared-coaster-shape-js">
+(function(){
+  "use strict";
+  const isCoaster = {{ product.id }} === 415;
+  if(!isCoaster) return;
+
+  function shapeControl(){
+    return document.querySelector(
+      'select[name="option_shape"], input[name="option_shape"]:checked, ' +
+      'select[data-option-key="shape"], input[data-option-key="shape"]:checked'
+    );
+  }
+  function selectedShape(){
+    const el=shapeControl();
+    return String(el && el.value || "Square").trim().toLowerCase()==="circle" ? "circle" : "square";
+  }
+  function applyShapeToEditorLinks(){
+    const shape=selectedShape();
+    document.querySelectorAll('a[href*="/editor/"]').forEach(function(a){
+      try{
+        const u=new URL(a.href,window.location.href);
+        u.searchParams.set("shape",shape);
+        a.href=u.pathname+u.search+u.hash;
+      }catch(e){}
+    });
+  }
+  function clipPreview(canvas,shape){
+    canvas.style.clipPath = shape==="circle" ? "circle(46% at 50% 50%)" : "inset(4% round 7%)";
+    canvas.style.webkitClipPath = canvas.style.clipPath;
+  }
+  function applyShapeToPreviews(){
+    const shape=selectedShape();
+    document.querySelectorAll('.zv-template-json-preview[data-product-id="415"]').forEach(function(canvas){
+      clipPreview(canvas,shape);
+    });
+    document.querySelectorAll('.zv-generic-card').forEach(function(card){
+      card.setAttribute("data-coaster-shape",shape);
+    });
+  }
+  function sync(){
+    applyShapeToEditorLinks();
+    applyShapeToPreviews();
+  }
+  document.addEventListener("change",function(e){
+    const t=e.target;
+    if(t && (t.name==="option_shape" || t.dataset.optionKey==="shape")) sync();
+  });
+  document.addEventListener("click",function(e){
+    if(e.target && e.target.closest('[data-option-key="shape"], [name="option_shape"]')){
+      setTimeout(sync,0);
+    }
+  });
+  document.addEventListener("DOMContentLoaded",sync,{once:true});
+  sync();
+})();
+</script>
+{% endblock %}
+
+
+
+
+
+<style>
+    /* FINAL PRODUCT-TAB TYPOGRAPHY OVERRIDE.
+   Placed at the END of the template so imported HTML/theme rules cannot win. */
+    .tab-product .zv-db-richtext,
+    .tab-product .zv-db-richtext * {
+        font-family: Arial, Helvetica, sans-serif !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        color: #333 !important;
+    }
+
+    .tab-product .zv-db-richtext,
+    .tab-product .zv-db-richtext p,
+    .tab-product .zv-db-richtext li,
+    .tab-product .zv-db-richtext span,
+    .tab-product .zv-db-richtext div,
+    .tab-product .zv-db-richtext td,
+    .tab-product .zv-db-richtext th,
+    .tab-product .zv-db-richtext a {
+        font-size: 14px !important;
+        line-height: 1.65 !important;
+        font-weight: 400 !important;
+    }
+
+    .tab-product .zv-db-richtext strong,
+    .tab-product .zv-db-richtext b {
+        font-size: inherit !important;
+        line-height: inherit !important;
+        font-weight: 600 !important;
+    }
+
+    .tab-product .zv-db-richtext h1,
+    .tab-product .zv-db-richtext h2,
+    .tab-product .zv-db-richtext h3,
+    .tab-product .zv-db-richtext h4,
+    .tab-product .zv-db-richtext h5,
+    .tab-product .zv-db-richtext h6 {
+        font-family: Arial, Helvetica, sans-serif !important;
+        line-height: 1.35 !important;
+        font-weight: 600 !important;
+        color: #222 !important;
+        text-transform: none !important;
+    }
+
+    .tab-product .zv-db-richtext h1 {
+        font-size: 24px !important;
+    }
+
+    .tab-product .zv-db-richtext h2 {
+        font-size: 22px !important;
+    }
+
+    .tab-product .zv-db-richtext h3 {
+        font-size: 19px !important;
+    }
+
+    .tab-product .zv-db-richtext h4,
+    .tab-product .zv-db-richtext h5,
+    .tab-product .zv-db-richtext h6 {
+        font-size: 16px !important;
+    }
+
+    .tab-product .zv-db-richtext [style] {
+        font-family: Arial, Helvetica, sans-serif !important;
+        color: inherit !important;
+    }
+</style>
+\n<style id="zv-product-tabs-ultimate-fix">
+    /* FINAL SCOPED FIX: Description / Information / FAQ natural height */
+    .tab-product.zv-product-content-tabs,
+    .tab-product.zv-product-content-tabs .container,
+    .tab-product.zv-product-content-tabs .row,
+    .tab-product.zv-product-content-tabs .col-12,
+    .tab-product.zv-product-content-tabs #top-tabContent,
+    .tab-product.zv-product-content-tabs #top-tabContent>.tab-pane,
+    .tab-product.zv-product-content-tabs .product-tab-description,
+    .tab-product.zv-product-content-tabs .zv-db-richtext {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+    }
+
+    .tab-product.zv-product-content-tabs {
+        display: block !important;
+        position: relative !important;
+        margin: 0 !important;
+        padding: 18px 0 30px !important;
+        overflow: visible !important;
+        background: #fff !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tab {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border: 1px solid #e8e8e8 !important;
+        background: #f7f7f7 !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tab::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tab .nav-item {
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tab .nav-link {
+        display: block !important;
+        height: auto !important;
+        min-height: 46px !important;
+        margin: 0 !important;
+        padding: 13px 22px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #222 !important;
+        font-size: 14px !important;
+        line-height: 20px !important;
+        font-weight: 600 !important;
+        overflow: visible !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tab .nav-link.active {
+        background: #0758b8 !important;
+        color: #fff !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tabContent {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 22px 24px !important;
+        border: 1px solid #e8e8e8 !important;
+        border-top: 0 !important;
+        background: #fff !important;
+        overflow: visible !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tabContent>.tab-pane {
+        display: none !important;
+        position: relative !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .tab-product.zv-product-content-tabs #top-tabContent>.tab-pane.active,
+    .tab-product.zv-product-content-tabs #top-tabContent>.tab-pane.show.active {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    .tab-product.zv-product-content-tabs .product-tab-description,
+    .tab-product.zv-product-content-tabs .zv-db-richtext {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .tab-product.zv-product-content-tabs .zv-db-richtext> :first-child {
+        margin-top: 0 !important;
+    }
+
+    .tab-product.zv-product-content-tabs .zv-db-richtext> :last-child {
+        margin-bottom: 0 !important;
+    }
+
+    .tab-product.zv-product-content-tabs .zv-db-richtext:empty {
+        display: none !important;
+    }
+
+    /* Do not allow the old four-tab rule's 180px minimum or theme carousel height to affect this section. */
+    .tab-product.zv-product-content-tabs .tab-content {
+        min-height: 0 !important;
+        height: auto !important;
+    }
+
+    /* Related products follows immediately after actual tab content. */
+    .tab-product.zv-product-content-tabs+section.section-b-space.ratio_asos {
+        clear: both !important;
+        position: relative !important;
+        margin-top: 0 !important;
+        padding-top: 28px !important;
+    }
+
+    @media(max-width:575px) {
+        .tab-product.zv-product-content-tabs #top-tab {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        .tab-product.zv-product-content-tabs #top-tab .nav-link {
+            width: 100% !important;
+            padding: 11px 10px !important;
+            text-align: center !important;
+            font-size: 13px !important;
+        }
+
+        .tab-product.zv-product-content-tabs #top-tabContent {
+            padding: 16px !important;
+        }
+    }
+</style>

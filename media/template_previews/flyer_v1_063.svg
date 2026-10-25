@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.16"/>
+<line x1="244.0" y1="129.0" x2="615.2" y2="195.816" stroke="#FFF7EF" stroke-width="3" opacity="0.85"/>
+<ellipse cx="285.2444444444444" cy="118.424" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 285.2444444444444 118.424)"/>
+<ellipse cx="326.4888888888889" cy="161.848" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 326.4888888888889 161.848)"/>
+<ellipse cx="367.73333333333335" cy="133.272" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 367.73333333333335 133.272)"/>
+<ellipse cx="408.97777777777776" cy="176.696" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 408.97777777777776 176.696)"/>
+<ellipse cx="450.22222222222223" cy="148.12" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 450.22222222222223 148.12)"/>
+<ellipse cx="491.46666666666664" cy="191.54399999999998" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 491.46666666666664 191.54399999999998)"/>
+<ellipse cx="532.7111111111111" cy="162.96800000000002" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 532.7111111111111 162.96800000000002)"/>
+<ellipse cx="573.9555555555555" cy="206.392" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 573.9555555555555 206.392)"/>
+<line x1="756.0" y1="363.0" x2="436.0" y2="420.6" stroke="#A52E4C" stroke-width="3" opacity="0.85"/>
+<ellipse cx="716.0" cy="352.2" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 716.0 352.2)"/>
+<ellipse cx="676.0" cy="395.4" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 676.0 395.4)"/>
+<ellipse cx="636.0" cy="366.6" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 636.0 366.6)"/>
+<ellipse cx="596.0" cy="409.8" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 596.0 409.8)"/>
+<ellipse cx="556.0" cy="381.0" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 556.0 381.0)"/>
+<ellipse cx="516.0" cy="424.2" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 516.0 424.2)"/>
+<ellipse cx="476.0" cy="395.4" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 476.0 395.4)"/>
+<circle cx="308.0" cy="370.79999999999995" r="70.4" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.12"/>
+<text x="500.0" y="594" fill="#FFF7EF" font-family="Oswald" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">WORK BETTER.</tspan><tspan x="500.0" dy="68.82000000000001">TOGETHER.</tspan></text>
+<text x="500.0" y="747" fill="#FFF7EF" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Flexible desks â€¢ Meeting rooms</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#E0B76A" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK A TOUR</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">63</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

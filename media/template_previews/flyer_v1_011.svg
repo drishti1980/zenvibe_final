@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#10223A" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="500.0" y="353.6" width="40.0" height="190.39999999999998" rx="0" ry="0" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="548.0" y="282.88" width="60.0" height="261.12" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="616.0" y="212.16000000000003" width="35.0" height="331.84" rx="0" ry="0" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="659.0" y="141.44" width="75.0" height="402.56" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="742.0" y="353.6" width="45.0" height="190.39999999999998" rx="0" ry="0" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="795.0" y="282.88" width="55.0" height="261.12" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="55" y="226" fill="#10223A" font-family="Poppins" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">BUILD YOUR</tspan><tspan x="55" dy="62.699999999999996">STRONGEST SELF</tspan></text>
+<text x="58" y="387" fill="#10223A" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Strength â€¢ Conditioning â€¢ Coaching</tspan></text>
+<text x="770.0" y="837" fill="#C6A15B" font-family="Poppins" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#F8F5EF" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#9FB8E8" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#10223A" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8F5EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">JOIN TODAY</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">11</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

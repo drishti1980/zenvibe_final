@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff4a8" opacity="1"/>
+<rect x="70" y="90" width="610" height="870" rx="32" fill="#fffbed" opacity="0.16" stroke="#e7b841" stroke-width="2"/>
+<rect x="85" y="100" width="580" height="850" rx="26" fill="#ffffff" opacity="0.7"/>
+<path d="M 95 150 C 155 220, 95 330, 160 430 C 220 530, 120 650, 185 800" fill="transparent" opacity="0.62" stroke="#e7b841" stroke-width="3"/>
+<text x="110" y="333" text-anchor="start" fill="#e7b841" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">HONOURING SARAH &amp; BABY</tspan></text>
+<text x="110" y="418" text-anchor="start" fill="#18274b" font-size="46" font-family="Libre Baskerville" font-weight="700" opacity="1"><tspan x="110" dy="0">BABY IN BLOOM</tspan></text>
+<text x="110" y="541" text-anchor="start" fill="#18274b" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">SUNDAY · 08 NOVEMBER 2026</tspan></text>
+<text x="110" y="581" text-anchor="start" fill="#18274b" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">WILLOW HOUSE · 2:00 PM</tspan></text>
+<text x="110" y="655" text-anchor="start" fill="#e7b841" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<line x1="65" y1="70" x2="685" y2="70" stroke="#e7b841" stroke-width="2.5" opacity="0.95"/>
+<line x1="65" y1="980" x2="685" y2="980" stroke="#e7b841" stroke-width="2.5" opacity="0.95"/>
+</svg>

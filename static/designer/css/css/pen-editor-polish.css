@@ -1,0 +1,115 @@
+/* Business-card aligned polish for the Pen customizer. */
+.pen-editor.category-studio{--pen-panel:#fff;--pen-soft:#f7f5ff;--pen-border:#e4e6ee}
+.pen-editor .studio-panel{padding:0!important;background:var(--pen-panel)!important}
+.pen-editor .panel-heading{padding:18px 22px 14px;border-bottom:1px solid var(--pen-border)}
+.pen-editor .panel-heading h2{font-size:24px;margin:4px 0 0}
+.pen-editor .studio-panel-section{padding:18px 22px 26px!important}
+.pen-editor .product-config-card{padding:16px!important;border-radius:14px!important;background:linear-gradient(145deg,#faf9ff,#f4f1ff)!important;border-color:#ddd7ff!important;box-shadow:0 5px 16px rgba(83,52,214,.06)}
+.pen-editor .product-config-card h3{font-size:15px;margin-bottom:14px!important}
+.pen-editor .product-config-card h4{font-size:12px!important;color:#48506a;margin-top:13px!important}
+.pen-editor .variant-swatches{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.pen-editor .variant-swatches button{height:42px!important;border-radius:10px!important;background:#fff!important;font-size:12px!important;font-weight:700;color:#27314a;border:1px solid #d8dbe5!important;transition:.18s ease}
+.pen-editor .variant-swatches button:hover{transform:translateY(-1px);border-color:#8b72f7!important}
+.pen-editor .variant-swatches button.active{border:2px solid #6547e8!important;background:#fff!important;box-shadow:0 0 0 3px rgba(101,71,232,.10)}
+.pen-editor .variant-swatches button span{width:18px!important;height:18px!important}
+.pen-editor .template-section-title{display:flex;align-items:flex-start;justify-content:space-between;margin:18px 0 12px}
+.pen-editor .template-section-title h3{margin:0 0 3px!important;font-size:16px}
+.pen-editor .template-section-title p{margin:0;color:#788095;font-size:10px;line-height:1.35}
+.pen-editor .template-section-title>span{padding:5px 8px;border-radius:999px;background:#eeeaff;color:#6042d8;font-size:9px;font-weight:800}
+.pen-editor .pen-templates{grid-template-columns:1fr 1fr!important;gap:12px!important}
+.pen-editor .pen-templates>button{min-height:144px!important;padding:9px!important;border-radius:13px!important;text-align:left;display:flex;flex-direction:column;gap:9px;border:1px solid #e1e4eb!important;box-shadow:0 3px 10px rgba(18,26,45,.04);transition:.18s ease}
+.pen-editor .pen-templates>button:hover{border-color:#7356ed!important;transform:translateY(-2px);box-shadow:0 8px 20px rgba(72,52,166,.10)}
+.pen-editor .pen-templates>button>span{display:grid;gap:2px;padding:0 3px}
+.pen-editor .pen-templates>button>span strong{font-size:11px;color:#202a43}
+.pen-editor .pen-templates>button>span small{font-size:9px;color:#7b8292}
+.pen-editor .template-preview{height:68px;border-radius:12px;background:linear-gradient(180deg,#294c7d 0%,#06162b 50%,#1f416d 100%);color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;position:relative;overflow:hidden;padding:9px;box-shadow:inset 0 1px 1px rgba(255,255,255,.35)}
+.pen-editor .template-preview:before,.pen-editor .template-preview:after{content:'';position:absolute;left:8px;right:8px;height:2px;border-radius:4px;background:rgba(255,255,255,.13)}
+.pen-editor .template-preview:before{top:8px}.pen-editor .template-preview:after{bottom:8px}
+.pen-editor .template-preview b{font-size:9px;letter-spacing:.04em}.pen-editor .template-preview small{font-size:6px}.pen-editor .preview-company{flex-direction:column;gap:1px}.pen-editor .preview-logo i{font-style:normal;font-size:14px;color:#e7c65a}.pen-editor .preview-name{flex-direction:column;gap:1px}.pen-editor .preview-minimal i{width:1px;height:18px;background:#d7b94e}.pen-editor .preview-badge i{width:22px;height:22px;border:1px solid #d7b94e;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#d7b94e}.pen-editor .preview-signature{flex-direction:column;gap:0}.pen-editor .preview-signature b{font-family:Georgia,serif;font-size:14px;font-style:italic;font-weight:500}
+.pen-editor .studio-workspace{background:#f2f3f7!important}
+.pen-editor .studio-canvas-scroll{padding:22px 28px!important;place-items:center!important;background-image:radial-gradient(#d2d6df 1px,transparent 1px);background-size:20px 20px}
+.pen-editor .canvas-stage{width:940px!important;height:340px!important;min-width:940px!important;min-height:340px!important;padding:0!important;background:#fff!important;box-shadow:0 16px 46px rgba(29,37,58,.18)!important;border-radius:3px;overflow:visible}
+.pen-editor .pen-canvas-wrap{width:900px!important;height:300px!important;margin-left:40px!important;margin-top:40px!important;overflow:hidden!important;box-shadow:none!important}
+.pen-editor .pe-ruler.ruler-x{left:40px!important;top:0!important;width:900px!important;height:40px!important}
+.pen-editor .pe-ruler.ruler-y{left:0!important;top:40px!important;width:40px!important;height:300px!important}
+.pen-editor .cut-line{left:116px!important;top:108px!important;width:750px!important;height:126px!important}
+.pen-editor .safe-line{left:238px!important;top:127px!important;width:325px!important;height:58px!important}
+.pen-editor .context-toolbar{height:52px!important;min-height:52px;margin:0!important;width:100%!important;border-radius:0!important;padding:7px 18px!important}
+.pen-editor .context-toolbar select{width:180px!important}
+.pen-editor .studio-bottom-bar{height:46px!important}
+.pen-editor .zoom-controls button{font-size:15px}
+.pen-editor .page-status span{font-size:11px!important}
+@media(min-width:1400px){.pen-editor .pen-templates{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:1100px){.pen-editor .pen-templates{grid-template-columns:1fr!important}.pen-editor .pen-templates>button{min-height:130px!important}}
+
+
+/* v2: compact, product-focused artboard. Pen products do not use page rulers. */
+.pen-editor .studio-canvas-scroll{
+  padding:24px 30px!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:auto!important;
+}
+.pen-editor .canvas-stage{
+  position:relative!important;
+  width:960px!important;
+  min-width:960px!important;
+  height:330px!important;
+  min-height:330px!important;
+  padding:15px 30px!important;
+  border:1px solid #e2e5ec!important;
+  border-radius:8px!important;
+  background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%)!important;
+  box-shadow:0 16px 42px rgba(31,39,61,.14)!important;
+  overflow:hidden!important;
+}
+.pen-editor .pe-ruler,
+.pen-editor .ruler-x,
+.pen-editor .ruler-y{display:none!important}
+.pen-editor .pen-artboard-label{
+  position:absolute;
+  left:18px;
+  top:12px;
+  z-index:5;
+  color:#8b93a5;
+  font:700 10px/1.2 Inter,Segoe UI,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+.pen-editor .pen-canvas-wrap{
+  position:relative!important;
+  width:900px!important;
+  height:300px!important;
+  margin:0!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.pen-editor .pen-canvas-wrap .canvas-container,
+.pen-editor .pen-canvas-wrap canvas{
+  width:900px!important;
+  height:300px!important;
+}
+.pen-editor .cut-line{display:none!important}
+.pen-editor .safe-line{
+  left:238px!important;
+  top:127px!important;
+  width:325px!important;
+  height:58px!important;
+  border:1px dashed rgba(32,160,90,.6)!important;
+  background:rgba(32,160,90,.025)!important;
+  pointer-events:none!important;
+}
+.pen-editor .context-toolbar{
+  position:relative!important;
+  z-index:8!important;
+  box-shadow:0 2px 8px rgba(24,31,50,.08)!important;
+}
+.pen-editor .context-controls{min-width:0!important;overflow-x:auto!important;scrollbar-width:thin}
+.pen-editor .context-controls select{min-width:170px!important}
+.pen-editor .studio-bottom-bar{border-top:1px solid #e4e7ee!important;background:#fff!important}
+.pen-editor .page-status strong{color:#3926a8}
+@media(max-width:1200px){
+ .pen-editor .canvas-stage{width:920px!important;min-width:920px!important;padding-left:10px!important;padding-right:10px!important}
+}

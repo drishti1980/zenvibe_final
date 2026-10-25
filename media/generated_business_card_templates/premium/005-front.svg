@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1125" height="675" viewBox="0 0 1125 675">
+<rect width="1125" height="675" fill="#0B0B0C"/>
+<line x1="45" y1="45" x2="135" y2="45" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="45" y1="45" x2="45" y2="110" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="1080" y1="45" x2="990" y2="45" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="1080" y1="45" x2="1080" y2="110" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="45" y1="630" x2="135" y2="630" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="45" y1="630" x2="45" y2="565" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="1080" y1="630" x2="990" y2="630" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<line x1="1080" y1="630" x2="1080" y2="565" stroke="#C8A96B" stroke-width="3.0" opacity="1.0"/>
+<text x="562.50" y="228.00" fill="#F8F3E8" font-family="Playfair Display" font-size="68.00" font-weight="normal" text-anchor="middle"><tspan x="562.50" dy="0.00">ALEX MORGAN</tspan></text>
+<text x="562.50" y="271.00" fill="#C8A96B" font-family="Montserrat" font-size="19.00" font-weight="bold" text-anchor="middle"><tspan x="562.50" dy="0.00">FOUNDER  ·  CREATIVE DIRECTOR</tspan></text>
+<text x="562.50" y="385.00" fill="#F8F3E8" font-family="Montserrat" font-size="20.00" font-weight="normal" text-anchor="middle"><tspan x="562.50" dy="0.00">+61 400 123 456   ·   alex@atelier.com   ·   atelier.com</tspan></text>
+</svg>

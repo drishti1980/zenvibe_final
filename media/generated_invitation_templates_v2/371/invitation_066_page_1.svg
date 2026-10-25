@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#16a6a8" opacity="1"/>
+<rect x="42" y="42" width="666" height="966" rx="18" fill="transparent" opacity="1" stroke="#e7c369" stroke-width="3"/>
+<rect x="0" y="0" width="750" height="258" rx="0" fill="#fffdfa" opacity="1"/>
+<rect x="0" y="258" width="750" height="8" rx="0" fill="#e7c369" opacity="1"/>
+<circle cx="375" cy="180" r="72" fill="transparent" opacity="1" stroke="#e7c369" stroke-width="3"/>
+<circle cx="375" cy="180" r="56" fill="#dff7f6" opacity="0.22" stroke="#e7c369" stroke-width="1"/>
+<text x="375.0" y="194" text-anchor="middle" fill="#fffdfa" font-size="42" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="375.0" dy="0">O E</tspan></text>
+<text x="110" y="285" text-anchor="start" fill="#e7c369" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">CELEBRATE OUR ENGAGEMENT</tspan></text>
+<text x="110" y="376" text-anchor="start" fill="#16a6a8" font-size="52" font-family="Cormorant Garamond" font-weight="700" opacity="1"><tspan x="110" dy="0">AMELIA &amp; NOAH</tspan></text>
+<text x="110" y="493" text-anchor="start" fill="#16a6a8" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">FRIDAY · 06 NOVEMBER 2026</tspan></text>
+<text x="110" y="533" text-anchor="start" fill="#16a6a8" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">THE TERRACE · GEELONG</tspan></text>
+<text x="110" y="607" text-anchor="start" fill="#e7c369" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fffdfa" opacity="0.018"/>
+</svg>

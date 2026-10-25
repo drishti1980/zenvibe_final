@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="185" rx="0" ry="0" fill="#152B45" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="84" fill="#C8A463" font-family="Inter" font-size="16" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">PRIVATE EDITION</tspan></text>
+<polygon points="201.8,610.0 244.4,610.0 223.10000000000002,344.8" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="301.20000000000005,610.0 343.80000000000007,610.0 322.50000000000006,391.6" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="400.6,610.0 443.20000000000005,610.0 421.90000000000003,438.40000000000003" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="500.0,610.0 542.6,610.0 521.3,344.8" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="599.4000000000001,610.0 642.0000000000001,610.0 620.7,391.6" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="698.8000000000001,610.0 741.4000000000001,610.0 720.1,438.40000000000003" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="798.2,610.0 840.8000000000001,610.0 819.5,344.8" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="145.0" cy="220.0" r="3" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="407.7" cy="457.9" r="4" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="670.4" cy="442.3" r="5" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="223.1" cy="426.7" r="6" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="485.8" cy="411.1" r="3" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="748.5" cy="395.5" r="4" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="301.2" cy="379.9" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="563.9" cy="364.3" r="6" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="826.6" cy="348.7" r="3" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="379.3" cy="333.1" r="4" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="642.0" cy="317.5" r="5" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="194.7" cy="301.9" r="6" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="457.4" cy="286.3" r="3" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="720.1" cy="270.7" r="4" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="272.8" cy="255.1" r="5" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="535.5" cy="239.5" r="6" fill="#C8A463" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="798.2" cy="223.9" r="3" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="350.9" cy="461.8" r="4" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="500.0" y="686" fill="#152B45" font-family="Oswald" font-size="66" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">MAKE AN</tspan><tspan x="500.0" dy="62.04">IMPACT</tspan></text>
+<text x="500.0" y="826" fill="#152B45" font-family="Inter" font-size="21" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Support â€¢ Give â€¢ Change</tspan></text>
+<line x1="250" y1="870" x2="750" y2="870" stroke="#C8A463" stroke-width="2" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#BBD7F3" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#152B45" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F6F8FB" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">DONATE</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">98</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

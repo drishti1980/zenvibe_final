@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8F5EF" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="500.0" cy="290" r="215" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.16"/>
+<ellipse cx="500.0" cy="386.4" rx="192.0" ry="23.4" fill="#10223A" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 500.0 386.4)"/>
+<rect x="320.8" y="168.0" width="358.40000000000003" height="202.8" rx="24" ry="24" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="397.6" y="136.8" width="204.8" height="226.2" rx="26" ry="26" fill="#10223A" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="436.0" y1="175.8" x2="564.0" y2="175.8" stroke="#C6A15B" stroke-width="3" opacity="1"/>
+<text x="500.0" y="594" fill="#10223A" font-family="Poppins" font-size="74" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">MOMENTS MADE</tspan><tspan x="500.0" dy="68.82000000000001">MEMORABLE</tspan></text>
+<text x="500.0" y="747" fill="#10223A" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Corporate â€¢ Social â€¢ Luxury events</tspan></text>
+<line x1="280" y1="805" x2="720" y2="805" stroke="#C6A15B" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#9FB8E8" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#10223A" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8F5EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">PLAN YOUR EVENT</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">66</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

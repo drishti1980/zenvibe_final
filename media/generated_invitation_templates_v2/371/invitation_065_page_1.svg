@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#44205b" opacity="1"/>
+<rect x="0" y="770" width="750" height="280" rx="0" fill="#fff9ff" opacity="1"/>
+<rect x="0" y="760" width="750" height="12" rx="0" fill="#e3b7e8" opacity="1"/>
+<ellipse cx="375" cy="160" rx="115" ry="72" fill="#f3ddf5" opacity="0.35" stroke="#e3b7e8" stroke-width="2"/>
+<circle cx="375.0" cy="158.0" r="11.55" fill="#f3ddf5" opacity="0.92"/>
+<circle cx="375.0" cy="158.0" r="3.85" fill="#e3b7e8" opacity="1"/>
+<polygon points="388.2,156.625 397.55,151.95 406.9,156.625 397.55,161.29999999999998" fill="#e3b7e8" opacity="0.82"/>
+<polygon points="376.1,175.325 387.65000000000003,170.1 399.20000000000005,175.325 387.65000000000003,180.54999999999998" fill="#e3b7e8" opacity="0.67"/>
+<line x1="375" y1="166.8" x2="414.6" y2="204.75" stroke="#e3b7e8" stroke-width="2" opacity="0.55"/>
+<text x="95" y="264" text-anchor="start" fill="#e3b7e8" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">AN INTIMATE DINNER CELEBRATION</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#fff9ff" font-size="52" font-family="DM Serif Display" font-weight="700" opacity="1"><tspan x="95" dy="0">YOU&#x27;RE INVITED</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#e3b7e8" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#fff9ff" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">SATURDAY · 07 NOVEMBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#fff9ff" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">ATELIER DINING · 7:30 PM</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#e3b7e8" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff9ff" opacity="0.012"/>
+</svg>

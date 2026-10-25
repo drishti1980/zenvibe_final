@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#b85f46" opacity="1"/>
+<ellipse cx="375" cy="245" rx="250" ry="145" fill="#f8e0d3" opacity="0.45" stroke="#f0b06a" stroke-width="2"/>
+<circle cx="375" cy="180" r="95" fill="transparent" opacity="1" stroke="#f0b06a" stroke-width="2"/>
+<circle cx="375" cy="180" r="72" fill="transparent" opacity="1" stroke="#f8e0d3" stroke-width="2"/>
+<circle cx="455" cy="140" r="7" fill="#f0b06a" opacity="1"/>
+<text x="95" y="264" text-anchor="start" fill="#f0b06a" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">CELEBRATE OUR ENGAGEMENT</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#fff9f1" font-size="52" font-family="DM Serif Display" font-weight="700" opacity="1"><tspan x="95" dy="0">AMELIA &amp; NOAH</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#f0b06a" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#fff9f1" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">FRIDAY · 06 NOVEMBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#fff9f1" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">THE TERRACE · GEELONG</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#f0b06a" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff9f1" opacity="0.012"/>
+</svg>

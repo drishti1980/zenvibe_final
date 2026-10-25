@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="426" y="586" width="308" height="358" rx="0" ry="0" fill="none" stroke="#E0B76A" stroke-width="2" opacity="1"/>
+<path d="M 471.2 862.5 L 471.2 687.0 Q 580.0 562.2 688.8 687.0 L 688.8 862.5" fill="none" stroke="#E0B76A" stroke-width="3" opacity="1"/>
+<line x1="450.8" y1="616.8" x2="559.6" y2="636.3839999999999" stroke="#E0B76A" stroke-width="3" opacity="0.85"/>
+<ellipse cx="468.93333333333334" cy="602.064" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 468.93333333333334 602.064)"/>
+<ellipse cx="487.06666666666666" cy="641.328" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 487.06666666666666 641.328)"/>
+<ellipse cx="505.2" cy="608.592" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 505.2 608.592)"/>
+<ellipse cx="523.3333333333334" cy="647.856" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 523.3333333333334 647.856)"/>
+<ellipse cx="541.4666666666667" cy="615.12" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 541.4666666666667 615.12)"/>
+<line x1="709.2" y1="850.8" x2="607.2" y2="869.16" stroke="#E0B76A" stroke-width="3" opacity="0.85"/>
+<ellipse cx="692.2" cy="835.8599999999999" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 692.2 835.8599999999999)"/>
+<ellipse cx="675.2" cy="874.92" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 675.2 874.92)"/>
+<ellipse cx="658.2" cy="841.9799999999999" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 658.2 841.9799999999999)"/>
+<ellipse cx="641.2" cy="881.04" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 641.2 881.04)"/>
+<ellipse cx="624.2" cy="848.0999999999999" rx="18" ry="8" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 624.2 848.0999999999999)"/>
+<text x="45" y="203" fill="#A52E4C" font-family="Cinzel" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">SPACES</tspan></text>
+<text x="50" y="302" fill="#2A0F17" font-family="Cinzel" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">THAT SHAPE LIFE</tspan></text>
+<text x="55" y="493" fill="#2A0F17" font-family="Montserrat" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Architecture â€¢ Planning â€¢ Interiors</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#E0B76A" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#FFF7EF" font-family="Montserrat" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">VIEW PROJECTS</tspan></text>
+<text x="730" y="684" fill="#2A0F17" font-family="Montserrat" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">85</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

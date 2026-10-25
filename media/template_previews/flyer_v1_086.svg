@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#5A1E37" stroke="none" stroke-width="0" opacity="1"/>
+<ellipse cx="580.0" cy="866.4" rx="102.0" ry="23.4" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="0.08" transform="rotate(0 580.0 866.4)"/>
+<rect x="484.8" y="648.0" width="190.4" height="202.8" rx="24" ry="24" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.42"/>
+<rect x="525.6" y="616.8" width="108.8" height="226.2" rx="26" ry="26" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="0.92"/>
+<line x1="546.0" y1="655.8" x2="614.0" y2="655.8" stroke="#C7A25D" stroke-width="3" opacity="1"/>
+<text x="45" y="203" fill="#B73C6C" font-family="Poppins" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">LIVE</tspan></text>
+<text x="50" y="302" fill="#F8EDEF" font-family="Poppins" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">BEAUTIFULLY</tspan></text>
+<text x="55" y="493" fill="#F8EDEF" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Premium interiors â€¢ Refined living</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#C7A25D" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#5A1E37" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">DISCOVER</tspan></text>
+<text x="730" y="684" fill="#F8EDEF" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">86</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

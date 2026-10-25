@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% block after_related_objects %}
+{{ block.super }}
+{% if original %}
+<p>Save the mailbox and test it using the admin action.</p>
+{% endif %}
+{% endblock %}

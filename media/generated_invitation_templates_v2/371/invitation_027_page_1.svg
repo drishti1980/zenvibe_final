@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#2349a6" opacity="1"/>
+<rect x="38" y="38" width="674" height="974" rx="14" fill="transparent" opacity="1" stroke="#ff7b6c" stroke-width="2"/>
+<rect x="54" y="54" width="642" height="942" rx="10" fill="transparent" opacity="1" stroke="#ffe4df" stroke-width="1"/>
+<rect x="0" y="0" width="176" height="1050" rx="0" fill="#fffaf7" opacity="1"/>
+<rect x="176" y="0" width="10" height="1050" rx="0" fill="#ff7b6c" opacity="1"/>
+<path d="M 95 150 C 155 220, 95 330, 160 430 C 220 530, 120 650, 185 800" fill="transparent" opacity="0.62" stroke="#ff7b6c" stroke-width="3"/>
+<text x="170" y="301" text-anchor="start" fill="#ff7b6c" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="170" dy="0">TOGETHER WITH THEIR FAMILIES</tspan></text>
+<text x="170" y="386" text-anchor="start" fill="#fffaf7" font-size="46" font-family="Playfair Display" font-weight="700" opacity="1"><tspan x="170" dy="0">OLIVIA &amp; ETHAN</tspan></text>
+<text x="170" y="509" text-anchor="start" fill="#fffaf7" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="170" dy="0">SATURDAY · 18 OCTOBER 2026</tspan></text>
+<text x="170" y="549" text-anchor="start" fill="#fffaf7" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="170" dy="0">THE GLASSHOUSE · MELBOURNE</tspan></text>
+<text x="170" y="623" text-anchor="start" fill="#ff7b6c" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="170" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="492" y="-100" width="130" height="1250" rx="0" fill="#ffffff" opacity="0.045" transform="rotate(24 492 -100)"/>
+</svg>

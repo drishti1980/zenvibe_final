@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0B2C63" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="464.4" cy="772.8" r="34" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="464.4" cy="772.8" r="17" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="454.4" y1="772.8" x2="474.4" y2="772.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<line x1="464.4" y1="762.8" x2="464.4" y2="782.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<circle cx="539.2" cy="772.8" r="34" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="539.2" cy="772.8" r="17" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="529.2" y1="772.8" x2="549.2" y2="772.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<line x1="539.2" y1="762.8" x2="539.2" y2="782.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<circle cx="614.0" cy="772.8" r="34" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="614.0" cy="772.8" r="17" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="604.0" y1="772.8" x2="624.0" y2="772.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<line x1="614.0" y1="762.8" x2="614.0" y2="782.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<circle cx="688.8" cy="772.8" r="34" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="688.8" cy="772.8" r="17" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="678.8" y1="772.8" x2="698.8" y2="772.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<line x1="688.8" y1="762.8" x2="688.8" y2="782.8" stroke="#0B2C63" stroke-width="2" opacity="1"/>
+<text x="45" y="203" fill="#1746D1" font-family="DM Serif Display" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">FIND</tspan></text>
+<text x="50" y="302" fill="#F4F6FA" font-family="DM Serif Display" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">THE RIGHT PEOPLE</tspan></text>
+<text x="55" y="493" fill="#F4F6FA" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Talent â€¢ Search â€¢ Workforce</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#C8A055" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#1746D1" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#0B2C63" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">TALK TO US</tspan></text>
+<text x="730" y="684" fill="#F4F6FA" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#1746D1" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">89</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A055" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

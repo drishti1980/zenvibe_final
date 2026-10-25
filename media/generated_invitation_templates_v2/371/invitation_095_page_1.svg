@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#dff6ec" opacity="1"/>
+<rect x="0" y="770" width="750" height="280" rx="0" fill="#10372f" opacity="1"/>
+<rect x="0" y="760" width="750" height="12" rx="0" fill="#2a8b73" opacity="1"/>
+<circle cx="375" cy="120" r="5" fill="#2a8b73" opacity="1"/>
+<line x1="375" y1="120" x2="416.04241719908026" y2="7.236885505691006" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="416.04" cy="7.24" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="452.13451316238474" y2="28.074666825722645" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="452.13" cy="28.07" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="478.92304845413264" y2="60.00000000000001" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="478.92" cy="60.0" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="493.176930361465" y2="99.16221867996836" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="493.18" cy="99.16" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="493.176930361465" y2="140.83778132003164" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="493.18" cy="140.84" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="478.92304845413264" y2="180.0" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="478.92" cy="180.0" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="452.13451316238474" y2="211.92533317427734" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="452.13" cy="211.93" r="3.5" fill="#ffffff" opacity="0.95"/>
+<line x1="375" y1="120" x2="416.04241719908026" y2="232.76311449430898" stroke="#2a8b73" stroke-width="2" opacity="0.75"/>
+<circle cx="416.04" cy="232.76" r="3.5" fill="#ffffff" opacity="0.95"/>
+<text x="95" y="264" text-anchor="start" fill="#2a8b73" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">CELEBRATE OUR ENGAGEMENT</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#10372f" font-size="52" font-family="DM Serif Display" font-weight="700" opacity="1"><tspan x="95" dy="0">AMELIA &amp; NOAH</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#2a8b73" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#10372f" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">FRIDAY · 06 NOVEMBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#10372f" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">THE TERRACE · GEELONG</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#2a8b73" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#10372f" opacity="0.012"/>
+</svg>

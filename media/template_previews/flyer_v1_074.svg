@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<text x="55" y="133" fill="#FFF7EF" font-family="DM Serif Display" font-size="68" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">FOR SOMEONE</tspan><tspan x="55" dy="63.919999999999995">EXTRAORDINARY</tspan></text>
+<text x="58" y="267" fill="#FFF7EF" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Thoughtful gifts â€¢ Limited collection</tspan></text>
+<ellipse cx="576.8" cy="155.0" rx="40.8" ry="22.44" fill="none" stroke="#D996AA" stroke-width="2" opacity="0.8" transform="rotate(0 576.8 155.0)"/>
+<ellipse cx="576.8" cy="155.0" rx="68.0" ry="37.400000000000006" fill="none" stroke="#D996AA" stroke-width="2" opacity="0.8" transform="rotate(0 576.8 155.0)"/>
+<ellipse cx="576.8" cy="155.0" rx="98.6" ry="54.230000000000004" fill="none" stroke="#D996AA" stroke-width="2" opacity="0.8" transform="rotate(0 576.8 155.0)"/>
+<circle cx="668.5999999999999" cy="155.0" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="641.712402512925" cy="181.51650429449552" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="576.8" cy="192.5" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="511.8875974870749" cy="181.51650429449552" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="484.99999999999994" cy="155.0" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="511.88759748707486" cy="128.48349570550448" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="576.8" cy="117.5" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="641.712402512925" cy="128.48349570550445" r="7" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="576.8" cy="155.0" r="26" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="55" y="370" width="205" height="270" rx="18" ry="18" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="75" y="413" fill="#A52E4C" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">01</tspan></text>
+<text x="75" y="533" fill="#FFF7EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">PLAN</tspan></text>
+<rect x="290" y="370" width="205" height="270" rx="18" ry="18" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.96"/>
+<text x="310" y="413" fill="#E0B76A" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">02</tspan></text>
+<text x="310" y="533" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">CREATE</tspan></text>
+<rect x="525" y="370" width="205" height="270" rx="18" ry="18" fill="#D996AA" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="545" y="413" fill="#A52E4C" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">03</tspan></text>
+<text x="545" y="533" fill="#FFF7EF" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">GROW</tspan></text>
+<text x="500.0" y="725" fill="#FFF7EF" font-family="Inter" font-size="25" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A clean, modern framework built around your next move.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SHOP GIFTS</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">74</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,1530 @@
+
+<style>
+/* ZENVIBE: product tab content uses the same typography as the website.
+   Admin/pasted font-family, font-size and colours must not override the theme. */
+.zv-db-richtext,
+.zv-db-richtext p,
+.zv-db-richtext div,
+.zv-db-richtext span,
+.zv-db-richtext li,
+.zv-db-richtext a,
+.zv-db-richtext strong,
+.zv-db-richtext b,
+.zv-db-richtext em,
+.zv-db-richtext i,
+.zv-db-richtext table,
+.zv-db-richtext th,
+.zv-db-richtext td {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    color: inherit !important;
+}
+.zv-db-richtext h1,
+.zv-db-richtext h2,
+.zv-db-richtext h3,
+.zv-db-richtext h4,
+.zv-db-richtext h5,
+.zv-db-richtext h6 {
+    font-family: inherit !important;
+    color: inherit !important;
+    line-height: 1.35 !important;
+    font-weight: 600 !important;
+}
+.zv-db-richtext h1 { font-size: 28px !important; margin: 20px 0 12px !important; }
+.zv-db-richtext h2 { font-size: 24px !important; margin: 18px 0 10px !important; }
+.zv-db-richtext h3 { font-size: 20px !important; margin: 16px 0 9px !important; }
+.zv-db-richtext h4,
+.zv-db-richtext h5,
+.zv-db-richtext h6 { font-size: 17px !important; margin: 14px 0 8px !important; }
+.zv-db-richtext p { margin: 0 0 10px !important; }
+.zv-db-richtext ul,
+.zv-db-richtext ol { padding-left: 22px !important; margin: 8px 0 12px !important; }
+.zv-db-richtext table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.zv-db-richtext th,
+.zv-db-richtext td { padding: 10px 12px; border: 1px solid #e5e5e5; vertical-align: top; }
+</style>
+
+
+
+
+{% extends 'designer/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ product.name }} | ZenVibe Corporate Gifts
+<style id="zv-remove-tab-scrollbar-final">
+/* =========================================================
+   FINAL FIX: REMOVE SCROLLBAR FROM DESCRIPTION/REVIEW/Q&A BAR
+========================================================= */
+
+/* The scrollbar is on the nav header, so hide overflow there */
+.tab-product ul.nav-tabs.nav-material,
+.tab-product .nav-tabs.nav-material,
+.tab-product #top-tab {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+/* Chrome / Edge / Safari */
+.tab-product ul.nav-tabs.nav-material::-webkit-scrollbar,
+.tab-product .nav-tabs.nav-material::-webkit-scrollbar,
+.tab-product #top-tab::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+}
+
+/* Make sure tab items do not create internal scrolling */
+.tab-product #top-tab .nav-item,
+.tab-product #top-tab .nav-link {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Tab body can expand normally */
+.tab-product .tab-content,
+.tab-product .tab-pane,
+.tab-product .product-tab-description {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+}
+</style>
+
+{% endblock %}
+
+{% block head %}
+<script src="{% static 'designer/js/product-360-viewer.js' %}"></script>
+<style>
+/* Keep only small ZenVibe-specific sizing; Multikart classes do the rest */
+.zv-product-accordian .product-slick img{
+    width:100%;
+    height:520px;
+    object-fit:contain;
+    background:#f8f8f8;
+}
+.zv-product-accordian .slider-nav img{
+    width:100%;
+    height:95px;
+    object-fit:contain;
+    background:#f8f8f8;
+    padding:6px;
+}
+.zv-product-accordian .product-form-box{
+    height:100%;
+}
+.zv-product-accordian .zv-action-btn{
+    width:100%;
+}
+.zv-product-accordian .zv-action-btn .btn{
+    width:100%;
+    margin-bottom:10px;
+}
+
+.zv-product-accordian .zv-buy-now{
+    width:100%;
+    margin-bottom:10px;
+}
+.zv-product-accordian .zv-benefits{
+    width:100%;
+}
+.zv-product-accordian .zv-benefits li{
+    padding:8px 0;
+    border-bottom:1px dashed #ddd;
+}
+.zv-template-thumb img{
+    width:100%;
+    height:240px;
+    object-fit:contain;
+}
+@media(max-width:991px){
+    .zv-product-accordian .product-slick img{height:420px}
+}
+@media(max-width:575px){
+    .zv-product-accordian .product-slick img{height:320px}
+}
+
+
+/* =========================================================
+   PRINTING GUIDELINES
+   Added only for product printing information.
+========================================================= */
+
+.zv-print-guidelines{
+    width:100%;
+}
+
+.zv-print-guide-list{
+    margin:0 0 20px;
+    padding:0;
+    list-style:none;
+}
+
+.zv-print-guide-list li{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:6px 0;
+    color:#666;
+    font-size:13px;
+    line-height:1.55;
+}
+
+.zv-print-guide-list li i{
+    margin-top:2px;
+    color:#0758b8;
+}
+
+.zv-print-spec-card{
+    margin-top:20px;
+    padding:18px;
+    border:1px solid #e9e9e9;
+    background:#fafafa;
+}
+
+.zv-print-spec-head{
+    margin-bottom:16px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.zv-print-spec-head h5{
+    margin:0 0 4px;
+    color:#222;
+    font-family:"Montserrat",sans-serif;
+    font-size:14px;
+    font-weight:600;
+}
+
+.zv-print-spec-head p{
+    margin:0;
+    color:#888;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.zv-print-spec-head > span{
+    padding:5px 9px;
+    background:#0758b8;
+    color:#fff;
+    font-size:10px;
+    font-weight:600;
+    text-transform:uppercase;
+}
+
+.zv-print-spec-grid{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    border:1px solid #e7e7e7;
+    background:#fff;
+}
+
+.zv-print-spec-grid > div{
+    padding:11px 12px;
+    border-right:1px solid #e7e7e7;
+    border-bottom:1px solid #e7e7e7;
+}
+
+.zv-print-spec-grid > div:nth-child(2n){
+    border-right:0;
+}
+
+.zv-print-spec-grid > div:nth-last-child(-n+2){
+    border-bottom:0;
+}
+
+.zv-print-spec-grid span{
+    display:block;
+    margin-bottom:3px;
+    color:#999;
+    font-size:10px;
+    text-transform:uppercase;
+}
+
+.zv-print-spec-grid strong{
+    color:#333;
+    font-family:"Montserrat",sans-serif;
+    font-size:12px;
+    font-weight:500;
+}
+
+
+/* Banner frame */
+.zv-print-frame-banner{
+    width:100%;
+    aspect-ratio:3 / 1;
+    padding:8px;
+    border:2px solid #555;
+    background:#fff;
+}
+
+.zv-print-safe-area{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed #f6a329;
+    color:#777;
+    font-size:11px;
+    letter-spacing:.8px;
+}
+
+
+/* Canopy frame */
+.zv-canopy-frame{
+    position:relative;
+    width:220px;
+    height:150px;
+    margin:0 auto;
+}
+
+.zv-canopy-roof{
+    width:190px;
+    height:82px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    clip-path:polygon(12% 100%,25% 15%,75% 15%,88% 100%);
+    background:#eef5ff;
+    border:2px solid #0758b8;
+    color:#0758b8;
+    font-size:9px;
+    font-weight:600;
+}
+
+.zv-canopy-valance{
+    width:168px;
+    height:27px;
+    margin:-2px auto 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #0758b8;
+    background:#fff;
+    color:#666;
+    font-size:8px;
+    font-weight:600;
+}
+
+.zv-canopy-legs{
+    width:168px;
+    height:42px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+}
+
+.zv-canopy-legs i{
+    width:3px;
+    height:42px;
+    background:#555;
+}
+
+
+/* T-shirt frame */
+.zv-shirt-frame{
+    display:flex;
+    justify-content:center;
+    padding:4px 0;
+}
+
+.zv-shirt-body{
+    position:relative;
+    width:180px;
+    height:205px;
+    clip-path:polygon(
+        25% 0,
+        38% 0,
+        42% 10%,
+        58% 10%,
+        62% 0,
+        75% 0,
+        100% 22%,
+        87% 38%,
+        75% 30%,
+        75% 100%,
+        25% 100%,
+        25% 30%,
+        13% 38%,
+        0 22%
+    );
+    background:#e9edf2;
+}
+
+.zv-shirt-neck{
+    position:absolute;
+    top:-1px;
+    left:50%;
+    width:42px;
+    height:25px;
+    transform:translateX(-50%);
+    border-radius:0 0 25px 25px;
+    background:#fff;
+}
+
+.zv-shirt-print-zone{
+    position:absolute;
+    top:55px;
+    left:50%;
+    width:76px;
+    height:102px;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed #f6a329;
+    background:rgba(255,255,255,.75);
+    color:#0758b8;
+    text-align:center;
+}
+
+.zv-shirt-print-zone span{
+    font-family:"Montserrat",sans-serif;
+    font-size:12px;
+    font-weight:600;
+}
+
+.zv-shirt-print-zone small{
+    margin-top:3px;
+    color:#777;
+    font-size:7px;
+    letter-spacing:.5px;
+}
+
+.zv-print-general-note{
+    margin-top:16px;
+    padding:13px 14px;
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    background:#f7f7f7;
+    color:#777;
+    font-size:12px;
+    line-height:1.55;
+}
+
+.zv-print-general-note i{
+    margin-top:1px;
+    color:#0758b8;
+    font-size:16px;
+}
+
+@media(max-width:575px){
+    .zv-print-spec-card{
+        padding:14px;
+    }
+
+    .zv-print-spec-grid{
+        grid-template-columns:1fr;
+    }
+
+    .zv-print-spec-grid > div{
+        border-right:0;
+        border-bottom:1px solid #e7e7e7 !important;
+    }
+
+    .zv-print-spec-grid > div:last-child{
+        border-bottom:0 !important;
+    }
+
+    .zv-canopy-frame{
+        width:190px;
+        transform:scale(.9);
+        transform-origin:center top;
+        margin-bottom:-12px;
+    }
+}
+</style>
+
+<style id="zv-bottom-layout-fix">
+/* =========================================================
+   FIX MULTIKART BOTTOM SECTION SPACING / OVERLAP
+========================================================= */
+
+/* remove excessive vertical whitespace before tabs */
+.zv-product-accordian{
+    padding-bottom:28px !important;
+}
+
+.tab-product{
+    margin-top:0 !important;
+    padding-top:0 !important;
+    padding-bottom:35px !important;
+}
+
+/* clean tab shell */
+.tab-product .container{
+    padding-top:0 !important;
+}
+
+.tab-product .nav-tabs{
+    margin:0 !important;
+    padding:15px 15px 0 !important;
+    min-height:auto !important;
+}
+
+.tab-product .tab-content{
+    position:relative !important;
+    min-height:0 !important;
+    height:auto !important;
+    padding:24px 18px 26px !important;
+    overflow:visible !important;
+}
+
+.tab-product .tab-pane{
+    position:relative !important;
+    min-height:0 !important;
+    height:auto !important;
+}
+
+.tab-product .product-tab-description{
+    min-height:0 !important;
+    height:auto !important;
+    padding:0 !important;
+}
+
+.tab-product .product-tab-description .part{
+    margin-bottom:18px !important;
+}
+
+.tab-product .product-tab-description .part:last-child{
+    margin-bottom:0 !important;
+}
+
+.tab-product .product-tab-description p{
+    margin-bottom:0 !important;
+    line-height:1.7 !important;
+}
+
+/* Related Products must start after tab box, never overlap */
+section.section-b-space.ratio_asos{
+    clear:both !important;
+    position:relative !important;
+    margin-top:0 !important;
+    padding-top:35px !important;
+    padding-bottom:55px !important;
+    background:#fff !important;
+}
+
+.product-related{
+    position:relative !important;
+    display:block !important;
+    width:100% !important;
+    margin:0 0 22px !important;
+    padding:0 !important;
+    clear:both !important;
+}
+
+.product-related h2{
+    margin:0 !important;
+    padding-bottom:18px !important;
+    border-bottom:1px solid #eee !important;
+    font-size:25px !important;
+    line-height:1.3 !important;
+}
+
+/* Related product carousel/card height */
+.product-5{
+    margin-top:0 !important;
+}
+
+.product-5 .basic-product{
+    height:100% !important;
+}
+
+.product-5 .basic-product .overflow-hidden{
+    height:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+
+.product-5 .img-wrapper{
+    height:285px !important;
+    min-height:285px !important;
+}
+
+.product-5 .product-detail{
+    flex:1 !important;
+    padding-top:12px !important;
+}
+
+.product-5 .product-detail h6{
+    min-height:18px !important;
+}
+
+/* Prevent sticky bottom cart from covering content */
+.sticky-bottom-cart{
+    z-index:1050 !important;
+}
+
+
+@media(max-width:991px){
+    .tab-product{
+        padding-bottom:28px !important;
+    }
+
+    section.section-b-space.ratio_asos{
+        padding-top:28px !important;
+    }
+
+    .product-5 .img-wrapper{
+        height:245px !important;
+        min-height:245px !important;
+    }
+}
+
+@media(max-width:575px){
+    .tab-product .nav-tabs{
+        padding:10px 8px 0 !important;
+    }
+
+    .tab-product .nav-tabs .nav-link{
+        padding:10px 12px !important;
+        font-size:13px !important;
+    }
+
+    .tab-product .tab-content{
+        padding:18px 12px 20px !important;
+    }
+
+    section.section-b-space.ratio_asos{
+        padding-top:22px !important;
+        padding-bottom:35px !important;
+    }
+
+    .product-related h2{
+        font-size:21px !important;
+    }
+
+    .product-5 .img-wrapper{
+        height:210px !important;
+        min-height:210px !important;
+    }
+
+    body{
+        padding-bottom:120px;
+    }
+}
+</style>
+
+
+<style id="zv-database-product-options">
+.zv-color-swatches{display:flex;flex-wrap:wrap;gap:9px}.zv-color-swatch{display:flex;align-items:center;gap:7px;border:1px solid #ddd;background:#fff;padding:7px 10px;border-radius:4px}.zv-color-swatch span{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}.zv-color-swatch.active{border-color:#0b5fc1;box-shadow:0 0 0 1px #0b5fc1}.zv-price-table tr.zv-active-tier{background:#f3e0f0;font-weight:600}.zv-db-richtext,.zv-db-richtext *{font-family:inherit!important;color:inherit}.zv-db-richtext p,.zv-db-richtext li{font-size:14px!important;line-height:1.75!important}.zv-db-richtext ul,.zv-db-richtext ol{margin:12px 0 18px;padding-left:24px}.zv-db-richtext h1,.zv-db-richtext h2,.zv-db-richtext h3,.zv-db-richtext h4,.zv-db-richtext h5,.zv-db-richtext h6{font-family:inherit!important;margin:18px 0 10px}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     BREADCRUMB â€” SAME MULTIKART STRUCTURE
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{{ product.name }}</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:category_detail' product.category.slug %}">
+                        {{ product.category.name }}
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    {{ product.name }}
+                </li>
+
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+
+<style id="zv-two-column-product-ui">
+/* ZenVibe product detail refresh: 2 columns + 4 bottom tabs */
+.zv-product-two-col{padding:38px 0 34px!important;background:#fff}
+.zv-gallery-card,.zv-product-info-card{background:#fff;border:1px solid #ececec;border-radius:4px;padding:24px;height:100%}
+.zv-gallery-card .product-slick img{width:100%;max-height:560px;object-fit:contain;background:#fafafa}
+.zv-product-thumbs{margin-top:18px}.zv-product-thumbs img{height:78px;width:78px;object-fit:cover;border:1px solid #eee;padding:4px}
+.zv-product-info-card{display:block!important;align-items:initial!important}.zv-product-info-card .main-title{font-size:30px;line-height:1.25;margin:8px 0 12px}
+.zv-main-price{border-bottom:1px solid #eee;padding-bottom:16px;margin-bottom:16px}.zv-main-price h3{color:#0b5fc1;margin:0}
+.zv-short-description{font-size:15px;line-height:1.75;color:#666;margin-bottom:20px}
+.zv-option-block{padding:15px 0;border-top:1px solid #f0f0f0}.zv-option-block label{margin-bottom:8px}
+.zv-purchase-row{padding:16px 0}.zv-qty-wrap{max-width:220px}.zv-qty-wrap label{display:block;margin-bottom:8px}.zv-qty-wrap small{display:block;margin-top:7px;color:#777}
+.zv-qty-wrap .input-group{flex-wrap:nowrap}.zv-qty-wrap .form-control{text-align:center;min-width:70px}
+.zv-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:5px}.zv-action-grid .btn,.zv-customize-btn{width:100%;min-height:48px;border-radius:0!important}
+.zv-customize-wrap{margin-top:12px}.zv-customize-btn{display:flex!important;align-items:center;justify-content:center;font-weight:600}
+.zv-benefits{margin-top:20px;border-top:1px solid #eee;padding-top:15px}.zv-benefits ul{display:flex;gap:18px;flex-wrap:wrap;padding:0;margin:0;list-style:none}.zv-benefits li{font-size:13px;color:#555}.zv-benefits i,.zv-guideline-list i{color:#0b5fc1}
+.zv-four-tabs{clear:both!important;padding:18px 0 30px!important}.zv-four-tabs .nav-tabs{display:flex!important;flex-wrap:wrap!important;height:auto!important;overflow:visible!important;border:1px solid #e8e8e8;background:#f7f7f7;padding:0!important}
+.zv-four-tabs .nav-item{margin:0!important}.zv-four-tabs .nav-link{border:0!important;border-radius:0!important;padding:16px 24px!important;font-weight:600!important;color:#222!important;background:transparent!important}
+.zv-four-tabs .nav-link.active{background:#0b5fc1!important;color:#fff!important}
+.zv-four-tabs .tab-content{border:1px solid #e8e8e8!important;border-top:0!important;padding:26px!important;min-height:180px!important;height:auto!important;overflow:visible!important}
+.zv-four-tabs .tab-pane{height:auto!important;min-height:0!important;overflow:visible!important}.zv-guideline-list{padding:0;margin:0;list-style:none}.zv-guideline-list li{margin:0 0 11px}.zv-guideline-list i{margin-right:8px}
+.zv-info-table{display:grid;grid-template-columns:1fr 1fr;gap:0 35px}.zv-info-table .part{padding:12px 0!important;border-bottom:1px solid #eee!important}
+@media(max-width:991px){.zv-product-two-col{padding-top:24px!important}.zv-gallery-card,.zv-product-info-card{padding:18px}.zv-product-info-card .main-title{font-size:25px}.zv-four-tabs .nav-link{padding:13px 16px!important}}
+@media(max-width:575px){.zv-action-grid{grid-template-columns:1fr}.zv-four-tabs .nav-tabs{display:grid!important;grid-template-columns:1fr 1fr}.zv-four-tabs .nav-link{width:100%;text-align:center;font-size:13px}.zv-four-tabs .tab-content{padding:18px!important}.zv-info-table{grid-template-columns:1fr}}
+</style>
+<!-- =========================================================
+     PRODUCT SECTION — CLEAN 2-COLUMN PRODUCT DETAIL LAYOUT
+========================================================= -->
+<section class="zv-product-accordian zv-product-two-col">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+
+                <!-- LEFT: PRODUCT IMAGE / GALLERY -->
+                <div class="col-lg-6">
+                    <div class="zv-gallery-card">
+                        <div class="product-slick" id="productPreviewMount">
+                            {% if product.image %}
+                            <div><img src="{{ product.image.url }}" id="productMainImage" alt="{{ product.name }}" class="w-100 img-fluid blur-up lazyload"></div>
+                            {% endif %}
+                            {% if product.hover_image %}
+                            <div><img src="{{ product.hover_image.url }}" alt="{{ product.name }} alternate" class="w-100 img-fluid blur-up lazyload"></div>
+                            {% endif %}
+                        </div>
+                        <div class="slider-nav zv-product-thumbs">
+                            {% if product.image %}<div><img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid blur-up lazyload"></div>{% endif %}
+                            {% if product.hover_image %}<div><img src="{{ product.hover_image.url }}" alt="{{ product.name }} alternate" class="img-fluid blur-up lazyload"></div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PRODUCT INFORMATION + PURCHASE ACTIONS -->
+                <div class="col-lg-6">
+                    <div class="product-page-details zv-product-info-card mt-0">
+                        <div class="trending-text"><i class="ri-fire-fill"></i><h5>Popular custom product</h5></div>
+                        <h2 class="main-title">{{ product.name }}</h2>
+
+                        <div class="price-text zv-main-price">
+                            <h3><span class="fw-normal">Price:</span>
+                                <span id="zvUnitPrice">{% if product.min_price and product.max_price and product.min_price != product.max_price %}${{ product.min_price }} – ${{ product.max_price }}{% else %}${{ product.sale_price|default:product.price }}{% endif %}</span>
+                                {% if product.is_on_sale and product.sale_price %}<del>${{ product.price }}</del>{% endif %}
+                            </h3>
+                            {% if product.is_on_sale %}<span>Special promotional price</span>{% endif %}
+                            {% if product.min_price and product.max_price and product.min_price != product.max_price %}
+                            <div class="zv-price-range-note">Price varies by quantity / selected option. Range: ${{ product.min_price }} – ${{ product.max_price }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if product.short_description %}<div class="zv-short-description">{{ product.short_description|safe }}</div>{% endif %}
+
+                        {% if size_variants %}
+                        <div class="form-group w-100 zv-option-block">
+                            <label for="zvProductSize"><strong>Product Size</strong></label>
+                            <select id="zvProductSize" class="form-control">
+                                {% for size in size_variants %}<option value="{{ size.size_key }}">{{ size.name }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if color_variants %}
+                        <div class="zv-option-block w-100">
+                            <strong>Color</strong>
+                            <div class="zv-color-swatches mt-2" id="zvColorSwatches">
+                                {% for color in color_variants %}<button type="button" class="zv-color-swatch{% if forloop.first %} active{% endif %}" data-color-key="{{ color.color_key }}" title="{{ color.name }}"><span style="background:{{ color.hex_value|default:'#ddd' }}"></span>{{ color.name }}</button>{% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% for group in option_groups %}
+                        <div class="form-group w-100 zv-option-block">
+                            <label for="zvOption{{ forloop.counter }}"><strong>{{ group.label }}</strong></label>
+                            <select id="zvOption{{ forloop.counter }}" class="form-control zv-generic-option" data-option-key="{{ group.key }}">
+                                {% for value in group.values %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        {% endfor %}
+
+                        {% if price_tier_rows %}
+                        <div class="zv-option-block w-100">
+                            <strong id="zvPriceListTitle">Quantity Pricing</strong>
+                            <div class="table-responsive mt-2"><table class="table table-sm mb-0 zv-price-table"><thead><tr><th>Quantity</th><th>Unit Price</th></tr></thead><tbody>{% for row in price_tier_rows %}<tr data-price-tier data-min="{{ row.min_quantity }}" data-max="{{ row.max_quantity|default:'' }}" data-price="{{ row.unit_price }}" data-variant="{{ row.variant_key }}"><td>{{ row.min_quantity }}{% if row.max_quantity %} – {{ row.max_quantity }}{% else %}+{% endif %}</td><td>${{ row.unit_price }}</td></tr>{% endfor %}</tbody></table></div>
+                        </div>
+                        {% endif %}
+
+                        <div class="zv-purchase-row">
+                            <div class="zv-qty-wrap">
+                                <label><strong>Quantity</strong></label>
+                                <div class="qty-box"><div class="input-group">
+                                    <span class="input-group-prepend"><button type="button" class="btn quantity-left-minus" id="zvQtyMinus"><i class="ri-subtract-line"></i></button></span>
+                                    <input type="text" id="zvProductQty" name="quantity" class="form-control input-number" value="{{ product.minimum_quantity|default:1 }}" min="{{ product.minimum_quantity|default:1 }}"{% if product.maximum_quantity %} max="{{ product.maximum_quantity }}"{% endif %}>
+                                    <span class="input-group-prepend"><button type="button" class="btn quantity-right-plus" id="zvQtyPlus"><i class="ri-add-line"></i></button></span>
+                                </div></div>
+                                <small>Minimum order: {{ product.minimum_quantity|default:1 }}{% if product.maximum_quantity %} &nbsp;|&nbsp; Maximum order: {{ product.maximum_quantity }}{% endif %}</small>
+                            </div>
+                        </div>
+
+                        <div class="zv-action-grid">
+                            <button class="btn btn-animation btn-solid hover-solid scroll-button" type="button" data-add-cart data-product-id="{{ product.id }}" data-product-name="{{ product.name|escape }}" data-product-price="{{ product.sale_price|default:product.price }}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-url="{% url 'designer:choose_design' product.id %}" data-cart-url="{% url \'designer:add_to_cart\' product.id %}"><i class="ri-shopping-cart-line"></i> Add To Cart</button>
+                            <button class="btn btn-solid zv-buy-now" type="button" id="zvBuyNow" data-cart-url="{% url \'designer:add_to_cart\' product.id %}"><i class="ri-flashlight-line"></i> Buy Now</button>
+                        </div>
+
+                        <div class="zv-customize-wrap">
+                            {% if customizer_kind == 'awards' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:awards_customizer' product.id %}">Customize</a>
+                            {% elif customizer_kind == 'drinkware' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:drinkware_customizer' product.id %}">Customize</a>
+                            {% elif customizer_kind == 'bags' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:bags_customizer' product.id %}">Customize</a>
+                            {% elif customizer_kind == 'tshirt' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:tshirt_customizer' product.id %}">Customize</a>
+                            {% elif customizer_kind == 'pen' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:pen_customizer' product.id %}?color=navy&ink=black">Customize</a>
+                            {% elif customizer_kind == 'photo' %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:photo_customizer' product.id %}">Customize</a>
+                            {% else %}<a class="btn btn-solid zv-customize-btn" href="{% url 'designer:editor' product.id %}?mode=blank">Customize</a>{% endif %}
+                        </div>
+
+                        <div class="zv-benefits"><ul>
+                            <li><i class="ri-checkbox-circle-line"></i> Free digital proof</li>
+                            <li><i class="ri-truck-line"></i> Canada-wide delivery</li>
+                            <li><i class="ri-palette-line"></i> Easy artwork customization</li>
+                        </ul></div>
+
+                        <div class="buy-box justify-content-start mt-3"><a href="#!" data-wishlist data-id="{{ product.id }}" data-name="{{ product.name|escape }}" data-price="{{ product.sale_price|default:product.price }}" data-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-url="{% url 'designer:choose_design' product.id %}"><i class="ri-heart-line"></i><span>Add To Wishlist</span></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     PRODUCT TABS — DATABASE DRIVEN; BLANK SECTIONS ARE HIDDEN
+     Rich HTML entered in Admin is rendered here.
+========================================================= -->
+{% if product.description or product.product_information or product.printing_method or product.design_guidelines or product.printing_guidelines or product.faqs %}
+<section class="tab-product zv-product-content-tabs m-0">
+  <div class="container"><div class="row"><div class="col-12">
+    <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+      {% if product.description %}<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#description-pane">Description</a></li>{% endif %}
+      {% if product.product_information %}<li class="nav-item"><a class="nav-link{% if not product.description %} active{% endif %}" data-bs-toggle="tab" href="#information-pane">Information</a></li>{% endif %}
+      {% if product.printing_method %}<li class="nav-item"><a class="nav-link{% if not product.description and not product.product_information %} active{% endif %}" data-bs-toggle="tab" href="#printing-method-pane">Printing Method</a></li>{% endif %}
+      {% if product.design_guidelines %}<li class="nav-item"><a class="nav-link{% if not product.description and not product.product_information and not product.printing_method %} active{% endif %}" data-bs-toggle="tab" href="#design-guidelines-pane">Design Guidelines</a></li>{% endif %}
+      {% if product.printing_guidelines %}<li class="nav-item"><a class="nav-link{% if not product.description and not product.product_information and not product.printing_method and not product.design_guidelines %} active{% endif %}" data-bs-toggle="tab" href="#printing-guidelines-pane">Printing Guidelines</a></li>{% endif %}
+      {% if product.faqs %}<li class="nav-item"><a class="nav-link{% if not product.description and not product.product_information and not product.printing_method and not product.design_guidelines and not product.printing_guidelines %} active{% endif %}" data-bs-toggle="tab" href="#faq-pane">FAQ</a></li>{% endif %}
+    </ul>
+    <div class="tab-content nav-material" id="top-tabContent">
+      {% if product.description %}<div class="tab-pane fade show active" id="description-pane"><div class="product-tab-description zv-db-richtext">{{ product.description|safe }}</div></div>{% endif %}
+      {% if product.product_information %}<div class="tab-pane fade{% if not product.description %} show active{% endif %}" id="information-pane"><div class="product-tab-description zv-db-richtext">{{ product.product_information|safe }}</div></div>{% endif %}
+      {% if product.printing_method %}<div class="tab-pane fade{% if not product.description and not product.product_information %} show active{% endif %}" id="printing-method-pane"><div class="product-tab-description zv-db-richtext">{{ product.printing_method|safe }}</div></div>{% endif %}
+      {% if product.design_guidelines %}<div class="tab-pane fade{% if not product.description and not product.product_information and not product.printing_method %} show active{% endif %}" id="design-guidelines-pane"><div class="product-tab-description zv-db-richtext">{{ product.design_guidelines|safe }}</div></div>{% endif %}
+      {% if product.printing_guidelines %}<div class="tab-pane fade{% if not product.description and not product.product_information and not product.printing_method and not product.design_guidelines %} show active{% endif %}" id="printing-guidelines-pane"><div class="product-tab-description zv-db-richtext">{{ product.printing_guidelines|safe }}</div></div>{% endif %}
+      {% if product.faqs %}<div class="tab-pane fade{% if not product.description and not product.product_information and not product.printing_method and not product.design_guidelines and not product.printing_guidelines %} show active{% endif %}" id="faq-pane"><div class="product-tab-description zv-db-richtext">{{ product.faqs|safe }}</div></div>{% endif %}
+    </div>
+  </div></div></div>
+</section>
+{% endif %}
+
+<!-- =========================================================
+     RELATED PRODUCTS â€” SAME MULTIKART STRUCTURE
+========================================================= -->
+<section class="section-b-space ratio_asos">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-12 product-related">
+                <h2>Related Products</h2>
+            </div>
+
+        </div>
+
+
+        <div class="product-5 product-m no-arrow">
+
+            {% for rp in product.category.products.all|slice:':6' %}
+
+                {% if rp.id != product.id %}
+
+                <div class="basic-product theme-product-1">
+
+                    <div class="overflow-hidden">
+
+                        <div class="img-wrapper">
+
+                            <a href="{% url 'designer:choose_design' rp.id %}">
+
+                                {% if rp.image %}
+                                <img src="{{ rp.image.url }}"
+                                     class="img-fluid blur-up lazyload"
+                                     alt="{{ rp.name }}">
+                                {% endif %}
+
+                            </a>
+
+
+                            {% if rp.is_on_sale %}
+                            <div class="ribbon">
+                                <span>Sale</span>
+                            </div>
+                            {% endif %}
+
+
+                            <div class="rating-label">
+                                <i class="ri-star-fill"></i>
+                                <span>4.5</span>
+                            </div>
+
+
+                            <div class="cart-info">
+
+                                <ul class="hover-action">
+
+                                    <li>
+                                        <button class="btn btn-solid" type="button"
+                                                title="Add to cart"
+                                                data-add-cart
+                                                data-product-id="{{ rp.id }}"
+                                                data-product-name="{{ rp.name|escape }}"
+                                                data-product-price="{{ rp.sale_price|default:rp.price }}"
+                                                data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}"
+                                                data-product-url="{% url 'designer:choose_design' rp.id %}"
+                                                data-cart-url="{% url \'designer:add_to_cart\' rp.id %}">
+                                            <i class="ri-shopping-cart-line"></i>
+                                        </button>
+                                    </li>
+
+                                    <li>
+                                        <a href="#!"
+                                           title="Add to Wishlist"
+                                           data-wishlist
+                                           data-id="{{ rp.id }}"
+                                           data-name="{{ rp.name|escape }}"
+                                           data-price="{{ rp.sale_price|default:rp.price }}"
+                                           data-image="{% if rp.image %}{{ rp.image.url }}{% endif %}"
+                                           data-url="{% url 'designer:choose_design' rp.id %}">
+                                            <i class="ri-heart-line"></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="product-detail">
+
+                            <div>
+
+                                <div class="brand-w-color">
+
+                                    <a class="product-title"
+                                       href="{% url 'designer:choose_design' rp.id %}">
+                                        {{ rp.name }}
+                                    </a>
+
+                                </div>
+
+
+                                <h6>
+                                    {{ rp.category.name }}
+                                </h6>
+
+
+                                <h4 class="price">
+
+                                    {% if rp.is_on_sale and rp.sale_price %}
+
+                                    ${{ rp.sale_price }}
+
+                                    <del>
+                                        ${{ rp.price }}
+                                    </del>
+
+                                    <span class="discounted-price">
+                                        Sale
+                                    </span>
+
+                                    {% else %}
+
+                                    ${{ rp.price }}
+
+                                    {% endif %}
+
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            {% empty %}
+
+            <div class="text-center py-4">
+                <p>No related products available.</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<style id="zv-multikart-bottom-css">
+
+/* Tabs exactly in Multikart-style box */
+.tab-product{
+    margin-top:45px !important;
+}
+
+.tab-product .nav-material{
+    background:#fafafa;
+}
+
+.tab-product .nav-tabs{
+    padding:15px 15px 0;
+    border:1px solid #eee;
+    border-bottom:0;
+}
+
+.tab-product .nav-tabs .nav-link{
+    margin-right:12px;
+    padding:14px 24px;
+    border:1px solid #eee;
+    background:#fff;
+    color:#222;
+}
+
+.tab-product .nav-tabs .nav-link.active{
+    background:#0758b8;
+    border-color:#0758b8;
+    color:#fff;
+}
+
+.tab-product .tab-content{
+    padding:22px 18px;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+
+/* Related products */
+.product-related h2{
+    margin-bottom:25px;
+    text-transform:capitalize;
+}
+
+.product-5 .basic-product{
+    margin:0 8px;
+}
+
+.product-5 .img-wrapper{
+    height:300px;
+    background:#f5f5f5;
+}
+
+.product-5 .img-wrapper > a{
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+.product-5 .img-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+
+/* Sticky cart */
+.sticky-bottom-cart .product-image > img{
+    width:75px;
+    height:75px;
+    object-fit:contain;
+    background:#f5f5f5;
+}
+
+.sticky-bottom-cart .add-btn button{
+    min-width:145px;
+}
+
+@media(max-width:767px){
+    .tab-product .nav-tabs .nav-link{
+        padding:10px 14px;
+        margin-right:5px;
+    }
+
+    .product-5 .img-wrapper{
+        height:230px;
+    }
+}
+
+</style>
+
+
+
+{% if templates and not invitation_templates and not bc_pack_templates %}
+<section class="section-b-space zv-generic-template-section" id="productTemplates">
+  <div class="container">
+    <div class="title1">
+      <h2 class="title-inner1">Choose a {{ product.name }} Template</h2>
+      <p>Choose a design, then customize all editable text, shapes, colors and image areas in the ZenVibe designer.</p>
+    </div>
+
+    <div class="zv-generic-filter-row">
+      <input id="zvTemplateSearch" type="search" placeholder="Search templates..." aria-label="Search templates">
+    </div>
+
+    <div class="zv-generic-grid" id="zvTemplateGrid">
+      {% for card in templates %}
+      <article class="zv-generic-card" data-search="{{ card.name|lower }}">
+        <a class="zv-generic-preview" href="{% url 'designer:editor' product.id %}?template={{ card.id }}">
+          {% if card.preview %}
+            <img src="{{ card.preview.url }}" alt="{{ card.name }}" loading="lazy"
+                 onerror="this.onerror=null;this.style.display='none';">
+          {% else %}
+            <div class="zv-template-preview-placeholder">{{ card.name }}</div>
+          {% endif %}
+          {% if card.json_data.zvFinish %}
+            <span class="zv-template-finish">{{ card.json_data.zvFinish }}</span>
+          {% endif %}
+        </a>
+
+        <div class="zv-generic-info">
+          {% if card.json_data.zvCategory %}
+            <span>{{ card.json_data.zvCategory }}</span>
+          {% else %}
+            <span>{{ product.category.name }}</span>
+          {% endif %}
+          <h5>{{ card.name }}</h5>
+          <a class="btn btn-solid btn-sm" href="{% url 'designer:editor' product.id %}?template={{ card.id }}">Customize</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style id="zv-generic-template-gallery-v2">
+.zv-generic-template-section{padding:42px 0}
+.zv-generic-template-section .title1{text-align:center;margin-bottom:22px}
+.zv-generic-filter-row{max-width:620px;margin:0 auto 25px}
+.zv-generic-filter-row input{width:100%;height:46px;padding:0 16px;border:1px solid #d8dee8;border-radius:10px;background:#fff}
+.zv-generic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.zv-generic-card{min-width:0;border:1px solid #e6e9ef;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 5px 18px rgba(15,23,42,.06)}
+.zv-generic-preview{position:relative;display:block;aspect-ratio:8.5/11;background:#f6f7f9;overflow:hidden}
+.zv-generic-preview img{display:block;width:100%;height:100%;object-fit:contain}
+.zv-template-finish{position:absolute;top:10px;right:10px;padding:5px 9px;border-radius:999px;background:rgba(17,17,17,.86);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.zv-generic-info{padding:14px}
+.zv-generic-info>span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b}
+.zv-generic-info h5{font-size:14px;line-height:1.35;margin:6px 0 12px;min-height:38px}
+@media(max-width:1199px){.zv-generic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:767px){.zv-generic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.zv-generic-grid{grid-template-columns:1fr}}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const q=document.getElementById('zvTemplateSearch');
+  if(!q)return;
+  q.addEventListener('input',function(){
+    const term=q.value.trim().toLowerCase();
+    document.querySelectorAll('#zvTemplateGrid .zv-generic-card').forEach(function(card){
+      card.style.display=(!term || (card.dataset.search||'').includes(term))?'':'none';
+    });
+  });
+});
+</script>
+{% endif %}
+
+{% if invitation_templates %}
+<section class="section-b-space zv-inv-template-section" id="invitationTemplates">
+  <div class="container">
+    <div class="title1"><h2 class="title-inner1">Choose an Invitation Template</h2><p>Choose a design, then edit every page in the ZenVibe designer.</p></div>
+    <div class="zv-inv-filter-row">
+      <input id="zvInvSearch" type="search" placeholder="Search invitation templates...">
+      <select id="zvInvPages"><option value="">All page counts</option><option value="1">1 page</option><option value="2">2 pages</option><option value="3plus">3+ pages</option></select>
+    </div>
+    <div class="zv-inv-grid" id="zvInvGrid">
+      {% for card in invitation_templates %}
+      <article class="zv-inv-card" data-search="{{ card.name|lower }} {{ card.category|lower }}" data-pages="{{ card.page_count }}">
+        <a class="zv-inv-preview" href="{{ card.url }}">
+          {% if card.preview %}<img src="{{ card.preview }}" alt="{{ card.name }}" loading="lazy">
+          {% else %}<div class="zv-inv-placeholder"><strong>{{ card.name }}</strong><span>{{ card.category }}</span></div>{% endif %}
+          <span class="zv-inv-page-badge">{{ card.page_count }} page{% if card.page_count != 1 %}s{% endif %}</span>
+        </a>
+        <div class="zv-inv-info"><span>{{ card.category }}</span><h5>{{ card.name }}</h5><a class="btn btn-solid btn-sm" href="{{ card.url }}">Customize</a></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<style id="zv-invitation-gallery-v1">
+.zv-inv-template-section{padding:42px 0}.zv-inv-filter-row{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 22px}
+.zv-inv-filter-row input,.zv-inv-filter-row select{height:44px;border:1px solid #ddd;background:#fff;padding:0 14px}
+.zv-inv-filter-row input{flex:1;min-width:240px}.zv-inv-filter-row select{min-width:170px}
+.zv-inv-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.zv-inv-card{border:1px solid #e7e7e7;background:#fff;overflow:hidden}.zv-inv-preview{position:relative;display:block;background:#f7f5f1;aspect-ratio:5/7;overflow:hidden}
+.zv-inv-preview img{width:100%;height:100%;object-fit:contain;display:block}.zv-inv-page-badge{position:absolute;right:9px;top:9px;background:#111;color:#fff;padding:5px 8px;font-size:11px}
+.zv-inv-info{padding:14px}.zv-inv-info>span{font-size:11px;text-transform:uppercase;color:#777;letter-spacing:.7px}.zv-inv-info h5{font-size:14px;margin:6px 0 12px;min-height:34px}
+.zv-inv-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px;text-align:center;color:#333}
+@media(max-width:1199px){.zv-inv-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:767px){.zv-inv-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.zv-inv-grid{grid-template-columns:1fr}}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const q=document.getElementById('zvInvSearch'),p=document.getElementById('zvInvPages');
+ function filter(){const term=(q?.value||'').toLowerCase().trim(),pages=p?.value||'';
+ document.querySelectorAll('#zvInvGrid .zv-inv-card').forEach(function(card){const n=parseInt(card.dataset.pages||'1',10);
+ const okp=!pages||(pages==='3plus'?n>=3:n===parseInt(pages,10));const okt=!term||(card.dataset.search||'').includes(term);card.style.display=(okp&&okt)?'':'none';});}
+ q?.addEventListener('input',filter);p?.addEventListener('change',filter);
+});
+</script>
+{% endif %}
+
+{% if bc_pack_templates %}
+<section class="section-b-space zv-bc-template-section" id="businessCardTemplates">
+  <div class="container">
+    <div class="title1"><h2 class="title-inner1">Choose a Business Card Template</h2><p>Choose a design, then edit the front and back in the ZenVibe designer.</p></div>
+    <div class="zv-bc-filter-row">
+      <input id="zvBcSearch" type="search" placeholder="Search business card templates..." aria-label="Search business card templates">
+    </div>
+    <div class="zv-bc-grid" id="zvBcGrid">
+      {% for card in bc_pack_templates %}
+      <article class="zv-bc-card" data-search="{{ card.name|lower }} {{ card.category|lower }}">
+        <a class="zv-bc-preview" href="{{ card.url }}">
+          <img src="{{ card.preview_front }}" alt="{{ card.name }} front" loading="lazy">
+          <span class="zv-bc-back"><img src="{{ card.preview_back }}" alt="{{ card.name }} back" loading="lazy"></span>
+        </a>
+        <div class="zv-bc-info"><span>{{ card.category }}</span><h5>{{ card.name }}</h5>
+          <a class="btn btn-solid btn-sm" href="{{ card.url }}">Customize</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<style>
+.zv-bc-template-section{padding:42px 0}.zv-bc-filter-row{max-width:620px;margin:0 auto 24px}.zv-bc-filter-row input{width:100%;padding:13px 16px;border:1px solid #d8dee8;border-radius:10px}.zv-bc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.zv-bc-card{border:1px solid #e6e9ef;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 5px 18px rgba(15,23,42,.06)}.zv-bc-preview{display:block;position:relative;background:#f6f7f9;aspect-ratio:1.75;overflow:hidden}.zv-bc-preview>img{width:100%;height:100%;object-fit:contain}.zv-bc-back{position:absolute;right:8px;bottom:8px;width:34%;background:#fff;border:1px solid #ddd;box-shadow:0 2px 8px rgba(0,0,0,.12)}.zv-bc-back img{display:block;width:100%}.zv-bc-info{padding:14px}.zv-bc-info span{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#64748b}.zv-bc-info h5{margin:5px 0 12px;font-size:15px}@media(max-width:991px){.zv-bc-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:575px){.zv-bc-grid{grid-template-columns:1fr}}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){const q=document.getElementById('zvBcSearch');if(!q)return;q.addEventListener('input',function(){const term=q.value.trim().toLowerCase();document.querySelectorAll('#zvBcGrid .zv-bc-card').forEach(function(card){card.style.display=!term||card.dataset.search.includes(term)?'':'none';});});});
+</script>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+{% block scripts %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* 360 viewer */
+    var urls = {{ angle_image_urls_json|safe }};
+
+    if (window.ZenVibe360 && urls && urls.length > 1) {
+
+        var mount = document.getElementById('productPreviewMount');
+
+        if (mount) {
+            window.ZenVibe360.mount(mount, urls);
+        }
+
+    }
+
+
+    /* Quantity */
+    const qty = document.getElementById("zvProductQty");
+    const minus = document.getElementById("zvQtyMinus");
+    const plus = document.getElementById("zvQtyPlus");
+    const sizeSelect = document.getElementById("zvProductSize");
+
+    minus?.addEventListener("click", function () {
+
+        let value = parseInt(qty.value || "1", 10);
+
+        qty.value = Math.max(parseInt(qty.min || "1", 10), value - 1);
+        syncCommerceUI();
+
+    });
+
+
+    plus?.addEventListener("click", function () {
+
+        let value = parseInt(qty.value || "1", 10);
+
+        qty.value = value + 1;
+        syncCommerceUI();
+
+    });
+
+
+
+    const colorButtons = document.querySelectorAll('[data-color-key]');
+    const genericOptions = document.querySelectorAll('.zv-generic-option');
+    let selectedColor = colorButtons.length ? colorButtons[0].dataset.colorKey : '';
+
+    function effectivePriceRows() {
+        const sizeKey = sizeSelect?.value || '';
+        const allRows = Array.from(document.querySelectorAll('[data-price-tier]'));
+        const variantRows = sizeKey
+            ? allRows.filter(row => (row.dataset.variant || '') === sizeKey)
+            : [];
+        const rows = variantRows.length
+            ? variantRows
+            : allRows.filter(row => !(row.dataset.variant || ''));
+
+        allRows.forEach(row => {
+            row.hidden = !rows.includes(row);
+            row.classList.remove('zv-active-tier');
+        });
+
+        const title = document.getElementById('zvPriceListTitle');
+        if (title) {
+            const selectedName = sizeSelect?.options[sizeSelect.selectedIndex]?.text || '';
+            title.textContent = variantRows.length && selectedName
+                ? 'Quantity Pricing — ' + selectedName
+                : 'Quantity Pricing';
+        }
+        return rows;
+    }
+
+    function currentTier() {
+        const value = Math.max(1, parseInt(qty?.value || '1', 10));
+        let selected = null;
+
+        effectivePriceRows().forEach(function(row) {
+            const min = parseInt(row.dataset.min || '1', 10);
+            const max = row.dataset.max ? parseInt(row.dataset.max, 10) : null;
+            const matches = value >= min && (max === null || value <= max);
+            row.classList.toggle('zv-active-tier', matches);
+            if (matches) selected = row;
+        });
+        return selected;
+    }
+
+    function syncSelectedPriceRange() {
+        const rows = effectivePriceRows();
+        const prices = rows
+            .map(row => Number(row.dataset.price))
+            .filter(price => Number.isFinite(price));
+
+        const priceNode = document.getElementById('zvUnitPrice');
+        if (!priceNode || !prices.length) return;
+
+        const low = Math.min(...prices);
+        const high = Math.max(...prices);
+
+        if (low !== high) {
+            priceNode.textContent = '$' + low.toFixed(2) + ' – $' + high.toFixed(2);
+        } else {
+            priceNode.textContent = '$' + low.toFixed(2);
+        }
+    }
+
+    function syncCommerceUI() {
+        if (!qty) return;
+        let value = parseInt(qty.value || qty.min || '1', 10);
+        const min = parseInt(qty.min || '1', 10);
+        const max = parseInt(qty.max || '0', 10);
+        value = Math.max(min, value);
+        if (max) value = Math.min(max, value);
+        qty.value = value;
+        const tier = currentTier();
+        const price = tier?.dataset.price;
+        const priceNode = document.getElementById('zvUnitPrice');
+        if (price && priceNode) {
+            priceNode.textContent = '$' + Number(price).toFixed(2);
+        } else if (priceNode) {
+            {% if product.min_price and product.max_price and product.min_price != product.max_price %}
+            priceNode.textContent = '${{ product.min_price }} – ${{ product.max_price }}';
+            {% else %}
+            priceNode.textContent = '${{ product.sale_price|default:product.price }}';
+            {% endif %}
+        }
+        document.querySelectorAll('[data-add-cart]').forEach(function(button){
+            button.dataset.productPrice = price || "{{ product.sale_price|default:product.price }}";
+        });
+    }
+
+    colorButtons.forEach(function(button){button.addEventListener('click',function(){selectedColor=this.dataset.colorKey||'';colorButtons.forEach(b=>b.classList.toggle('active',b===this));document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function(link){const url=new URL(link.href,window.location.origin);url.searchParams.set('color',selectedColor);link.href=url.pathname+url.search;});});});
+    genericOptions.forEach(function(select){select.addEventListener('change',function(){document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function(link){const url=new URL(link.href,window.location.origin);url.searchParams.set(select.dataset.optionKey,select.value);link.href=url.pathname+url.search;});});});
+    qty?.addEventListener('input', syncCommerceUI);
+    qty?.addEventListener('change', syncCommerceUI);
+
+    /* Buy Now: add product, then open cart/checkout flow */
+    const buyNow = document.getElementById("zvBuyNow");
+
+    buyNow?.addEventListener("click", async function () {
+
+        const cartUrl = this.dataset.cartUrl;
+        const quantity = Math.max(1, parseInt(qty?.value || "1", 10));
+
+        if (!cartUrl) return;
+
+        this.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append("quantity", quantity);
+            if (sizeSelect) formData.append("size_key", sizeSelect.value);
+
+            const csrfToken =
+                document.querySelector("[name=csrfmiddlewaretoken]")?.value ||
+                document.cookie.match(/csrftoken=([^;]+)/)?.[1] ||
+                "";
+
+            const response = await fetch(cartUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to add product.");
+            }
+
+            /* Use your existing cart page if available */
+            window.location.href = "/cart/";
+
+        } catch (error) {
+            console.error(error);
+
+            /* Fallback to existing Add To Cart button */
+            const addCartButton = document.querySelector(
+                ".zv-action-btn [data-add-cart]"
+            );
+
+            if (addCartButton) {
+                addCartButton.click();
+            }
+
+        } finally {
+            this.disabled = false;
+        }
+
+    });
+
+    function syncSelectedSize() {
+        if (!sizeSelect || !qty) return;
+        const minimum = parseInt("{{ product.minimum_quantity|default:1 }}", 10);
+        qty.min = minimum;
+        qty.value = Math.max(minimum, parseInt(qty.value || minimum, 10));
+        document.querySelectorAll('a[href*="customizer"], a[href*="editor"]').forEach(function(link) {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('size', sizeSelect.value);
+            link.href = url.pathname + url.search;
+        });
+        document.querySelectorAll('[data-add-cart]').forEach(function(button) {
+            const url = new URL(button.dataset.cartUrl, window.location.origin);
+            url.searchParams.set('size', sizeSelect.value);
+            button.dataset.cartUrl = url.pathname + url.search;
+        });
+        syncSelectedPriceRange();
+        syncCommerceUI();
+    }
+    sizeSelect?.addEventListener('change', syncSelectedSize);
+    if (sizeSelect) {
+        syncSelectedSize();
+    } else {
+        syncSelectedPriceRange();
+        syncCommerceUI();
+    }
+
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+<style>
+/* FINAL PRODUCT-TAB TYPOGRAPHY OVERRIDE.
+   Placed at the END of the template so imported HTML/theme rules cannot win. */
+.tab-product .zv-db-richtext,
+.tab-product .zv-db-richtext * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    color: #333 !important;
+}
+.tab-product .zv-db-richtext,
+.tab-product .zv-db-richtext p,
+.tab-product .zv-db-richtext li,
+.tab-product .zv-db-richtext span,
+.tab-product .zv-db-richtext div,
+.tab-product .zv-db-richtext td,
+.tab-product .zv-db-richtext th,
+.tab-product .zv-db-richtext a {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    font-weight: 400 !important;
+}
+.tab-product .zv-db-richtext strong,
+.tab-product .zv-db-richtext b {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    font-weight: 600 !important;
+}
+.tab-product .zv-db-richtext h1,
+.tab-product .zv-db-richtext h2,
+.tab-product .zv-db-richtext h3,
+.tab-product .zv-db-richtext h4,
+.tab-product .zv-db-richtext h5,
+.tab-product .zv-db-richtext h6 {
+    font-family: Arial, Helvetica, sans-serif !important;
+    line-height: 1.35 !important;
+    font-weight: 600 !important;
+    color: #222 !important;
+    text-transform: none !important;
+}
+.tab-product .zv-db-richtext h1 { font-size: 24px !important; }
+.tab-product .zv-db-richtext h2 { font-size: 22px !important; }
+.tab-product .zv-db-richtext h3 { font-size: 19px !important; }
+.tab-product .zv-db-richtext h4,
+.tab-product .zv-db-richtext h5,
+.tab-product .zv-db-richtext h6 { font-size: 16px !important; }
+.tab-product .zv-db-richtext [style] {
+    font-family: Arial, Helvetica, sans-serif !important;
+    color: inherit !important;
+}
+</style>

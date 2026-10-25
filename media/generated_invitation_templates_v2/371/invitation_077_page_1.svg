@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#e9f5ff" opacity="1"/>
+<rect x="38" y="38" width="674" height="974" rx="14" fill="transparent" opacity="1" stroke="#3f8fd2" stroke-width="2"/>
+<rect x="54" y="54" width="642" height="942" rx="10" fill="transparent" opacity="1" stroke="#ffffff" stroke-width="1"/>
+<rect x="0" y="0" width="154" height="1050" rx="0" fill="#183756" opacity="1"/>
+<rect x="154" y="0" width="10" height="1050" rx="0" fill="#3f8fd2" opacity="1"/>
+<ellipse cx="375" cy="160" rx="115" ry="72" fill="#ffffff" opacity="0.35" stroke="#3f8fd2" stroke-width="2"/>
+<circle cx="375.0" cy="158.0" r="11.55" fill="#ffffff" opacity="0.92"/>
+<circle cx="375.0" cy="158.0" r="3.85" fill="#3f8fd2" opacity="1"/>
+<polygon points="388.2,156.625 397.55,151.95 406.9,156.625 397.55,161.29999999999998" fill="#3f8fd2" opacity="0.82"/>
+<polygon points="376.1,175.325 387.65000000000003,170.1 399.20000000000005,175.325 387.65000000000003,180.54999999999998" fill="#3f8fd2" opacity="0.67"/>
+<line x1="375" y1="166.8" x2="414.6" y2="204.75" stroke="#3f8fd2" stroke-width="2" opacity="0.55"/>
+<text x="95" y="264" text-anchor="start" fill="#3f8fd2" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">CELEBRATING MIA &amp; DANIEL</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#183756" font-size="52" font-family="Playfair Display" font-weight="700" opacity="1"><tspan x="95" dy="0">25 YEARS</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#3f8fd2" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#183756" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">SATURDAY · 14 NOVEMBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#183756" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">GRAND BALLROOM · 6:30 PM</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#3f8fd2" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="492" y="-100" width="130" height="1250" rx="0" fill="#ffffff" opacity="0.045" transform="rotate(14 492 -100)"/>
+</svg>

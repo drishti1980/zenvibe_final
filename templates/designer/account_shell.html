@@ -1,0 +1,94 @@
+{% extends "designer/base.html" %}
+{% block title %}My Account | ZenVibe{% endblock %}
+{% block content %}
+<style>
+.zv-portal-page{background:#f6f8fc;min-height:70vh;padding:38px 20px 76px;color:#172b49;font-family:"Lato",sans-serif!important;font-size:14px;line-height:1.55}
+.zv-portal-page,.zv-portal-page :is(p,span,small,label,a,button,input,select,textarea,th,td){font-family:"Lato",sans-serif!important}
+.zv-portal-page :is(h1,h2,h3,h4,h5,h6),.zv-portal-page .zv-side-header h2,.zv-portal-page .zv-dash-stat strong,.zv-portal-page .zv-dash-link-copy strong{font-family:"Montserrat",sans-serif!important;font-weight:700!important;letter-spacing:-.025em!important}
+.zv-portal-page .zv-eyebrow,.zv-portal-page .zv-nav-label,.zv-portal-page .zv-dash-kicker{font-family:"Montserrat",sans-serif!important;font-weight:700!important;letter-spacing:.04em!important}
+.zv-portal-page .zv-side a,.zv-portal-page .zv-main p,.zv-portal-page .zv-dash-link-copy strong{font-size:14px!important}
+.zv-portal-page .zv-main h1{font-size:clamp(23px,2.3vw,30px)!important;line-height:1.28!important;letter-spacing:-.025em!important}
+.zv-portal-page .zv-side-header h2{font-size:22px!important}
+.zv-portal{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:256px minmax(0,1fr);align-items:start;gap:24px}
+.zv-side{position:sticky;top:22px;background:#fff;border:1px solid #e5eaf2;border-radius:16px;padding:24px 14px;box-shadow:0 8px 28px rgba(18,43,78,.035)}
+.zv-side-header{padding:2px 12px 22px;border-bottom:1px solid #edf1f6;margin-bottom:15px}
+.zv-side-header .zv-eyebrow{font-size:11px!important;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:#f26b32}
+.zv-side-header h2{font-size:23px!important;line-height:1.3!important;letter-spacing:-.02em!important;margin:7px 0 4px!important;font-weight:750!important;color:#142a47!important;text-transform:none!important}
+.zv-side-header p{font-size:12px!important;line-height:1.5!important;color:#8190a4;margin:0!important;overflow-wrap:anywhere}
+.zv-nav-label{display:block;padding:7px 12px 10px;font-size:11px!important;font-weight:800;letter-spacing:.1em;color:#8996a8;text-transform:uppercase}
+.zv-side a{display:flex;align-items:center;gap:12px;text-decoration:none!important;border-radius:10px;color:#41546f!important;font-size:14px!important;font-weight:600!important;line-height:1.35!important;padding:12px 14px;margin:2px 0;transition:background .16s,color .16s}
+.zv-side a i{font-size:19px;line-height:1;width:20px;text-align:center;flex:none}
+.zv-side a:hover{background:#f2f6fd;color:#0758b8!important}
+.zv-side a.zv-active{background:#eaf2ff;color:#0758b8!important;box-shadow:inset 3px 0 0 #0758b8}
+.zv-side .zv-nav-separator{height:1px;background:#edf1f6;margin:15px 10px}
+.zv-side .zv-logout-form{margin:0}
+.zv-side .zv-logout{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;background:transparent!important;color:#586b83!important;border:0!important;border-radius:10px;cursor:pointer;text-align:left;font-size:14px!important;font-weight:600!important;box-shadow:none!important}
+.zv-side .zv-logout:hover{background:#fff3ed!important;color:#d95c27!important}
+.zv-side .zv-logout i{font-size:19px}
+.zv-main{background:#fff;border:1px solid #e5eaf2;border-radius:16px;box-shadow:0 8px 28px rgba(18,43,78,.035);padding:36px 42px;min-width:0}
+.zv-main h1,.zv-main h2,.zv-main h3,.zv-main h4{font-family:"Montserrat",sans-serif!important;text-transform:none!important;letter-spacing:-.025em!important;color:#152b49!important;font-weight:750!important}
+.zv-main h1{font-size:clamp(25px,2.6vw,32px)!important;line-height:1.3!important;margin:0 0 12px!important}
+.zv-main h2{font-size:21px!important;line-height:1.35!important;margin:26px 0 14px!important}
+.zv-main h3{font-size:18px!important;line-height:1.4!important}
+.zv-main p{font-size:14px!important;line-height:1.7!important;color:#6c7d93;margin-bottom:17px}
+.zv-main form{max-width:760px}
+.zv-main form p{margin:0 0 17px!important}
+.zv-main label{display:block;font-size:13px!important;font-weight:650!important;color:#334761;margin:0 0 7px}
+.zv-main input:not([type=checkbox]):not([type=radio]):not([type=hidden]),.zv-main select,.zv-main textarea{display:block;width:100%;max-width:100%;min-height:46px;border:1px solid #dce4ee;border-radius:9px;padding:11px 13px;background:#fff;color:#1c304a;font-size:14px!important;box-shadow:none;outline:none;transition:border-color .15s,box-shadow .15s;margin:5px 0 16px}
+.zv-main input:focus,.zv-main select:focus,.zv-main textarea:focus{border-color:#3477c7!important;box-shadow:0 0 0 3px rgba(32,112,210,.1)!important}
+.zv-main input[type=checkbox]{accent-color:#0758b8;margin-right:8px}
+.zv-main button[type=submit]{background:#0758b8;color:#fff;border:1px solid #0758b8;border-radius:9px;padding:11px 20px;min-height:43px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.zv-main button[type=submit]:hover{background:#06488f}
+.zv-main a{color:#0758b8}
+.zv-main .zv-address{padding:20px 22px;margin:16px 0;border:1px solid #e3eaf3;border-radius:12px;background:#fafcff}
+.zv-main .zv-address strong{font-size:15px;color:#193453}
+.zv-main .zv-address p{margin:8px 0 12px}
+.zv-main .zv-address form{display:inline-block;margin-left:14px}
+.zv-main .zv-address button{background:#fff!important;border:1px solid #f0d3d3!important;color:#b34242!important;min-height:36px!important;padding:7px 12px!important}
+.zv-main .helptext,.zv-main .helptext li{font-size:12px;color:#8391a4;line-height:1.6}
+.zv-main ul.errorlist{list-style:none;padding:0;color:#b42318;font-size:12px}
+.zv-main .table{width:100%;border-collapse:collapse;min-width:600px}
+.zv-main .table th,.zv-main .table td{padding:14px;text-align:left;border-bottom:1px solid #e7edf4;font-size:13px}
+.zv-main .table th{background:#f6f8fc;color:#40546f;font-weight:750}
+.zv-alert{border-radius:9px;background:#edf7ef;color:#24613a;padding:12px 16px;margin-bottom:18px;font-size:13px}
+@media(max-width:950px){.zv-portal{grid-template-columns:220px minmax(0,1fr);gap:16px}.zv-main{padding:28px}.zv-side{padding:20px 10px}}
+@media(max-width:700px){.zv-portal-page{padding:18px 12px 44px}.zv-portal{grid-template-columns:minmax(0,1fr);gap:14px}.zv-side{position:static;padding:16px}.zv-side-header{padding-bottom:12px;margin-bottom:10px}.zv-side nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}.zv-side a{font-size:12px!important;padding:10px 8px;gap:7px}.zv-side a i{font-size:17px;width:17px}.zv-nav-label{padding:6px 10px}.zv-main{padding:22px 17px}.zv-main h1{font-size:25px!important}.zv-main .zv-address{padding:15px}}
+@media(max-width:360px){.zv-side nav{grid-template-columns:1fr}}
+/* Keep nested dashboard headings consistent with the actual storefront fonts. */
+.zv-portal-page .zv-dash-intro h1,
+.zv-portal-page .zv-dash-section-head h2,
+.zv-portal-page .zv-dash-stat strong,
+.zv-portal-page .zv-dash-link-copy strong{font-family:"Montserrat",sans-serif!important}
+.zv-portal-page .zv-side :is(a,button){font-family:"Montserrat",Arial,sans-serif!important}
+.zv-portal-page :is(.zv-nav-label,.zv-side-header p,.zv-main small,.zv-dash-stat span,.zv-dash-link-copy small){color:#586778!important}
+</style>
+<div class="zv-portal-page">
+  <div class="zv-portal">
+    <aside class="zv-side">
+      <div class="zv-side-header">
+        <span class="zv-eyebrow">ZENVIBE ACCOUNT</span>
+        <h2>My Account</h2>
+        <p>{{ request.user.get_full_name|default:request.user.username }}</p>
+      </div>
+      <span class="zv-nav-label">ACCOUNT MENU</span>
+      <nav aria-label="Customer account navigation">
+        <a href="{% url 'designer:customer_panel' %}" class="{% if request.resolver_match.url_name == 'customer_panel' %}zv-active{% endif %}" {% if request.resolver_match.url_name == 'customer_panel' %}aria-current="page"{% endif %}><i class="ri-dashboard-line" aria-hidden="true"></i> Dashboard</a>
+        <a href="{% url 'designer:my_orders' %}" class="{% if request.resolver_match.url_name == 'my_orders' %}zv-active{% endif %}"><i class="ri-shopping-bag-3-line" aria-hidden="true"></i> My Orders</a>
+        <a href="{% url 'designer:payment_history' %}" class="{% if request.resolver_match.url_name == 'payment_history' %}zv-active{% endif %}"><i class="ri-bank-card-line" aria-hidden="true"></i> Payments</a>
+        <a href="{% url 'designer:address_book' %}" class="{% if request.resolver_match.url_name == 'address_book' %}zv-active{% endif %}"><i class="ri-map-pin-line" aria-hidden="true"></i> Address Book</a>
+        <a href="{% url 'designer:account_settings' %}" class="{% if request.resolver_match.url_name == 'account_settings' %}zv-active{% endif %}"><i class="ri-user-line" aria-hidden="true"></i> Edit Profile</a>
+        <a href="{% url 'designer:account_security' %}" class="{% if request.resolver_match.url_name == 'account_security' %}zv-active{% endif %}"><i class="ri-lock-password-line" aria-hidden="true"></i> Password & Security</a>
+      </nav>
+      <div class="zv-nav-separator"></div>
+      <form method="post" action="{% url 'logout' %}" class="zv-logout-form">
+        {% csrf_token %}
+        <button type="submit" class="zv-logout"><i class="ri-logout-box-r-line" aria-hidden="true"></i> Log Out</button>
+      </form>
+    </aside>
+    <main class="zv-main" id="account-content">
+      {% if messages %}{% for message in messages %}<div class="zv-alert" role="status">{{ message }}</div>{% endfor %}{% endif %}
+      {% block account_content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

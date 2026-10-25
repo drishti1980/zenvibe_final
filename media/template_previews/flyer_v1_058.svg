@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#F5F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#0D0D0F" font-family="Inter" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<polygon points="264.6,470.0 309.3,470.0 286.95000000000005,198.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="368.90000000000003,470.0 413.6,470.0 391.25000000000006,246.0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="473.20000000000005,470.0 517.9000000000001,470.0 495.55000000000007,294.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="577.5,470.0 622.2,470.0 599.85,198.0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="681.8,470.0 726.5,470.0 704.15,246.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="786.1,470.0 830.8000000000001,470.0 808.45,294.0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="890.4,470.0 935.1,470.0 912.75,198.0" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="205.0" cy="70.0" r="3" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="480.65" cy="314.0" r="4" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="756.3" cy="298.0" r="5" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="286.95" cy="282.0" r="6" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="562.6" cy="266.0" r="3" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="838.25" cy="250.0" r="4" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="368.9" cy="234.0" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="644.55" cy="218.0" r="6" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="920.2" cy="202.0" r="3" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="450.85" cy="186.0" r="4" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="726.5" cy="170.0" r="5" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="257.15" cy="154.0" r="6" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="532.8" cy="138.0" r="3" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="808.45" cy="122.0" r="4" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="339.1" cy="106.0" r="5" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="614.75" cy="90.0" r="6" fill="#E0BD73" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="890.4" cy="74.0" r="3" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="421.05" cy="318.0" r="4" fill="#6F5733" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="205" y="605" fill="#F5F1E8" font-family="Oswald" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">SOFTWARE FOR</tspan><tspan x="205" dy="65.8">REAL BUSINESS</tspan></text>
+<text x="205" y="772" fill="#F5F1E8" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Platforms â€¢ Automation â€¢ APIs</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#6F5733" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F1E8" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0D0D0F" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">TALK TO US</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">58</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

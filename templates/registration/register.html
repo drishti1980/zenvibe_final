@@ -1,0 +1,238 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}Register | ZenVibe{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     BREADCRUMB - SAME MULTIKART REGISTER PAGE
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+
+        <h2>Create account</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Create account
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     REGISTER SECTION - SAME MULTIKART STRUCTURE
+========================================================= -->
+<section class="login-page section-b-space">
+
+    <div class="container">
+
+        <h3>Create account</h3>
+
+        <div class="theme-card">
+
+            <form class="theme-form"
+                  method="post">
+
+                {% csrf_token %}
+
+                <div class="row">
+
+                    {% for field in form %}
+
+                    <div class="col-md-6">
+
+                        <div class="form-box">
+
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label">
+
+                                {{ field.label }}
+
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                            <div class="zv-register-help">
+                                {{ field.help_text|safe }}
+                            </div>
+                            {% endif %}
+
+                            {% if field.errors %}
+                            <div class="zv-register-error">
+                                {{ field.errors|striptags }}
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+
+                    {% if form.non_field_errors %}
+
+                    <div class="col-12">
+
+                        <div class="zv-register-error zv-register-error-main">
+
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="col-12">
+
+                        <button type="submit"
+                                class="btn btn-solid w-auto">
+
+                            Create Account
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     ZENVIBE FIELD STYLING
+     Keeps Multikart layout but styles Django-rendered fields
+========================================================= -->
+<style>
+
+/* same Multikart register spacing */
+.login-page .theme-card{
+    width:100%;
+}
+
+.login-page .theme-form .form-box{
+    margin-bottom:22px;
+}
+
+/* Django generated input fields */
+.login-page .theme-form input,
+.login-page .theme-form select,
+.login-page .theme-form textarea{
+    display:block;
+    width:100%;
+    min-height:48px;
+
+    padding:10px 14px;
+
+    border:1px solid #ddd;
+    border-radius:0;
+
+    background:#fff;
+    color:#444;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:14px;
+
+    outline:none;
+    box-shadow:none;
+}
+
+.login-page .theme-form textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+.login-page .theme-form input:focus,
+.login-page .theme-form select:focus,
+.login-page .theme-form textarea:focus{
+    border-color:#0758b8;
+    box-shadow:none;
+}
+
+/* label */
+.login-page .theme-form .form-label{
+    display:block;
+    margin-bottom:8px;
+    color:#555;
+    font-weight:500;
+}
+
+/* help text */
+.zv-register-help{
+    margin-top:6px;
+    color:#999;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.zv-register-help ul{
+    margin:6px 0 0 18px;
+}
+
+/* Django errors */
+.zv-register-error{
+    margin-top:6px;
+    color:#c0392b;
+    font-size:12px;
+}
+
+.zv-register-error-main{
+    margin-bottom:20px;
+    padding:12px 14px;
+
+    background:#fff3f3;
+    border:1px solid #ffd6d6;
+}
+
+/* ZenVibe button colours */
+.login-page .btn-solid{
+    background-color:#0758b8;
+    border-color:#0758b8;
+    color:#fff;
+}
+
+.login-page .btn-solid:hover,
+.login-page .btn-solid:focus{
+    background-color:#f6a329;
+    border-color:#f6a329;
+    color:#fff;
+}
+
+
+/* Mobile */
+@media(max-width:767px){
+
+    .login-page .theme-form .form-box{
+        margin-bottom:18px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+

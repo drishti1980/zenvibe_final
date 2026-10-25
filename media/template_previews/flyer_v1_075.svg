@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="1"/>
+<text x="55" y="133" fill="#5A1E37" font-family="Cinzel" font-size="68" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">BLACK FRIDAY</tspan><tspan x="55" dy="63.919999999999995">EVENT</tspan></text>
+<text x="58" y="267" fill="#5A1E37" font-family="Montserrat" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Our biggest offer of the season</tspan></text>
+<rect x="416" y="51" width="308" height="218" rx="0" ry="0" fill="none" stroke="#C7A25D" stroke-width="2" opacity="1"/>
+<path d="M 461.2 222.5 L 461.2 110.0 Q 570.0 30.0 678.8 110.0 L 678.8 222.5" fill="none" stroke="#C7A25D" stroke-width="3" opacity="1"/>
+<line x1="440.8" y1="65.0" x2="549.6" y2="84.584" stroke="#C7A25D" stroke-width="3" opacity="0.85"/>
+<ellipse cx="458.93333333333334" cy="50.263999999999996" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 458.93333333333334 50.263999999999996)"/>
+<ellipse cx="477.06666666666666" cy="89.528" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 477.06666666666666 89.528)"/>
+<ellipse cx="495.2" cy="56.792" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 495.2 56.792)"/>
+<ellipse cx="513.3333333333334" cy="96.056" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 513.3333333333334 96.056)"/>
+<ellipse cx="531.4666666666667" cy="63.31999999999999" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 531.4666666666667 63.31999999999999)"/>
+<line x1="699.2" y1="215.0" x2="597.2" y2="233.36" stroke="#C7A25D" stroke-width="3" opacity="0.85"/>
+<ellipse cx="682.2" cy="200.06" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 682.2 200.06)"/>
+<ellipse cx="665.2" cy="239.12" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 665.2 239.12)"/>
+<ellipse cx="648.2" cy="206.18" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 648.2 206.18)"/>
+<ellipse cx="631.2" cy="245.24" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 631.2 245.24)"/>
+<ellipse cx="614.2" cy="212.3" rx="18" ry="8" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 614.2 212.3)"/>
+<rect x="55" y="370" width="205" height="270" rx="18" ry="18" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="75" y="413" fill="#B73C6C" font-family="Montserrat" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">01</tspan></text>
+<text x="75" y="533" fill="#5A1E37" font-family="Montserrat" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">PLAN</tspan></text>
+<rect x="290" y="370" width="205" height="270" rx="18" ry="18" fill="#5A1E37" stroke="none" stroke-width="0" opacity="0.96"/>
+<text x="310" y="413" fill="#C7A25D" font-family="Montserrat" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">02</tspan></text>
+<text x="310" y="533" fill="#F8EDEF" font-family="Montserrat" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">CREATE</tspan></text>
+<rect x="525" y="370" width="205" height="270" rx="18" ry="18" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="545" y="413" fill="#B73C6C" font-family="Montserrat" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">03</tspan></text>
+<text x="545" y="533" fill="#5A1E37" font-family="Montserrat" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">GROW</tspan></text>
+<text x="500.0" y="725" fill="#5A1E37" font-family="Montserrat" font-size="25" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A clean, modern framework built around your next move.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#E7B5C5" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#5A1E37" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8EDEF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SHOP NOW</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">75</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#152B45" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#F6F8FB" font-family="Inter" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<ellipse cx="592.4000000000001" cy="262.0" rx="89.39999999999999" ry="49.17" fill="none" stroke="#BBD7F3" stroke-width="2" opacity="0.8" transform="rotate(0 592.4000000000001 262.0)"/>
+<ellipse cx="592.4000000000001" cy="262.0" rx="149.0" ry="81.95" fill="none" stroke="#BBD7F3" stroke-width="2" opacity="0.8" transform="rotate(0 592.4000000000001 262.0)"/>
+<ellipse cx="592.4000000000001" cy="262.0" rx="216.04999999999998" ry="118.8275" fill="none" stroke="#BBD7F3" stroke-width="2" opacity="0.8" transform="rotate(0 592.4000000000001 262.0)"/>
+<circle cx="793.5500000000001" cy="262.0" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="734.6345290356742" cy="304.42640687119285" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="592.4000000000001" cy="322.0" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="450.16547096432606" cy="304.42640687119285" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="391.2500000000001" cy="262.0" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="450.165470964326" cy="219.57359312880715" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="592.4000000000001" cy="202.0" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="734.6345290356741" cy="219.57359312880715" r="7" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="592.4000000000001" cy="262.0" r="26" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="205" y="605" fill="#152B45" font-family="DM Serif Display" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">SECURE YOUR</tspan><tspan x="205" dy="65.8">DIGITAL WORLD</tspan></text>
+<text x="205" y="772" fill="#152B45" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Protect â€¢ Detect â€¢ Respond</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#BBD7F3" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#152B45" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F6F8FB" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET SECURE</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">54</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

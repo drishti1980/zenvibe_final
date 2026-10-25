@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3F0E7" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="150" height="800" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="1"/>
+<text x="35" y="844" fill="#F3F0E7" font-family="Inter" font-size="24" font-weight="700" text-anchor="start" opacity="1"><tspan x="35" dy="0">ZENVIBE</tspan></text>
+<rect x="205" y="330.0" width="59.6" height="140.0" rx="0" ry="0" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="272.6" y="278.0" width="89.39999999999999" height="192.0" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="370.0" y="226.0" width="52.150000000000006" height="244.0" rx="0" ry="0" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="430.15" y="174.0" width="111.75" height="296.0" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="549.9" y="330.0" width="67.05" height="140.0" rx="0" ry="0" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="624.9499999999999" y="278.0" width="81.95" height="192.0" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="205" y="605" fill="#173F35" font-family="Poppins" font-size="70" font-weight="700" text-anchor="start" opacity="1"><tspan x="205" dy="0">PLUMBING</tspan><tspan x="205" dy="65.8">DONE RIGHT</tspan></text>
+<text x="205" y="772" fill="#173F35" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="205" dy="0">Repairs â€¢ Installations â€¢ Emergency</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#8FB8A1" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#173F35" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2E6A56" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3F0E7" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">CALL NOW</tspan></text>
+<text x="954" y="69" fill="#2E6A56" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">51</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

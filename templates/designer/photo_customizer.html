@@ -1,0 +1,259 @@
+﻿{% extends 'designer/base.html' %}
+{% load static %}
+{% block title %}Design Studio Â· {{ product.name }}{% endblock %}
+{% block head %}
+<script>
+document.documentElement.classList.add('editor-document');
+window.PRODUCT={id:{{ product.id }},name:"{{ product.name|escapejs }}",width:720,height:720,minDpi:{{ product.min_dpi }},bleedMm:{{ product.bleed_mm }},safeMarginMm:{{ product.safe_margin_mm }}};
+window.PHOTO_CONFIG={{ photo_config_json|safe }};
+window.INITIAL_TEMPLATE={{ template_json|safe }};
+window.TEMPLATE_IMAGE="{% if template_image %}{{ template_image }}{% endif %}";
+window.SOURCE_TEMPLATE_ID={% if template %}{{ template.id }}{% else %}null{% endif %};
+window.TEMPLATE_CATALOG={{ template_catalog_json|safe }};
+window.EXISTING_DESIGN={id:{% if existing_design %}{{ existing_design.id }}{% else %}null{% endif %},name:"{% if existing_design %}{{ existing_design.name|escapejs }}{% endif %}",quantity:{% if existing_design %}{{ existing_design.quantity }}{% else %}100{% endif %}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+<script src="{% static 'designer/js/image-tools.js' %}"></script>
+<script src="{% static 'designer/js/vector-upload.js' %}"></script>
+<script src="{% static 'designer/js/arrange-tools.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script defer src="{% static 'designer/js/editor.js' %}?v=20261022-product-proofs"></script>
+<script defer src="{% static 'designer/js/editor-enhancements.js' %}"></script>
+<script defer src="{% static 'designer/js/canva-pro.js' %}"></script>
+<link rel="stylesheet" href="{% static 'designer/css/image-tools.css' %}">
+<link rel="stylesheet" href="{% static 'designer/css/photo-customizer.css' %}">
+<script defer src="{% static 'designer/js/photo-customizer.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="studio-app editor-shell">
+  <header class="studio-topbar">
+    <div class="studio-brand-group">
+      <a class="studio-back" href="{% url 'designer:choose_design' product.id %}" aria-label="Back">â†</a>
+      <a class="studio-logo" href="/">Z<span>ENVIBE</span></a>
+      <div class="studio-file-menu"><button id="fileMenuBtn">File</button><button id="resizeMenuBtn">Resize</button><button id="viewMenuBtn">View</button></div><div class="studio-file-meta">
+        <input id="designName" value="{% if existing_design %}{{ existing_design.name }}{% else %}My Zenvibe Design{% endif %}" aria-label="Design name">
+        <small>{{ product.name }} Â· Product-specific printable canvas</small>
+      </div>
+    </div>
+    <div class="studio-history-actions">
+      <button id="undoBtn" class="icon-command" title="Undo (Ctrl+Z)">â†¶</button>
+      <button id="redoBtn" class="icon-command" title="Redo (Ctrl+Y)">â†·</button>
+      <span id="autosaveStatus" class="autosave-status">Ready</span>
+    </div>
+    <div class="studio-primary-actions">
+      <button id="printCheckBtn" class="studio-secondary">Print check</button>
+      <button id="downloadBtn" class="studio-secondary">Download</button>
+      <button id="saveDraftBtn" class="studio-secondary">Save</button>
+      <button id="saveBtn" class="studio-share">Continue to cart</button>
+    </div>
+  </header>
+
+  <aside class="studio-rail" aria-label="Design tools">
+    <button class="rail-tab active" data-panel="productPanel"><span>ðŸ“¦</span><b>Product</b></button>
+    <button class="rail-tab" data-panel="templatesPanel"><span>â–¦</span><b>Templates</b></button>
+    <button class="rail-tab" data-panel="elementsPanel"><span>â—ˆ</span><b>Elements</b></button>
+    <button class="rail-tab" data-panel="textPanel"><span>T</span><b>Text</b></button>
+    <button class="rail-tab" data-panel="uploadsPanel"><span>â‡§</span><b>Uploads</b></button>
+    <button class="rail-tab" data-panel="iconsPanel"><span>âœ¦</span><b>Icons</b></button>
+    <button class="rail-tab" data-panel="photosPanel"><span>â–£</span><b>Photos</b></button>
+    <button class="rail-tab" data-panel="toolsPanel"><span>âŒ˜</span><b>Tools</b></button>
+    <button class="rail-tab" data-panel="emojiPanel"><span>â˜º</span><b>Emoji</b></button>
+    <button class="rail-tab" data-panel="backgroundPanel"><span>â–§</span><b>Background</b></button>
+    <button class="rail-tab" data-panel="layersPanelWrap"><span>â˜·</span><b>Layers</b></button>
+  </aside>
+
+  <aside class="studio-panel editor-sidebar">
+    <div class="panel-heading"><div><small>DESIGN STUDIO</small><h2 id="panelTitle">Product</h2></div><button id="closePanelBtn" aria-label="Close panel">Ã—</button></div>
+
+
+    <section id="productPanel" class="studio-panel-section active bag-product-panel">
+      <div class="panel-search"><span>âŒ•</span><input id="bagSearch" placeholder="Search products" aria-label="Search products"></div>
+      <h3>Product style</h3>
+      <div id="bagProductGrid" class="bag-product-grid"></div>
+      <div id="bagViewSection" hidden>
+        <div class="panel-inline-title"><h3>Product image</h3><span class="zv-help-tip" tabindex="0" data-tip="Choose the product colour or view you want to customise. The editable area updates automatically for each image.">?</span></div>
+        <div id="bagViewGrid" class="bag-view-grid"></div>
+      </div>
+      <h3>Print side</h3>
+      <div id="bagSideButtons" class="bag-side-buttons">
+        <button type="button" data-side="front" class="active">Front</button>
+        <button type="button" data-side="back">Back</button>
+        <button type="button" data-side="wrap">Full wrap</button>
+      </div>
+      <h3>Colour</h3>
+      <div id="bagColours" class="bag-colours"></div>
+      <div class="tool-card">
+        <strong>Branding method</strong>
+        <select id="bagBranding"><option value="front">Front print</option><option value="back">Back print</option><option value="screen-print">Screen print</option><option value="embroidery">Embroidery</option><option value="heat-transfer">Heat transfer</option><option value="full-colour">Full-colour print</option></select>
+      </div>
+      <div class="tool-card bag-price-card">
+        <strong>Product options</strong>
+        <label>Size<select id="bagSize"></select></label>
+        <label>Quantity<input id="bagQuantity" type="number" min="1" value="1"></label>
+        <div><span>Unit price</span><b id="bagUnitPrice">$0.00</b></div>
+        <div><span>Estimated total</span><b id="bagTotal">$0.00</b></div>
+      </div>
+      <p class="panel-help">The dotted box represents the printable area. Each product keeps its own canvas dimensions and branding rules.</p>
+    </section>
+
+    <section id="templatesPanel" class="studio-panel-section">
+      <div class="panel-search"><span>âŒ•</span><input id="templateSearch" placeholder="Search templates" aria-label="Search templates" autocomplete="off"></div>
+      <div id="templateSuggestions" class="template-suggestions"></div>
+      <div class="panel-callout"><strong>Master template protected</strong><p>Your edits are saved as a personal copy. The admin template is never changed.</p></div>
+      <h3>Pages</h3><div id="pageButtons" class="page-list"></div>
+      <div class="two-col"><button id="addPageBtn">ï¼‹ Add page</button><button id="duplicatePageBtn">Duplicate</button></div>
+      <button id="deletePageBtn" class="danger ghost-command">Delete current page</button>
+    </section>
+
+    <section id="elementsPanel" class="studio-panel-section">
+      <div class="panel-search"><span>âŒ•</span><input id="elementSearch" placeholder="Search shapes and lines" aria-label="Search elements"></div>
+      <h3>Lines &amp; shapes</h3>
+      <div id="shapeLibrary" class="asset-grid shape-grid">
+        <button data-shape="rect" title="Rectangle"><span class="shape-preview shape-square"></span></button>
+        <button data-shape="roundRect" title="Rounded rectangle"><span class="shape-preview shape-rounded"></span></button>
+        <button data-shape="circle" title="Circle"><span class="shape-preview shape-circle"></span></button>
+        <button data-shape="ellipse" title="Ellipse"><span class="shape-preview shape-ellipse"></span></button>
+        <button data-shape="triangle" title="Triangle"><span class="shape-preview shape-triangle"></span></button>
+        <button data-shape="diamond" title="Diamond"><span class="shape-preview shape-diamond"></span></button>
+        <button data-shape="pentagon" title="Pentagon"><span class="shape-preview">â¬Ÿ</span></button>
+        <button data-shape="hexagon" title="Hexagon"><span class="shape-preview">â¬¢</span></button>
+        <button data-shape="star" title="Star"><span class="shape-preview">â˜…</span></button>
+        <button data-shape="heart" title="Heart"><span class="shape-preview">â™¥</span></button>
+        <button data-shape="arrowRight" title="Arrow"><span class="shape-preview">âžœ</span></button>
+        <button data-shape="speech" title="Speech bubble"><span class="shape-preview">â–°</span></button>
+        <button data-shape="line" title="Line"><span class="shape-preview">â”</span></button>
+        <button data-shape="dashLine" title="Dashed line"><span class="shape-preview">â”…</span></button>
+        <button data-shape="wave" title="Wave"><span class="shape-preview">ã€°</span></button>
+        <button data-shape="cross" title="Cross"><span class="shape-preview">âœš</span></button>
+      </div>
+      <h3>Quick add</h3>
+      <div class="three-col legacy-adders"><button id="addRectBtn">Rectangle</button><button id="addCircleBtn">Circle</button><button id="addTriangleBtn">Triangle</button></div>
+    </section>
+
+    <section id="textPanel" class="studio-panel-section">
+      <button id="addTextBtn" class="big-text-command">ï¼‹ Add a text box</button>
+      <button class="text-preset" data-text-preset="heading"><strong>Add a heading</strong></button>
+      <button class="text-preset" data-text-preset="subheading"><span>Add a subheading</span></button>
+      <button class="text-preset" data-text-preset="body"><small>Add a little bit of body text</small></button>
+      <h3>Font library</h3>
+      <div class="panel-search"><span>âŒ•</span><input id="fontSearch" placeholder="Search fonts" aria-label="Search fonts"></div>
+      <div id="fontLibrary" class="font-library"></div>
+    </section>
+
+    <section id="uploadsPanel" class="studio-panel-section">
+      <label class="upload-dropzone">â‡§<strong>Upload files</strong><span>PNG, JPG, WebP or SVG up to 15 MB</span><input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple hidden></label>
+      <div class="upload-note">Uploaded images remain inside the customer's saved design.</div>
+    </section>
+
+
+    <section id="iconsPanel" class="studio-panel-section">
+      <div class="panel-search"><span>âŒ•</span><input id="iconSearch" placeholder="Search icons" aria-label="Search icons"></div>
+      <div id="iconCategories" class="asset-chip-row"></div>
+      <div id="iconLibrary" class="asset-grid icon-grid"></div>
+    </section>
+
+    <section id="photosPanel" class="studio-panel-section">
+      <div class="panel-search"><span>âŒ•</span><input id="photoSearch" placeholder="Search attractive photos, gradients and patterns" aria-label="Search photos"></div>
+      <div id="photoLibrary" class="photo-grid"></div>
+      <p class="panel-help">Choose Add photo for an editable image, or Use as background to fill the full page. All changes remain inside the customer's personal design.</p>
+    </section>
+
+    <section id="toolsPanel" class="studio-panel-section">
+      <h3>Design tools</h3>
+      <div class="tool-card"><strong>QR code</strong><input id="qrValue" value="" placeholder="URL or text"><button id="addQrBtn">Add QR code</button></div>
+      <div class="tool-card"><strong>Barcode</strong><input id="barcodeValue" value="123456789012" placeholder="Barcode value"><button id="addBarcodeBtn">Add barcode</button></div>
+      <div class="tool-card"><strong>Canvas guides</strong><button id="toggleRulersBtn">Show/hide rulers</button><button id="clearGuidesBtn">Clear draggable guides</button></div>
+      <div class="tool-card"><strong>Object position</strong><div class="position-grid"><label>X<input id="positionX" type="number"></label><label>Y<input id="positionY" type="number"></label><label>W<input id="positionW" type="number"></label><label>H<input id="positionH" type="number"></label></div><button id="applyPositionBtn">Apply position &amp; size</button></div>
+    </section>
+
+    <section id="emojiPanel" class="studio-panel-section">
+      <div class="panel-search"><span>âŒ•</span><input id="emojiSearch" placeholder="Search emoji" aria-label="Search emoji"></div>
+      <div id="emojiLibrary" class="emoji-grid"></div>
+    </section>
+
+    <section id="backgroundPanel" class="studio-panel-section">
+      <h3>Document background</h3><p class="panel-help">Changes the colour behind every element on this page. It does not change a selected shape or text colour.</p><label class="colour-row document-colour-control"><input id="backgroundColor" type="color" value="#ffffff"><span><strong>Page colour</strong><small id="backgroundHex">#FFFFFF</small></span></label><button id="applyBackgroundBtn">Apply page colour</button>
+      <h3>Colour presets</h3><div id="backgroundSwatches" class="swatch-grid"></div>
+      <h3>View</h3><label class="check-row"><input id="snapToggle" type="checkbox" checked> Smart alignment guides</label>
+      <div class="three-col"><button id="fitBtn" title="Fit the whole page inside the available workspace">Fit</button><button id="gridBtn" title="Show or hide the alignment grid">Grid</button><button id="guidesBtn" title="Show print trim, bleed and safe margins">Safe/Bleed</button></div>
+      <div class="view-legend"><span><i class="legend-grid"></i>Grid helps alignment</span><span><i class="legend-bleed"></i>Red: trim/bleed</span><span><i class="legend-safe"></i>Green: safe area</span></div>
+    </section>
+
+    <section id="layersPanelWrap" class="studio-panel-section">
+      <div class="two-col"><button id="showAllBtn">Show all</button><button id="unlockAllBtn">Unlock all</button></div>
+      <div id="layersPanel" class="layers-panel modern-layers"></div>
+    </section>
+
+    <section class="studio-hidden-legacy" aria-hidden="true">
+      <button id="fullscreenBtn"></button><input id="zoomRange" type="range" min="20" max="180" value="100"><select id="zoomSelect"><option value="100" selected>100%</option></select><button id="zoomOutBtn"></button><button id="zoomInBtn"></button>
+      <div id="printResults"></div><input id="quantity" type="number" min="1" value="{% if existing_design %}{{ existing_design.quantity }}{% else %}100{% endif %}"><button id="downloadPdfBtn"></button><button id="discardBtn"></button><p id="saveStatus"></p>
+    </section>
+  </aside>
+
+  <main class="canvas-area studio-workspace">
+    <div id="contextToolbar" class="context-toolbar">
+      <div id="bagProductContext" class="bag-product-context">
+        <span class="product-context-icon">â˜•</span>
+        <span><strong id="bagContextName">Product</strong><small id="bagContextDetails">Select a product and printable side</small></span>
+      </div>
+      <div class="context-empty">Select an element to edit it</div>
+      <div class="context-controls">
+        <select id="fontFamily" title="Font family"></select>
+        <input id="fontSize" type="number" min="6" max="300" value="32" title="Font size">
+        <button id="boldBtn" title="Bold"><b>B</b></button><button id="italicBtn" title="Italic"><i>I</i></button><button id="underlineBtn" title="Underline"><u>U</u></button>
+        <label class="toolbar-colour" title="Fill"><input id="fillColor" type="color" value="#111827"><span></span></label>
+        <input id="textValue" placeholder="Text content" aria-label="Text content"><button id="applyTextBtn">Apply</button>
+        <button id="duplicateBtn">Duplicate</button><button id="lockBtn">Lock</button><button id="deleteBtn" class="danger">Delete</button>
+        <input id="opacity" type="range" min="0.05" max="1" step="0.05" value="1" title="Opacity"><input id="rotation" type="range" min="-180" max="180" step="1" value="0" title="Rotation">
+      </div>
+      <div class="context-more arrange-dropdown" id="arrangeDropdown">
+        <button type="button" id="arrangeMenuBtn" class="arrange-menu-trigger" aria-expanded="false">Arrange <span></span></button>
+        <div class="arrange-menu" id="arrangeMenu" role="menu">
+          <div class="arrange-menu-heading">Align horizontally</div>
+          <div class="arrange-menu-grid three">
+            <button id="leftBtn" role="menuitem">Left</button><button id="centerBtn" role="menuitem">Centre</button><button id="rightBtn" role="menuitem">Right</button>
+          </div>
+          <div class="arrange-menu-heading">Align vertically</div>
+          <div class="arrange-menu-grid three">
+            <button id="topBtn" role="menuitem">Top</button><button id="middleBtn" role="menuitem">Middle</button><button id="bottomBtn" role="menuitem">Bottom</button>
+          </div>
+          <div class="arrange-menu-heading">Layer order</div>
+          <div class="arrange-menu-grid two">
+            <button id="bringFrontBtn" role="menuitem">Bring forward</button><button id="sendBackBtn" role="menuitem">Send backward</button>
+          </div>
+          <div class="arrange-menu-heading">Transform</div>
+          <div class="arrange-menu-grid two">
+            <button id="flipXBtn" role="menuitem">Flip horizontal</button><button id="flipYBtn" role="menuitem">Flip vertical</button>
+          </div>
+          <button id="groupBtn" class="arrange-menu-wide" role="menuitem">Group / Ungroup selection</button>
+        </div>
+      </div>
+    </div>
+    <div class="studio-canvas-scroll">
+      <div class="canvas-stage bag-canvas-stage">
+        <div id="horizontalRuler" class="canvas-ruler horizontal-ruler"></div><div id="verticalRuler" class="canvas-ruler vertical-ruler"></div>
+        <div id="measurementBadge" class="measurement-badge" hidden></div><div id="smartGuideLayer" class="smart-guide-layer"></div><div class="canvas-wrap" id="canvasWrap"><canvas id="designCanvas"></canvas></div>
+      </div>
+    </div>
+    <footer class="studio-bottom-bar">
+      <div class="page-status"><strong id="activePageLabel">Page 1</strong><span>Changes save to your personal design only</span></div>
+      <div class="zoom-controls"><button id="bottomZoomOut">âˆ’</button><input id="bottomZoomRange" type="range" min="20" max="180" value="100"><button id="bottomZoomIn">ï¼‹</button><span id="zoomLabel">100%</span></div>
+    </footer>
+  </main>
+</div>
+
+<div id="studioToast" class="studio-toast" role="status" aria-live="polite"></div>
+<div id="studioModal" class="studio-modal" aria-hidden="true">
+  <div class="studio-modal-backdrop" data-close-modal></div>
+  <section class="studio-modal-card" role="dialog" aria-modal="true" aria-labelledby="studioModalTitle">
+    <header><div><small>DESIGN REVIEW</small><h2 id="studioModalTitle">Print check</h2></div><button id="studioModalClose" aria-label="Close">Ã—</button></header>
+    <div id="studioModalBody" class="studio-modal-body"></div>
+    <footer><button id="studioModalDone" class="studio-share">Done</button></footer>
+  </section>
+</div>
+{% endblock %}
+
+
+

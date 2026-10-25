@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff4a8" opacity="1"/>
+<rect x="85" y="100" width="580" height="850" rx="26" fill="#ffffff" opacity="0.7"/>
+<polygon points="0,0 230,0 0,230" fill="#e7b841" opacity="0.14"/>
+<polygon points="750,1050 520,1050 750,820" fill="#f8df67" opacity="0.18"/>
+<text x="390.0" y="351" text-anchor="middle" fill="#e7b841" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="390.0" dy="0">CELEBRATING MIA &amp; DANIEL</tspan></text>
+<text x="390.0" y="442" text-anchor="middle" fill="#18274b" font-size="52" font-family="Libre Baskerville" font-weight="700" opacity="1"><tspan x="390.0" dy="0">25 YEARS</tspan></text>
+<text x="390.0" y="559" text-anchor="middle" fill="#18274b" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="390.0" dy="0">SATURDAY · 14 NOVEMBER 2026</tspan></text>
+<text x="390.0" y="599" text-anchor="middle" fill="#18274b" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="390.0" dy="0">GRAND BALLROOM · 6:30 PM</tspan></text>
+<text x="390.0" y="673" text-anchor="middle" fill="#e7b841" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="390.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<line x1="65" y1="70" x2="685" y2="70" stroke="#e7b841" stroke-width="2.5" opacity="0.95"/>
+<line x1="65" y1="980" x2="685" y2="980" stroke="#e7b841" stroke-width="2.5" opacity="0.95"/>
+</svg>

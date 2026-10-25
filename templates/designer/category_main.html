@@ -1,0 +1,152 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}{{ category.name }} | ZenVibe{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{{ category.name }}</h2>
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Homeeeeeeeee</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:start_designing' %}">Products</a>
+                </li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section-b-space zv-subcategory-page">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+
+            {% for subcategory in subcategories %}
+            <div class="col-xl-4 col-md-6 col-12">
+                <a href="{% url 'designer:category_detail' subcategory.slug %}"
+                   class="zv-subcategory-card">
+
+                    <div class="zv-subcategory-image">
+                        {% if subcategory.image %}
+                            <img src="{{ subcategory.image.url }}"
+                                 alt="{{ subcategory.name }}"
+                                 class="img-fluid blur-up lazyload">
+                        {% else %}
+                            {% with first_product=subcategory.products.first %}
+                                {% if first_product and first_product.image %}
+                                    <img src="{{ first_product.image.url }}"
+                                         alt="{{ subcategory.name }}"
+                                         class="img-fluid blur-up lazyload">
+                                {% else %}
+                                    <div class="zv-subcategory-placeholder">
+                                        {{ subcategory.name|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+
+                    <div class="zv-subcategory-content">
+                        <h3>{{ subcategory.name }}</h3>
+                        <p>
+                            {{ subcategory.product_count|default:subcategory.products.count }}
+                            PRODUCT{{ subcategory.product_count|default:subcategory.products.count|pluralize }}
+                        </p>
+                    </div>
+
+                </a>
+            </div>
+
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h3>No subcategories found</h3>
+                    <p>Categories will appear here once they are added.</p>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+<style>
+.zv-subcategory-page{background:#fff}
+.zv-subcategory-card{
+    display:block;
+    width:100%;
+    text-decoration:none!important;
+    color:inherit!important;
+    background:#fff;
+    transition:transform .25s ease,box-shadow .25s ease
+}
+.zv-subcategory-card:hover{transform:translateY(-4px)}
+.zv-subcategory-image{
+    width:100%;
+    aspect-ratio:1.12/1;
+    overflow:hidden;
+    background:#f7f7f7;
+    display:flex;
+    align-items:center;
+    justify-content:center
+}
+.zv-subcategory-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:transform .35s ease
+}
+.zv-subcategory-card:hover .zv-subcategory-image img{transform:scale(1.035)}
+.zv-subcategory-placeholder{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f3f5f7;
+    color:#0758b8;
+    font-size:58px;
+    font-weight:700
+}
+.zv-subcategory-content{
+    padding:17px 10px 10px;
+    text-align:center
+}
+.zv-subcategory-content h3{
+    margin:0 0 4px;
+    color:#565656;
+    font-size:19px;
+    font-weight:600;
+    line-height:1.35;
+    text-transform:uppercase
+}
+.zv-subcategory-content p{
+    margin:0;
+    color:#222;
+    font-size:13px;
+    font-weight:400;
+    line-height:1.3;
+    text-transform:uppercase
+}
+.zv-subcategory-card:hover .zv-subcategory-content h3{color:#0758b8}
+@media(min-width:1200px){
+    .zv-subcategory-page .container{max-width:1400px}
+}
+@media(max-width:991px){
+    .zv-subcategory-content h3{font-size:18px}
+}
+@media(max-width:575px){
+    .zv-subcategory-page{padding-top:35px;padding-bottom:35px}
+    .zv-subcategory-image{aspect-ratio:1.1/1}
+    .zv-subcategory-content{padding-top:13px}
+    .zv-subcategory-content h3{font-size:16px}
+    .zv-subcategory-content p{font-size:12px}
+}
+</style>
+
+{% endblock %}
+

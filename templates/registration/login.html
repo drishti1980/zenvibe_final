@@ -1,0 +1,229 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}Login | ZenVibe{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     BREADCRUMB - SAME MULTIKART LOGIN PAGE STRUCTURE
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+
+        <h2>Customer's login</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Customer's login
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     LOGIN SECTION - SAME MULTIKART HTML STRUCTURE
+========================================================= -->
+<section class="login-page section-b-space">
+
+    <div class="container">
+
+        <div class="row">
+
+
+            <!-- =================================================
+                 LEFT SIDE - LOGIN
+            ================================================== -->
+            <div class="col-lg-6">
+
+                <h3>Login</h3>
+
+                <div class="theme-card">
+
+                    <form class="theme-form"
+                          method="post">
+
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next|default:'/my-account/' }}">
+
+
+                        <!-- USERNAME / EMAIL -->
+                        <div class="form-box">
+
+                            <label for="id_username"
+                                   class="form-label">
+                                Username
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="id_username"
+                                   name="username"
+                                   placeholder="Username (e.g. Demo)"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+                        <div class="form-box">
+
+                            <label for="id_password"
+                                   class="form-label">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   class="form-control"
+                                   id="id_password"
+                                   name="password"
+                                   placeholder="Enter your password"
+                                   required>
+
+                        </div>
+
+
+                        <!-- ERRORS -->
+                        {% if form.errors %}
+
+                        <div class="zv-login-error">
+                            <i class="ri-error-warning-line"></i>
+                            Username or password is incorrect.
+                        </div>
+
+                        {% endif %}
+
+
+                        <!-- LOGIN BUTTON -->
+                        <div class="zv-login-actions">
+                            <button type="submit" class="btn btn-solid">Login</button>
+                            <a class="zv-forgot-link" href="{% url 'password_reset' %}">Forgot Password?</a>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT SIDE - NEW CUSTOMER
+            ================================================== -->
+            <div class="col-lg-6 right-login">
+
+                <h3>New Customer</h3>
+
+                <div class="theme-card authentication-right">
+
+                    <h6 class="title-font">
+                        Create An Account
+                    </h6>
+
+                    <p>
+                        Sign up for a free ZenVibe account.
+                        Registration is quick and easy.
+                        Your account allows you to manage your orders
+                        and checkout faster.
+                    </p>
+
+                    <a href="{% url 'designer:register' %}"
+                       class="btn btn-solid">
+
+                        Create an Account
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     SMALL ZENVIBE OVERRIDES ONLY
+========================================================= -->
+<style>
+
+/* Keep Multikart design but use ZenVibe brand colors */
+
+
+.login-page .theme-form .form-box{
+    margin-bottom:20px;
+}
+
+.login-page .theme-form .form-label{
+    font-weight:500;
+}
+
+.login-page .theme-form .form-control{
+    min-height:48px;
+    border-radius:0;
+}
+
+.login-page .theme-form .form-control:focus{
+    border-color:#0758b8;
+    box-shadow:none;
+}
+
+.login-page .btn-solid{
+    background-color:#0758b8;
+    border-color:#0758b8;
+}
+
+.login-page .btn-solid:hover,
+.login-page .btn-solid:focus{
+    background-color:#f6a329;
+    border-color:#f6a329;
+}
+
+.zv-login-error{
+    margin:0 0 18px;
+    padding:11px 14px;
+
+    background:#fff3f3;
+    border:1px solid #ffd6d6;
+
+    color:#c0392b;
+
+    font-size:13px;
+}
+
+.zv-login-error i{
+    margin-right:6px;
+}
+
+
+/* responsive */
+@media(max-width:991px){
+
+    .right-login{
+        margin-top:35px;
+    }
+
+}
+
+.zv-login-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.zv-forgot-link{color:#0758b8;font-size:13px;text-decoration:none}.zv-forgot-link:hover{color:#f6a329}
+</style>
+
+{% endblock %}
+
+

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#004b55" opacity="1"/>
+<rect x="38" y="38" width="674" height="974" rx="14" fill="transparent" opacity="1" stroke="#d9a84f" stroke-width="2"/>
+<rect x="54" y="54" width="642" height="942" rx="10" fill="transparent" opacity="1" stroke="#d9f1f1" stroke-width="1"/>
+<circle cx="55" cy="90" r="160" fill="#d9f1f1" opacity="0.7"/>
+<circle cx="700" cy="950" r="195" fill="#d9a84f" opacity="0.18"/>
+<circle cx="115" cy="150" r="5" fill="#d9a84f" opacity="0.95"/>
+<circle cx="630" cy="120" r="4" fill="#d9f1f1" opacity="0.95"/>
+<circle cx="670" cy="260" r="6" fill="#d9a84f" opacity="0.95"/>
+<circle cx="90" cy="840" r="5" fill="#d9f1f1" opacity="0.95"/>
+<circle cx="625" cy="900" r="4" fill="#d9a84f" opacity="0.95"/>
+<circle cx="560" cy="780" r="3" fill="#d9f1f1" opacity="0.95"/>
+<text x="95" y="264" text-anchor="start" fill="#d9a84f" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="95" dy="0">DINNER · DRINKS · DANCING</tspan></text>
+<text x="95" y="356" text-anchor="start" fill="#fffdf7" font-size="52" font-family="Playfair Display" font-weight="700" opacity="1"><tspan x="95" dy="0">SOPHIA TURNS 30</tspan></text>
+<line x1="95" y1="455" x2="610" y2="455" stroke="#d9a84f" stroke-width="3" opacity="1"/>
+<text x="95" y="506" text-anchor="start" fill="#fffdf7" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="95" dy="0">SATURDAY · 24 OCTOBER 2026</tspan></text>
+<text x="95" y="550" text-anchor="start" fill="#fffdf7" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="95" dy="0">THE GARDEN ROOM · 7:00 PM</tspan></text>
+<text x="95" y="628" text-anchor="start" fill="#d9a84f" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="95" dy="0">RSVP · hello@example.com</tspan></text>
+<rect x="492" y="-100" width="130" height="1250" rx="0" fill="#ffffff" opacity="0.045" transform="rotate(29 492 -100)"/>
+</svg>

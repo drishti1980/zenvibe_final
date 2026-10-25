@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#44205b" opacity="1"/>
+<rect x="0" y="770" width="750" height="280" rx="0" fill="#fff9ff" opacity="1"/>
+<rect x="0" y="760" width="750" height="12" rx="0" fill="#e3b7e8" opacity="1"/>
+<rect x="130" y="105" width="490" height="7" rx="0" fill="#e3b7e8" opacity="1"/>
+<rect x="185" y="125" width="380" height="2" rx="0" fill="#f3ddf5" opacity="1"/>
+<text x="110" y="349" text-anchor="start" fill="#e3b7e8" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">CELEBRATE WILLIAM&#x27;S GRADUATION</tspan></text>
+<text x="110" y="434" text-anchor="start" fill="#fff9ff" font-size="46" font-family="DM Serif Display" font-weight="700" opacity="1"><tspan x="110" dy="0">CLASS OF 2026</tspan></text>
+<text x="110" y="557" text-anchor="start" fill="#fff9ff" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">FRIDAY · 20 NOVEMBER 2026</tspan></text>
+<text x="110" y="597" text-anchor="start" fill="#fff9ff" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">HARBOUR HALL · 6:00 PM</tspan></text>
+<text x="110" y="671" text-anchor="start" fill="#e3b7e8" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff9ff" opacity="0.012"/>
+</svg>

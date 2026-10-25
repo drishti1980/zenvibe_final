@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#2A0F17" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="34" y="34" width="932" height="732" rx="0" ry="0" fill="none" stroke="#E0B76A" stroke-width="2" opacity="1"/>
+<rect x="52" y="52" width="896" height="696" rx="0" ry="0" fill="none" stroke="#D996AA" stroke-width="1" opacity="1"/>
+<rect x="120" y="304.0" width="60.800000000000004" height="125.99999999999999" rx="0" ry="0" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="188.8" y="257.20000000000005" width="91.2" height="172.79999999999998" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="288.0" y="210.4" width="53.2" height="219.6" rx="0" ry="0" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="349.2" y="163.60000000000002" width="114.0" height="266.4" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="471.2" y="304.0" width="68.39999999999999" height="125.99999999999999" rx="0" ry="0" fill="#A52E4C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="547.6" y="257.20000000000005" width="83.6" height="172.79999999999998" rx="0" ry="0" fill="#FFF7EF" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="500.0" y="538" fill="#FFF7EF" font-family="Poppins" font-size="68" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">SMILE WITH</tspan><tspan x="500.0" dy="64.6">CONFIDENCE</tspan></text>
+<text x="500.0" y="687" fill="#FFF7EF" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">General â€¢ Cosmetic â€¢ Preventive</tspan></text>
+<text x="500.0" y="782" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">EST. 2026</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#D996AA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#FFF7EF" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#A52E4C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#2A0F17" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK A VISIT</tspan></text>
+<text x="954" y="69" fill="#A52E4C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">41</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0B76A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

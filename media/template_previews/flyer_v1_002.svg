@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#0B0D12" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="430.0,138.0 638.0,60.0 750.0,226.4 551.6,372.0" fill="#24D3EE" stroke="none" stroke-width="0" opacity="0.92"/>
+<polygon points="478.0,580.0 583.6,216.0 750.0,330.40000000000003 663.6,580.0" fill="#865CFF" stroke="none" stroke-width="0" opacity="0.62"/>
+<line x1="455.6" y1="507.2" x2="718.0" y2="138.0" stroke="#D6B35A" stroke-width="3" opacity="0.85"/>
+<text x="60" y="78" fill="#24D3EE" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#F5F7FA" font-family="Playfair Display" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">WE BUILD</tspan><tspan x="60" dy="71.76">ICONIC BRANDS</tspan></text>
+<text x="62" y="414" fill="#F5F7FA" font-family="Inter" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Identity â€¢ Direction â€¢ Digital</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#D6B35A" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#F5F7FA" font-family="Inter" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#865CFF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#F5F7FA" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#24D3EE" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#0B0D12" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">DISCOVER THE STUDIO</tspan></text>
+<text x="954" y="69" fill="#24D3EE" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">02</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#D6B35A" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

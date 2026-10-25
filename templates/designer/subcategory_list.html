@@ -1,0 +1,1176 @@
+﻿{% extends 'designer/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} | ZenVibe{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{{ category.name }}</h2>
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:start_designing' %}">Products</a>
+                </li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section-b-space ratio_asos zv-category-page">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-xl-3 col-lg-4 collection-filter">
+                    <div class="collection-filter-block">
+
+                        <div class="collection-mobile-back">
+                            <span class="filter-back">
+                                <i class="ri-arrow-left-s-line"></i> back
+                            </span>
+                        </div>
+
+                        <div class="collection-collapse-block open">
+                            <div class="accordion collection-accordion" id="zvCategoryFilterAccordion">
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button pt-0" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-categories"
+                                                aria-expanded="true">
+                                            Categories
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-categories" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <ul class="collection-listing">
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-current"
+                                                               checked>
+                                                        <label class="form-check-label" for="zv-cat-current">
+                                                            All {{ category.name }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                {% for subcategory in subcategories %}
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input zv-subcategory-filter"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-{{ subcategory.id }}"
+                                                               data-name="{{ subcategory.name|lower }}">
+                                                        <label class="form-check-label"
+                                                               for="zv-cat-{{ subcategory.id }}">
+                                                            {{ subcategory.name }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-search"
+                                                aria-expanded="true">
+                                            Search
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-search" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <input type="text"
+                                                   id="zvSubcategorySearch"
+                                                   class="zv-filter-search-input"
+                                                   placeholder="Search categories...">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-view"
+                                                aria-expanded="true">
+                                            View
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-view" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <ul class="collection-listing">
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="zv-view-style"
+                                                               id="zv-view-grid"
+                                                               value="grid"
+                                                               checked>
+                                                        <label class="form-check-label" for="zv-view-grid">
+                                                            Grid View
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="zv-view-style"
+                                                               id="zv-view-list"
+                                                               value="list">
+                                                        <label class="form-check-label" for="zv-view-list">
+                                                            List View
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collection-content col-xl-9 col-lg-8">
+                    <div class="page-main-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="top-banner-wrapper zv-multikart-category-banner">
+
+                                    {% if category.image %}
+                                    <div class="zv-category-banner-image">
+                                        <img src="{{ category.image.url }}"
+                                             class="img-fluid blur-up lazyload"
+                                             alt="{{ category.name }}">
+                                    </div>
+                                    {% else %}
+                                        {% with first_subcategory=subcategories.first %}
+                                            {% if first_subcategory.image %}
+                                            <div class="zv-category-banner-image">
+                                                <img src="{{ first_subcategory.image.url }}"
+                                                     class="img-fluid blur-up lazyload"
+                                                     alt="{{ category.name }}">
+                                            </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+
+                                    <div class="zv-category-banner-copy">
+                                        <span>ZEN VIBE COLLECTION</span>
+                                        <h3>{{ category.name }}</h3>
+                                        <p>
+                                            Explore our {{ category.name|lower }} collection
+                                            and choose the right product category for your
+                                            business, event or promotion.
+                                        </p>
+                                        <a href="#zvSubcategoryGrid" class="btn btn-solid">
+                                            Browse Collection
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <button class="filter-btn btn" type="button">
+                                    <i class="ri-arrow-left-s-line"></i>
+                                    Filter
+                                </button>
+
+                                <div class="collection-product-wrapper">
+
+                                    <div class="product-top-filter">
+                                        <div class="product-filter-content w-100">
+
+                                            <div class="d-flex align-items-center gap-sm-3 gap-2">
+                                                <select class="form-select" id="zvCategorySort">
+                                                    <option value="asc" selected>Ascending Order</option>
+                                                    <option value="desc">Descending Order</option>
+                                                </select>
+
+                                                <select class="form-select" id="zvCategoryLimit">
+                                                    <option value="8" selected>8 Categories</option>
+                                                    <option value="12">12 Categories</option>
+                                                    <option value="24">24 Categories</option>
+                                                    <option value="100">All Categories</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="collection-grid-view">
+                                                <ul>
+                                                    <li class="zv-grid-view active"
+                                                        data-view="grid"
+                                                        title="Grid View">
+                                                        <span class="zv-layout-icon zv-layout-3">
+                                                            <i></i><i></i><i></i>
+                                                        </span>
+                                                    </li>
+
+                                                    <li class="list-layout-view"
+                                                        data-view="list"
+                                                        title="List View">
+                                                        <i class="ri-list-check-2"></i>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="zv-category-heading">
+                                        <span class="zv-category-small-title">SHOP BY CATEGORY</span>
+                                        <h2>{{ category.name }}</h2>
+                                        <div class="zv-category-line"></div>
+                                    </div>
+
+                                    <div class="row g-lg-4 g-md-4 g-3"
+                                         id="zvSubcategoryGrid">
+
+                                        {% for subcategory in subcategories %}
+
+                                        <div class="col-xl-4 col-md-6 col-sm-6 col-12 zv-subcategory-column"
+                                             data-subcategory-card
+                                             data-name="{{ subcategory.name|lower }}">
+
+                                            <a href="{% url 'designer:category_detail' subcategory.slug %}"
+                                               class="zv-category-card">
+
+                                                <div class="zv-category-image">
+
+                                                    {% if subcategory.image %}
+                                                    <img src="{{ subcategory.image.url }}"
+                                                         alt="{{ subcategory.name }}"
+                                                         class="img-fluid blur-up lazyload">
+
+                                                    {% else %}
+                                                        {% with first_product=subcategory.products.first %}
+                                                            {% if first_product and first_product.image %}
+                                                            <img src="{{ first_product.image.url }}"
+                                                                 alt="{{ subcategory.name }}"
+                                                                 class="img-fluid blur-up lazyload">
+                                                            {% else %}
+                                                            <div class="zv-category-placeholder">
+                                                                {{ subcategory.name|slice:":1" }}
+                                                            </div>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    {% endif %}
+
+                                                    <div class="zv-category-overlay">
+                                                        <span>View Products</span>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="zv-category-content">
+                                                    <h3>{{ subcategory.name }}</h3>
+                                                    <p>
+                                                        {{ subcategory.product_count }}
+                                                        PRODUCT{{ subcategory.product_count|pluralize }}
+                                                    </p>
+                                                </div>
+
+                                            </a>
+                                        </div>
+
+                                        {% empty %}
+
+                                        <div class="col-12">
+                                            <div class="zv-empty-category">
+                                                <h3>No subcategories found</h3>
+                                                <p>Products for this category will appear here.</p>
+                                            </div>
+                                        </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                    <div id="zvNoCategoryResults"
+                                         class="zv-empty-category"
+                                         style="display:none;">
+                                        <h3>No categories found</h3>
+                                        <p>Try another category or search term.</p>
+                                    </div>
+
+                                    <nav id="zvCategoryPaginationWrap"
+                                         class="zv-pagination-wrap"
+                                         aria-label="Category pagination"
+                                         style="display:none;">
+                                        <ul class="zv-page-list"
+                                            id="zvCategoryPagination"></ul>
+                                    </nav>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- =========================================================
+     CATEGORY SEO CONTENT + FAQ
+========================================================= -->
+<section class="zv-category-info-section">
+    <div class="container">
+        <div class="zv-category-info-inner">
+
+            <div class="zv-category-seo-copy">
+                <p>
+                    Shop premium <strong>custom {{ category.name|lower }} in Canada</strong>
+                    designed for businesses, organizations, schools, teams, corporate events
+                    and promotional campaigns. Personalize your {{ category.name|lower }}
+                    with your company logo, custom text, artwork or branding to create
+                    professional products that help your brand stand out.
+                </p>
+
+                <p>
+                    Our custom {{ category.name|lower }} are ideal for employee recognition,
+                    client gifts, trade shows, conferences, sports events, schools,
+                    appreciation programs and special occasions. Pair them with
+                    <a href="{% url 'designer:start_designing' %}">corporate gifts</a>,
+                    custom drinkware, branded apparel and promotional accessories
+                    for a complete branding solution across Canada.
+                </p>
+            </div>
+
+            <div class="zv-category-faq">
+
+                <h2>Frequently Asked Questions</h2>
+
+                <div class="accordion zv-category-faq-accordion"
+                     id="zvCategoryFaqAccordion">
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingOne">
+                            <button class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqOne"
+                                    aria-expanded="true"
+                                    aria-controls="zvFaqOne">
+                                1. What types of {{ category.name|lower }} do you offer?
+                            </button>
+                        </h3>
+                        <div id="zvFaqOne"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="zvFaqHeadingOne"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                We offer a wide range of custom {{ category.name|lower }}
+                                for corporate, promotional, event, school and team needs.
+                                Available options depend on the products currently listed
+                                in this category.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingTwo">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqTwo"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqTwo">
+                                2. Can I customize {{ category.name|lower }} with my logo or artwork?
+                            </button>
+                        </h3>
+                        <div id="zvFaqTwo"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingTwo"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. You can personalize eligible products with your
+                                logo, text or artwork using ZenVibe's customization
+                                options. A digital proof can be reviewed before production
+                                where applicable.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingThree">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqThree"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqThree">
+                                3. Are bulk discounts available for {{ category.name|lower }}?
+                            </button>
+                        </h3>
+                        <div id="zvFaqThree"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingThree"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Bulk pricing may be available for larger quantities.
+                                Pricing can vary by product, customization method and
+                                order volume.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingFour">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqFour"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqFour">
+                                4. Do you ship {{ category.name|lower }} across Canada?
+                            </button>
+                        </h3>
+                        <div id="zvFaqFour"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingFour"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. ZenVibe offers Canada-wide delivery for eligible
+                                custom and promotional product orders.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="zvFaqHeadingFive">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#zvFaqFive"
+                                    aria-expanded="false"
+                                    aria-controls="zvFaqFive">
+                                5. Are {{ category.name|lower }} suitable for corporate and promotional events?
+                            </button>
+                        </h3>
+                        <div id="zvFaqFive"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="zvFaqHeadingFive"
+                             data-bs-parent="#zvCategoryFaqAccordion">
+                            <div class="accordion-body">
+                                Yes. Custom {{ category.name|lower }} can be used for
+                                corporate events, recognition programs, trade shows,
+                                client gifts, employee appreciation, schools, teams
+                                and promotional campaigns.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+.zv-category-page{background:#fff}
+
+.collection-accordion .accordion-button:not(.collapsed),
+.collection-accordion .accordion-button:hover,
+.collection-listing .form-check-label:hover{color:#0758b8}
+
+.collection-listing .form-check-input:checked{
+    background-color:#0758b8;
+    border-color:#0758b8;
+}
+
+.zv-filter-search-input{
+    width:100%;
+    height:40px;
+    padding:0 11px;
+    border:1px solid #ddd;
+    outline:none;
+    font-size:13px;
+}
+
+.zv-filter-search-input:focus{border-color:#0758b8}
+
+.zv-multikart-category-banner{
+    position:relative;
+    min-height:355px;
+    overflow:hidden;
+    background:#f5f7fa;
+    margin-bottom:25px;
+}
+
+.zv-category-banner-image{position:absolute;inset:0}
+
+.zv-category-banner-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    opacity:.58;
+}
+
+.zv-multikart-category-banner::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.98) 0%,
+        rgba(255,255,255,.88) 35%,
+        rgba(255,255,255,.20) 72%,
+        rgba(255,255,255,.05) 100%
+    );
+}
+
+.zv-category-banner-copy{
+    position:relative;
+    z-index:2;
+    width:min(480px,72%);
+    min-height:355px;
+    padding:55px 0 45px 48px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.zv-category-banner-copy > span{
+    color:#f6a329;
+    font:700 11px Montserrat,sans-serif;
+    letter-spacing:1.5px;
+}
+
+.zv-category-banner-copy h3{
+    margin:8px 0 10px;
+    color:#222;
+    font:600 34px/1.15 Montserrat,sans-serif;
+}
+
+.zv-category-banner-copy p{
+    margin:0 0 20px;
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+}
+
+.zv-category-banner-copy .btn{width:max-content}
+
+.zv-category-heading{
+    max-width:700px;
+    margin:38px auto 34px;
+    text-align:center;
+}
+
+.zv-category-small-title{
+    display:block;
+    margin-bottom:8px;
+    color:#f6a329;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+
+.zv-category-heading h2{
+    margin:0;
+    color:#222;
+    font-size:32px;
+    font-weight:700;
+}
+
+.zv-category-line{
+    width:50px;
+    height:2px;
+    margin:16px auto 0;
+    background:#0758b8;
+}
+
+.zv-category-card{
+    display:block;
+    width:100%;
+    height:100%;
+    color:inherit!important;
+    background:#fff;
+    text-decoration:none!important;
+    transition:transform .3s ease,box-shadow .3s ease;
+}
+
+.zv-category-card:hover{transform:translateY(-5px)}
+
+.zv-category-image{
+    position:relative;
+    width:100%;
+    aspect-ratio:1/1;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-category-image img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:transform .45s ease;
+}
+
+.zv-category-card:hover .zv-category-image img{transform:scale(1.06)}
+
+.zv-category-overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.18);
+    opacity:0;
+    transition:opacity .3s ease;
+}
+
+.zv-category-card:hover .zv-category-overlay{opacity:1}
+
+.zv-category-overlay span{
+    padding:10px 18px;
+    background:#fff;
+    color:#222;
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.zv-category-placeholder{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f3f3f3;
+    color:#0758b8;
+    font-size:60px;
+    font-weight:700;
+}
+
+.zv-category-content{
+    padding:18px 8px 8px;
+    text-align:center;
+}
+
+.zv-category-content h3{
+    margin:0 0 6px;
+    color:#333;
+    font-size:17px;
+    font-weight:600;
+    line-height:1.4;
+    text-transform:uppercase;
+    transition:color .2s ease;
+}
+
+.zv-category-content p{
+    margin:0;
+    color:#777;
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+}
+
+.zv-category-card:hover .zv-category-content h3{color:#0758b8}
+
+#zvSubcategoryGrid.zv-list-view .zv-subcategory-column{
+    flex:0 0 100%;
+    max-width:100%;
+}
+
+#zvSubcategoryGrid.zv-list-view .zv-category-card{
+    display:grid;
+    grid-template-columns:240px minmax(0,1fr);
+    align-items:center;
+    border-bottom:1px solid #eee;
+}
+
+#zvSubcategoryGrid.zv-list-view .zv-category-image{
+    aspect-ratio:auto;
+    width:240px;
+    height:220px;
+}
+
+#zvSubcategoryGrid.zv-list-view .zv-category-content{
+    padding:28px;
+    text-align:left;
+}
+
+.collection-grid-view ul{align-items:center}
+.collection-grid-view li{cursor:pointer}
+
+.zv-layout-icon{
+    width:26px;
+    height:22px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+    padding:3px;
+    border:1px solid #ddd;
+}
+
+.zv-layout-icon i{display:block;background:#999}
+
+.collection-grid-view li.active .zv-layout-icon,
+.collection-grid-view li:hover .zv-layout-icon{border-color:#0758b8}
+
+.collection-grid-view li.active .zv-layout-icon i,
+.collection-grid-view li:hover .zv-layout-icon i{background:#0758b8}
+
+.collection-grid-view .list-layout-view{
+    width:30px;
+    height:26px;
+    display:grid;
+    place-items:center;
+    border:1px solid #ddd;
+    color:#999;
+}
+
+.collection-grid-view .list-layout-view.active,
+.collection-grid-view .list-layout-view:hover{
+    border-color:#0758b8;
+    color:#0758b8;
+}
+
+.zv-empty-category{
+    width:100%;
+    padding:60px 20px;
+    text-align:center;
+    background:#f8f8f8;
+}
+
+.zv-empty-category h3{margin:0 0 8px;color:#222;font-size:22px}
+.zv-empty-category p{margin:0;color:#777}
+
+#zvCategoryPaginationWrap{
+    display:flex;
+    width:100%;
+    align-items:center;
+    justify-content:center;
+    clear:both;
+    margin:36px 0 10px;
+}
+
+#zvCategoryPagination{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:0 auto;
+    padding:0;
+    list-style:none;
+}
+
+#zvCategoryPagination li{margin:0;padding:0;list-style:none}
+
+#zvCategoryPagination button{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:42px;
+    height:42px;
+    padding:0 13px;
+    border:1px solid #e2e2e2;
+    background:#fff;
+    color:#555;
+    font-size:13px;
+    cursor:pointer;
+}
+
+#zvCategoryPagination li.is-active button{
+    border-color:#0758b8;
+    background:#0758b8;
+    color:#fff;
+}
+
+#zvCategoryPagination button:hover{
+    border-color:#f6a329;
+    background:#f6a329;
+    color:#fff;
+}
+
+@media(min-width:1200px){
+    .zv-category-page .container{max-width:1400px}
+}
+
+@media(max-width:991px){
+    .zv-category-heading h2{font-size:28px}
+}
+
+@media(max-width:767px){
+    .zv-multikart-category-banner{min-height:285px}
+
+    .zv-category-banner-copy{
+        min-height:285px;
+        width:88%;
+        padding:35px 24px;
+    }
+
+    .zv-category-banner-copy h3{font-size:27px}
+    .zv-category-heading{margin:30px auto 28px}
+    .zv-category-heading h2{font-size:25px}
+    .zv-category-overlay{display:none}
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-card{
+        grid-template-columns:150px minmax(0,1fr);
+    }
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-image{
+        width:150px;
+        height:155px;
+    }
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-content{
+        padding:18px;
+    }
+}
+
+@media(max-width:575px){
+    .zv-category-page{
+        padding-top:40px;
+        padding-bottom:45px;
+    }
+
+    .zv-category-heading h2{font-size:23px}
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-card{
+        display:block;
+    }
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-image{
+        width:100%;
+        height:auto;
+        aspect-ratio:1/1;
+    }
+
+    #zvSubcategoryGrid.zv-list-view .zv-category-content{
+        text-align:center;
+    }
+}
+
+
+/* =========================================================
+   CATEGORY SEO + FAQ
+========================================================= */
+
+.zv-category-info-section{
+    padding:15px 0 70px;
+    background:#fff;
+}
+
+.zv-category-seo-copy{
+    padding-top:28px;
+    border-top:1px solid #ededed;
+}
+
+.zv-category-seo-copy p{
+    margin:0 0 8px;
+    color:#555;
+    font-family:"Lato",sans-serif;
+    font-size:16px;
+    line-height:1.95;
+}
+
+.zv-category-seo-copy strong{
+    color:#444;
+    font-weight:700;
+}
+
+.zv-category-seo-copy a{
+    color:#0758b8;
+    text-decoration:none;
+}
+
+.zv-category-seo-copy a:hover{
+    color:#f6a329;
+}
+
+.zv-category-faq{
+    margin-top:26px;
+}
+
+.zv-category-faq > h2{
+    margin:0 0 12px;
+    color:#555;
+    font-family:"Montserrat",sans-serif;
+    font-size:25px;
+    line-height:1.3;
+    font-weight:600;
+}
+
+.zv-category-faq-accordion .accordion-item{
+    border:0 !important;
+    background:transparent !important;
+}
+
+.zv-category-faq-accordion .accordion-header{
+    margin:0;
+}
+
+.zv-category-faq-accordion .accordion-button{
+    padding:10px 0 6px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    color:#555 !important;
+    font-family:"Lato",sans-serif;
+    font-size:17px;
+    line-height:1.4;
+    font-weight:700;
+    text-decoration:underline;
+}
+
+.zv-category-faq-accordion .accordion-button:not(.collapsed),
+.zv-category-faq-accordion .accordion-button:hover{
+    color:#0758b8 !important;
+}
+
+.zv-category-faq-accordion .accordion-button::after{
+    margin-left:auto;
+    transform:scale(.8);
+}
+
+.zv-category-faq-accordion .accordion-body{
+    max-width:900px;
+    padding:2px 0 10px !important;
+    color:#555;
+    font-family:"Lato",sans-serif;
+    font-size:16px;
+    line-height:1.85;
+}
+
+@media(max-width:767px){
+    .zv-category-info-section{
+        padding:10px 0 48px;
+    }
+
+    .zv-category-seo-copy p{
+        font-size:14px;
+        line-height:1.8;
+    }
+
+    .zv-category-faq{
+        margin-top:22px;
+    }
+
+    .zv-category-faq > h2{
+        font-size:22px;
+    }
+
+    .zv-category-faq-accordion .accordion-button{
+        font-size:15px;
+        line-height:1.5;
+    }
+
+    .zv-category-faq-accordion .accordion-body{
+        font-size:14px;
+        line-height:1.75;
+    }
+}
+
+</style>
+
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+
+    const grid=document.getElementById("zvSubcategoryGrid");
+    if(!grid)return;
+
+    const cards=Array.from(grid.querySelectorAll("[data-subcategory-card]"));
+    const currentCategory=document.getElementById("zv-cat-current");
+    const categoryFilters=document.querySelectorAll(".zv-subcategory-filter");
+    const search=document.getElementById("zvSubcategorySearch");
+    const sort=document.getElementById("zvCategorySort");
+    const limit=document.getElementById("zvCategoryLimit");
+    const viewButtons=document.querySelectorAll("[data-view]");
+    const paginationWrap=document.getElementById("zvCategoryPaginationWrap");
+    const pagination=document.getElementById("zvCategoryPagination");
+    const noResults=document.getElementById("zvNoCategoryResults");
+
+    let currentPage=1;
+
+    function pageSize(){
+        const value=parseInt(limit?.value||"8",10);
+        return value>0?value:8;
+    }
+
+    function matchedCards(){
+        const selected=document.querySelector(".zv-subcategory-filter:checked");
+        const selectedName=selected?(selected.dataset.name||"").toLowerCase():"";
+        const query=(search?.value||"").trim().toLowerCase();
+
+        return cards.filter(function(card){
+            const name=(card.dataset.name||"").toLowerCase();
+
+            if(selectedName&&name!==selectedName)return false;
+            if(query&&!name.includes(query))return false;
+
+            return true;
+        });
+    }
+
+    function addPageButton(label,page,active){
+        const li=document.createElement("li");
+        if(active)li.classList.add("is-active");
+
+        const button=document.createElement("button");
+        button.type="button";
+        button.textContent=label;
+
+        button.addEventListener("click",function(){
+            currentPage=page;
+            render(false);
+
+            document.querySelector(".product-top-filter")?.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+        });
+
+        li.appendChild(button);
+        pagination.appendChild(li);
+    }
+
+    function drawPagination(total){
+        if(!pagination||!paginationWrap)return;
+
+        pagination.innerHTML="";
+
+        const pages=Math.ceil(total/pageSize());
+
+        if(pages<=1){
+            paginationWrap.style.display="none";
+            return;
+        }
+
+        paginationWrap.style.display="flex";
+
+        if(currentPage>1){
+            addPageButton("Previous",currentPage-1,false);
+        }
+
+        for(let page=1;page<=pages;page++){
+            addPageButton(String(page),page,page===currentPage);
+        }
+
+        if(currentPage<pages){
+            addPageButton("Next",currentPage+1,false);
+        }
+    }
+
+    function render(reset=true){
+        if(reset)currentPage=1;
+
+        const matched=matchedCards();
+
+        matched.sort(function(a,b){
+            const aName=a.dataset.name||"";
+            const bName=b.dataset.name||"";
+
+            return sort?.value==="desc"
+                ? bName.localeCompare(aName)
+                : aName.localeCompare(bName);
+        });
+
+        matched.forEach(function(card){
+            grid.appendChild(card);
+        });
+
+        cards.forEach(function(card){
+            card.style.setProperty("display","none","important");
+        });
+
+        const size=pageSize();
+        const totalPages=Math.max(1,Math.ceil(matched.length/size));
+
+        if(currentPage>totalPages)currentPage=totalPages;
+
+        const start=(currentPage-1)*size;
+
+        matched.slice(start,start+size).forEach(function(card){
+            card.style.removeProperty("display");
+        });
+
+        if(noResults){
+            noResults.style.display=matched.length?"none":"block";
+        }
+
+        drawPagination(matched.length);
+    }
+
+    currentCategory?.addEventListener("change",function(){
+        if(currentCategory.checked){
+            categoryFilters.forEach(function(input){
+                input.checked=false;
+            });
+        }
+        render(true);
+    });
+
+    categoryFilters.forEach(function(input){
+        input.addEventListener("change",function(){
+            if(input.checked&&currentCategory){
+                currentCategory.checked=false;
+            }
+            render(true);
+        });
+    });
+
+    search?.addEventListener("input",()=>render(true));
+    sort?.addEventListener("change",()=>render(true));
+    limit?.addEventListener("change",()=>render(true));
+
+    viewButtons.forEach(function(button){
+        button.addEventListener("click",function(){
+
+            viewButtons.forEach(function(item){
+                item.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            grid.classList.toggle(
+                "zv-list-view",
+                button.dataset.view==="list"
+            );
+        });
+    });
+
+    render(true);
+});
+</script>
+
+{% endblock %}
+

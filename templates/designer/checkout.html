@@ -1,0 +1,32 @@
+﻿{% extends 'designer/base.html' %}{% block title %}Secure Checkout | ZenVibe{% endblock %}{% block content %}<div class="breadcrumb-section"><div class="container"><div class="row"><div class="col-sm-6"><div class="page-title"><h2>checkout</h2></div></div><div class="col-sm-6"><nav class="theme-breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'designer:home' %}">Home</a></li><li class="breadcrumb-item active">checkout</li></ol></nav></div></div></div></div><section class="section-b-space"><div class="container"><div class="checkout-page"><div class="checkout-form">{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}<form method="post"><style>.checkout-form .zv-required-mark{color:#d52b36;font-weight:800;font-size:1.1em;margin-left:3px}</style>
+{% if request.user.is_authenticated %}
+<div class="zv-saved-address" style="padding:16px;margin:12px 0;border:1px solid #d8e1ed;border-radius:10px;background:#f8fbff">
+  <label for="zv-saved-address-select"><strong>Saved Canadian address</strong></label>
+  <select id="zv-saved-address-select" class="form-control" style="margin:8px 0">
+    <option value="">Enter a new address</option>
+    {% for a in saved_addresses %}<option value="{{ a.pk }}" data-name="{{ a.full_name }}" data-phone="{{ a.phone }}" data-company="{{ a.company }}" data-address="{{ a.address }}" data-city="{{ a.city }}" data-province="{{ a.province }}" data-postal="{{ a.postal_code }}" {% if a.is_default %}selected{% endif %}>{{ a.label }} — {{ a.address }}, {{ a.city }}, {{ a.province }} {{ a.postal_code }}</option>{% endfor %}
+  </select>
+  <a href="{% url 'designer:address_book' %}">Manage saved addresses</a>
+  <label style="display:block;margin-top:12px"><input type="checkbox" name="save_address" value="1" checked> Save this address to my account</label>
+  <input type="hidden" name="address_label" value="Home">
+  <p style="font-size:12px;color:#64748b;margin-top:6px">Select an address or edit the fields below. Existing saved addresses remain unchanged.</p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const sel=document.getElementById('zv-saved-address-select');
+ if(!sel)return;
+ function apply(){
+  const o=sel.options[sel.selectedIndex];if(!o||!o.value)return;
+  const mapping={customer_name:'name',customer_phone:'phone',company:'company',address:'address',city:'city',province:'province',postal_code:'postal'};
+  Object.entries(mapping).forEach(([name,key])=>{
+    const field=sel.closest('form').querySelector('[name="'+name+'"]');
+    if(field){field.value=o.dataset[key]||'';field.dispatchEvent(new Event('change',{bubbles:true}));}
+  });
+ }
+ sel.addEventListener('change',apply);
+ {% if request.method != 'POST' %}apply();{% endif %}
+});
+</script>
+{% endif %}
+{% csrf_token %}<div class="row"><div class="col-lg-6 col-sm-12"><div class="checkout-title"><h3>Billing Details</h3></div><div class="row check-out"><div class="form-group col-md-12"><div class="field-label">Full Name <span class="zv-required-mark" aria-label="required">*</span></div><input name="customer_name" required value="{{ checkout_initial.customer_name|default:'' }}"></div><div class="form-group col-md-12"><div class="field-label">Email Address <span class="zv-required-mark" aria-label="required">*</span></div><input type="email" name="customer_email" required value="{{ checkout_initial.customer_email|default:'' }}"></div><div class="form-group col-md-12"><div class="field-label">Phone <span class="zv-required-mark" aria-label="required">*</span></div><input name="customer_phone" required value="{{ checkout_initial.customer_phone|default:'' }}"></div><div class="form-group col-md-12"><div class="field-label">Company <span class="zv-required-mark" aria-label="required">*</span></div><input name="company" required value="{{ checkout_initial.company|default:'' }}"></div><div class="form-group col-md-12"><div class="field-label">Address <span class="zv-required-mark" aria-label="required">*</span></div><input name="address" required value="{{ checkout_initial.address|default:'' }}"></div><div class="form-group col-md-6"><div class="field-label">City <span class="zv-required-mark" aria-label="required">*</span></div><input name="city" required value="{{ checkout_initial.city|default:'' }}"></div><div class="form-group col-md-3"><div class="field-label">Province <span class="zv-required-mark" aria-label="required">*</span></div><select name="province" id="province" class="form-control" required><option value="">Select province / territory</option>{% for code,label in canadian_provinces %}<option value="{{ code }}" {% if checkout_initial.province == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div><div class="form-group col-md-3"><div class="field-label">Postal Code <span class="zv-required-mark" aria-label="required">*</span></div><input name="postal_code" required value="{{ checkout_initial.postal_code|default:'' }}"></div><div class="form-group col-md-12"><div class="field-label">Order Notes <span class="text-muted">(optional)</span></div><textarea class="form-control" name="customer_notes">{{ request.POST.customer_notes }}</textarea></div></div></div><div class="col-lg-6 col-sm-12"><div class="checkout-details"><div class="order-box"><div class="title-box"><div>Product <span>Total</span></div></div><ul class="qty"><li>{{ design.product.name }} Ã— {{ design.quantity }} <span>${{ total }}</span></li></ul><ul class="sub-total"><li>Unit Price <span class="count">${{ unit_price }}</span></li></ul><ul class="total"><li>Total <span class="count">${{ total }}</span></li></ul></div><div class="payment-box"><div class="upper-box"><div class="payment-options"><ul><li><div class="radio-option"><input type="radio" id="payment1" checked><label for="payment1">{% if payment_mode == 'stripe' %}Secure Stripe Checkout{% else %}Order Confirmation{% endif %}</label></div></li></ul></div></div><div class="text-end"><button type="submit" class="btn-solid btn">{% if payment_mode == 'stripe' %}Continue to Secure Payment{% else %}Place Order{% endif %}</button></div></div></div></div></div></form></div></div></div></section>{% endblock %}
+

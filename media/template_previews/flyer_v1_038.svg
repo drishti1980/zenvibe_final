@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3E8DF" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0.0,0.0 1000.0,0.0 1000.0,500.0 0.0,720.0" fill="#4A2B22" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="390.4,475.0 413.2,475.0 401.79999999999995,182.6" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="443.6,475.0 466.40000000000003,475.0 455.0,234.2" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="496.8,475.0 519.6,475.0 508.2,285.8" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="550.0,475.0 572.8,475.0 561.4,182.6" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="603.2,475.0 626.0,475.0 614.6,234.2" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="656.4000000000001,475.0 679.2,475.0 667.8000000000001,285.8" fill="#B75C3F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="709.6,475.0 732.4,475.0 721.0,182.6" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="360.0" cy="45.0" r="3" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="500.6" cy="307.3" r="4" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="641.2" cy="290.1" r="5" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="401.8" cy="272.9" r="6" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="542.4" cy="255.7" r="3" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="683.0" cy="238.5" r="4" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="443.6" cy="221.3" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="584.2" cy="204.1" r="6" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="724.8" cy="186.9" r="3" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="485.4" cy="169.7" r="4" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="626.0" cy="152.5" r="5" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="386.6" cy="135.3" r="6" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="527.2" cy="118.1" r="3" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="667.8" cy="100.9" r="4" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="428.4" cy="83.7" r="5" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="569.0" cy="66.5" r="6" fill="#B98A4C" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="709.6" cy="49.3" r="3" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="470.2" cy="311.6" r="4" fill="#DFAD92" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="60" y="192" fill="#F3E8DF" font-family="Oswald" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">PROTECTION FOR</tspan><tspan x="60" dy="67.67999999999999">WHAT MATTERS</tspan></text>
+<text x="62" y="384" fill="#F3E8DF" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Personal â€¢ Family â€¢ Business</tspan></text>
+<text x="60" y="792" fill="#4A2B22" font-family="Inter" font-size="32" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">DESIGNED</tspan><tspan x="60" dy="33.6">FOR IMPACT</tspan></text>
+<line x1="60" y1="875" x2="350" y2="875" stroke="#B75C3F" stroke-width="6" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#DFAD92" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#4A2B22" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B75C3F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3E8DF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">GET A QUOTE</tspan></text>
+<text x="954" y="69" fill="#B75C3F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">38</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B98A4C" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

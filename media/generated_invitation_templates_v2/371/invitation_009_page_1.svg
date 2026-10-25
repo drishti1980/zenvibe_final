@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#1e5037" opacity="1"/>
+<rect x="70" y="90" width="610" height="870" rx="32" fill="#e4f1e7" opacity="0.16" stroke="#b9954f" stroke-width="2"/>
+<rect x="85" y="100" width="580" height="850" rx="26" fill="#ffffff" opacity="0.7"/>
+<rect x="130" y="105" width="490" height="7" rx="0" fill="#b9954f" opacity="1"/>
+<rect x="185" y="125" width="380" height="2" rx="0" fill="#e4f1e7" opacity="1"/>
+<text x="110" y="333" text-anchor="start" fill="#b9954f" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">SHOWERING EMMA WITH LOVE</tspan></text>
+<text x="110" y="418" text-anchor="start" fill="#fffaf0" font-size="46" font-family="Libre Baskerville" font-weight="700" opacity="1"><tspan x="110" dy="0">BRIDAL BRUNCH</tspan></text>
+<text x="110" y="541" text-anchor="start" fill="#fffaf0" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">SUNDAY · 01 NOVEMBER 2026</tspan></text>
+<text x="110" y="581" text-anchor="start" fill="#fffaf0" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">THE CONSERVATORY · 11:00 AM</tspan></text>
+<text x="110" y="655" text-anchor="start" fill="#b9954f" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<line x1="65" y1="70" x2="685" y2="70" stroke="#b9954f" stroke-width="2.5" opacity="0.95"/>
+<line x1="65" y1="980" x2="685" y2="980" stroke="#b9954f" stroke-width="2.5" opacity="0.95"/>
+</svg>

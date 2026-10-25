@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1125" height="675" viewBox="0 0 1125 675">
+<rect width="1125" height="675" fill="#0B0B0C"/>
+<circle cx="210.0" cy="255.0" r="130.0" fill="none" stroke="#C8A96B" stroke-width="5.0" opacity="1.0"/>
+<circle cx="210.0" cy="255.0" r="107.0" fill="none" stroke="#C8A96B" stroke-width="1.0" opacity="1.0"/>
+<text x="210.00" y="269.00" fill="#C8A96B" font-family="Cormorant Garamond" font-size="64.00" font-weight="bold" text-anchor="middle"><tspan x="210.00" dy="0.00">AM</tspan></text>
+<text x="430.00" y="221.00" fill="#F8F3E8" font-family="Cormorant Garamond" font-size="76.00" font-weight="normal" text-anchor="start"><tspan x="430.00" dy="0.00">Alex Morgan</tspan></text>
+<text x="433.00" y="269.00" fill="#C8A96B" font-family="Montserrat" font-size="19.00" font-weight="bold" text-anchor="start"><tspan x="433.00" dy="0.00">FOUNDER / CREATIVE DIRECTOR</tspan></text>
+<line x1="430" y1="310" x2="870" y2="310" stroke="#C8A96B" stroke-width="2.0" opacity="1.0"/>
+<text x="430.00" y="380.00" fill="#F8F3E8" font-family="Montserrat" font-size="20.00" font-weight="normal" text-anchor="start"><tspan x="430.00" dy="0.00">+61 400 123 456</tspan></text>
+<text x="430.00" y="417.00" fill="#F8F3E8" font-family="Montserrat" font-size="20.00" font-weight="normal" text-anchor="start"><tspan x="430.00" dy="0.00">alex@atelier.com</tspan></text>
+<text x="430.00" y="454.00" fill="#F8F3E8" font-family="Montserrat" font-size="20.00" font-weight="normal" text-anchor="start"><tspan x="430.00" dy="0.00">atelier.com</tspan></text>
+</svg>

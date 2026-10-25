@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F8EDEF" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="520.0" y="0" width="480.0" height="800" rx="0" ry="0" fill="#5A1E37" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="580.0" cy="282.88" r="34" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="580.0" cy="282.88" r="17" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="570.0" y1="282.88" x2="590.0" y2="282.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<line x1="580.0" y1="272.88" x2="580.0" y2="292.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<circle cx="690.0" cy="282.88" r="34" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="690.0" cy="282.88" r="17" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="680.0" y1="282.88" x2="700.0" y2="282.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<line x1="690.0" y1="272.88" x2="690.0" y2="292.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<circle cx="800.0" cy="282.88" r="34" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="800.0" cy="282.88" r="17" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="790.0" y1="282.88" x2="810.0" y2="282.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<line x1="800.0" y1="272.88" x2="800.0" y2="292.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<circle cx="910.0" cy="282.88" r="34" fill="#E7B5C5" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="910.0" cy="282.88" r="17" fill="#B73C6C" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="900.0" y1="282.88" x2="920.0" y2="282.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<line x1="910.0" y1="272.88" x2="910.0" y2="292.88" stroke="#F8EDEF" stroke-width="2" opacity="1"/>
+<text x="55" y="226" fill="#5A1E37" font-family="DM Serif Display" font-size="66" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">GO SOMEWHERE</tspan><tspan x="55" dy="62.699999999999996">BEAUTIFUL</tspan></text>
+<text x="58" y="387" fill="#5A1E37" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Curated escapes â€¢ Tailored journeys</tspan></text>
+<text x="770.0" y="837" fill="#C7A25D" font-family="DM Serif Display" font-size="92" font-weight="700" text-anchor="middle" opacity="1"><tspan x="770.0" dy="0">01</tspan></text>
+<text x="755.0" y="867" fill="#F8EDEF" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="755.0" dy="0">MODERN</tspan><tspan x="755.0" dy="23.1">EDITION</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#E7B5C5" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#5A1E37" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#B73C6C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F8EDEF" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">PLAN YOUR TRIP</tspan></text>
+<text x="954" y="69" fill="#B73C6C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">19</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C7A25D" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

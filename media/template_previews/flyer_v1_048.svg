@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="34" y="34" width="932" height="732" rx="0" ry="0" fill="none" stroke="#B89A62" stroke-width="2" opacity="1"/>
+<rect x="52" y="52" width="896" height="696" rx="0" ry="0" fill="none" stroke="#C5CFBA" stroke-width="1" opacity="1"/>
+<polygon points="180.8,430.0 226.4,430.0 203.60000000000002,185.2" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="287.20000000000005,430.0 332.80000000000007,430.0 310.00000000000006,228.4" fill="#7C967F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="393.6,430.0 439.20000000000005,430.0 416.40000000000003,271.6" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="500.0,430.0 545.6,430.0 522.8,185.2" fill="#7C967F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="606.4000000000001,430.0 652.0000000000001,430.0 629.2,228.4" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="712.8000000000001,430.0 758.4000000000001,430.0 735.6,271.6" fill="#7C967F" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="819.2,430.0 864.8000000000001,430.0 842.0,185.2" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="120.0" cy="70.0" r="3" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="401.2" cy="289.6" r="4" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="682.4" cy="275.2" r="5" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="203.6" cy="260.8" r="6" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="484.8" cy="246.4" r="3" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="766.0" cy="232.0" r="4" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="287.2" cy="217.6" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="568.4" cy="203.2" r="6" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="849.6" cy="188.8" r="3" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="370.8" cy="174.4" r="4" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="652.0" cy="160.0" r="5" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="173.2" cy="145.6" r="6" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="454.4" cy="131.2" r="3" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="735.6" cy="116.8" r="4" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="256.8" cy="102.4" r="5" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="538.0" cy="88.0" r="6" fill="#B89A62" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="819.2" cy="73.6" r="3" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="340.4" cy="293.2" r="4" fill="#C5CFBA" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="500.0" y="538" fill="#34463D" font-family="Oswald" font-size="68" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">PESTS OUT.</tspan><tspan x="500.0" dy="64.6">PEACE IN.</tspan></text>
+<text x="500.0" y="687" fill="#34463D" font-family="Inter" font-size="22" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Safe â€¢ Fast â€¢ Professional</tspan></text>
+<text x="500.0" y="782" fill="#7C967F" font-family="Inter" font-size="17" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">EST. 2026</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#C5CFBA" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#34463D" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#7C967F" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F1E8" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK SERVICE</tspan></text>
+<text x="954" y="69" fill="#7C967F" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">48</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89A62" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

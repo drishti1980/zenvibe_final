@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="1"/>
+<circle cx="481.2" cy="330.40000000000003" r="34" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="481.2" cy="330.40000000000003" r="17" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="471.2" y1="330.40000000000003" x2="491.2" y2="330.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<line x1="481.2" y1="320.40000000000003" x2="481.2" y2="340.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<circle cx="551.6" cy="330.40000000000003" r="34" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="551.6" cy="330.40000000000003" r="17" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="541.6" y1="330.40000000000003" x2="561.6" y2="330.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<line x1="551.6" y1="320.40000000000003" x2="551.6" y2="340.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<circle cx="622.0" cy="330.40000000000003" r="34" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="622.0" cy="330.40000000000003" r="17" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="612.0" y1="330.40000000000003" x2="632.0" y2="330.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<line x1="622.0" y1="320.40000000000003" x2="622.0" y2="340.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<circle cx="692.4000000000001" cy="330.40000000000003" r="34" fill="#BBD7F3" stroke="none" stroke-width="0" opacity="0.25"/>
+<circle cx="692.4000000000001" cy="330.40000000000003" r="17" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<line x1="682.4000000000001" y1="330.40000000000003" x2="702.4000000000001" y2="330.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<line x1="692.4000000000001" y1="320.40000000000003" x2="692.4000000000001" y2="340.40000000000003" stroke="#F6F8FB" stroke-width="2" opacity="1"/>
+<text x="60" y="78" fill="#2D7DD2" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">ZENVIBE STUDIO</tspan></text>
+<text x="60" y="223" fill="#152B45" font-family="DM Serif Display" font-size="78" font-weight="700" text-anchor="start" opacity="1"><tspan x="60" dy="0">FRESHLY BAKED</tspan><tspan x="60" dy="71.76">EVERY MORNING</tspan></text>
+<text x="62" y="414" fill="#152B45" font-family="Inter" font-size="24" font-weight="400" text-anchor="start" opacity="1"><tspan x="62" dy="0">Pastries â€¢ Cakes â€¢ Artisan bread</tspan></text>
+<line x1="60" y1="485" x2="300" y2="485" stroke="#C8A463" stroke-width="3" opacity="1"/>
+<text x="60" y="540" fill="#152B45" font-family="Inter" font-size="20" font-weight="400" text-anchor="start" opacity="1"><tspan x="60" dy="0">Premium solutions, designed with clarity and purpose.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#BBD7F3" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#152B45" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F6F8FB" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">ORDER NOW</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">09</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

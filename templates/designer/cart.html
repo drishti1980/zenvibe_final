@@ -1,0 +1,1074 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}Shopping Cart | ZenVibe{% endblock %}
+
+{% block content %}
+
+<!-- ==============================
+     BREADCRUMB
+================================ -->
+<div class="breadcrumb-section">
+    <div class="container">
+
+        <h2>Cart</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Cart
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
+
+
+<!-- ==============================
+     CART
+================================ -->
+<section class="cart-section section-b-space zv-cart-page">
+
+    <div class="container">
+
+        {% if items %}
+
+        <div class="table-responsive">
+
+            <table class="table cart-table zv-cart-table">
+
+                <!-- HEADER -->
+                <thead>
+
+                    <tr>
+
+                        <th>Image</th>
+
+                        <th>Product Name</th>
+
+                        <th>Price</th>
+
+                        <th>Quantity</th>
+
+                        <th>Total</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <!-- PRODUCTS -->
+                <tbody>
+
+                    {% for item in items %}
+
+                    <tr>
+
+                        <!-- IMAGE -->
+                        <td class="zv-image-cell">
+
+                            <a href="{% if item.preview_image_url %}{{ item.preview_image_url }}{% else %}{% url 'designer:choose_design' item.product.id %}{% endif %}"
+                               {% if item.design %}data-design-preview="{{ item.preview_image_url|default:'' }}" data-design-preview-url="{% url 'designer:cart_preview' item.design.id %}?format=json" data-preview-name="{{ item.product.name }}" aria-label="Preview {{ item.product.name }} design"{% endif %}
+                               class="zv-image-link">
+
+                                {% if item.preview_image_url %}
+                                <img src="{{ item.preview_image_url }}" alt="{{ item.product.name }}{% if item.color_variant %} — {{ item.color_variant.name }}{% endif %}" class="zv-cart-img{% if item.design %} zv-cart-design-thumb{% endif %}"{% if item.design %} data-saved-design-thumb="{% url 'designer:cart_preview' item.design.id %}?format=json"{% endif %}>
+                                {% else %}
+                                <span class="zv-cart-placeholder">Z</span>
+                                {% endif %}
+
+                            </a>
+
+                        </td>
+
+
+                        <!-- PRODUCT NAME -->
+                        <td class="zv-product-cell">
+
+                            <a
+                                href="{% url 'designer:choose_design' item.product.id %}"
+                                class="zv-product-name"
+                            >
+                                {{ item.product.name }}
+                            </a>
+                            {% if item.variant %}<small class="d-block text-muted">Size: {{ item.variant.name }}</small>{% endif %}
+                            {% if item.color_variant %}<small class="d-block text-muted">Color: {{ item.color_variant.name }}</small>{% endif %}
+                            {% if not item.design %}
+                            <div class="zv-custom-design-actions">
+                                <a class="btn btn-solid zv-edit-design" href="{{ item.edit_url }}" data-cart-edit>Edit</a>
+                            </div>
+                            {% endif %}
+                            {% if item.design %}
+                            <div class="zv-custom-design-actions">
+                                <span class="zv-custom-label">Custom design</span>
+                                <a class="btn btn-solid zv-edit-design" href="{{ item.edit_url }}" data-cart-edit>Edit Design</a>
+                            </div>
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- PRICE -->
+                        <td class="zv-price-cell">
+
+                            <h2>
+                                ${{ item.unit_price }}
+                            </h2>
+                            {% if item.quantity_saving > 0 %}<small class="zv-quantity-saving">Quantity price: <del>${{ item.reference_unit_price }}</del> → ${{ item.unit_price }} each<br>You save ${{ item.quantity_saving }} on this line.</small>{% endif %}
+
+                        </td>
+
+
+                        <!-- QUANTITY -->
+                        <td class="zv-quantity-cell">
+
+                            <form
+                                method="post"
+                                action="{% url 'designer:update_cart' item.product.id %}"
+                                class="zv-cart-qty-form"
+                            >
+
+                                {% csrf_token %}
+                                <input type="hidden" name="cart_key" value="{{ item.cart_key }}">
+                                <input type="hidden" name="size_key" value="{{ item.size_key }}">
+                                <input type="hidden" name="color_key" value="{{ item.color_key }}">
+
+                                <div class="zv-quantity-box">
+
+                                    <button
+                                        type="button"
+                                        class="zv-qty-btn zv-minus"
+                                        aria-label="Decrease quantity"
+                                    >
+                                        <i class="ri-arrow-left-s-line"></i>
+                                    </button>
+
+
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        value="{{ item.quantity }}"
+                                        min="{{ item.minimum_quantity }}"
+                                        max="{{ item.maximum_quantity|default:9999 }}"
+                                        class="zv-qty-input"
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        class="zv-qty-btn zv-plus"
+                                        aria-label="Increase quantity"
+                                    >
+                                        <i class="ri-arrow-right-s-line"></i>
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </td>
+
+
+                        <!-- TOTAL -->
+                        <td class="zv-total-cell">
+
+                            <h2>
+                                ${{ item.line_total }}
+                            </h2>
+
+                        </td>
+
+
+                        <!-- REMOVE -->
+                        <td class="zv-action-cell">
+
+                            <form
+                                method="post"
+                                action="{% url 'designer:remove_from_cart' item.product.id %}"
+                                class="zv-remove-form"
+                            >
+
+                                {% csrf_token %}
+                                <input type="hidden" name="cart_key" value="{{ item.cart_key }}">
+                                <input type="hidden" name="size_key" value="{{ item.size_key }}">
+                                <input type="hidden" name="color_key" value="{{ item.color_key }}">
+
+                                <button
+                                    type="submit"
+                                    class="zv-remove-btn"
+                                    aria-label="Remove {{ item.product.name }}"
+                                >
+                                    <i class="ri-close-line"></i>
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+
+                <!-- TOTAL -->
+                <tfoot>
+
+                    <tr>
+
+                        <td colspan="4" class="zv-total-label">
+
+                            Total Price :
+
+                        </td>
+
+                        <td class="zv-grand-total">
+
+                            <h2>
+                                ${{ subtotal }}
+                            </h2>
+
+                        </td>
+
+                        <td></td>
+
+                    </tr>
+
+                </tfoot>
+
+            </table>
+
+        </div>
+
+
+        <!-- ==============================
+             BUTTONS
+        ============================== -->
+        <div class="zv-cart-buttons">
+
+            <a
+                href="{% url 'designer:start_designing' %}"
+                class="btn btn-solid"
+            >
+                Continue Shopping
+            </a>
+
+
+            <a
+                href="{% url 'designer:cart_checkout' %}"
+                class="btn btn-solid"
+            >
+                Check Out
+            </a>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- ==============================
+             EMPTY CART
+        ============================== -->
+        <div class="zv-empty-cart">
+
+            <div class="zv-empty-icon">
+                <i class="ri-shopping-cart-line"></i>
+            </div>
+
+            <h2>
+                Your Cart Is Empty
+            </h2>
+
+            <p>
+                Add something you love and it will appear here.
+            </p>
+
+            <a
+                href="{% url 'designer:start_designing' %}"
+                class="btn btn-solid"
+            >
+                Shop Now
+            </a>
+
+        </div>
+
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+
+<style>
+
+/* =========================================================
+   CART PAGE
+========================================================= */
+
+.zv-cart-page{
+    background:#fff;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.zv-cart-table{
+    width:100%;
+    margin:0;
+    border:1px solid #ededed;
+    table-layout:fixed;
+}
+
+
+/* HEADER */
+
+.zv-cart-table thead tr{
+    height:64px;
+    background:#fafafa;
+}
+
+.zv-cart-table thead th{
+    padding:15px 10px !important;
+
+    vertical-align:middle !important;
+
+    text-align:center !important;
+
+    color:#111;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:15px;
+    font-weight:600;
+
+    border-bottom:1px solid #ededed;
+}
+
+
+/* COLUMN WIDTHS */
+
+.zv-cart-table thead th:nth-child(1){
+    width:14%;
+}
+
+.zv-cart-table thead th:nth-child(2){
+    width:30%;
+}
+
+.zv-cart-table thead th:nth-child(3){
+    width:13%;
+}
+
+.zv-cart-table thead th:nth-child(4){
+    width:17%;
+}
+
+.zv-cart-table thead th:nth-child(5){
+    width:14%;
+}
+
+.zv-cart-table thead th:nth-child(6){
+    width:12%;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   PERFECT VERTICAL + HORIZONTAL ALIGNMENT
+========================================================= */
+
+.zv-cart-table tbody tr{
+    height:130px;
+}
+
+.zv-cart-table tbody td{
+
+    padding:15px 10px !important;
+
+    vertical-align:middle !important;
+
+    text-align:center !important;
+
+    border-bottom:1px solid #ededed;
+}
+
+
+/* Every cell inner content centered */
+
+.zv-image-cell,
+.zv-product-cell,
+.zv-price-cell,
+.zv-quantity-cell,
+.zv-total-cell,
+.zv-action-cell{
+
+    vertical-align:middle !important;
+    text-align:center !important;
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.zv-image-link{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+}
+
+
+.zv-cart-img{
+
+    display:block;
+
+    width:90px;
+    height:95px;
+
+    margin:0 auto;
+
+    object-fit:contain;
+
+    background:#f7f7f7;
+}
+
+
+.zv-no-image{
+
+    width:90px;
+    height:95px;
+
+    margin:0 auto;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:#f5f5f5;
+
+    color:#aaa;
+
+    font-size:25px;
+}
+
+
+/* =========================================================
+   PRODUCT NAME
+========================================================= */
+
+.zv-product-cell{
+
+    text-align:center !important;
+}
+
+
+.zv-product-name{
+
+    display:inline-block;
+
+    margin:0 auto;
+
+    color:#222 !important;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:16px;
+
+    font-weight:500;
+
+    line-height:1.5;
+
+    text-align:center;
+
+    text-decoration:none !important;
+
+    transition:.2s ease;
+}
+
+
+.zv-product-name:hover{
+
+    color:#0758b8 !important;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.zv-price-cell h2{
+
+    margin:0 !important;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    line-height:1;
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+.zv-cart-qty-form{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:0 !important;
+}
+
+
+.zv-quantity-box{
+
+    width:140px;
+    height:42px;
+
+    margin:0 auto;
+
+    display:grid;
+
+    grid-template-columns:40px 60px 40px;
+
+    align-items:center;
+
+    border:1px solid #e7e7e7;
+
+    background:#fff;
+}
+
+
+.zv-qty-btn{
+
+    width:40px;
+    height:40px;
+
+    padding:0;
+
+    border:0;
+
+    background:#fff;
+
+    color:#555;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+
+.zv-qty-btn:hover{
+
+    background:#0758b8;
+
+    color:#fff;
+}
+
+
+.zv-qty-input{
+
+    width:60px;
+    height:40px;
+
+    padding:0;
+
+    border:0;
+
+    border-left:1px solid #e7e7e7;
+
+    border-right:1px solid #e7e7e7;
+
+    outline:0;
+
+    background:#fff;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    text-align:center;
+
+    appearance:textfield;
+}
+
+
+.zv-qty-input::-webkit-inner-spin-button,
+.zv-qty-input::-webkit-outer-spin-button{
+
+    -webkit-appearance:none;
+
+    margin:0;
+}
+
+
+/* =========================================================
+   PRODUCT TOTAL
+========================================================= */
+
+.zv-total-cell h2{
+
+    margin:0 !important;
+
+    color:#0758b8;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    line-height:1;
+}
+
+
+/* =========================================================
+   REMOVE
+========================================================= */
+
+.zv-remove-form{
+
+    margin:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+
+.zv-remove-btn{
+
+    width:36px;
+    height:36px;
+
+    margin:0 auto;
+
+    padding:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:1px solid #ededed;
+
+    background:#fafafa;
+
+    color:#777;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+
+.zv-remove-btn:hover{
+
+    border: color #0758b8;;
+
+    background:#f8f8f8;
+
+    color:#0758b8;
+}
+
+
+/* =========================================================
+   TOTAL PRICE ROW
+========================================================= */
+
+.zv-cart-table tfoot tr{
+
+    height:72px;
+
+    background:#fff;
+}
+
+
+.zv-cart-table tfoot td{
+
+    padding:15px 10px !important;
+
+    vertical-align:middle !important;
+
+    border-top:1px solid #ededed;
+}
+
+
+.zv-total-label{
+
+    text-align:right !important;
+
+    color:#777;
+
+    font-family:"Lato",sans-serif;
+
+    font-size:16px;
+
+    font-weight:400;
+
+    padding-right:45px !important;
+}
+
+
+.zv-grand-total{
+
+    text-align:center !important;
+}
+
+
+.zv-grand-total h2{
+
+    margin:0 !important;
+
+    color:#0758b8;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:20px;
+
+    font-weight:600;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.zv-cart-buttons{
+
+    margin-top:38px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+}
+
+
+.zv-cart-buttons .btn-solid{
+
+    min-width:205px;
+
+    padding:14px 25px;
+
+    border-radius:0;
+
+    background:#0758b8 !important;
+
+    border-color:#0758b8 !important;
+
+    color:#fff !important;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    text-transform:capitalize;
+
+    transition:.25s ease;
+}
+
+
+.zv-cart-buttons .btn-solid:hover{
+
+    background: #f8f8f8 !important;
+
+    border-color:#0758b8 !important;
+
+    color:#0758b8 !important;
+}
+
+
+/* =========================================================
+   EMPTY CART
+========================================================= */
+
+.zv-empty-cart{
+
+    padding:80px 20px;
+
+    text-align:center;
+}
+
+
+.zv-empty-icon{
+
+    width:85px;
+    height:85px;
+
+    margin:0 auto 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#eef5ff;
+
+    color:#0758b8;
+
+    font-size:38px;
+}
+
+
+.zv-empty-cart h2{
+
+    margin:0 0 8px;
+
+    color:#222;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:25px;
+
+    font-weight:600;
+}
+
+
+.zv-empty-cart p{
+
+    margin:0 0 22px;
+
+    color:#777;
+
+    font-family:"Lato",sans-serif;
+
+    font-size:15px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:991px){
+
+    .zv-cart-table{
+
+        min-width:900px;
+    }
+
+}
+
+
+@media(max-width:767px){
+
+    .zv-cart-buttons{
+
+        gap:15px;
+    }
+
+
+    .zv-cart-buttons .btn-solid{
+
+        width:50%;
+
+        min-width:0;
+    }
+
+}
+
+
+@media(max-width:575px){
+
+    .zv-cart-buttons{
+
+        flex-direction:column;
+    }
+
+
+    .zv-cart-buttons .btn-solid{
+
+        width:100%;
+    }
+
+}
+
+
+/* Saved custom artwork preview, matching the live ZenVibe cart behaviour. */
+.zv-custom-design-actions{margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:10px}.zv-custom-label{font-size:13px;color:#555}.zv-edit-design{padding:10px 18px!important;min-width:0!important;font-size:12px!important;background:#075fbd!important;border-color:#075fbd!important;color:#fff!important;text-decoration:none!important}.zv-edit-design:hover,.zv-edit-design:focus{color:#fff!important;background:#064f9d!important}.zv-cart-design-thumb{width:120px!important;height:120px!important;object-fit:contain!important;background:#fff}
+</style>
+
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    document
+        .querySelectorAll(".zv-cart-qty-form")
+        .forEach(function(form){
+
+            const input =
+                form.querySelector(".zv-qty-input");
+
+            const minus =
+                form.querySelector(".zv-minus");
+
+            const plus =
+                form.querySelector(".zv-plus");
+
+
+            if(!input){
+                return;
+            }
+
+
+            function submitQuantity(){
+
+                let quantity =
+                    parseInt(input.value || "1", 10);
+
+
+                if(
+                    !Number.isFinite(quantity) ||
+                    quantity < 1
+                ){
+
+                    quantity = 1;
+                }
+
+
+                const maximum = parseInt(input.max || "9999", 10);
+                quantity =
+                    Math.min(
+                        maximum,
+                        quantity
+                    );
+
+
+                input.value =
+                    quantity;
+
+
+                form.submit();
+            }
+
+
+            if(minus){
+
+                minus.addEventListener(
+                    "click",
+                    function(){
+
+                        let quantity =
+                            parseInt(
+                                input.value || "1",
+                                10
+                            );
+
+
+                        quantity =
+                            Math.max(
+                                parseInt(input.min || "1", 10),
+                                quantity - 1
+                            );
+
+
+                        input.value =
+                            quantity;
+
+
+                        submitQuantity();
+                    }
+                );
+
+            }
+
+
+            if(plus){
+
+                plus.addEventListener(
+                    "click",
+                    function(){
+
+                        let quantity =
+                            parseInt(
+                                input.value || "1",
+                                10
+                            );
+
+
+                        quantity =
+                            Math.min(
+                                parseInt(input.max || "9999", 10),
+                                quantity + 1
+                            );
+
+
+                        input.value =
+                            quantity;
+
+
+                        submitQuantity();
+                    }
+                );
+
+            }
+
+
+            input.addEventListener(
+                "change",
+                submitQuantity
+            );
+
+        });
+
+});
+
+</script>
+
+{% endblock %}
+
+
+
+

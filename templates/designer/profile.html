@@ -1,0 +1,676 @@
+﻿{% extends 'designer/base.html' %}
+
+{% block title %}My Profile | ZenVibe{% endblock %}
+
+{% block content %}
+
+<!-- ==========================================
+     BREADCRUMB
+=========================================== -->
+<div class="breadcrumb-section">
+    <div class="container">
+
+        <h2>Profile</h2>
+
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Profile
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
+
+
+<!-- ==========================================
+     PERSONAL DETAIL
+=========================================== -->
+<section class="contact-page register-page zv-profile-personal">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-sm-12">
+
+                <h3>PERSONAL DETAIL</h3>
+
+                <div class="theme-form">
+
+                    <div class="row g-sm-4 g-3">
+
+                        <!-- FIRST NAME -->
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label>
+                                    First Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="{{ profile_user.first_name }}"
+                                    
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- LAST NAME -->
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label>
+                                    Last Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="{{ profile_user.last_name }}"
+                                    
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- USERNAME -->
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label>
+                                    Username
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="{{ profile_user.username }}"
+                                    
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label>
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    value="{{ profile_user.email }}"
+                                    
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TOTAL ORDERS -->
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label>
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="{{ order_count }}"
+                                    
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                      
+
+                    </div>
+
+                </div>
+
+            </div>
+<div class="col-md-12">
+
+                            <button
+                                type="submit"
+                                name="save_shipping"
+                                class="btn btn-sm btn-solid"
+                            >
+                                Save Setting
+                            </button>
+
+                        </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================
+     SHIPPING ADDRESS
+=========================================== -->
+<!-- <section class="contact-page register-page zv-shipping-section">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-sm-12">
+
+                <h3>SHIPPING ADDRESS</h3>
+
+                <form method="post" class="theme-form">
+
+                    {% csrf_token %}
+
+                    <div class="row g-sm-4 g-3">
+
+                       
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="flat_plot">
+                                    Flat / Plot
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="flat_plot"
+                                    name="flat_plot"
+                                    value="{{ shipping_address.flat_plot|default:'' }}"
+                                    placeholder="Company name / Flat / Plot"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="address">
+                                    Address *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="address"
+                                    name="address"
+                                    value="{{ shipping_address.address|default:'' }}"
+                                    placeholder="Address"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="postal_code">
+                                    Postal Code *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="postal_code"
+                                    name="postal_code"
+                                    value="{{ shipping_address.postal_code|default:'' }}"
+                                    placeholder="Postal Code"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="country">
+                                    Country *
+                                </label>
+
+                                <select
+                                    class="form-control"
+                                    id="country"
+                                    name="country"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Country
+                                    </option>
+
+                                    <option value="Canada"
+                                        {% if shipping_address.country == "Canada" %}selected{% endif %}>
+                                        Canada
+                                    </option>
+
+                                    <option value="United States"
+                                        {% if shipping_address.country == "United States" %}selected{% endif %}>
+                                        United States
+                                    </option>
+
+                                    <option value="India"
+                                        {% if shipping_address.country == "India" %}selected{% endif %}>
+                                        India
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="city">
+                                    City *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="city"
+                                    name="city"
+                                    value="{{ shipping_address.city|default:'' }}"
+                                    placeholder="City"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="form-box">
+
+                                <label for="province">
+                                    Province / State *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="province"
+                                    name="province"
+                                    value="{{ shipping_address.province|default:'' }}"
+                                    placeholder="Province / State"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                        
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section> -->
+
+
+
+<style>
+
+/* =============================================
+   MATCH MULTIKART PROFILE PAGE
+============================================= */
+
+.zv-profile-personal{
+    padding-top:60px;
+    padding-bottom:30px;
+}
+
+.zv-account-section{
+    padding-top:30px;
+}
+
+
+/* HEADINGS */
+
+.contact-page.register-page h3{
+    margin:0 0 25px;
+
+    color:#222;
+
+    font-size:24px;
+    font-weight:700;
+
+    letter-spacing:.5px;
+
+    text-transform:uppercase;
+}
+
+
+/* =============================================
+   FORM
+============================================= */
+
+.zv-profile-personal .form-box{
+    margin-bottom:5px;
+}
+
+.zv-profile-personal .form-box label{
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#555;
+
+    font-size:16px;
+    font-weight:400;
+}
+
+.zv-profile-personal .form-control{
+    width:100%;
+    height:50px;
+
+    padding:12px 18px;
+
+    border:1px solid #e6e6e6;
+    border-radius:0;
+
+    background:#fff;
+
+    color:#444;
+
+    font-size:15px;
+
+    box-shadow:none;
+}
+
+.zv-profile-personal .form-control:focus{
+    border-color:#ddd;
+    box-shadow:none;
+}
+
+.zv-profile-personal input[readonly]{
+    background:#fff;
+    cursor:default;
+}
+
+
+
+/* =============================================
+   SHIPPING ADDRESS
+============================================= */
+
+.zv-shipping-section{
+    padding-top:30px;
+    padding-bottom:30px;
+}
+
+.zv-shipping-section .form-box{
+    margin-bottom:5px;
+}
+
+.zv-shipping-section .form-box label{
+    display:block;
+    margin-bottom:8px;
+    color:#555;
+    font-size:16px;
+    font-weight:400;
+}
+
+.zv-shipping-section .form-control{
+    width:100%;
+    height:50px;
+    padding:12px 18px;
+    border:1px solid #e6e6e6;
+    border-radius:0;
+    background:#fff;
+    color:#444;
+    font-size:15px;
+    box-shadow:none;
+}
+
+.zv-shipping-section .form-control:focus{
+    border-color:#ddd;
+    box-shadow:none;
+}
+
+.zv-shipping-section select.form-control{
+    appearance:auto;
+}
+
+.zv-shipping-section .btn-solid{
+    margin-top:5px;
+    min-width:150px;
+}
+
+/* =============================================
+   ACCOUNT OPTIONS
+============================================= */
+
+.zv-account-option{
+    height:100%;
+
+    display:flex;
+
+    gap:15px;
+
+    padding:22px;
+
+    border:1px solid #eeeeee;
+
+    background:#fff;
+
+    color:#222;
+
+    text-decoration:none !important;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
+
+.zv-account-option:hover{
+    border-color:#ddd;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+
+    transform:translateY(-2px);
+}
+
+.zv-option-icon{
+    width:48px;
+    height:48px;
+
+    flex:0 0 48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#f7f7f7;
+
+    font-size:22px;
+
+    color:var(--theme-color, #ff4c3b);
+}
+
+.zv-account-option h4{
+    margin:0 0 6px;
+
+    color:#222;
+
+    font-size:17px;
+    font-weight:600;
+}
+
+.zv-account-option p{
+    margin:0;
+
+    color:#777;
+
+    font-size:13px;
+    line-height:1.6;
+}
+
+
+/* =============================================
+   BUTTONS
+============================================= */
+
+.zv-profile-buttons{
+    display:flex;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-top:30px;
+}
+
+.zv-profile-buttons .btn{
+    min-width:150px;
+
+    text-align:center;
+}
+
+
+/* =============================================
+   TABLET
+============================================= */
+
+@media(max-width:991px){
+
+    .zv-profile-personal{
+        padding-top:45px;
+    }
+
+}
+
+
+/* =============================================
+   MOBILE
+============================================= */
+
+@media(max-width:767px){
+
+    .zv-profile-personal{
+        padding-top:35px;
+        padding-bottom:20px;
+    }
+
+    .zv-account-section{
+        padding-top:20px;
+    }
+
+    .zv-shipping-section{
+        padding-top:20px;
+        padding-bottom:20px;
+    }
+
+    .zv-shipping-section .form-control{
+        height:48px;
+        padding:10px 14px;
+    }
+
+    .zv-shipping-section .btn-solid{
+        width:100%;
+    }
+
+
+    .contact-page.register-page h3{
+        margin-bottom:20px;
+
+        font-size:20px;
+    }
+
+    .zv-profile-buttons{
+        flex-direction:column;
+
+        align-items:stretch;
+    }
+
+    .zv-profile-buttons .btn{
+        width:100%;
+    }
+
+}
+
+
+/* =============================================
+   SMALL MOBILE
+============================================= */
+
+@media(max-width:575px){
+
+    .zv-profile-personal .form-control{
+        height:48px;
+
+        padding:10px 14px;
+    }
+
+    .zv-account-option{
+        padding:18px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F5F1E8" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="410" y="823.5" width="27.2" height="136.5" rx="0" ry="0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="445.2" y="772.8" width="40.8" height="187.2" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="494.0" y="722.1" width="23.8" height="237.9" rx="0" ry="0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="525.8" y="671.4" width="51.0" height="288.6" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="584.8" y="823.5" width="30.599999999999998" height="136.5" rx="0" ry="0" fill="#C9A45C" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="623.4" y="772.8" width="37.4" height="187.2" rx="0" ry="0" fill="#0D0D0F" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="45" y="203" fill="#C9A45C" font-family="Poppins" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">DON'T</tspan></text>
+<text x="50" y="302" fill="#0D0D0F" font-family="Poppins" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">MISS OUT</tspan></text>
+<text x="55" y="493" fill="#0D0D0F" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Available for a limited time</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#E0BD73" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#C9A45C" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#F5F1E8" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">GET THE OFFER</tspan></text>
+<text x="730" y="684" fill="#0D0D0F" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#C9A45C" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">81</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#E0BD73" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

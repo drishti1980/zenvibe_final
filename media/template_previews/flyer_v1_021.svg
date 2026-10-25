@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#152B45" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="40" y="306.5" width="73.60000000000001" height="143.5" rx="0" ry="0" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="121.60000000000001" y="253.20000000000002" width="110.39999999999999" height="196.79999999999998" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="240.0" y="199.9" width="64.4" height="250.1" rx="0" ry="0" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="312.4" y="146.60000000000002" width="138.0" height="303.4" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="458.4" y="306.5" width="82.8" height="143.5" rx="0" ry="0" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="0.9"/>
+<rect x="549.1999999999999" y="253.20000000000002" width="101.2" height="196.79999999999998" rx="0" ry="0" fill="#F6F8FB" stroke="none" stroke-width="0" opacity="0.9"/>
+<text x="500.0" y="630" fill="#152B45" font-family="Poppins" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">BUSINESS</tspan><tspan x="500.0" dy="65.8">CONFERENCE 2026</tspan></text>
+<text x="500.0" y="768" fill="#152B45" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Ideas â€¢ Leaders â€¢ Opportunity</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#C8A463" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#BBD7F3" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#152B45" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2D7DD2" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F6F8FB" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">REGISTER NOW</tspan></text>
+<text x="954" y="69" fill="#2D7DD2" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">21</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A463" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

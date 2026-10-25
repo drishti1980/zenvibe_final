@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F4F6FA" stroke="none" stroke-width="0" opacity="1"/>
+<text x="55" y="133" fill="#0B2C63" font-family="Oswald" font-size="68" font-weight="700" text-anchor="start" opacity="1"><tspan x="55" dy="0">SAVE MORE</tspan><tspan x="55" dy="63.919999999999995">TODAY</tspan></text>
+<text x="58" y="267" fill="#0B2C63" font-family="Inter" font-size="22" font-weight="400" text-anchor="start" opacity="1"><tspan x="58" dy="0">Selected products â€¢ While stocks last</tspan></text>
+<polygon points="427.2,285.0 447.59999999999997,285.0 437.4,115.0" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="474.8,285.0 495.2,285.0 485.0,145.0" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="522.4,285.0 542.8,285.0 532.6,175.0" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="570.0,285.0 590.4,285.0 580.2,115.0" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="617.6,285.0 638.0,285.0 627.8000000000001,145.0" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="665.2,285.0 685.6,285.0 675.4000000000001,175.0" fill="#1746D1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="712.8,285.0 733.1999999999999,285.0 723.0,115.0" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="400.0" cy="35.0" r="3" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="525.8" cy="187.5" r="4" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="651.6" cy="177.5" r="5" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="437.4" cy="167.5" r="6" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="563.2" cy="157.5" r="3" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="689.0" cy="147.5" r="4" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="474.8" cy="137.5" r="5" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="600.6" cy="127.5" r="6" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="726.4" cy="117.5" r="3" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="512.2" cy="107.5" r="4" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="638.0" cy="97.5" r="5" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="423.8" cy="87.5" r="6" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="549.6" cy="77.5" r="3" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="675.4" cy="67.5" r="4" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="461.2" cy="57.5" r="5" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="587.0" cy="47.5" r="6" fill="#C8A055" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="712.8" cy="37.5" r="3" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="498.6" cy="190.0" r="4" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.8"/>
+<rect x="55" y="370" width="205" height="270" rx="18" ry="18" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="75" y="413" fill="#1746D1" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">01</tspan></text>
+<text x="75" y="533" fill="#0B2C63" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="75" dy="0">PLAN</tspan></text>
+<rect x="290" y="370" width="205" height="270" rx="18" ry="18" fill="#0B2C63" stroke="none" stroke-width="0" opacity="0.96"/>
+<text x="310" y="413" fill="#C8A055" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">02</tspan></text>
+<text x="310" y="533" fill="#F4F6FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="310" dy="0">CREATE</tspan></text>
+<rect x="525" y="370" width="205" height="270" rx="18" ry="18" fill="#94B3FF" stroke="none" stroke-width="0" opacity="0.55"/>
+<text x="545" y="413" fill="#1746D1" font-family="Inter" font-size="18" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">03</tspan></text>
+<text x="545" y="533" fill="#0B2C63" font-family="Inter" font-size="28" font-weight="700" text-anchor="start" opacity="1"><tspan x="545" dy="0">GROW</tspan></text>
+<text x="500.0" y="725" fill="#0B2C63" font-family="Inter" font-size="25" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">A clean, modern framework built around your next move.</tspan></text>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#94B3FF" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#0B2C63" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#1746D1" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F4F6FA" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">SHOP NOW</tspan></text>
+<text x="954" y="69" fill="#1746D1" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">78</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C8A055" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

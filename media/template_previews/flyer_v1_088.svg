@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#10223A" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="437.2,960.0 457.59999999999997,960.0 447.4,694.8" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="484.8,960.0 505.2,960.0 495.0,741.6" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="532.4,960.0 552.8,960.0 542.6,788.4000000000001" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="580.0,960.0 600.4,960.0 590.2,694.8" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="627.6,960.0 648.0,960.0 637.8000000000001,741.6" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="675.2,960.0 695.6,960.0 685.4000000000001,788.4000000000001" fill="#3867D6" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="722.8,960.0 743.1999999999999,960.0 733.0,694.8" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="410.0" cy="570.0" r="3" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="535.8" cy="807.9" r="4" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="661.6" cy="792.3" r="5" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="447.4" cy="776.7" r="6" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="573.2" cy="761.1" r="3" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="699.0" cy="745.5" r="4" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="484.8" cy="729.9" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="610.6" cy="714.3" r="6" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="736.4" cy="698.7" r="3" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="522.2" cy="683.1" r="4" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="648.0" cy="667.5" r="5" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="433.8" cy="651.9" r="6" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="559.6" cy="636.3" r="3" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="685.4" cy="620.7" r="4" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="471.2" cy="605.1" r="5" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="597.0" cy="589.5" r="6" fill="#C6A15B" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="722.8" cy="573.9" r="3" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="508.6" cy="811.8" r="4" fill="#9FB8E8" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="45" y="203" fill="#3867D6" font-family="Oswald" font-size="128" font-weight="700" text-anchor="start" opacity="1"><tspan x="45" dy="0">CLARITY</tspan></text>
+<text x="50" y="302" fill="#F8F5EF" font-family="Oswald" font-size="72" font-weight="700" text-anchor="start" opacity="1"><tspan x="50" dy="0">FOR WHAT'S NEXT</tspan></text>
+<text x="55" y="493" fill="#F8F5EF" font-family="Inter" font-size="23" font-weight="400" text-anchor="start" opacity="1"><tspan x="55" dy="0">Strategy â€¢ Transformation â€¢ Growth</tspan></text>
+<line x1="55" y1="545" x2="350" y2="545" stroke="#C6A15B" stroke-width="4" opacity="1"/>
+<rect x="50" y="650" width="230" height="58" rx="29" ry="29" fill="#3867D6" stroke="none" stroke-width="0" opacity="1"/>
+<text x="165.0" y="686" fill="#10223A" font-family="Inter" font-size="22" font-weight="700" text-anchor="middle" opacity="1"><tspan x="165.0" dy="0">BOOK A CALL</tspan></text>
+<text x="730" y="684" fill="#F8F5EF" font-family="Inter" font-size="16" font-weight="400" text-anchor="end" opacity="1"><tspan x="730" dy="0">zenvibe.example  â€¢  +61 400 000 000</tspan></text>
+<text x="954" y="69" fill="#3867D6" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">88</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#C6A15B" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

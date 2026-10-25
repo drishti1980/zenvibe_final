@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3F0E7" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="185" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="1"/>
+<text x="500.0" y="84" fill="#B89555" font-family="Montserrat" font-size="16" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">PRIVATE EDITION</tspan></text>
+<rect x="161" y="236" width="678" height="358" rx="0" ry="0" fill="none" stroke="#B89555" stroke-width="2" opacity="1"/>
+<path d="M 272.8 512.5 L 272.8 337.0 Q 500.0 212.2 727.1999999999999 337.0 L 727.1999999999999 512.5" fill="none" stroke="#B89555" stroke-width="3" opacity="1"/>
+<line x1="230.2" y1="266.8" x2="457.4" y2="307.696" stroke="#B89555" stroke-width="3" opacity="0.85"/>
+<ellipse cx="268.06666666666666" cy="255.61599999999999" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 268.06666666666666 255.61599999999999)"/>
+<ellipse cx="305.93333333333334" cy="298.432" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 305.93333333333334 298.432)"/>
+<ellipse cx="343.8" cy="269.248" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 343.8 269.248)"/>
+<ellipse cx="381.66666666666663" cy="312.064" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 381.66666666666663 312.064)"/>
+<ellipse cx="419.5333333333333" cy="282.88" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 419.5333333333333 282.88)"/>
+<line x1="769.8" y1="500.8" x2="556.8" y2="539.14" stroke="#B89555" stroke-width="3" opacity="0.85"/>
+<ellipse cx="734.3" cy="489.19" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 734.3 489.19)"/>
+<ellipse cx="698.8" cy="531.58" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 698.8 531.58)"/>
+<ellipse cx="663.3" cy="501.97" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 663.3 501.97)"/>
+<ellipse cx="627.8" cy="544.36" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(-32 627.8 544.36)"/>
+<ellipse cx="592.3" cy="514.75" rx="18" ry="8" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.92" transform="rotate(32 592.3 514.75)"/>
+<text x="500.0" y="686" fill="#173F35" font-family="Cinzel" font-size="66" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">TIME TO</tspan><tspan x="500.0" dy="62.04">UNWIND</tspan></text>
+<text x="500.0" y="826" fill="#173F35" font-family="Montserrat" font-size="21" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Massage â€¢ Skin â€¢ Wellness</tspan></text>
+<line x1="250" y1="870" x2="750" y2="870" stroke="#B89555" stroke-width="2" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#8FB8A1" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#173F35" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2E6A56" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3F0E7" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">BOOK YOUR ESCAPE</tspan></text>
+<text x="954" y="69" fill="#2E6A56" font-family="Montserrat" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">95</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

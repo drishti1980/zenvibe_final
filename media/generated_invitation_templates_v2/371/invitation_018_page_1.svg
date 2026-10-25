@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#fff0f0" opacity="1"/>
+<line x1="80" y1="65" x2="670" y2="65" stroke="#c0767f" stroke-width="3" opacity="1"/>
+<line x1="80" y1="985" x2="670" y2="985" stroke="#c0767f" stroke-width="3" opacity="1"/>
+<line x1="55" y1="100" x2="55" y2="950" stroke="#ffffff" stroke-width="2" opacity="1"/>
+<line x1="695" y1="100" x2="695" y2="950" stroke="#ffffff" stroke-width="2" opacity="1"/>
+<rect x="270" y="0" width="210" height="1050" rx="0" fill="#ffffff" opacity="0.22"/>
+<line x1="270" y1="0" x2="270" y2="1050" stroke="#c0767f" stroke-width="2" opacity="1"/>
+<line x1="480" y1="0" x2="480" y2="1050" stroke="#c0767f" stroke-width="2" opacity="1"/>
+<circle cx="375" cy="180" r="72" fill="transparent" opacity="1" stroke="#c0767f" stroke-width="3"/>
+<circle cx="375" cy="180" r="56" fill="#ffffff" opacity="0.22" stroke="#c0767f" stroke-width="1"/>
+<text x="375.0" y="194" text-anchor="middle" fill="#6f1f2f" font-size="42" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="375.0" dy="0">O E</tspan></text>
+<text x="110" y="317" text-anchor="start" fill="#c0767f" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="110" dy="0">DINNER · DRINKS · DANCING</tspan></text>
+<text x="110" y="408" text-anchor="start" fill="#6f1f2f" font-size="52" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="110" dy="0">SOPHIA TURNS 30</tspan></text>
+<text x="110" y="525" text-anchor="start" fill="#6f1f2f" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="110" dy="0">SATURDAY · 24 OCTOBER 2026</tspan></text>
+<text x="110" y="565" text-anchor="start" fill="#6f1f2f" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="110" dy="0">THE GARDEN ROOM · 7:00 PM</tspan></text>
+<text x="110" y="639" text-anchor="start" fill="#c0767f" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="110" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#ffffff" opacity="0.025"/>
+</svg>

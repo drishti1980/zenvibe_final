@@ -1,0 +1,57 @@
+{% extends "designer/account_shell.html" %}
+{% block title %}Dashboard | ZenVibe{% endblock %}
+{% block account_content %}
+<style>
+.zv-dash-intro{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid #e8edf5;margin-bottom:24px}
+.zv-dash-intro .zv-dash-kicker{display:block;color:#e56834;font-size:11px;font-weight:800;letter-spacing:.12em;margin-bottom:7px}
+.zv-dash-intro h1{font-size:clamp(25px,2.6vw,31px)!important;line-height:1.25!important;margin:0 0 8px!important;letter-spacing:-.03em!important;text-transform:none!important}
+.zv-dash-intro p{margin:0!important;font-size:14px!important}
+.zv-dash-avatar{width:58px;height:58px;border-radius:17px;background:#eaf2ff;color:#0758b8;display:grid;place-items:center;font-size:26px;flex-shrink:0}
+.zv-dash-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:28px}
+.zv-dash-stat{background:#f8faff;border:1px solid #e8eef7;border-radius:12px;padding:19px 20px}
+.zv-dash-stat i{font-size:21px;color:#0758b8}
+.zv-dash-stat strong{display:block;font-size:22px;line-height:1.3;color:#142b49;margin:10px 0 4px;font-weight:750}
+.zv-dash-stat span{font-size:12px;color:#72849a;font-weight:600}
+.zv-dash-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.zv-dash-section-head h2{font-size:19px!important;margin:0!important;line-height:1.4!important}
+.zv-dash-section-head span{font-size:12px;color:#8290a3}
+.zv-dash-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.zv-dash-link{display:flex;align-items:center;gap:14px;padding:18px 17px;border:1px solid #e5ebf3;border-radius:12px;background:#fff;text-decoration:none!important;min-width:0;transition:border-color .16s,box-shadow .16s,transform .16s}
+.zv-dash-link:hover{border-color:#b8cdec;box-shadow:0 7px 22px rgba(20,53,95,.07);transform:translateY(-1px)}
+.zv-dash-link-icon{width:45px;height:45px;flex:0 0 45px;display:grid;place-items:center;border-radius:12px;background:#edf4ff;color:#0758b8;font-size:21px}
+.zv-dash-link-icon.orange{background:#fff2e9;color:#e36a32}
+.zv-dash-link-icon.green{background:#eaf8f1;color:#17805c}
+.zv-dash-link-copy{min-width:0;flex:1}
+.zv-dash-link-copy strong{display:block;color:#1b3453;font-size:14px;font-weight:750;margin-bottom:4px}
+.zv-dash-link-copy small{display:block;color:#7b8ba0;font-size:12px;line-height:1.45}
+.zv-dash-link .ri-arrow-right-s-line{font-size:20px;color:#9ba8b8}
+.zv-dash-note{display:flex;align-items:flex-start;gap:11px;margin-top:25px;padding:16px 18px;border-radius:11px;background:#f5f9ff;color:#566b84;font-size:12px;line-height:1.6}
+.zv-dash-note i{color:#0758b8;font-size:19px;flex-shrink:0}
+@media(max-width:1050px){.zv-dash-overview{gap:9px}.zv-dash-stat{padding:15px}.zv-dash-links{gap:10px}.zv-dash-link{padding:15px 12px;gap:10px}}
+@media(max-width:800px){.zv-dash-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.zv-dash-overview{grid-template-columns:1fr;gap:9px}.zv-dash-stat{padding:14px 16px}.zv-dash-stat strong{margin:4px 0 0}.zv-dash-links{grid-template-columns:1fr}.zv-dash-link{padding:15px}.zv-dash-avatar{width:46px;height:46px;font-size:22px}.zv-dash-intro{padding-bottom:19px}}
+</style>
+<div class="zv-dash-intro">
+  <div>
+    <span class="zv-dash-kicker">ACCOUNT OVERVIEW</span>
+    <h1>Welcome back, {{ request.user.first_name|default:request.user.username }}!</h1>
+    <p>Manage your orders, delivery addresses and account preferences.</p>
+  </div>
+  <span class="zv-dash-avatar" aria-hidden="true"><i class="ri-user-line"></i></span>
+</div>
+<div class="zv-dash-overview" aria-label="Account summary">
+  <div class="zv-dash-stat"><i class="ri-shopping-bag-3-line" aria-hidden="true"></i><strong>{{ order_count|default:0 }}</strong><span>Total orders</span></div>
+  <div class="zv-dash-stat"><i class="ri-user-line" aria-hidden="true"></i><strong>Profile</strong><span>Personal details and preferences</span></div>
+  <div class="zv-dash-stat"><i class="ri-lock-password-line" aria-hidden="true"></i><strong>Security</strong><span>Password and account access</span></div>
+</div>
+<div class="zv-dash-section-head"><h2>Quick access</h2><span>Your account tools</span></div>
+<div class="zv-dash-links">
+  <a class="zv-dash-link" href="{% url 'designer:my_orders' %}"><span class="zv-dash-link-icon"><i class="ri-shopping-bag-3-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>My Orders</strong><small>Track current and past orders</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+  <a class="zv-dash-link" href="{% url 'designer:address_book' %}"><span class="zv-dash-link-icon orange"><i class="ri-map-pin-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>Address Book</strong><small>Manage Canadian delivery addresses</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+  <a class="zv-dash-link" href="{% url 'designer:payment_history' %}"><span class="zv-dash-link-icon green"><i class="ri-bank-card-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>Payment History</strong><small>Review payment status and totals</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+  <a class="zv-dash-link" href="{% url 'designer:account_settings' %}"><span class="zv-dash-link-icon"><i class="ri-user-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>Edit Profile</strong><small>Update your personal information</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+  <a class="zv-dash-link" href="{% url 'designer:account_security' %}"><span class="zv-dash-link-icon orange"><i class="ri-lock-password-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>Password & Security</strong><small>Change your account password</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+  <a class="zv-dash-link" href="{% url 'designer:cart' %}"><span class="zv-dash-link-icon green"><i class="ri-shopping-cart-2-line" aria-hidden="true"></i></span><span class="zv-dash-link-copy"><strong>Shopping Cart</strong><small>Review products before checkout</small></span><i class="ri-arrow-right-s-line" aria-hidden="true"></i></a>
+</div>
+<div class="zv-dash-note"><i class="ri-information-line" aria-hidden="true"></i><span>Your orders and saved addresses are associated with your account. You can update your details anytime from the menu.</span></div>
+{% endblock %}

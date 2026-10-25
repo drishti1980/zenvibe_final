@@ -1,0 +1,1995 @@
+﻿{% extends 'designer/base.html' %}
+{% load static %}
+
+{% block title %}Shop Custom Promotional Products | ZenVibe Canada{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     MULTIKART BREADCRUMB
+========================================================= -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <h2>{% if category %}{{ category.name }}{% else %}Shop{% endif %}</h2>
+        <nav class="theme-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'designer:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">{% if category %}{{ category.name }}{% else %}Products{% endif %}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     MULTIKART CATEGORY LIST VIEW
+========================================================= -->
+<section class="section-b-space ratio_asos">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+
+                <!-- =================================================
+                     LEFT SIDEBAR - SAME MULTIKART STRUCTURE
+                ================================================== -->
+                <div class="col-xl-3 col-lg-4 collection-filter">
+
+                    <div class="collection-filter-block">
+
+                        <div class="collection-mobile-back">
+                            <span class="filter-back">
+                                <i class="ri-arrow-left-s-line"></i> back
+                            </span>
+                        </div>
+
+                        <div class="collection-collapse-block open">
+                            <div class="accordion collection-accordion"
+                                 id="zvCategoryFilterAccordion">
+
+                                <!-- CATEGORIES -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button pt-0"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-categories"
+                                                aria-expanded="true">
+                                            Categories
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-categories"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body">
+
+                                            <ul class="collection-listing">
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-all"
+                                                               checked>
+                                                        <label class="form-check-label"
+                                                               for="zv-cat-all">
+                                                            All Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                {% for c in storefront_categories %}
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input zv-category-filter"
+                                                               type="radio"
+                                                               name="zv-category-filter"
+                                                               id="zv-cat-{{ c.id }}"
+                                                               data-category="{{ c.name|lower }}">
+                                                        <label class="form-check-label"
+                                                               for="zv-cat-{{ c.id }}">
+                                                            {{ c.name }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                                {% empty %}
+                                                    {% for c in categories %}
+                                                    <li>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input zv-category-filter"
+                                                                   type="radio"
+                                                                   name="zv-category-filter"
+                                                                   id="zv-cat-{{ c.id }}"
+                                                                   data-category="{{ c.name|lower }}">
+                                                            <label class="form-check-label"
+                                                                   for="zv-cat-{{ c.id }}">
+                                                                {{ c.name }}
+                                                            </label>
+                                                        </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                {% endfor %}
+
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- COLLECTION -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-collection"
+                                                aria-expanded="true">
+                                            Collection
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-collection"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body">
+
+                                            <ul class="collection-listing">
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input zv-sale-filter"
+                                                               type="checkbox"
+                                                               id="zv-on-sale">
+                                                        <label class="form-check-label"
+                                                               for="zv-on-sale">
+                                                            On Sale
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-custom-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-custom-products">
+                                                            Custom Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-corporate-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-corporate-products">
+                                                            Corporate Gifts
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               id="zv-event-products">
+                                                        <label class="form-check-label"
+                                                               for="zv-event-products">
+                                                            Event Products
+                                                        </label>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- PRICE -->
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#zv-filter-price"
+                                                aria-expanded="true">
+                                            Price
+                                        </button>
+                                    </h2>
+
+                                    <div id="zv-filter-price"
+                                         class="accordion-collapse collapse show">
+
+                                        <div class="accordion-body price-body">
+
+                                            <div class="zv-price-fields">
+                                                <input type="number"
+                                                       id="zvMinPrice"
+                                                       placeholder="Min">
+                                                <span>-</span>
+                                                <input type="number"
+                                                       id="zvMaxPrice"
+                                                       placeholder="Max">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- =================================================
+                     MAIN CONTENT
+                ================================================== -->
+                <div class="collection-content col-xl-9 col-lg-8">
+
+                    <div class="page-main-content">
+
+                        <div class="row">
+
+                            <div class="col-sm-12">
+
+
+                                <!-- =========================================
+                                     MULTIKART TOP BANNER
+                                ========================================== -->
+                                <div class="top-banner-wrapper zv-multikart-category-banner">
+
+                                    {% if category and category.image %}
+                                    <div class="zv-category-banner-image">
+                                        <img src="{{ category.image.url }}"
+                                             class="img-fluid blur-up lazyload"
+                                             alt="{% if category %}{{ category.name }}{% else %}ZenVibe Products{% endif %}">
+                                    </div>
+                                    {% else %}
+                                    {% with first_product=products.first %}
+                                        {% if first_product.image %}
+                                        <div class="zv-category-banner-image">
+                                            <img src="{{ first_product.image.url }}"
+                                                 class="img-fluid blur-up lazyload"
+                                                 alt="{% if category %}{{ category.name }}{% else %}ZenVibe Products{% endif %}">
+                                        </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                    {% endif %}
+
+                                    <div class="zv-category-banner-copy">
+                                        <span>ZEN VIBE COLLECTION</span>
+                                        <h3>{% if category %}{{ category.name }}{% else %}Custom Promotional Products{% endif %}</h3>
+                                        <p>
+                                            {% if category %}Explore custom {{ category.name|lower }} designed for{% else %}Explore custom promotional products designed for{% endif %}
+                                            businesses, events, teams and special occasions.
+                                        </p>
+                                        <a href="#zvProductList" class="btn btn-solid">
+                                            Shop Collection
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+                                <button class="filter-btn btn">
+                                    <i class="ri-arrow-left-s-line"></i>
+                                    Filter
+                                </button>
+
+                                <!-- =========================================
+                                     ALL CATEGORIES - MULTIKART STYLE
+                                ========================================== -->
+                                <div class="zv-all-category-section">
+
+                                    <div class="title1 zv-all-category-title">
+                                        <h4>Shop By Category</h4>
+                                        <h2 class="title-inner1">All Categories</h2>
+                                    </div>
+
+                                    <div class="row g-3 g-md-4">
+
+                                        {% if storefront_categories %}
+
+                                            {% for c in storefront_categories %}
+
+                                            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6">
+
+                                                <a
+                                                    href="{% url 'designer:category_detail' c.slug %}"
+                                                    class="zv-all-category-card"
+                                                >
+
+                                                    <div class="zv-all-category-image">
+
+                                                        {% if c.image %}
+
+                                                            <img
+                                                                src="{{ c.image.url }}"
+                                                                class="img-fluid blur-up lazyload"
+                                                                alt="{{ c.name }}"
+                                                                loading="lazy"
+                                                            >
+
+                                                        {% else %}
+
+                                                            {% with first_product=c.products.first %}
+
+                                                                {% if first_product and first_product.image %}
+
+                                                                    <img
+                                                                        src="{{ first_product.image.url }}"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="{{ c.name }}"
+                                                                        loading="lazy"
+                                                                    >
+
+                                                                {% else %}
+
+                                                                    <div class="zv-all-category-placeholder">
+                                                                        {{ c.name|slice:":1" }}
+                                                                    </div>
+
+                                                                {% endif %}
+
+                                                            {% endwith %}
+
+                                                        {% endif %}
+
+                                                        <div class="zv-all-category-overlay">
+                                                            <span>View Products</span>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <div class="zv-all-category-content">
+
+                                                        <h3>
+                                                            {{ c.name }}
+                                                        </h3>
+
+                                                        {% if c.description %}
+                                                        <p>
+                                                             {{ c.products.count }} Product{{ c.products.count|pluralize }}
+                                                        </p>
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                </a>
+
+                                            </div>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            {% for c in categories %}
+
+                                            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6">
+
+                                                <a
+                                                    href="{% url 'designer:category_detail' c.slug %}"
+                                                    class="zv-all-category-card"
+                                                >
+
+                                                    <div class="zv-all-category-image">
+
+                                                        {% if c.image %}
+
+                                                            <img
+                                                                src="{{ c.image.url }}"
+                                                                class="img-fluid blur-up lazyload"
+                                                                alt="{{ c.name }}"
+                                                                loading="lazy"
+                                                            >
+
+                                                        {% else %}
+
+                                                            {% with first_product=c.products.first %}
+
+                                                                {% if first_product and first_product.image %}
+
+                                                                    <img
+                                                                        src="{{ first_product.image.url }}"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="{{ c.name }}"
+                                                                        loading="lazy"
+                                                                    >
+
+                                                                {% else %}
+
+                                                                    <div class="zv-all-category-placeholder">
+                                                                        {{ c.name|slice:":1" }}
+                                                                    </div>
+
+                                                                {% endif %}
+
+                                                            {% endwith %}
+
+                                                        {% endif %}
+
+                                                        <div class="zv-all-category-overlay">
+                                                            <span>View Products</span>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <div class="zv-all-category-content">
+
+                                                        <h3>
+                                                            {{ c.name }}
+                                                        </h3>
+
+                                                        {% if c.description %}
+                                                        <p>
+                                                            {{ c.description|truncatewords:10 }}
+                                                        </p>
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                </a>
+
+                                            </div>
+
+                                            {% empty %}
+
+                                            <div class="col-12">
+                                                <div class="text-center py-5">
+                                                    <h3>No categories found</h3>
+                                                    <p>Categories will appear here when they are available.</p>
+                                                </div>
+                                            </div>
+
+                                            {% endfor %}
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="collection-product-wrapper">
+
+
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    
+
+                </div>
+
+            </div>
+              <!-- DYNAMIC PAGINATION -->
+                                        <nav id="zvPaginationWrap"
+                                             class="zv-pagination-wrap"
+                                             aria-label="Product pagination">
+
+                                            <ul class="zv-page-list"
+                                                id="zvPagination">
+                                            </ul>
+
+                                        </nav>
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     SMALL ZENVIBE OVERRIDES ONLY
+     Multikart's own CSS still controls the main design.
+========================================================= -->
+<style>
+
+/* ZenVibe brand accents */
+.collection-accordion .accordion-button:not(.collapsed),
+.collection-accordion .accordion-button:hover,
+.collection-listing .form-check-label:hover {
+    color:#0758b8;
+}
+
+.collection-listing .form-check-input:checked {
+    background-color:#0758b8;
+    border-color:#0758b8;
+}
+
+.star-rating {
+    color:#f6a329;
+}
+
+.product-detail .price,
+.basic-product .product-detail .price {
+    color:#0758b8;
+}
+
+.product-detail .discounted-price {
+    color:#f6a329;
+}
+
+.offer-panel .offer-icon {
+    color:#f6a329;
+}
+
+.basic-product .cart-info a:hover,
+.basic-product .cart-info button:hover {
+    color:#0758b8;
+}
+
+
+/* =========================================================
+   BANNER - Multikart proportions
+========================================================= */
+.zv-multikart-category-banner {
+    position:relative;
+    min-height:355px;
+    overflow:hidden;
+    background:#f5f7fa;
+    margin-bottom:25px;
+}
+
+.zv-category-banner-image {
+    position:absolute;
+    inset:0;
+}
+
+.zv-category-banner-image img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    opacity:.58;
+}
+
+.zv-multikart-category-banner::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.98) 0%,
+        rgba(255,255,255,.88) 35%,
+        rgba(255,255,255,.20) 72%,
+        rgba(255,255,255,.05) 100%
+    );
+}
+
+.zv-category-banner-copy {
+    position:relative;
+    z-index:2;
+    width:min(480px,72%);
+    min-height:355px;
+    padding:55px 0 45px 48px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.zv-category-banner-copy > span {
+    color:#f6a329;
+    font:700 11px Montserrat,sans-serif;
+    letter-spacing:1.5px;
+}
+
+.zv-category-banner-copy h3 {
+    margin:8px 0 10px;
+    color:#222;
+    font:600 34px/1.15 Montserrat,sans-serif;
+}
+
+.zv-category-banner-copy p {
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+    margin:0 0 20px;
+}
+
+.zv-category-banner-copy .btn {
+    width:max-content;
+}
+
+
+
+/* =========================================================
+   ALL CATEGORIES - MULTIKART CATEGORY CARDS
+========================================================= */
+
+.zv-all-category-section{
+    margin:35px 0 45px;
+}
+
+.zv-all-category-title{
+    margin-bottom:28px;
+}
+
+.zv-all-category-card{
+    display:block;
+    height:100%;
+    background:#fff;
+    color:inherit !important;
+    text-decoration:none !important;
+    transition:transform .25s ease, box-shadow .25s ease;
+}
+
+.zv-all-category-card:hover{
+    transform:translateY(-4px);
+}
+
+.zv-all-category-image{
+    position:relative;
+    width:100%;
+    aspect-ratio:1 / 1;
+    overflow:hidden;
+    background:#f7f7f7;
+}
+
+.zv-all-category-image img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:contain;
+    background:#f7f7f7;
+    transition:transform .35s ease;
+}
+
+.zv-all-category-card:hover .zv-all-category-image img{
+    transform:scale(1.05);
+}
+
+.zv-all-category-overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.16);
+    opacity:0;
+    transition:opacity .25s ease;
+}
+
+.zv-all-category-card:hover .zv-all-category-overlay{
+    opacity:1;
+}
+
+.zv-all-category-overlay span{
+    padding:9px 16px;
+    background:#fff;
+    color:#222;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.zv-all-category-placeholder{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f4f5f7;
+    color:#0758b8;
+    font-size:48px;
+    font-weight:700;
+}
+
+.zv-all-category-content{
+    padding:15px 8px 4px;
+    text-align:center;
+}
+
+.zv-all-category-content h3{
+    margin:0 0 7px;
+    color:#222;
+    font-size:15px;
+    font-weight:600;
+    line-height:1.4;
+    text-transform:uppercase;
+    transition:color .2s ease;
+}
+
+.zv-all-category-content p{
+    margin:0;
+    color:#777;
+    font-size:12px;
+    line-height:1.55;
+}
+
+.zv-all-category-card:hover .zv-all-category-content h3{
+    color:#0758b8;
+}
+
+@media(max-width:767px){
+    .zv-all-category-section{
+        margin:28px 0 35px;
+    }
+
+    .zv-all-category-overlay{
+        display:none;
+    }
+
+    .zv-all-category-content{
+        padding:12px 4px 2px;
+    }
+
+    .zv-all-category-content h3{
+        font-size:13px;
+    }
+
+    .zv-all-category-content p{
+        display:none;
+    }
+}
+
+/* =========================================================
+   EXACT LIST VIEW SIZE TUNING
+========================================================= */
+.product-wrapper-grid.list-view .basic-product .overflow-hidden {
+    display:grid;
+    grid-template-columns:310px minmax(0,1fr);
+    align-items:stretch;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper {
+    height:340px;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper > a {
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+.product-wrapper-grid.list-view .basic-product .img-wrapper img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid.list-view .basic-product .product-detail {
+    padding:30px 25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.product-wrapper-grid.list-view .basic-product .product-detail p {
+    display:block;
+    max-width:680px;
+}
+
+.zv-multikart-product-action {
+    margin-top:18px;
+}
+
+.zv-multikart-product-action .btn {
+    min-width:220px;
+    padding:11px 18px;
+}
+
+
+/* =========================================================
+   GRID VIEW SIZES
+========================================================= */
+.product-wrapper-grid:not(.list-view) .basic-product .img-wrapper {
+    height:300px;
+    background:#f7f7f7;
+}
+
+.product-wrapper-grid:not(.list-view) .basic-product .img-wrapper img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+}
+
+.product-wrapper-grid:not(.list-view) .basic-product .product-detail p,
+.product-wrapper-grid:not(.list-view) .basic-product .offer-panel {
+    display:none !important;
+}
+
+.product-wrapper-grid:not(.list-view) .zv-multikart-product-action .btn {
+    width:100%;
+    min-width:0;
+    font-size:11px;
+}
+
+
+/* layout icons */
+.collection-grid-view ul {
+    align-items:center;
+}
+
+.collection-grid-view li {
+    cursor:pointer;
+}
+
+.zv-layout-icon {
+    width:26px;
+    height:22px;
+    display:grid;
+    gap:2px;
+    padding:3px;
+    border:1px solid #ddd;
+}
+
+.zv-layout-icon i {
+    display:block;
+    background:#999;
+}
+
+.zv-layout-2 { grid-template-columns:repeat(2,1fr); }
+.zv-layout-3 { grid-template-columns:repeat(3,1fr); }
+.zv-layout-4 { grid-template-columns:repeat(4,1fr); }
+
+.collection-grid-view li.active .zv-layout-icon,
+.collection-grid-view li:hover .zv-layout-icon {
+    border-color:#0758b8;
+}
+
+.collection-grid-view li.active .zv-layout-icon i,
+.collection-grid-view li:hover .zv-layout-icon i {
+    background:#0758b8;
+}
+
+.collection-grid-view .list-icon {
+    width:30px;
+    height:26px;
+    display:grid;
+    place-items:center;
+    border:1px solid #ddd;
+    color:#999;
+}
+
+.collection-grid-view .list-icon.active,
+.collection-grid-view .list-icon:hover {
+    border-color:#0758b8;
+    color:#0758b8;
+}
+
+
+/* price fields */
+.zv-price-fields {
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:7px;
+}
+
+.zv-price-fields input {
+    width:100%;
+    height:38px;
+    padding:0 8px;
+    border:1px solid #ddd;
+    outline:none;
+}
+
+.zv-price-fields input:focus {
+    border-color:#0758b8;
+}
+
+
+/* responsive */
+@media(max-width:991px) {
+
+    .product-wrapper-grid.list-view .basic-product .overflow-hidden {
+        grid-template-columns:250px minmax(0,1fr);
+    }
+
+    .product-wrapper-grid.list-view .basic-product .img-wrapper {
+        height:300px;
+    }
+
+}
+
+@media(max-width:767px) {
+
+    .zv-multikart-category-banner {
+        min-height:285px;
+    }
+
+    .zv-category-banner-copy {
+        min-height:285px;
+        width:88%;
+        padding:35px 24px;
+    }
+
+    .zv-category-banner-copy h3 {
+        font-size:27px;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .overflow-hidden {
+        display:block;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .img-wrapper {
+        height:310px;
+    }
+
+    .product-wrapper-grid.list-view .basic-product .product-detail {
+        padding:20px 14px;
+    }
+
+}
+
+
+/* =========================================================
+   FILTER PAGINATION
+========================================================= */
+
+.zv-pagination-wrap{
+    margin-top:34px;
+}
+
+#zvPagination{
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+#zvPagination .page-item{
+    margin:0;
+}
+
+#zvPagination .page-link{
+    min-width:40px;
+    height:40px;
+    padding:0 11px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid #e2e2e2;
+    border-radius:0;
+
+    background:#fff;
+    color:#555;
+
+    font-family:"Montserrat",sans-serif;
+    font-size:13px;
+
+    box-shadow:none;
+}
+
+#zvPagination .page-item.active .page-link{
+    background:#0758b8;
+    border-color:#0758b8;
+    color:#fff;
+}
+
+#zvPagination .page-link:hover{
+    background:#f6a329;
+    border-color:#f6a329;
+    color:#fff;
+}
+
+#zvPagination .page-item.disabled .page-link{
+    opacity:.35;
+    pointer-events:none;
+    cursor:default !important;
+    background:#f7f7f7 !important;
+    border-color:#e5e5e5 !important;
+    color:#aaa !important;
+}
+
+/* Disabled previous/next arrows: no cancel/prohibited cursor */
+#zvPagination .page-item.disabled,
+#zvPagination .page-item.disabled .page-link{
+    cursor:default !important;
+}
+
+.zv-filter-empty{
+    width:100%;
+    color:#777;
+}
+
+.zv-filter-empty h3{
+    margin-bottom:7px;
+    color:#222;
+}
+
+
+/* =========================================================
+   PAGINATION BASE RESET
+========================================================= */
+#zvPagination,
+#zvPagination li{
+    list-style:none !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+#zvPagination li::before,
+#zvPagination li::after,
+#zvPagination button::before,
+#zvPagination button::after{
+    content:none !important;
+    display:none !important;
+}
+
+
+</style>
+
+
+<!-- =========================================================
+     SORT + LAYOUT + FILTER FUNCTIONALITY
+========================================================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const wrapper = document.querySelector(".product-wrapper-grid");
+    const grid = document.getElementById("mkProductGrid");
+    const sort = document.getElementById("mkSort");
+    const limit = document.getElementById("zvProductLimit");
+    const layoutButtons = document.querySelectorAll("[data-layout]");
+
+    const categoryFilters = document.querySelectorAll(".zv-category-filter");
+    const allCategory = document.getElementById("zv-cat-all");
+
+    const saleFilter = document.getElementById("zv-on-sale");
+    const minPrice = document.getElementById("zvMinPrice");
+    const maxPrice = document.getElementById("zvMaxPrice");
+
+    const paginationWrap = document.getElementById("zvPaginationWrap");
+    const pagination = document.getElementById("zvPagination");
+    const emptyState = document.getElementById("zvFilterEmpty");
+
+    if (!wrapper || !grid) return;
+
+    let currentPage = 1;
+
+
+    function allCards() {
+        return Array.from(
+            grid.querySelectorAll("[data-product-card]")
+        );
+    }
+
+
+    function pageSize() {
+        /*
+           Product limit is independent from grid/list layout.
+           Example:
+           10 Products = always exactly 10 visible products
+           in list, 2-column, 3-column and 4-column view.
+        */
+        const value = limit
+            ? parseInt(limit.value || "10", 10)
+            : 10;
+
+        return Number.isFinite(value) && value > 0
+            ? value
+            : 10;
+    }
+
+
+    function getFilteredCards() {
+
+        const selectedCategory =
+            document.querySelector(".zv-category-filter:checked");
+
+        const categoryValue =
+            selectedCategory
+                ? (selectedCategory.dataset.category || "").toLowerCase()
+                : "";
+
+        const saleOnly =
+            !!(saleFilter && saleFilter.checked);
+
+        const min =
+            minPrice && minPrice.value !== ""
+                ? parseFloat(minPrice.value)
+                : null;
+
+        const max =
+            maxPrice && maxPrice.value !== ""
+                ? parseFloat(maxPrice.value)
+                : null;
+
+
+        return allCards().filter(function(card) {
+
+            const cardCategory =
+                (card.dataset.category || "").toLowerCase();
+
+            const cardPrice =
+                parseFloat(card.dataset.price || "0");
+
+            const isSale =
+                card.dataset.sale === "1";
+
+
+            if (
+                categoryValue &&
+                !cardCategory.includes(categoryValue)
+            ) {
+                return false;
+            }
+
+
+            if (saleOnly && !isSale) {
+                return false;
+            }
+
+
+            if (
+                min !== null &&
+                cardPrice < min
+            ) {
+                return false;
+            }
+
+
+            if (
+                max !== null &&
+                cardPrice > max
+            ) {
+                return false;
+            }
+
+
+            return true;
+        });
+    }
+
+
+    function renderPagination(totalItems) {
+
+        if (!pagination || !paginationWrap) return;
+
+        const size = pageSize();
+
+        const totalPages =
+            Math.ceil(totalItems / size);
+
+        pagination.innerHTML = "";
+
+        /* FORCE PROPER HORIZONTAL PAGINATION */
+        paginationWrap.style.cssText =
+            "display:flex !important;" +
+            "width:100% !important;" +
+            "clear:both !important;" +
+            "justify-content:center !important;" +
+            "align-items:center !important;" +
+            "margin:36px 0 0 !important;" +
+            "padding:0 !important;" +
+            "position:relative !important;" +
+            "float:none !important;" +
+            "transform:none !important;";
+
+        pagination.style.cssText =
+            "display:flex !important;" +
+            "flex-direction:row !important;" +
+            "flex-wrap:wrap !important;" +
+            "justify-content:center !important;" +
+            "align-items:center !important;" +
+            "gap:6px !important;" +
+            "width:auto !important;" +
+            "max-width:100% !important;" +
+            "margin:0 auto !important;" +
+            "padding:0 !important;" +
+            "list-style:none !important;";
+
+
+        if (totalPages <= 1) {
+
+            paginationWrap.style.display = "none";
+
+            return;
+        }
+
+
+        paginationWrap.style.display = "";
+
+
+        function addButton(
+            label,
+            page,
+            active,
+            disabled
+        ) {
+
+            const li =
+                document.createElement("li");
+
+            li.className = "zv-page-item";
+
+            /* Prevent Multikart from stacking pagination vertically */
+            li.style.cssText =
+                "display:block !important;" +
+                "flex:0 0 auto !important;" +
+                "width:auto !important;" +
+                "min-width:0 !important;" +
+                "max-width:none !important;" +
+                "height:auto !important;" +
+                "margin:0 !important;" +
+                "padding:0 !important;" +
+                "float:none !important;" +
+                "clear:none !important;" +
+                "border:0 !important;" +
+                "background:transparent !important;" +
+                "list-style:none !important;";
+
+
+            if (active) {
+                li.classList.add("is-active");
+            }
+
+
+            if (disabled) {
+                li.classList.add("is-disabled");
+            }
+
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+            button.className = "zv-page-link";
+            button.textContent = label;
+
+            button.style.cssText =
+                "appearance:none !important;" +
+                "-webkit-appearance:none !important;" +
+                "display:flex !important;" +
+                "align-items:center !important;" +
+                "justify-content:center !important;" +
+                "min-width:" + ((label === "Previous" || label === "Next") ? "82px" : "42px") + " !important;" +
+                "height:42px !important;" +
+                "margin:0 !important;" +
+                "padding:0 12px !important;" +
+                "border:1px solid #e2e2e2 !important;" +
+                "border-radius:0 !important;" +
+                "background:" + (active ? "#0758b8" : "#fff") + " !important;" +
+                "background-image:none !important;" +
+                "color:" + (active ? "#fff" : "#555") + " !important;" +
+                "font-family:Montserrat,sans-serif !important;" +
+                "font-size:13px !important;" +
+                "font-weight:500 !important;" +
+                "line-height:1 !important;" +
+                "box-shadow:none !important;" +
+                "cursor:pointer !important;";
+
+
+            if (!disabled) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        currentPage = page;
+
+                        applyFilters(false);
+
+
+                        const toolbar =
+                            document.querySelector(
+                                ".product-top-filter"
+                            );
+
+                        if (toolbar) {
+
+                            toolbar.scrollIntoView({
+                                behavior:"smooth",
+                                block:"start"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            li.appendChild(button);
+
+            pagination.appendChild(li);
+        }
+
+
+        /* PREVIOUS - hidden on page 1 */
+        if (currentPage > 1) {
+            addButton(
+                "Previous",
+                currentPage - 1,
+                false,
+                false
+            );
+        }
+
+
+        /* PAGE NUMBERS */
+        let start =
+            Math.max(
+                1,
+                currentPage - 2
+            );
+
+        let end =
+            Math.min(
+                totalPages,
+                start + 4
+            );
+
+
+        if (end - start < 4) {
+
+            start =
+                Math.max(
+                    1,
+                    end - 4
+                );
+
+        }
+
+
+        for (
+            let page = start;
+            page <= end;
+            page++
+        ) {
+
+            addButton(
+                String(page),
+                page,
+                page === currentPage,
+                false
+            );
+
+        }
+
+
+        /* NEXT - hidden on last page */
+        if (currentPage < totalPages) {
+            addButton(
+                "Next",
+                currentPage + 1,
+                false,
+                false
+            );
+        }
+
+    }
+
+
+    function applyFilters(resetPage) {
+
+        if (resetPage !== false) {
+            currentPage = 1;
+        }
+
+
+        const matched = getFilteredCards();
+        const size = pageSize();
+
+        const totalPages = Math.max(
+            1,
+            Math.ceil(matched.length / size)
+        );
+
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+
+        const pageStart =
+            (currentPage - 1) * size;
+
+        const pageEnd =
+            Math.min(
+                pageStart + size,
+                matched.length
+            );
+
+
+        /*
+           IMPORTANT:
+           Hide every product first.
+           Then show ONLY the selected product-limit count.
+           Grid layout must never change this count.
+        */
+        allCards().forEach(function(card) {
+
+            card.style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
+
+        });
+
+
+        matched.forEach(function(card, index) {
+
+            if (
+                index >= pageStart &&
+                index < pageEnd
+            ) {
+
+                /*
+                   Remove only our inline hidden state.
+                   CSS / Bootstrap grid classes decide columns,
+                   while pagination decides product count.
+                */
+                card.style.removeProperty("display");
+
+            }
+
+        });
+
+
+        /* No products found */
+        if (emptyState) {
+
+            emptyState.style.display =
+                matched.length === 0
+                    ? ""
+                    : "none";
+
+        }
+
+
+        renderPagination(
+            matched.length
+        );
+
+    }
+
+
+    /* =====================================================
+       SORTING
+    ===================================================== */
+    sort?.addEventListener(
+        "change",
+        function () {
+
+            const cards =
+                allCards();
+
+            const value =
+                sort.value;
+
+
+            if (value === "default") {
+
+                cards.sort(function(a,b) {
+
+                    return (
+                        a.dataset.name || ""
+                    ).localeCompare(
+                        b.dataset.name || ""
+                    );
+
+                });
+
+            }
+
+
+            if (value === "name-desc") {
+
+                cards.sort(function(a,b) {
+
+                    return (
+                        b.dataset.name || ""
+                    ).localeCompare(
+                        a.dataset.name || ""
+                    );
+
+                });
+
+            }
+
+
+            if (value === "price-asc") {
+
+                cards.sort(function(a,b) {
+
+                    return (
+                        parseFloat(
+                            a.dataset.price || 0
+                        )
+                        -
+                        parseFloat(
+                            b.dataset.price || 0
+                        )
+                    );
+
+                });
+
+            }
+
+
+            if (value === "price-desc") {
+
+                cards.sort(function(a,b) {
+
+                    return (
+                        parseFloat(
+                            b.dataset.price || 0
+                        )
+                        -
+                        parseFloat(
+                            a.dataset.price || 0
+                        )
+                    );
+
+                });
+
+            }
+
+
+            cards.forEach(function(card) {
+                grid.appendChild(card);
+            });
+
+
+            applyFilters(true);
+
+        }
+    );
+
+
+    /* =====================================================
+       PRODUCTS PER PAGE
+    ===================================================== */
+    limit?.addEventListener(
+        "change",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    /* =====================================================
+       CATEGORY FILTER
+    ===================================================== */
+    categoryFilters.forEach(
+        function(input) {
+
+            input.addEventListener(
+                "change",
+                function () {
+
+                    if (
+                        input.checked &&
+                        allCategory
+                    ) {
+                        allCategory.checked = false;
+                    }
+
+                    applyFilters(true);
+
+                }
+            );
+
+        }
+    );
+
+
+    allCategory?.addEventListener(
+        "change",
+        function () {
+
+            if (allCategory.checked) {
+
+                categoryFilters.forEach(
+                    function(input) {
+                        input.checked = false;
+                    }
+                );
+
+            }
+
+
+            applyFilters(true);
+
+        }
+    );
+
+
+    /* =====================================================
+       SALE FILTER
+    ===================================================== */
+    saleFilter?.addEventListener(
+        "change",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    /* =====================================================
+       PRICE FILTER
+    ===================================================== */
+    minPrice?.addEventListener(
+        "input",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    maxPrice?.addEventListener(
+        "input",
+        function () {
+            applyFilters(true);
+        }
+    );
+
+
+    /* =====================================================
+       GRID / LIST VIEW
+    ===================================================== */
+    layoutButtons.forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    layoutButtons.forEach(
+                        function(item) {
+                            item.classList.remove(
+                                "active"
+                            );
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    const layout =
+                        button.dataset.layout;
+
+
+                    if (layout === "list") {
+
+                        wrapper.classList.add(
+                            "list-view"
+                        );
+
+                        wrapper.removeAttribute("data-zv-layout");
+
+
+                        allCards().forEach(
+                            function(card) {
+
+                                card.className =
+                                    "col-sm-12 col-6 col-grid-box";
+
+                            }
+                        );
+
+
+                        currentPage = 1;
+                        applyFilters(false);
+
+                        return;
+                    }
+
+
+                    wrapper.classList.remove(
+                        "list-view"
+                    );
+
+                    wrapper.setAttribute(
+                        "data-zv-layout",
+                        layout
+                    );
+
+
+                    allCards().forEach(
+                        function(card) {
+
+                            if (layout === "2") {
+
+                                card.className =
+                                    "col-lg-6 col-md-6 col-6 col-grid-box";
+
+                            }
+
+
+                            if (layout === "3") {
+
+                                card.className =
+                                    "col-xl-4 col-md-6 col-6 col-grid-box";
+
+                            }
+
+
+                            if (layout === "4") {
+
+                                card.className =
+                                    "col-xl-3 col-lg-4 col-md-6 col-6 col-grid-box";
+
+                            }
+
+                        }
+                    );
+
+
+                    /*
+                       Grid changes columns only.
+                       Product limit remains exactly the selected value.
+                    */
+                    currentPage = 1;
+                    applyFilters(false);
+
+                }
+            );
+
+        }
+    );
+
+
+    /* FIRST LOAD */
+    applyFilters(true);
+
+});
+</script>
+
+
+<style id="zv-grid-wrap-fix">
+/* =========================================================
+   FIX GRID VIEW: PRODUCTS MUST WRAP INTO ROWS
+========================================================= */
+
+/* Main product row */
+#mkProductGrid{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    width:100% !important;
+    overflow:visible !important;
+}
+
+/* LIST VIEW */
+.product-wrapper-grid.list-view #mkProductGrid > [data-product-card]{
+    flex:0 0 100% !important;
+    max-width:100% !important;
+    width:100% !important;
+}
+
+/* GRID VIEW COMMON */
+.product-wrapper-grid:not(.list-view) #mkProductGrid > [data-product-card]{
+    position:relative !important;
+    display:block !important;
+    float:none !important;
+    width:auto;
+}
+
+/* 2 COLUMN VIEW */
+.product-wrapper-grid[data-zv-layout="2"] #mkProductGrid > [data-product-card]{
+    flex:0 0 50% !important;
+    max-width:50% !important;
+    width:50% !important;
+}
+
+/* 3 COLUMN VIEW */
+.product-wrapper-grid[data-zv-layout="3"] #mkProductGrid > [data-product-card]{
+    flex:0 0 33.333333% !important;
+    max-width:33.333333% !important;
+    width:33.333333% !important;
+}
+
+/* 4 COLUMN VIEW */
+.product-wrapper-grid[data-zv-layout="4"] #mkProductGrid > [data-product-card]{
+    flex:0 0 25% !important;
+    max-width:25% !important;
+    width:25% !important;
+}
+
+/* Prevent Multikart product internals from forcing horizontal layout */
+.product-wrapper-grid:not(.list-view) .basic-product,
+.product-wrapper-grid:not(.list-view) .basic-product > .overflow-hidden{
+    width:100% !important;
+    max-width:100% !important;
+}
+
+.product-wrapper-grid:not(.list-view) .basic-product > .overflow-hidden{
+    display:flex !important;
+    flex-direction:column !important;
+}
+
+/* Responsive */
+@media(max-width:991px){
+    .product-wrapper-grid[data-zv-layout="3"] #mkProductGrid > [data-product-card],
+    .product-wrapper-grid[data-zv-layout="4"] #mkProductGrid > [data-product-card]{
+        flex:0 0 50% !important;
+        max-width:50% !important;
+        width:50% !important;
+    }
+}
+
+@media(max-width:575px){
+    .product-wrapper-grid[data-zv-layout="2"] #mkProductGrid > [data-product-card],
+    .product-wrapper-grid[data-zv-layout="3"] #mkProductGrid > [data-product-card],
+    .product-wrapper-grid[data-zv-layout="4"] #mkProductGrid > [data-product-card]{
+        flex:0 0 50% !important;
+        max-width:50% !important;
+        width:50% !important;
+    }
+}
+</style>
+
+
+
+
+
+<style id="zv-pagination-final-fix">
+/* FINAL PAGINATION SAFETY OVERRIDE */
+
+#zvPaginationWrap{
+    width:100% !important;
+    clear:both !important;
+}
+
+#zvPagination.zv-page-list{
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+    width:auto !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    list-style:none !important;
+}
+
+#zvPagination > .zv-page-item{
+    display:block !important;
+    flex:0 0 auto !important;
+    width:auto !important;
+    max-width:none !important;
+    height:auto !important;
+    float:none !important;
+    clear:none !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+#zvPagination > .zv-page-item > .zv-page-link{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:auto !important;
+    min-width:42px !important;
+    height:42px !important;
+    margin:0 !important;
+}
+
+#zvPagination > .zv-page-item:first-child > .zv-page-link,
+#zvPagination > .zv-page-item:last-child > .zv-page-link{
+    width:auto !important;
+}
+
+#zvPagination .zv-page-item.is-active .zv-page-link{
+    background:#0758b8 !important;
+    border-color:#0758b8 !important;
+    color:#fff !important;
+}
+
+#zvPagination .zv-page-link:hover{
+    background:#f6a329 !important;
+    border-color:#f6a329 !important;
+    color:#fff !important;
+}
+
+#zvPagination li::before,
+#zvPagination li::after,
+#zvPagination button::before,
+#zvPagination button::after{
+    content:none !important;
+    display:none !important;
+}
+
+@media(max-width:575px){
+    #zvPagination.zv-page-list{
+        gap:4px !important;
+    }
+
+    #zvPagination > .zv-page-item > .zv-page-link{
+        min-width:36px !important;
+        height:36px !important;
+        padding:0 8px !important;
+        font-size:12px !important;
+    }
+}
+</style>
+
+
+<style id="zv-product-limit-grid-safety">
+/* =========================================================
+   PRODUCT LIMIT IS INDEPENDENT OF GRID VIEW
+========================================================= */
+
+#mkProductGrid{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:stretch !important;
+}
+
+/* Hidden products must stay hidden in every Multikart grid layout */
+#mkProductGrid > [data-product-card][style*="display: none"]{
+    display:none !important;
+}
+
+/* 2 columns */
+.product-wrapper-grid[data-zv-layout="2"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 50% !important;
+    max-width:50% !important;
+}
+
+/* 3 columns */
+.product-wrapper-grid[data-zv-layout="3"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 33.333333% !important;
+    max-width:33.333333% !important;
+}
+
+/* 4 columns */
+.product-wrapper-grid[data-zv-layout="4"]
+#mkProductGrid > [data-product-card]{
+    flex:0 0 25% !important;
+    max-width:25% !important;
+}
+
+/* List */
+.product-wrapper-grid.list-view
+#mkProductGrid > [data-product-card]{
+    flex:0 0 100% !important;
+    max-width:100% !important;
+}
+
+@media(max-width:991px){
+    .product-wrapper-grid[data-zv-layout="3"]
+    #mkProductGrid > [data-product-card],
+    .product-wrapper-grid[data-zv-layout="4"]
+    #mkProductGrid > [data-product-card]{
+        flex:0 0 50% !important;
+        max-width:50% !important;
+    }
+}
+
+@media(max-width:575px){
+    .product-wrapper-grid:not(.list-view)
+    #mkProductGrid > [data-product-card]{
+        flex:0 0 50% !important;
+        max-width:50% !important;
+    }
+}
+</style>
+
+{% endblock %}
+

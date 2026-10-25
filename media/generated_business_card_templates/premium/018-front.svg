@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1125" height="675" viewBox="0 0 1125 675">
+<rect width="1125" height="675" fill="#0B0B0C"/>
+<circle cx="90.0" cy="100.0" r="18.0" fill="#C8A96B" stroke="none" stroke-width="0.0" opacity="1.0"/>
+<line x1="120" y1="100" x2="280" y2="100" stroke="#C8A96B" stroke-width="2.0" opacity="1.0"/>
+<text x="70.00" y="287.00" fill="#F8F3E8" font-family="Cormorant Garamond" font-size="92.00" font-weight="normal" text-anchor="start"><tspan x="70.00" dy="0.00">Alex Morgan</tspan></text>
+<text x="72.00" y="350.00" fill="#C8A96B" font-family="Montserrat" font-size="20.00" font-weight="bold" text-anchor="start"><tspan x="72.00" dy="0.00">PRIVATE BRAND ADVISORY</tspan></text>
+<text x="72.00" y="477.00" fill="#F8F3E8" font-family="Montserrat" font-size="22.00" font-weight="normal" text-anchor="start"><tspan x="72.00" dy="0.00">+61 400 123 456   ·   alex@morgan.co</tspan></text>
+</svg>

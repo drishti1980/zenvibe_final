@@ -1,0 +1,2689 @@
+:root{--zv-navy:#0c2f57;--zv-blue:#164f7d;--zv-sky:#3f88a8;--zv-orange:#ff6b35;--zv-gold:#f2b746;--zv-bg:#f7f8fb;--zv-border:#e7e9ef;--zv-text:#243147}
+*{box-sizing:border-box}.zv-mk-admin{font-family:'Work Sans','Nunito',Arial,sans-serif;background:var(--zv-bg);color:var(--zv-text)}.zv-mk-admin a{text-decoration:none}.zv-topbar{background:#fff!important;border-bottom:1px solid var(--zv-border);box-shadow:0 1px 8px rgba(24,39,75,.06);height:70px;left:255px!important;width:calc(100% - 255px)!important}.zv-topbar .main-header-right{height:70px;padding:0 28px}.zv-topbar .nav-menus{display:flex;align-items:center;justify-content:flex-end;gap:20px;height:70px;margin:0}.zv-topbar .nav-menus>li>a,.zv-topbar .nav-menus>li>i{color:#4a5568}.zv-admin-search{margin-right:auto!important;width:340px;display:flex;align-items:center;gap:10px;background:#f7f8fb;border:1px solid #edf0f5;border-radius:8px;padding:0 14px;height:42px}.zv-admin-search svg{width:18px}.zv-admin-search input{border:0;background:transparent;outline:0;width:100%;font-size:14px}.zv-profile-menu{display:flex!important;align-items:center;gap:9px;cursor:pointer}.zv-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--zv-blue),var(--zv-sky));color:#fff;display:grid;place-items:center;font-weight:800}.zv-profile-copy{display:flex;flex-direction:column;line-height:1.15}.zv-profile-copy strong{font-size:13px;color:#263043}.zv-profile-copy span{font-size:11px;color:#8b94a5}.zv-profile-menu>svg{width:14px}.notification-dropdown,.profile-dropdown{border:1px solid var(--zv-border)!important;border-radius:10px!important;box-shadow:0 12px 32px rgba(27,39,70,.12)!important}.notification-dropdown li a{display:flex!important;align-items:center;gap:9px}.notification-dropdown svg{width:17px}.zv-notify-title{font-weight:700!important;color:var(--zv-navy)!important}
+.zv-sidebar{width:255px!important;background:var(--zv-navy)!important;box-shadow:none!important}.zv-sidebar .main-header-left{width:255px;height:70px;background:#09284a;display:flex;align-items:center;padding:0 25px}.zv-admin-logo{display:flex;align-items:center;gap:12px;color:#fff!important}.zv-logo-mark{width:35px;height:35px;border-radius:9px;background:var(--zv-orange);display:grid;place-items:center;color:#fff;font-size:21px;font-weight:900}.zv-admin-logo span:last-child{display:flex;flex-direction:column}.zv-admin-logo b{font-size:20px;letter-spacing:.2px}.zv-admin-logo small{font-size:9px;letter-spacing:1.8px;color:#c8d9ea}.zv-sidebar .sidebar{background:var(--zv-navy)!important;padding-top:18px;height:calc(100vh - 70px)}.zv-sidebar .sidebar-menu>li{margin:2px 10px}.zv-sidebar .sidebar-menu .sidebar-header{padding:13px 16px!important;color:#dce8f5!important;border-radius:7px;display:flex!important;align-items:center;gap:13px;font-size:14px!important}.zv-sidebar .sidebar-menu .sidebar-header svg{width:18px!important;height:18px!important}.zv-sidebar .sidebar-menu .sidebar-header:hover,.zv-sidebar .sidebar-menu .active>.sidebar-header{background:rgba(255,255,255,.1)!important;color:#fff!important}.zv-sidebar .sidebar-submenu{background:#09284a!important;border-radius:0 0 8px 8px;margin:0 7px 8px!important;padding:7px 0!important}.zv-sidebar .sidebar-submenu li a{color:#cbd9e8!important;padding:9px 20px 9px 46px!important;font-size:13px!important}.zv-sidebar .sidebar-submenu .fa-circle{font-size:6px!important;left:26px!important}.zv-page-body{margin-left:255px!important;padding-top:70px!important;min-height:100vh;background:var(--zv-bg)!important}.zv-admin-content{padding:28px 30px 40px!important;max-width:none!important}.zv-dashboard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px!important;padding:0!important}.zv-dashboard-header h3{font-size:24px!important;font-weight:600!important;color:#31394d!important}.zv-dashboard-header h3 small{display:block!important;font-size:12px!important;color:#9aa3b3!important;margin-top:4px!important}.zv-dashboard-header .breadcrumb{background:transparent!important;margin:0!important;font-size:13px!important}.zv-dashboard-header .breadcrumb svg{width:15px}
+.card{border:0!important;border-radius:10px!important;box-shadow:0 2px 10px rgba(26,39,74,.06)!important;background:#fff!important;margin-bottom:24px!important}.card-header{background:#fff!important;border-bottom:1px solid #eef0f5!important;padding:20px 22px!important}.card-header h5{font-size:16px!important;font-weight:700!important;color:#30384a!important;margin:0!important}.zv-card-head{display:flex!important;justify-content:space-between!important;align-items:center!important}.zv-kpi-row .card-body{padding:22px!important}.zv-kpi .static-top-widget{display:flex;gap:16px}.zv-kpi .icons-widgets{width:54px;height:54px;border-radius:12px;display:grid;place-items:center}.zv-kpi .icons-widgets svg{width:24px;height:24px}.zv-kpi .media-body span{font-size:13px;color:#8a93a3}.zv-kpi .media-body h3{font-size:26px;margin:4px 0 2px;color:#273043;font-weight:700}.zv-kpi .media-body small{font-size:11px;color:#a2aaba}.warning-box .icons-widgets{background:#fff5dc;color:#e0a019}.secondary-box .icons-widgets{background:#e8f7f1;color:#30a46c}.primary-box .icons-widgets{background:#e8f1ff;color:#3377d5}.danger-box .icons-widgets{background:#fff0f0;color:#df5252}.zv-performance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}.zv-performance-grid>div{padding:15px;border:1px solid #edf0f5;border-radius:8px}.zv-performance-grid span{display:block;color:#8a93a3;font-size:12px}.zv-performance-grid strong{display:block;font-size:18px;margin:5px 0 10px}.zv-progress{height:6px;background:#eef2f7;border-radius:99px;overflow:hidden}.zv-progress i{display:block;height:100%;background:#4f80ff;border-radius:99px}.zv-progress.secondary i{background:#38b17a}.zv-progress.warning i{background:#f0ad3d}.zv-progress.danger i{background:#ed6262}.zv-activity-chart{height:170px;display:flex;align-items:flex-end;gap:12px;padding:15px 10px 0;border-top:1px solid #eef0f5;background:linear-gradient(180deg,rgba(79,128,255,.03),transparent)}.zv-activity-chart span{flex:1;background:linear-gradient(180deg,#5a88ff,#8fb0ff);border-radius:5px 5px 0 0;min-height:8px}.latest-order-table table{margin:0!important}.latest-order-table th{border:0!important;background:#f9fafc!important;color:#8a93a3!important;font-size:11px!important;font-weight:700!important;text-transform:uppercase!important;padding:12px 16px!important}.latest-order-table td{padding:14px 16px!important;border-top:1px solid #f0f2f6!important;vertical-align:middle!important;font-size:13px}.latest-order-table td:first-child a{display:block;font-weight:700;color:#273e68}.latest-order-table td:first-child small{display:block;color:#9ba4b4;margin-top:2px}.zv-badge{display:inline-block;padding:5px 9px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap}.payment-paid,.status-completed{background:#e7f7ef;color:#22855a}.payment-bypassed{background:#eee9ff;color:#6f52bb}.payment-pending,.status-new{background:#fff4d9;color:#a97400}.status-confirmed{background:#e8f1ff;color:#2f6dbd}.status-in_production{background:#f1ebff;color:#7655bd}.status-shipped{background:#e7f7fb;color:#267c8d}.status-cancelled,.payment-failed{background:#ffeded;color:#c64a4a}.zv-empty-table{text-align:center!important;color:#9aa3b3!important;padding:35px!important}.zv-best-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.zv-best-item{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;border:1px solid #eef0f4;border-radius:9px;padding:10px 12px;color:#2c3446}.zv-best-img{width:56px;height:56px;border-radius:8px;background:#f8f9fb;display:grid;place-items:center;overflow:hidden}.zv-best-img img{width:100%;height:100%;object-fit:contain}.zv-best-item b{display:block;font-size:13px}.zv-best-item span{display:block;font-size:11px;color:#9aa3b3;margin-top:2px}.zv-best-item>strong{font-size:18px;color:#273e68}.zv-best-item>strong small{display:block;font-size:9px;color:#9aa3b3;font-weight:500}.zv-empty-panel{grid-column:1/-1;text-align:center;color:#9aa3b3;padding:25px}.zv-quick-actions{display:grid;gap:10px}.zv-quick-actions a{display:flex;align-items:center;gap:13px;padding:12px;border:1px solid #edf0f5;border-radius:8px;color:#2f3748}.zv-quick-actions a:hover{border-color:#9db7dc;background:#f7faff}.zv-quick-actions svg{width:20px;color:#3e74bb}.zv-quick-actions span{display:flex;flex-direction:column;font-size:13px;font-weight:700}.zv-quick-actions small{font-size:10px;color:#9aa3b3;font-weight:400;margin-top:2px}.footer{margin-left:0!important;border-top:1px solid #e9ebf0!important;background:#fff!important;padding:15px 30px!important}.footer .container-fluid{display:flex;justify-content:space-between;color:#9aa3b3;font-size:11px}
+/* Django admin content inside Multikart shell */
+#content-main,.module,.inline-group{width:100%}.module{background:#fff;border:1px solid #e8ebf0;border-radius:10px;overflow:hidden;margin-bottom:20px}.module h2,.module caption,.inline-group h2{background:#f9fafc!important;color:#30384a!important;font-size:14px!important;padding:14px 18px!important;border-bottom:1px solid #edf0f5!important}.change-list #changelist{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(26,39,74,.05);padding:0;overflow:hidden}.change-list #toolbar{background:#fff!important;border:0!important;border-bottom:1px solid #edf0f5!important;padding:14px!important}.change-list #toolbar input[type=text]{border:1px solid #dfe3ea!important;border-radius:7px!important;padding:8px 10px!important}.change-list .results table{width:100%}.change-list .results thead th{background:#f8f9fb!important;color:#747e90!important;border-bottom:1px solid #e8ebf0!important;padding:12px!important}.change-list .results tbody td,.change-list .results tbody th{padding:12px!important;border-bottom:1px solid #eef0f4!important}.object-tools a,.submit-row input,.button,input[type=submit],input[type=button]{background:var(--zv-orange)!important;border:0!important;border-radius:7px!important;color:#fff!important;padding:9px 15px!important;font-weight:700!important}.object-tools a:hover,.submit-row input:hover,.button:hover,input[type=submit]:hover{background:#ed5d2a!important}.form-row{padding:15px 18px!important;border-bottom:1px solid #f0f2f5!important}.form-row label{font-weight:600;color:#495366}.form-row input[type=text],.form-row input[type=email],.form-row input[type=number],.form-row input[type=password],.form-row select,.form-row textarea{border:1px solid #dfe3ea!important;border-radius:7px!important;padding:8px 10px!important;background:#fff!important}.breadcrumbs{background:transparent!important;color:#8992a2!important;padding:0 0 16px!important}.breadcrumbs a{color:#4a74ad!important}.zv-messages{padding:18px 30px 0}.zv-messages .alert{border-radius:8px!important}
+/* Login */
+.zv-login-page .zv-topbar,.zv-login-page .zv-sidebar,.zv-login-page .footer{display:none!important}.zv-login-page .zv-page-body{margin:0!important;padding:0!important;min-height:100vh!important}.zv-login-page .zv-admin-content{padding:0!important}.zv-login-wrap{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;background:#f4f6fa}.zv-login-brand-panel{background:linear-gradient(145deg,#08294e,#154d7c);padding:70px;display:flex;flex-direction:column;color:#fff}.zv-login-brand{display:flex;align-items:center;gap:13px}.zv-login-brand b{display:block;font-size:24px}.zv-login-brand small{display:block;font-size:10px;letter-spacing:2px;color:#cbdced}.zv-login-copy{margin:auto 0}.zv-login-copy>span{font-size:11px;letter-spacing:2px;color:#f2bd56;font-weight:700}.zv-login-copy h1{font-size:42px;line-height:1.15;max-width:580px;margin:18px 0}.zv-login-copy p{font-size:15px;color:#c9d9e8;max-width:530px;line-height:1.7}.zv-login-points{display:flex;gap:25px;border-top:1px solid rgba(255,255,255,.15);padding-top:24px}.zv-login-points>div{display:flex;align-items:center;gap:10px}.zv-login-points svg{width:22px;color:#f2bd56}.zv-login-points span{display:flex;flex-direction:column}.zv-login-points b{font-size:12px}.zv-login-points small{font-size:9px;color:#aebfd1}.zv-login-card{width:min(430px,80%);margin:auto;background:#fff;padding:42px;border-radius:12px;box-shadow:0 20px 55px rgba(20,35,65,.12)}.zv-login-card-head h2{font-size:26px;margin:0 0 5px}.zv-login-card-head p{color:#8d96a6;margin-bottom:30px}.zv-login-card label{display:block;font-weight:600;font-size:13px;margin-bottom:7px}.zv-login-card input{width:100%;height:44px;border:1px solid #dfe3ea;border-radius:7px;padding:0 12px}.zv-login-card .form-group{margin-bottom:18px}.zv-login-btn{width:100%;height:45px;background:var(--zv-orange)!important;border:0!important}.zv-login-foot{text-align:center;color:#a0a8b6;font-size:10px;margin-top:20px}
+@media(max-width:991px){.zv-sidebar{transform:translateX(-100%);transition:.2s}.zv-sidebar.open{transform:translateX(0)}.zv-topbar{left:0!important;width:100%!important}.zv-page-body{margin-left:0!important}.zv-profile-copy{display:none}.zv-admin-search{width:220px}.zv-login-wrap{grid-template-columns:1fr}.zv-login-brand-panel{display:none}.zv-login-card{margin:70px auto}}
+@media(max-width:767px){.zv-admin-content{padding:20px 14px!important}.zv-performance-grid{grid-template-columns:1fr 1fr}.zv-best-grid{grid-template-columns:1fr}.zv-admin-search{display:none}.zv-topbar .main-header-right{padding:0 14px}}
+
+.zv-sidebar .sidebar-submenu{display:none!important;position:static!important;width:auto!important;opacity:1!important;visibility:visible!important;transform:none!important}
+.zv-sidebar .sidebar-menu>li.zv-menu-open>.sidebar-submenu{display:block!important}
+.zv-sidebar .sidebar-menu>li.zv-menu-open>.sidebar-header .fa-angle-right{transform:rotate(90deg)}
+.zv-sidebar .sidebar-header .fa-angle-right{margin-left:auto;transition:transform .2s ease}
+.zv-page-body .breadcrumbs{padding:16px 30px!important;white-space:normal;overflow-wrap:anywhere}
+.zv-admin-content #changelist,.zv-admin-content #content-main,.zv-admin-content .module{max-width:100%;min-width:0}
+.zv-admin-content #changelist-form{min-width:0;overflow:visible}
+.zv-admin-content .results{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+.zv-admin-content .results table{min-width:760px;width:100%}
+.zv-admin-content #changelist-filter{max-width:260px;min-width:220px}
+.zv-admin-content .paginator{white-space:normal}
+.zv-admin-content input,.zv-admin-content select,.zv-admin-content textarea{max-width:100%}
+.zv-admin-content .form-row{min-width:0}
+.zv-admin-content .related-widget-wrapper{max-width:100%;display:flex;flex-wrap:wrap;gap:5px}
+.zv-admin-content .submit-row{display:flex;flex-wrap:wrap;gap:8px}
+.footer{position:relative!important;left:auto!important;width:auto!important}
+@media(max-width:1199px){.zv-admin-content{padding:24px 22px 36px!important}.zv-admin-content #changelist-filter{max-width:220px}.zv-topbar .nav-menus{gap:12px}.zv-profile-copy{display:none}}
+@media(max-width:991px){body.zv-mk-admin{overflow-x:hidden}.zv-sidebar{position:fixed!important;left:0!important;top:0!important;height:100vh!important;z-index:1105!important;transform:translateX(-100%)!important;transition:transform .25s ease!important}.zv-sidebar.open{transform:translateX(0)!important}.zv-sidebar.open:after{content:"";position:fixed;left:255px;top:0;width:calc(100vw - 255px);height:100vh;background:rgba(9,25,45,.35);z-index:-1}.zv-topbar{left:0!important;width:100%!important;z-index:1100!important}.zv-page-body{margin-left:0!important;width:100%!important}.zv-admin-content #changelist{display:block!important}.zv-admin-content #changelist-filter{float:none!important;width:100%!important;max-width:none!important;margin:18px 0 0!important;border-radius:10px}.zv-admin-content #changelist-form{width:100%!important}.zv-admin-content .change-list .filtered .results,.zv-admin-content .change-list .filtered .paginator,.zv-admin-content .change-list .filtered .actions{margin-right:0!important}.zv-admin-content .aligned label{width:auto!important;float:none!important;display:block;margin-bottom:6px}.zv-admin-content .aligned .form-row>div{margin-left:0!important}.zv-admin-content .wide label{width:auto!important}.zv-admin-content .form-row{padding:12px!important}}
+@media(max-width:767px){.zv-topbar{height:60px!important}.zv-topbar .main-header-right,.zv-topbar .nav-menus{height:60px!important}.zv-page-body{padding-top:60px!important}.zv-sidebar .main-header-left{height:60px}.zv-sidebar .sidebar{height:calc(100vh - 60px)}.zv-admin-content{padding:16px 10px 28px!important}.zv-page-body .breadcrumbs{padding:12px 12px!important;font-size:12px}.page-header h3,.zv-admin-content h1{font-size:22px!important;line-height:1.25}.zv-admin-content .object-tools{float:none!important;margin:8px 0 14px!important;display:flex;flex-wrap:wrap;gap:7px}.zv-admin-content .object-tools li{height:auto!important;margin:0!important}.zv-admin-content .actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.zv-admin-content .actions label{width:100%}.zv-admin-content .actions select{width:100%;max-width:100%}.zv-admin-content .search-form,#changelist-search{display:flex!important;flex-wrap:wrap;gap:8px}.zv-admin-content #changelist-search input[type=text]{min-width:0!important;width:calc(100% - 100px)!important}.zv-admin-content #changelist-filter{font-size:13px}.zv-admin-content fieldset.module{overflow:visible}.zv-admin-content .results table{min-width:680px}.zv-profile-menu,.notification-badge{display:none!important}.mobile-sidebar{display:block!important}.zv-icon-btn{width:40px;height:40px}.footer .container-fluid{padding:10px 12px!important;display:block!important;text-align:center}.footer span{display:block}}
+@media(max-width:480px){.zv-sidebar{width:min(280px,86vw)!important}.zv-sidebar .main-header-left{width:100%!important}.zv-sidebar.open:after{left:min(280px,86vw);width:14vw}.zv-admin-content{padding-left:8px!important;padding-right:8px!important}.zv-admin-content .results table{min-width:620px}.zv-admin-content #changelist-search input[type=text]{width:100%!important}.zv-admin-content #changelist-search input[type=submit]{width:100%}.zv-login-card{width:92%!important;padding:26px 20px!important}}
+
+.zv-admin-content .change-list #changelist{display:grid!important;grid-template-columns:minmax(0,1fr) 245px!important;gap:20px!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;align-items:start}
+.zv-admin-content .change-list #changelist-form{grid-column:1!important;background:#fff!important;border:1px solid #e7e9ef!important;border-radius:12px!important;box-shadow:0 2px 10px rgba(26,39,74,.05)!important;overflow:hidden!important}
+.zv-admin-content .change-list #changelist-filter{grid-column:2!important;float:none!important;width:245px!important;max-width:245px!important;min-width:0!important;margin:0!important;background:#fff!important;border:1px solid #e7e9ef!important;border-radius:12px!important;box-shadow:0 2px 10px rgba(26,39,74,.05)!important;overflow:hidden!important;position:static!important}
+.zv-admin-content #changelist-filter h2{margin:0!important;padding:16px 18px!important;background:#0c2f57!important;color:#fff!important;font-size:14px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.3px}
+.zv-admin-content #changelist-filter h3{margin:0!important;padding:14px 16px 7px!important;color:#4d586b!important;font-size:12px!important;font-weight:700!important;border-top:1px solid #eef0f4!important}
+.zv-admin-content #changelist-filter h3:first-of-type{border-top:0!important}
+.zv-admin-content #changelist-filter ul{margin:0!important;padding:0 10px 12px!important;list-style:none!important}
+.zv-admin-content #changelist-filter li{margin:2px 0!important;padding:0!important;white-space:normal!important}
+.zv-admin-content #changelist-filter li a{display:block!important;padding:7px 9px!important;border-radius:6px!important;color:#5d6676!important;font-size:12px!important;line-height:1.25!important;overflow-wrap:anywhere}
+.zv-admin-content #changelist-filter li.selected a,.zv-admin-content #changelist-filter li a:hover{background:#fff1eb!important;color:#ed5d2a!important;font-weight:700!important}
+.zv-admin-content #changelist-filter-extra-actions{padding:10px 16px!important}
+.zv-admin-content .change-list #toolbar{padding:15px 16px!important}
+.zv-admin-content #changelist-search{display:flex!important;align-items:center!important;gap:9px!important;margin:0!important;max-width:650px!important}
+.zv-admin-content #changelist-search label{margin:0!important;flex:1 1 auto!important;display:flex!important;align-items:center!important}
+.zv-admin-content #changelist-search input[type=text]{height:40px!important;width:100%!important;min-width:180px!important;margin:0!important}
+.zv-admin-content #changelist-search input[type=submit]{height:40px!important;margin:0!important;white-space:nowrap!important;padding:0 20px!important}
+.zv-admin-content .actions{padding:13px 16px!important;display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:9px!important;background:#fff!important;border-bottom:1px solid #eef0f4!important}
+.zv-admin-content .actions label{display:flex!important;align-items:center!important;gap:8px!important;margin:0!important;white-space:nowrap!important}
+.zv-admin-content .actions select{height:36px!important;min-width:190px!important;border:1px solid #dfe3ea!important;border-radius:7px!important;padding:0 32px 0 10px!important;background:#fff!important}
+.zv-admin-content .actions .button{height:36px!important;padding:0 16px!important;white-space:nowrap!important}
+.zv-admin-content .actions .action-counter,.zv-admin-content .actions .all,.zv-admin-content .actions .question,.zv-admin-content .actions .clear{font-size:12px!important;white-space:nowrap!important;margin:0!important}
+.zv-admin-content .results{border-radius:0!important;overflow-x:auto!important}
+.zv-admin-content .results table{min-width:820px!important;table-layout:auto!important}
+.zv-admin-content .results th,.zv-admin-content .results td{vertical-align:middle!important;line-height:1.3!important}
+.zv-admin-content .results th:last-child,.zv-admin-content .results td:last-child{min-width:125px!important}
+.zv-admin-content .results a.button,.zv-admin-content .results .button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:34px!important;padding:7px 12px!important;line-height:1.1!important;white-space:nowrap!important;border-radius:7px!important}
+.zv-admin-content .object-tools{display:flex!important;justify-content:flex-end!important;gap:8px!important;margin:0 0 14px!important;float:none!important}
+.zv-admin-content .object-tools li{margin:0!important;height:auto!important}
+.zv-admin-content .object-tools a{display:inline-flex!important;align-items:center!important;min-height:38px!important;white-space:nowrap!important}
+
+@media(max-width:1199px){
+ .zv-admin-content .change-list #changelist{grid-template-columns:minmax(0,1fr) 210px!important;gap:14px!important}
+ .zv-admin-content .change-list #changelist-filter{width:210px!important;max-width:210px!important}
+}
+@media(max-width:991px){
+ .zv-admin-content .change-list #changelist{display:block!important}
+ .zv-admin-content .change-list #changelist-filter{width:100%!important;max-width:none!important;margin-top:16px!important}
+ .zv-admin-content #changelist-filter h2{cursor:pointer!important;position:relative!important;padding-right:45px!important}
+ .zv-admin-content #changelist-filter h2:after{content:'⌄';position:absolute;right:18px;top:12px;font-size:20px}
+ .zv-admin-content #changelist-filter.zv-filter-collapsed>*:not(h2){display:none!important}
+}
+@media(max-width:767px){
+ .zv-admin-content #changelist-search{max-width:none!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+ .zv-admin-content #changelist-search input[type=text]{width:100%!important;min-width:0!important}
+ .zv-admin-content .actions{align-items:stretch!important}
+ .zv-admin-content .actions label{width:100%!important;white-space:normal!important}
+ .zv-admin-content .actions select{width:100%!important;min-width:0!important}
+ .zv-admin-content .results table{min-width:720px!important}
+ .zv-admin-content .object-tools{justify-content:flex-start!important}
+}
+@media(max-width:480px){
+ .zv-admin-content #changelist-search{grid-template-columns:1fr!important}
+ .zv-admin-content #changelist-search input[type=submit]{width:100%!important}
+ .zv-admin-content .results table{min-width:680px!important}
+}
+
+.zv-admin-content{padding-top:18px!important}
+.zv-admin-content .page-header{margin:0 0 10px!important;padding:0!important;min-height:0!important}
+.zv-admin-content .page-header h3,.zv-admin-content h1{margin:0!important}
+.zv-admin-content .change-list .object-tools{margin:-42px 0 12px!important;min-height:40px!important}
+.zv-admin-content .change-list #changelist{grid-template-columns:minmax(0,1fr) 280px!important;gap:14px!important}
+.zv-admin-content .change-list #toolbar{padding:12px 14px!important}
+.zv-admin-content #changelist-search{max-width:760px!important}
+.zv-admin-content #changelist-search input[type=text]{height:38px!important}
+.zv-admin-content #changelist-search input[type=submit]{height:38px!important}
+.zv-admin-content .change-list #changelist-form{min-height:0!important}
+.zv-admin-content .change-list #changelist-filter{width:280px!important;max-width:280px!important}
+.zv-admin-content #changelist-filter h2{padding:13px 16px!important}
+.zv-admin-content #changelist-filter .zv-filter-fields{padding:13px!important;display:grid!important;gap:11px!important}
+.zv-admin-content #changelist-filter .zv-filter-field{display:grid!important;gap:5px!important}
+.zv-admin-content #changelist-filter .zv-filter-field label{font-size:11px!important;font-weight:700!important;color:#5c6677!important;margin:0!important;text-transform:none!important}
+.zv-admin-content #changelist-filter .zv-filter-select{width:100%!important;height:38px!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#26364b!important;padding:0 34px 0 10px!important;font-size:12px!important;outline:none!important}
+.zv-admin-content #changelist-filter .zv-filter-select:focus{border-color:#164f7d!important;box-shadow:0 0 0 3px rgba(22,79,125,.08)!important}
+.zv-admin-content #changelist-filter .zv-filter-original{display:none!important}
+.zv-admin-content #changelist-filter .zv-filter-actions{display:flex!important;gap:8px!important;padding:0 13px 13px!important}
+.zv-admin-content #changelist-filter .zv-filter-clear{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:34px!important;padding:0 12px!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#526075!important;font-size:12px!important;font-weight:700!important}
+.zv-admin-content #changelist-filter .zv-filter-clear:hover{border-color:#164f7d!important;color:#164f7d!important}
+.zv-admin-content .change-list .filtered .results,.zv-admin-content .change-list .filtered .paginator,.zv-admin-content .change-list .filtered .actions{margin-right:0!important}
+.zv-admin-content .paginator{margin:0!important;padding:12px 16px!important}
+@media(max-width:1199px){.zv-admin-content .change-list #changelist{grid-template-columns:minmax(0,1fr) 250px!important}.zv-admin-content .change-list #changelist-filter{width:250px!important;max-width:250px!important}}
+@media(max-width:991px){.zv-admin-content{padding-top:14px!important}.zv-admin-content .change-list .object-tools{margin:0 0 10px!important}.zv-admin-content .change-list #changelist{display:flex!important;flex-direction:column!important}.zv-admin-content .change-list #changelist-filter{order:-1!important;width:100%!important;max-width:none!important;margin:0 0 12px!important}.zv-admin-content #changelist-filter .zv-filter-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:600px){.zv-admin-content #changelist-filter .zv-filter-fields{grid-template-columns:1fr!important}.zv-admin-content .change-list .object-tools{justify-content:stretch!important}.zv-admin-content .change-list .object-tools li,.zv-admin-content .change-list .object-tools a{width:100%!important;justify-content:center!important}}
+\n\n.zv-admin-content .change-list #content-main{margin-top:0!important}
+.zv-admin-content .change-list #changelist{margin-top:0!important;align-items:start!important}
+.zv-admin-content .change-list #toolbar{margin:0!important;min-height:0!important}
+.zv-admin-content .change-list #toolbar form{margin:0!important}
+.zv-admin-content .change-list #changelist-form{margin:0!important;padding:0!important}
+.zv-admin-content .change-list #changelist-form .results{margin-top:0!important}
+.zv-admin-content .change-list .object-tools{position:static!important;float:none!important;margin:8px 0 12px!important;display:flex!important;justify-content:flex-end!important}
+.zv-admin-content .change-list .object-tools li{margin:0!important}
+.zv-admin-content .change-list #changelist-filter{position:static!important;top:auto!important;right:auto!important;height:auto!important;min-height:0!important;overflow:visible!important;border-radius:9px!important}
+.zv-admin-content #changelist-filter .zv-filter-fields{padding:12px!important}
+.zv-admin-content #changelist-filter .zv-filter-actions{padding:0 12px 12px!important}
+.zv-admin-content .change-list .results{overflow:auto!important}
+.zv-admin-content .change-list .results table{margin:0!important}
+@media(min-width:992px){
+ .zv-admin-content .change-list #changelist{display:grid!important;grid-template-columns:minmax(0,1fr) 270px!important;gap:14px!important}
+ .zv-admin-content .change-list #changelist-form{grid-column:1!important;grid-row:1!important}
+ .zv-admin-content .change-list #changelist-filter{grid-column:2!important;grid-row:1!important;width:270px!important;max-width:270px!important;margin:0!important}
+}
+@media(max-width:991px){
+ .zv-admin-content .change-list #changelist{display:flex!important;flex-direction:column!important;gap:10px!important}
+ .zv-admin-content .change-list #changelist-filter{width:100%!important;max-width:none!important;order:-1!important}
+}
+
+/* Header is part of the page flow now: it does not follow the user while scrolling. */
+.zv-mk-admin .zv-topbar{
+  position:absolute!important;
+  top:0!important;
+  right:0!important;
+  z-index:1000!important;
+}
+.zv-mk-admin .zv-topbar .main-header-right{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 24px!important;
+  display:flex!important;
+  align-items:center!important;
+}
+.zv-mk-admin .zv-topbar .mobile-sidebar{
+  flex:0 0 auto!important;
+  margin:0 14px 0 0!important;
+  padding:0!important;
+  order:0!important;
+}
+.zv-mk-admin .zv-topbar .nav-right{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  padding:0!important;
+  order:1!important;
+}
+.zv-mk-admin .zv-topbar .nav-menus{
+  width:100%!important;
+}
+.zv-mk-admin .zv-admin-search{
+  width:min(520px,46vw)!important;
+  margin-left:0!important;
+  margin-right:auto!important;
+}
+
+/* Put Django list filters beside the list-page search instead of in a right column. */
+.zv-admin-content .change-list #changelist{
+  display:block!important;
+  grid-template-columns:none!important;
+  overflow:hidden!important;
+}
+.zv-admin-content .change-list #changelist-form{
+  width:100%!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters{
+  display:flex!important;
+  align-items:flex-end!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  padding:12px 14px!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-search{
+  flex:1 1 360px!important;
+  min-width:260px!important;
+  max-width:none!important;
+  margin:0!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter{
+  flex:2 1 560px!important;
+  width:auto!important;
+  max-width:none!important;
+  min-width:320px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter>h2{
+  display:none!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-fields{
+  display:flex!important;
+  align-items:flex-end!important;
+  gap:10px!important;
+  padding:0!important;
+  margin:0!important;
+  flex-wrap:wrap!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-field{
+  flex:1 1 145px!important;
+  min-width:130px!important;
+  gap:4px!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-select{
+  height:40px!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-actions{
+  display:flex!important;
+  align-items:flex-end!important;
+  padding:0!important;
+  margin-top:8px!important;
+}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-clear{
+  min-height:40px!important;
+  height:40px!important;
+}
+
+@media(max-width:991px){
+  .zv-mk-admin .zv-topbar .main-header-right{padding:0 14px!important}
+  .zv-mk-admin .zv-topbar .mobile-sidebar{margin-right:10px!important}
+  .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters{align-items:stretch!important}
+  .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-search,
+  .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter{flex:1 1 100%!important;min-width:0!important;width:100%!important}
+  .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:600px){
+  .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter .zv-filter-fields{grid-template-columns:1fr!important}
+}
+
+html,body.zv-mk-admin{max-width:100%;overflow-x:hidden!important}
+body.zv-mk-admin .page-wrapper,body.zv-mk-admin .page-body-wrapper{max-width:100%;overflow:visible!important}
+body.zv-mk-admin .zv-topbar{position:absolute!important;top:0!important;left:255px!important;right:0!important;width:auto!important;height:70px!important;min-width:0!important}
+body.zv-mk-admin .zv-topbar .main-header-right{height:70px!important;display:flex!important;flex-wrap:nowrap!important;padding:0 22px!important;gap:12px!important}
+body.zv-mk-admin .zv-topbar .mobile-sidebar{display:flex!important;align-items:center!important;position:static!important;flex:0 0 44px!important;margin:0!important;order:0!important}
+body.zv-mk-admin .zv-topbar .nav-right{min-width:0!important;flex:1 1 auto!important;order:1!important}
+body.zv-mk-admin .zv-topbar .nav-menus{display:flex!important;width:100%!important;min-width:0!important;height:70px!important;gap:14px!important;align-items:center!important}
+body.zv-mk-admin .zv-topbar .zv-admin-search{position:static!important;flex:0 1 520px!important;width:auto!important;min-width:180px!important;max-width:520px!important;margin:0 auto 0 0!important;height:42px!important}
+body.zv-mk-admin .zv-page-body{margin-left:255px!important;width:calc(100% - 255px)!important;max-width:calc(100% - 255px)!important;padding-top:70px!important;overflow:visible!important}
+body.zv-mk-admin .zv-admin-content{width:100%!important;max-width:100%!important;min-width:0!important;overflow:visible!important}
+body.zv-mk-admin #content-main,body.zv-mk-admin .change-list,body.zv-mk-admin #changelist,body.zv-mk-admin #changelist-form{max-width:100%!important;min-width:0!important}
+
+/* Search + one Filters dropdown. Never use the old right-side filter column. */
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important;overflow:visible!important;padding:12px 14px!important}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-search{flex:1 1 420px!important;max-width:none!important;min-width:220px!important;margin:0!important}
+.zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter{position:relative!important;display:block!important;flex:0 0 auto!important;width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important}
+.zv-admin-content #changelist-filter>h2{display:none!important}
+.zv-filter-dropdown-button{height:40px!important;display:inline-flex!important;align-items:center!important;gap:8px!important;padding:0 15px!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#26364b!important;font-size:13px!important;font-weight:700!important;cursor:pointer!important;white-space:nowrap!important}
+.zv-filter-dropdown-button:after{content:'▾';font-size:11px;color:#778195}
+.zv-filter-dropdown-button:hover,.zv-filter-dropdown-button[aria-expanded="true"]{border-color:var(--zv-orange)!important;color:var(--zv-orange)!important}
+.zv-admin-content #changelist-filter .zv-filter-panel{display:none!important;position:absolute!important;z-index:1200!important;right:0!important;top:48px!important;width:min(520px,calc(100vw - 40px))!important;padding:14px!important;background:#fff!important;border:1px solid #e1e5ec!important;border-radius:10px!important;box-shadow:0 14px 35px rgba(28,42,70,.16)!important}
+.zv-admin-content #changelist-filter.zv-filter-open .zv-filter-panel{display:block!important}
+.zv-admin-content #changelist-filter .zv-filter-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;padding:0!important;margin:0!important}
+.zv-admin-content #changelist-filter .zv-filter-field{display:grid!important;gap:5px!important;min-width:0!important}
+.zv-admin-content #changelist-filter .zv-filter-select{width:100%!important;min-width:0!important;height:40px!important}
+.zv-admin-content #changelist-filter .zv-filter-actions{display:flex!important;justify-content:flex-end!important;padding:12px 0 0!important;margin:0!important}
+.zv-admin-content #changelist-filter .zv-filter-original{display:none!important}
+.zv-admin-content .change-list .filtered .results,.zv-admin-content .change-list .filtered .paginator,.zv-admin-content .change-list .filtered .actions{margin-right:0!important}
+.zv-admin-content .change-list .results{width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+
+/* Dashboard chart controls and real data bars. */
+.zv-chart-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:wrap!important}
+.zv-chart-controls{display:flex;gap:8px;flex-wrap:wrap}
+.zv-chart-controls select{height:36px;border:1px solid #dfe4ec;border-radius:7px;background:#fff;padding:0 30px 0 10px;color:#334056;font-size:12px}
+.zv-activity-chart{height:230px!important;display:flex!important;align-items:stretch!important;gap:8px!important;padding:18px 8px 0!important;overflow-x:auto!important}
+.zv-chart-column{flex:1 0 48px;min-width:48px;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%}
+.zv-chart-value{text-align:center;font-size:10px;color:#69758a;margin-bottom:5px;white-space:nowrap}
+.zv-chart-bar-wrap{height:160px;display:flex;align-items:flex-end;justify-content:center}
+.zv-chart-bar{display:block!important;width:min(36px,72%)!important;min-height:3px!important;border-radius:5px 5px 0 0!important;background:#668ff0!important}
+.zv-chart-label{text-align:center;font-size:10px;color:#7e899a;padding-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zv-chart-empty{margin:auto;color:#8c96a7;font-size:13px}
+
+@media(max-width:991px){
+ body.zv-mk-admin .zv-topbar{left:0!important;width:100%!important}
+ body.zv-mk-admin .zv-page-body{margin-left:0!important;width:100%!important;max-width:100%!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search{flex:1 1 auto!important;max-width:none!important}
+ .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-search{flex:1 1 100%!important;min-width:0!important}
+ .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter{flex:0 0 auto!important;width:auto!important;order:initial!important}
+ .zv-admin-content #changelist-filter .zv-filter-panel{left:0!important;right:auto!important}
+}
+@media(max-width:767px){
+ body.zv-mk-admin .zv-topbar,body.zv-mk-admin .zv-topbar .main-header-right,body.zv-mk-admin .zv-topbar .nav-menus{height:60px!important}
+ body.zv-mk-admin .zv-page-body{padding-top:60px!important}
+ body.zv-mk-admin .zv-topbar .main-header-right{padding:0 10px!important;gap:8px!important}
+ body.zv-mk-admin .zv-topbar .mobile-sidebar{flex-basis:40px!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search{display:flex!important;height:38px!important;min-width:0!important}
+ body.zv-mk-admin .zv-topbar .nav-menus>li:not(.zv-admin-search):not(:first-child){display:none!important}
+ .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters{align-items:stretch!important}
+ .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-search{display:flex!important;flex:1 1 100%!important;min-width:0!important}
+ .zv-admin-content .change-list #toolbar.zv-toolbar-with-filters #changelist-filter{width:100%!important}
+ .zv-filter-dropdown-button{width:100%!important;justify-content:center!important}
+ .zv-admin-content #changelist-filter .zv-filter-panel{left:0!important;right:auto!important;width:100%!important;max-width:100%!important}
+ .zv-chart-head{align-items:flex-start!important}.zv-chart-controls{width:100%}.zv-chart-controls select{flex:1 1 140px;min-width:0}
+}
+@media(max-width:520px){
+ body.zv-mk-admin .zv-topbar .zv-admin-search{font-size:12px!important}
+ .zv-admin-content #changelist-filter .zv-filter-fields{grid-template-columns:1fr!important}
+ .zv-admin-content .change-list #changelist-search{display:grid!important;grid-template-columns:1fr!important}
+ .zv-admin-content .change-list #changelist-search input[type=submit]{width:100%!important}
+ .zv-performance-grid{grid-template-columns:1fr!important}
+}
+
+body.zv-mk-admin .zv-topbar{
+  position:absolute!important;
+  top:0!important;
+  left:255px!important;
+  right:0!important;
+  width:auto!important;
+  height:70px!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  z-index:1050!important;
+}
+body.zv-mk-admin .zv-topbar .zv-topbar-inner{
+  width:100%!important;
+  height:70px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+  padding:0 22px!important;
+  margin:0!important;
+  min-width:0!important;
+}
+body.zv-mk-admin .zv-sidebar-toggle{
+  position:static!important;
+  flex:0 0 42px!important;
+  width:42px!important;
+  height:42px!important;
+  margin:0!important;
+  transform:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid #dfe3ea!important;
+  background:#fff!important;
+}
+body.zv-mk-admin .zv-sidebar-toggle svg{width:20px!important;height:20px!important;color:var(--zv-orange)!important}
+body.zv-mk-admin .zv-topbar .zv-admin-search{
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  flex:1 1 520px!important;
+  width:auto!important;
+  max-width:650px!important;
+  min-width:180px!important;
+  height:42px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+body.zv-mk-admin .zv-topbar .zv-admin-search svg{position:static!important;flex:0 0 18px!important;width:18px!important;height:18px!important;margin:0!important;transform:none!important}
+body.zv-mk-admin .zv-topbar .zv-admin-search input,
+body.zv-mk-admin .zv-topbar .zv-admin-search input[type="search"]{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  display:block!important;
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  height:40px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  line-height:40px!important;
+  font-size:14px!important;
+  color:#2d3748!important;
+  text-indent:0!important;
+}
+body.zv-mk-admin .zv-topbar .zv-admin-search input::placeholder{color:#8b94a5!important;opacity:1!important}
+body.zv-mk-admin .zv-top-actions{
+  list-style:none!important;
+  margin:0 0 0 auto!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+  flex:0 0 auto!important;
+  height:70px!important;
+}
+body.zv-mk-admin .zv-top-actions>li{position:relative!important;display:flex!important;align-items:center!important;margin:0!important;padding:0!important}
+body.zv-mk-admin .zv-top-action-link,body.zv-mk-admin .zv-top-action-button{width:40px!important;height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:0!important;background:transparent!important;color:#4a5568!important;padding:0!important;margin:0!important;cursor:pointer!important}
+body.zv-mk-admin .zv-top-action-link svg,body.zv-mk-admin .zv-top-action-button svg{width:18px!important;height:18px!important}
+body.zv-mk-admin .zv-page-body{padding-top:70px!important}
+
+/* Keep Django list pages contained and prevent clipped content. */
+body.zv-mk-admin .zv-admin-content,body.zv-mk-admin #content-main,body.zv-mk-admin #changelist,body.zv-mk-admin #changelist-form{width:100%!important;max-width:100%!important;min-width:0!important}
+body.zv-mk-admin .change-list #changelist{display:block!important;overflow:visible!important}
+body.zv-mk-admin .change-list .results{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+body.zv-mk-admin .change-list .results table{width:100%!important;min-width:760px!important}
+body.zv-mk-admin .change-list .filtered .results,body.zv-mk-admin .change-list .filtered .paginator,body.zv-mk-admin .change-list .filtered .actions{margin-right:0!important}
+
+/* Hide Django's native filter column completely. V79 builds a clean dropdown in the toolbar. */
+body.zv-mk-admin .change-list #changelist-filter{display:none!important;float:none!important;width:0!important;max-width:0!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
+body.zv-mk-admin .change-list #toolbar{display:flex!important;align-items:flex-end!important;gap:10px!important;flex-wrap:wrap!important;overflow:visible!important;padding:14px!important}
+body.zv-mk-admin .change-list #toolbar #changelist-search{display:flex!important;align-items:flex-end!important;gap:8px!important;flex:1 1 520px!important;min-width:260px!important;max-width:none!important;margin:0!important;padding:0!important}
+body.zv-mk-admin .change-list #toolbar #changelist-search>div{display:flex!important;align-items:flex-end!important;gap:8px!important;flex:1 1 auto!important;min-width:0!important;flex-wrap:wrap!important}
+body.zv-mk-admin .change-list #toolbar #changelist-search label{flex:1 1 320px!important;min-width:180px!important;margin:0!important}
+body.zv-mk-admin .change-list #toolbar #changelist-search input[type="text"],body.zv-mk-admin .change-list #toolbar #changelist-search input[type="search"]{width:100%!important;min-width:0!important;height:40px!important;margin:0!important}
+body.zv-mk-admin .change-list #toolbar #changelist-search input[type="submit"]{height:40px!important;margin:0!important;flex:0 0 auto!important}
+.zv-filter-control{position:relative!important;flex:0 0 auto!important;margin:0!important;align-self:flex-end!important}
+.zv-filter-dropdown-button{height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:0 15px!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#26364b!important;font-size:13px!important;font-weight:700!important;cursor:pointer!important;white-space:nowrap!important}
+.zv-filter-dropdown-button:after{content:'▾';font-size:11px;color:#778195}
+.zv-filter-dropdown-button:hover,.zv-filter-dropdown-button[aria-expanded="true"]{border-color:var(--zv-orange)!important;color:var(--zv-orange)!important}
+.zv-filter-dropdown-panel{display:none!important;position:absolute!important;z-index:1300!important;right:0!important;top:48px!important;width:min(560px,calc(100vw - 36px))!important;max-height:min(70vh,620px)!important;overflow:auto!important;padding:16px!important;background:#fff!important;border:1px solid #e1e5ec!important;border-radius:10px!important;box-shadow:0 16px 40px rgba(28,42,70,.18)!important}
+.zv-filter-control.zv-filter-open .zv-filter-dropdown-panel{display:block!important}
+.zv-filter-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.zv-filter-field-v79{display:grid!important;gap:5px!important;min-width:0!important}
+.zv-filter-field-v79 label{margin:0!important;font-size:11px!important;font-weight:700!important;color:#5c6677!important}
+.zv-filter-field-v79 select{width:100%!important;height:40px!important;min-width:0!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#26364b!important;padding:0 34px 0 10px!important;font-size:12px!important}
+.zv-filter-footer{display:flex!important;justify-content:flex-end!important;gap:8px!important;padding-top:14px!important;margin-top:14px!important;border-top:1px solid #eef0f4!important}
+.zv-filter-clear-v79{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:38px!important;padding:0 13px!important;border:1px solid #dfe4ec!important;border-radius:7px!important;background:#fff!important;color:#526075!important;font-size:12px!important;font-weight:700!important}
+
+@media(max-width:991px){
+ body.zv-mk-admin .zv-topbar{left:0!important;right:0!important;width:100%!important}
+ body.zv-mk-admin .zv-topbar .zv-topbar-inner{padding:0 12px!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search{max-width:none!important;flex:1 1 auto!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search{flex:1 1 100%!important;min-width:0!important}
+ .zv-filter-control{flex:0 0 auto!important}
+ .zv-filter-dropdown-panel{left:0!important;right:auto!important}
+}
+@media(max-width:767px){
+ body.zv-mk-admin .zv-topbar,body.zv-mk-admin .zv-topbar .zv-topbar-inner,body.zv-mk-admin .zv-top-actions{height:60px!important}
+ body.zv-mk-admin .zv-page-body{padding-top:60px!important}
+ body.zv-mk-admin .zv-topbar .zv-topbar-inner{gap:8px!important;padding:0 9px!important}
+ body.zv-mk-admin .zv-sidebar-toggle{flex-basis:38px!important;width:38px!important;height:38px!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search{height:38px!important;min-width:0!important;padding:0 10px!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search input{height:36px!important;line-height:36px!important;font-size:13px!important}
+ body.zv-mk-admin .zv-top-actions>li:not(.zv-profile-menu){display:none!important}
+ body.zv-mk-admin .zv-profile-copy,body.zv-mk-admin .zv-profile-menu>svg{display:none!important}
+ body.zv-mk-admin .zv-avatar{width:36px!important;height:36px!important}
+ body.zv-mk-admin .change-list #toolbar{align-items:stretch!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search{display:block!important;width:100%!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search>div{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;width:100%!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search label{min-width:0!important}
+ .zv-filter-control{width:100%!important}
+ .zv-filter-dropdown-button{width:100%!important}
+ .zv-filter-dropdown-panel{left:0!important;right:auto!important;width:100%!important;max-width:100%!important}
+ .zv-filter-grid{grid-template-columns:1fr!important}
+ body.zv-mk-admin .change-list .results table{min-width:680px!important}
+}
+@media(max-width:480px){
+ body.zv-mk-admin .zv-top-actions{display:none!important}
+ body.zv-mk-admin .zv-topbar .zv-admin-search{flex:1 1 auto!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search>div{grid-template-columns:1fr!important}
+ body.zv-mk-admin .change-list #toolbar #changelist-search input[type="submit"]{width:100%!important}
+}
+
+
+/* Targeted admin shell corrections. */
+body.zv-mk-admin .page-wrapper .page-body-wrapper .zv-page-body{
+    margin-top:0!important;
+    padding-top:70px!important;
+    padding-left:0!important;
+    padding-right:0!important;
+}
+body.zv-mk-admin .zv-page-body>.breadcrumbs{
+  margin:0!important;
+  padding:22px 30px 8px!important;
+  line-height:1.4!important;
+}
+body.zv-mk-admin .zv-admin-content{
+  padding:10px 30px 36px!important;
+}
+body.zv-mk-admin .zv-admin-content>.page-header{
+  padding:4px 0 16px!important;
+  margin:0!important;
+}
+body.zv-mk-admin .zv-admin-content>.page-header h3{
+  margin:0!important;
+}
+body.zv-mk-admin.change-list .zv-admin-content>.page-header,
+body.zv-mk-admin .change-list .page-header{
+  padding-bottom:12px!important;
+}
+body.zv-mk-admin .object-tools{
+  margin-top:0!important;
+}
+body.zv-mk-admin .zv-list-tools{
+  margin:0 0 12px!important;
+}
+body.zv-mk-admin .zv-topbar{
+  box-shadow:0 1px 0 rgba(19,36,61,.08),0 4px 16px rgba(26,39,74,.05)!important;
+}
+body.zv-mk-admin .zv-admin-search{
+  max-width:720px!important;
+}
+body.zv-mk-admin .zv-filterbar{
+  justify-content:flex-start!important;
+}
+body.zv-mk-admin .zv-filter-item{
+  max-width:210px!important;
+}
+body.zv-mk-admin .zv-clear-filter{
+  align-self:flex-end!important;
+}
+
+/* Optional dark theme, based on the Multikart admin reference but using ZenVibe colours. */
+body.zv-mk-admin.zv-dark-admin{
+  --zv-bg:#1f2228;
+  --zv-navy:#121a25;
+  color:#e7ebf1!important;
+  background:#1f2228!important;
+}
+body.zv-mk-admin.zv-dark-admin .zv-topbar,
+body.zv-mk-admin.zv-dark-admin .zv-list-tools,
+body.zv-mk-admin.zv-dark-admin #changelist,
+body.zv-mk-admin.zv-dark-admin .module,
+body.zv-mk-admin.zv-dark-admin .card,
+body.zv-mk-admin.zv-dark-admin .zv-filter-item select,
+body.zv-mk-admin.zv-dark-admin .zv-clear-filter{
+  background:#272b31!important;
+  color:#e7ebf1!important;
+  border-color:#383e47!important;
+}
+body.zv-mk-admin.zv-dark-admin .zv-page-body,
+body.zv-mk-admin.zv-dark-admin .zv-admin-content{
+  background:#1f2228!important;
+}
+body.zv-mk-admin.zv-dark-admin .zv-admin-search,
+body.zv-mk-admin.zv-dark-admin .zv-admin-search input{
+  background:#252a31!important;
+  color:#f3f5f8!important;
+  border-color:#363c46!important;
+}
+body.zv-mk-admin.zv-dark-admin .zv-admin-search input::placeholder{color:#949dab!important}
+body.zv-mk-admin.zv-dark-admin .page-header h3,
+body.zv-mk-admin.zv-dark-admin h1,
+body.zv-mk-admin.zv-dark-admin h2,
+body.zv-mk-admin.zv-dark-admin h3,
+body.zv-mk-admin.zv-dark-admin .breadcrumbs,
+body.zv-mk-admin.zv-dark-admin .breadcrumbs a{color:#e7ebf1!important}
+body.zv-mk-admin.zv-dark-admin .change-list .results thead th{background:#2d3239!important;color:#d5dbe5!important;border-color:#3a4049!important}
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody td,
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody th{background:#272b31!important;color:#e7ebf1!important;border-color:#363c45!important}
+body.zv-mk-admin.zv-dark-admin .change-list .results a{color:#ff7a45!important}
+body.zv-mk-admin.zv-dark-admin .actions,
+body.zv-mk-admin.zv-dark-admin .paginator{background:#272b31!important;color:#e7ebf1!important;border-color:#383e47!important}
+
+@media(max-width:991px){
+  body.zv-mk-admin .page-wrapper .page-body-wrapper .zv-page-body{padding-top:0!important}
+  body.zv-mk-admin .zv-page-body>.breadcrumbs{padding:16px 18px 6px!important}
+  body.zv-mk-admin .zv-admin-content{padding:8px 18px 28px!important}
+}
+@media(max-width:767px){
+  body.zv-mk-admin .page-wrapper .page-body-wrapper .zv-page-body{padding-top:0!important}
+  body.zv-mk-admin .zv-page-body>.breadcrumbs{padding:14px 12px 4px!important}
+  body.zv-mk-admin .zv-admin-content{padding:6px 12px 24px!important}
+  body.zv-mk-admin .zv-admin-content>.page-header{padding-bottom:12px!important}
+}
+/* =========================================================
+   ADMIN HEADER ACTIONS
+   ========================================================= */
+
+.zv-topbar-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+}
+
+
+/* Admin search */
+
+.zv-admin-search {
+    flex: 1 1 auto;
+    max-width: 820px;
+    min-width: 250px;
+}
+
+
+/* Push header icons to far right */
+
+.zv-top-actions {
+    margin: 0 18px 0 auto !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    list-style: none;
+    flex-shrink: 0;
+}
+
+.zv-top-actions > li {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+}
+
+
+/* All header icons */
+
+.zv-header-icon {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 7px;
+
+    background: transparent !important;
+    color: #46546a !important;
+
+    text-decoration: none !important;
+
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease;
+}
+
+.zv-header-icon:hover {
+    background: #f5f6f8 !important;
+    color: #ff6337 !important;
+}
+
+.zv-header-icon svg {
+    width: 19px;
+    height: 19px;
+    stroke-width: 2;
+}
+
+
+/* Notification counter */
+
+.zv-notification-count {
+    position: absolute;
+
+    top: 2px;
+    right: 1px;
+
+    min-width: 17px;
+    height: 17px;
+
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #ff6337;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 17px;
+}
+
+
+/* Logout */
+
+.zv-header-logout-form {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* Logout hover */
+
+.zv-logout-icon:hover {
+    color: #dc3545 !important;
+    background: #fff1f1 !important;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .zv-topbar-inner {
+        gap: 8px;
+    }
+
+    .zv-admin-search {
+        min-width: 0;
+    }
+
+    .zv-top-actions {
+        margin-right: 8px !important;
+        gap: 3px !important;
+    }
+
+    .zv-header-icon {
+        width: 38px;
+        height: 38px;
+    }
+}
+/* ==========================================================
+   ZENVIBE ADMIN TOPBAR - DESKTOP/TABLET/MOBILE FINAL FIX
+   ========================================================== */
+
+/* Main header */
+.zv-topbar {
+    width: auto !important;
+    right: 0 !important;
+    overflow: visible !important;
+}
+
+.zv-topbar-inner {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 16px !important;
+    padding: 10px 18px !important;
+
+    overflow: visible !important;
+}
+
+
+/* Sidebar hamburger */
+.zv-sidebar-toggle {
+    flex: 0 0 54px !important;
+}
+
+
+/* Search */
+.zv-admin-search {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    max-width: 820px !important;
+    min-width: 200px !important;
+
+    margin: 0 !important;
+}
+
+
+/* ==========================================================
+   RIGHT ACTION ICONS
+   ========================================================== */
+
+.zv-top-actions {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: max-content !important;
+
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+
+    gap: 8px !important;
+
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+
+    list-style: none !important;
+
+    overflow: visible !important;
+}
+
+.zv-top-actions > li {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: relative !important;
+
+    float: none !important;
+}
+
+
+/* Individual icons */
+.zv-header-icon {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 42px !important;
+
+    width: 42px !important;
+    height: 42px !important;
+
+    min-width: 42px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 8px !important;
+
+    background: transparent !important;
+    color: #40506a !important;
+
+    cursor: pointer !important;
+
+    text-decoration: none !important;
+}
+
+
+/* Feather icons */
+.zv-header-icon svg {
+    display: block !important;
+
+    width: 20px !important;
+    height: 20px !important;
+
+    stroke: currentColor !important;
+}
+
+
+/* Hover */
+.zv-header-icon:hover {
+    background: #f3f5f8 !important;
+    color: #ff6337 !important;
+}
+
+
+/* Logout form must not affect layout */
+.zv-header-logout-form {
+    display: flex !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: auto !important;
+}
+
+
+/* Logout */
+.zv-logout-icon:hover {
+    background: #fff1ed !important;
+    color: #ff6337 !important;
+}
+
+
+/* Notification badge */
+.zv-notification-count {
+    position: absolute !important;
+
+    top: 1px !important;
+    right: 0 !important;
+
+    min-width: 16px !important;
+    height: 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 4px !important;
+
+    border-radius: 20px !important;
+
+    background: #ff6337 !important;
+    color: #fff !important;
+
+    font-size: 9px !important;
+    font-weight: 700 !important;
+
+    line-height: 16px !important;
+}
+
+
+/* ==========================================================
+   IMPORTANT:
+   Override Multikart desktop header rules
+   ========================================================== */
+
+@media (min-width: 992px) {
+
+    .zv-topbar .zv-topbar-inner {
+        display: flex !important;
+    }
+
+    .zv-topbar .zv-top-actions {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        position: relative !important;
+
+        margin-left: auto !important;
+
+        right: auto !important;
+        transform: none !important;
+    }
+
+    .zv-topbar .zv-top-actions > li {
+        display: flex !important;
+        visibility: visible !important;
+    }
+
+    .zv-topbar .zv-header-icon {
+        display: inline-flex !important;
+        visibility: visible !important;
+    }
+}
+
+
+/* ==========================================================
+   TABLET
+   ========================================================== */
+
+@media (max-width: 991px) {
+
+    .zv-topbar-inner {
+        gap: 8px !important;
+        padding: 8px 12px !important;
+    }
+
+    .zv-admin-search {
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    .zv-top-actions {
+        gap: 2px !important;
+    }
+
+    .zv-header-icon {
+        flex-basis: 38px !important;
+
+        width: 38px !important;
+        height: 38px !important;
+
+        min-width: 38px !important;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 575px) {
+
+    .zv-topbar-inner {
+        gap: 5px !important;
+        padding: 7px 8px !important;
+    }
+
+    .zv-sidebar-toggle {
+        flex: 0 0 42px !important;
+    }
+
+    .zv-admin-search {
+        min-width: 0 !important;
+    }
+
+    .zv-admin-search input {
+        min-width: 0 !important;
+        font-size: 13px !important;
+    }
+
+    .zv-top-actions {
+        gap: 0 !important;
+    }
+
+    .zv-header-icon {
+        flex-basis: 34px !important;
+
+        width: 34px !important;
+        min-width: 34px !important;
+        height: 36px !important;
+    }
+
+    .zv-header-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+}
+/* ==========================================================
+   ZENVIBE ADMIN - FINAL DARK MODE
+   Supports both zv-dark and zv-dark-admin
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark,
+body.zv-mk-admin.zv-dark-admin {
+    --zv-bg: #1d2127;
+    --zv-text: #f1f5f9;
+    --zv-border: #3b424c;
+
+    background: #1d2127 !important;
+    color: #f1f5f9 !important;
+}
+
+
+/* ==========================================================
+   MAIN PAGE
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-page-body,
+body.zv-mk-admin.zv-dark .zv-admin-content,
+body.zv-mk-admin.zv-dark-admin .zv-page-body,
+body.zv-mk-admin.zv-dark-admin .zv-admin-content {
+    background: #1d2127 !important;
+    color: #f1f5f9 !important;
+}
+
+
+/* ==========================================================
+   HEADINGS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark h1,
+body.zv-mk-admin.zv-dark h2,
+body.zv-mk-admin.zv-dark h3,
+body.zv-mk-admin.zv-dark h4,
+body.zv-mk-admin.zv-dark h5,
+body.zv-mk-admin.zv-dark h6,
+
+body.zv-mk-admin.zv-dark-admin h1,
+body.zv-mk-admin.zv-dark-admin h2,
+body.zv-mk-admin.zv-dark-admin h3,
+body.zv-mk-admin.zv-dark-admin h4,
+body.zv-mk-admin.zv-dark-admin h5,
+body.zv-mk-admin.zv-dark-admin h6 {
+    color: #f8fafc !important;
+}
+
+
+/* ==========================================================
+   CARDS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .card,
+body.zv-mk-admin.zv-dark .card-body,
+body.zv-mk-admin.zv-dark-admin .card,
+body.zv-mk-admin.zv-dark-admin .card-body {
+    background: #252a31 !important;
+    color: #f1f5f9 !important;
+}
+
+body.zv-mk-admin.zv-dark .card-header,
+body.zv-mk-admin.zv-dark-admin .card-header {
+    background: #252a31 !important;
+    border-bottom-color: #3b424c !important;
+    color: #f8fafc !important;
+}
+
+body.zv-mk-admin.zv-dark .card-header h5,
+body.zv-mk-admin.zv-dark-admin .card-header h5 {
+    color: #f8fafc !important;
+}
+
+
+/* ==========================================================
+   DASHBOARD KPI
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-kpi .media-body span,
+body.zv-mk-admin.zv-dark .zv-kpi .media-body small,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .media-body span,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .media-body small {
+    color: #aeb8c7 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-kpi .media-body h3,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .media-body h3 {
+    color: #ffffff !important;
+}
+
+
+/* ==========================================================
+   STORE PERFORMANCE
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-performance-grid > div,
+body.zv-mk-admin.zv-dark-admin .zv-performance-grid > div {
+    background: #292f37 !important;
+    border-color: #414955 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-performance-grid span,
+body.zv-mk-admin.zv-dark-admin .zv-performance-grid span {
+    color: #aeb8c7 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-performance-grid strong,
+body.zv-mk-admin.zv-dark-admin .zv-performance-grid strong {
+    color: #ffffff !important;
+}
+
+
+/* Chart */
+
+body.zv-mk-admin.zv-dark .zv-activity-chart,
+body.zv-mk-admin.zv-dark-admin .zv-activity-chart {
+    background: #252a31 !important;
+    border-color: #3b424c !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-chart-value,
+body.zv-mk-admin.zv-dark .zv-chart-label,
+body.zv-mk-admin.zv-dark-admin .zv-chart-value,
+body.zv-mk-admin.zv-dark-admin .zv-chart-label {
+    color: #b7c1ce !important;
+}
+
+
+/* ==========================================================
+   BEST SELLING PRODUCTS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-best-item,
+body.zv-mk-admin.zv-dark-admin .zv-best-item {
+    background: #292f37 !important;
+    border-color: #59636f !important;
+    color: #f1f5f9 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-best-item b,
+body.zv-mk-admin.zv-dark-admin .zv-best-item b {
+    color: #ffffff !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-best-item span,
+body.zv-mk-admin.zv-dark-admin .zv-best-item span {
+    color: #bdc7d4 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-best-item > strong,
+body.zv-mk-admin.zv-dark-admin .zv-best-item > strong {
+    color: #8bb9ff !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-best-item > strong small,
+body.zv-mk-admin.zv-dark-admin .zv-best-item > strong small {
+    color: #bdc7d4 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-best-img,
+body.zv-mk-admin.zv-dark-admin .zv-best-img {
+    background: #ffffff !important;
+}
+
+
+/* ==========================================================
+   QUICK ACTIONS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-quick-actions a,
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions a {
+    background: #292f37 !important;
+    border-color: #59636f !important;
+    color: #f8fafc !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-quick-actions a:hover,
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions a:hover {
+    background: #323943 !important;
+    border-color: #6ea8fe !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-quick-actions span,
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions span {
+    color: #ffffff !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-quick-actions small,
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions small {
+    color: #bdc7d4 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-quick-actions svg,
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions svg {
+    color: #72adff !important;
+}
+
+
+/* ==========================================================
+   DJANGO ADMIN MODULES / LISTS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .module,
+body.zv-mk-admin.zv-dark #changelist,
+body.zv-mk-admin.zv-dark #changelist-form,
+
+body.zv-mk-admin.zv-dark-admin .module,
+body.zv-mk-admin.zv-dark-admin #changelist,
+body.zv-mk-admin.zv-dark-admin #changelist-form {
+    background: #252a31 !important;
+    color: #f1f5f9 !important;
+    border-color: #3b424c !important;
+}
+
+body.zv-mk-admin.zv-dark .module h2,
+body.zv-mk-admin.zv-dark .module caption,
+body.zv-mk-admin.zv-dark .inline-group h2,
+
+body.zv-mk-admin.zv-dark-admin .module h2,
+body.zv-mk-admin.zv-dark-admin .module caption,
+body.zv-mk-admin.zv-dark-admin .inline-group h2 {
+    background: #20252c !important;
+    color: #ffffff !important;
+    border-color: #3b424c !important;
+}
+
+
+/* ==========================================================
+   DJANGO TABLES
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark table,
+body.zv-mk-admin.zv-dark-admin table {
+    color: #e9eef5 !important;
+}
+
+body.zv-mk-admin.zv-dark .change-list .results thead th,
+body.zv-mk-admin.zv-dark-admin .change-list .results thead th {
+    background: #20252c !important;
+    color: #d6dee9 !important;
+    border-color: #3b424c !important;
+}
+
+body.zv-mk-admin.zv-dark .change-list .results tbody td,
+body.zv-mk-admin.zv-dark .change-list .results tbody th,
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody td,
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody th {
+    background: #292f37 !important;
+    color: #e9eef5 !important;
+    border-color: #3b424c !important;
+}
+
+body.zv-mk-admin.zv-dark .change-list .results tbody tr:hover td,
+body.zv-mk-admin.zv-dark .change-list .results tbody tr:hover th,
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody tr:hover td,
+body.zv-mk-admin.zv-dark-admin .change-list .results tbody tr:hover th {
+    background: #303741 !important;
+}
+
+
+/* ==========================================================
+   LINKS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-admin-content a:not(.button),
+body.zv-mk-admin.zv-dark-admin .zv-admin-content a:not(.button) {
+    color: #8bb9ff !important;
+}
+
+
+/* ==========================================================
+   FORMS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark input,
+body.zv-mk-admin.zv-dark select,
+body.zv-mk-admin.zv-dark textarea,
+
+body.zv-mk-admin.zv-dark-admin input,
+body.zv-mk-admin.zv-dark-admin select,
+body.zv-mk-admin.zv-dark-admin textarea {
+    background: #292f37 !important;
+    border-color: #48515d !important;
+    color: #f1f5f9 !important;
+}
+
+body.zv-mk-admin.zv-dark input::placeholder,
+body.zv-mk-admin.zv-dark textarea::placeholder,
+body.zv-mk-admin.zv-dark-admin input::placeholder,
+body.zv-mk-admin.zv-dark-admin textarea::placeholder {
+    color: #9ba6b5 !important;
+}
+
+
+/* ==========================================================
+   ACTIONS / PAGINATION
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .actions,
+body.zv-mk-admin.zv-dark .paginator,
+body.zv-mk-admin.zv-dark-admin .actions,
+body.zv-mk-admin.zv-dark-admin .paginator {
+    background: #252a31 !important;
+    color: #e9eef5 !important;
+    border-color: #3b424c !important;
+}
+
+
+/* ==========================================================
+   BREADCRUMBS
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .breadcrumbs,
+body.zv-mk-admin.zv-dark .breadcrumb,
+body.zv-mk-admin.zv-dark-admin .breadcrumbs,
+body.zv-mk-admin.zv-dark-admin .breadcrumb {
+    color: #b7c1ce !important;
+}
+
+body.zv-mk-admin.zv-dark .breadcrumbs a,
+body.zv-mk-admin.zv-dark .breadcrumb a,
+body.zv-mk-admin.zv-dark-admin .breadcrumbs a,
+body.zv-mk-admin.zv-dark-admin .breadcrumb a {
+    color: #8bb9ff !important;
+}
+
+
+/* ==========================================================
+   TOP HEADER
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-topbar,
+body.zv-mk-admin.zv-dark-admin .zv-topbar {
+    background: #252a31 !important;
+    border-color: #3b424c !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-header-icon,
+body.zv-mk-admin.zv-dark .zv-top-action-link,
+body.zv-mk-admin.zv-dark .zv-top-action-button,
+
+body.zv-mk-admin.zv-dark-admin .zv-header-icon,
+body.zv-mk-admin.zv-dark-admin .zv-top-action-link,
+body.zv-mk-admin.zv-dark-admin .zv-top-action-button {
+    color: #dbe3ee !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-header-icon:hover,
+body.zv-mk-admin.zv-dark-admin .zv-header-icon:hover {
+    background: #333a44 !important;
+    color: #ff7a45 !important;
+}
+
+
+/* ==========================================================
+   SEARCH
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-admin-search,
+body.zv-mk-admin.zv-dark-admin .zv-admin-search {
+    background: #20252c !important;
+    border-color: #414955 !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-admin-search input,
+body.zv-mk-admin.zv-dark-admin .zv-admin-search input {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+body.zv-mk-admin.zv-dark .zv-admin-search svg,
+body.zv-mk-admin.zv-dark-admin .zv-admin-search svg {
+    color: #c7d0dc !important;
+}
+
+
+/* ==========================================================
+   EMPTY TEXT
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark .zv-empty-table,
+body.zv-mk-admin.zv-dark .zv-empty-panel,
+body.zv-mk-admin.zv-dark-admin .zv-empty-table,
+body.zv-mk-admin.zv-dark-admin .zv-empty-panel {
+    color: #b7c1ce !important;
+}
+
+
+
+/* ==========================================================
+   TABLET / MOBILE
+   Sidebar stays overlay style
+   ========================================================== */
+
+@media (max-width: 991px) {
+
+    body.zv-mk-admin .zv-topbar {
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
+
+    body.zv-mk-admin .zv-page-body {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.zv-mk-admin .zv-sidebar {
+        width: 255px !important;
+        transform: translateX(-100%) !important;
+    }
+
+    body.zv-mk-admin .zv-sidebar.open {
+        transform: translateX(0) !important;
+    }
+}
+/* ==========================================================
+   ZENVIBE DARK MODE - FINAL TEXT VISIBILITY PATCH
+   MUST REMAIN AT THE VERY END OF admin.css
+   ========================================================== */
+
+body.zv-mk-admin.zv-dark-admin {
+    --zv-bg: #1d2127;
+    --zv-text: #f1f5f9;
+    --zv-border: #3b434e;
+
+    background: #1d2127 !important;
+    color: #f1f5f9 !important;
+}
+
+
+/* ----------------------------------------------------------
+   DASHBOARD KPI CARDS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .zv-kpi,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .card-body,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .static-top-widget,
+body.zv-mk-admin.zv-dark-admin .zv-kpi .media-body {
+    color: #f1f5f9 !important;
+}
+
+
+/* KPI labels: Revenue, Products, etc. */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi .media-body > span {
+    color: #b8c6da !important;
+}
+
+
+/* KPI NUMBERS - this fixes the white/blank rectangles area */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi .media-body h3,
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi .media-body h3 *,
+    
+body.zv-mk-admin.zv-dark-admin
+.static-top-widget .media-body h3,
+
+body.zv-mk-admin.zv-dark-admin
+.static-top-widget .media-body h3 * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: transparent !important;
+}
+
+
+/* Keep original KPI accent colours if classes exist */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.warning-box .media-body h3,
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.warning-box .media-body h3 * {
+    color: #ffb84d !important;
+    -webkit-text-fill-color: #ffb84d !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.secondary-box .media-body h3,
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.secondary-box .media-body h3 * {
+    color: #36d1bd !important;
+    -webkit-text-fill-color: #36d1bd !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.primary-box .media-body h3,
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi.primary-box .media-body h3 * {
+    color: #65a4ff !important;
+    -webkit-text-fill-color: #65a4ff !important;
+}
+
+
+/* KPI descriptions */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-kpi .media-body small {
+    color: #b3c0d3 !important;
+}
+
+
+/* ----------------------------------------------------------
+   CARD HEADINGS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .card-header,
+body.zv-mk-admin.zv-dark-admin .card-body {
+    color: #eef3f8 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .card-header h5,
+body.zv-mk-admin.zv-dark-admin .card-header h4,
+body.zv-mk-admin.zv-dark-admin .card-header h3 {
+    color: #ffffff !important;
+}
+
+
+/* ----------------------------------------------------------
+   STORE PERFORMANCE
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-performance-grid > div {
+    background: #292f37 !important;
+    border-color: #46505d !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-performance-grid span {
+    color: #b8c6da !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-performance-grid strong {
+    color: #ffffff !important;
+}
+
+
+/* Chart */
+
+body.zv-mk-admin.zv-dark-admin .zv-chart-value {
+    color: #e8eef7 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-chart-label {
+    color: #aebbd0 !important;
+}
+
+
+/* ----------------------------------------------------------
+   LATEST ORDERS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table table {
+    color: #eef3f8 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table tbody td {
+    color: #e7edf5 !important;
+    background: #252a31 !important;
+    border-color: #3c4550 !important;
+}
+
+
+/* IMPORTANT - fixes dark $15.99 */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table tbody td,
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table tbody td *,
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table tbody td strong,
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table tbody td span {
+    color: #e7edf5 !important;
+}
+
+
+/* Order ID */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table td:first-child a {
+    color: #72aaff !important;
+    font-weight: 700 !important;
+}
+
+
+/* Customer / secondary information */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table td:first-child small {
+    color: #aebbd0 !important;
+}
+
+
+/* Table header */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table thead th {
+    background: #f7f8fb !important;
+    color: #778398 !important;
+}
+
+
+/* Don't allow generic td rule to destroy badges */
+
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table .zv-badge,
+body.zv-mk-admin.zv-dark-admin
+.latest-order-table .zv-badge * {
+    -webkit-text-fill-color: currentColor !important;
+}
+
+
+/* Payment/status badges */
+
+body.zv-mk-admin.zv-dark-admin .payment-bypassed {
+    background: #eee9ff !important;
+    color: #6f52bb !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .payment-paid {
+    background: #e7f7ef !important;
+    color: #22855a !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .payment-pending {
+    background: #fff4d9 !important;
+    color: #9b6b00 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .payment-failed {
+    background: #ffeded !important;
+    color: #c64a4a !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-in_production {
+    background: #f1ebff !important;
+    color: #7655bd !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-new {
+    background: #fff4d9 !important;
+    color: #9b6b00 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-confirmed {
+    background: #e8f1ff !important;
+    color: #2f6dbd !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-completed {
+    background: #e7f7ef !important;
+    color: #22855a !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-shipped {
+    background: #e7f7fb !important;
+    color: #267c8d !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .status-cancelled {
+    background: #ffeded !important;
+    color: #c64a4a !important;
+}
+
+
+/* ----------------------------------------------------------
+   BEST SELLING PRODUCTS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .zv-best-item {
+    background: #292f37 !important;
+    border-color: #46505d !important;
+    color: #eef3f8 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-best-item b {
+    color: #ffffff !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-best-item span {
+    color: #b5c1d1 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-best-item > strong {
+    color: #72aaff !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-best-item > strong small {
+    color: #b5c1d1 !important;
+}
+
+
+/* ----------------------------------------------------------
+   QUICK ACTIONS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .zv-quick-actions a {
+    background: #292f37 !important;
+    border-color: #46505d !important;
+    color: #eef3f8 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-quick-actions a span {
+    color: #ffffff !important;
+}
+
+body.zv-mk-admin.zv-dark-admin
+.zv-quick-actions a small {
+    color: #b5c1d1 !important;
+}
+
+
+/* ----------------------------------------------------------
+   SELECTS / DASHBOARD CONTROLS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin
+.zv-chart-controls select {
+    background: #292f37 !important;
+    border-color: #46505d !important;
+    color: #ffffff !important;
+}
+
+
+/* ----------------------------------------------------------
+   GENERAL SECONDARY TEXT
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .text-muted {
+    color: #aebbd0 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin small {
+    border-color: transparent;
+}
+
+
+/* ----------------------------------------------------------
+   EMPTY STATES
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.zv-dark-admin .zv-empty-table,
+body.zv-mk-admin.zv-dark-admin .zv-empty-panel,
+body.zv-mk-admin.zv-dark-admin .zv-chart-empty {
+    color: #aebbd0 !important;
+}
+/* ==========================================================
+   ZENVIBE ADMIN - FINAL PAGE SPACING / OVERLAP FIX
+   KEEP THIS AS THE LAST CSS BLOCK
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   1. TOP BAR
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .zv-topbar {
+    position: absolute !important;
+    top: 0 !important;
+    left: 255px !important;
+    right: 0 !important;
+
+    width: auto !important;
+    height: 70px !important;
+
+    margin: 0 !important;
+
+    z-index: 1050 !important;
+}
+
+
+/* ----------------------------------------------------------
+   2. MAIN PAGE MUST START BELOW HEADER
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .page-wrapper
+.page-body-wrapper
+.zv-page-body {
+
+    margin-left: 255px !important;
+
+    margin-top: 0 !important;
+
+    width: calc(100% - 255px) !important;
+    max-width: calc(100% - 255px) !important;
+
+    /* THIS IS IMPORTANT */
+    padding-top: 70px !important;
+
+    min-height: 100vh !important;
+
+    overflow: visible !important;
+}
+
+
+/* ----------------------------------------------------------
+   3. BREADCRUMBS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .zv-page-body > .breadcrumbs {
+
+    display: block !important;
+
+    position: relative !important;
+
+    margin: 0 !important;
+
+    padding:
+        18px
+        36px
+        8px
+        36px !important;
+
+    min-height: 42px !important;
+
+    line-height: 1.4 !important;
+
+    background: transparent !important;
+
+    z-index: 1 !important;
+}
+
+
+/* ----------------------------------------------------------
+   4. MAIN ADMIN CONTENT
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .zv-admin-content {
+
+    position: relative !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    padding:
+        8px
+        36px
+        40px
+        36px !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+}
+
+
+/* ----------------------------------------------------------
+   5. PAGE TITLE
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .zv-admin-content > .page-header {
+
+    position: relative !important;
+
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 0 18px 0 !important;
+
+    padding: 0 !important;
+
+    min-height: 44px !important;
+
+    overflow: visible !important;
+}
+
+
+body.zv-mk-admin
+.zv-admin-content > .page-header h3 {
+
+    position: static !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 1.3 !important;
+}
+
+
+/* ----------------------------------------------------------
+   6. DJANGO CHANGE-LIST TITLE
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin.change-list
+.zv-admin-content > .page-header {
+
+    margin-bottom: 14px !important;
+}
+
+
+/* ----------------------------------------------------------
+   7. ADD PRODUCT / OBJECT TOOLS
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .change-list .object-tools,
+body.zv-mk-admin .zv-admin-content .object-tools {
+
+    position: static !important;
+
+    float: none !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    width: 100% !important;
+
+    min-height: 42px !important;
+
+    margin: 0 0 12px 0 !important;
+    padding: 0 !important;
+
+    gap: 8px !important;
+
+    transform: none !important;
+}
+
+
+body.zv-mk-admin .object-tools li {
+
+    display: block !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+body.zv-mk-admin .object-tools a {
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-height: 42px !important;
+
+    margin: 0 !important;
+
+    padding: 0 18px !important;
+
+    line-height: 42px !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ----------------------------------------------------------
+   8. REMOVE OLD NEGATIVE POSITIONING
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin
+.zv-admin-content
+.change-list
+.object-tools {
+
+    margin-top: 0 !important;
+}
+
+
+body.zv-mk-admin
+.zv-admin-content
+.change-list
+#content-main {
+
+    margin-top: 0 !important;
+}
+
+
+body.zv-mk-admin
+.zv-admin-content
+.change-list
+#changelist {
+
+    margin-top: 0 !important;
+}
+
+
+/* ----------------------------------------------------------
+   9. LIST / SEARCH CONTAINER
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .change-list #changelist {
+
+    position: relative !important;
+
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+}
+
+
+body.zv-mk-admin .change-list #changelist-form {
+
+    position: relative !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+}
+
+
+/* ----------------------------------------------------------
+   10. SEARCH + FILTER TOOLBAR
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .change-list #toolbar {
+
+    position: relative !important;
+
+    display: flex !important;
+
+    align-items: flex-end !important;
+
+    gap: 10px !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 14px 16px !important;
+
+    min-height: 76px !important;
+
+    overflow: visible !important;
+}
+
+
+/* Search area */
+
+body.zv-mk-admin
+.change-list
+#toolbar
+#changelist-search {
+
+    flex: 1 1 420px !important;
+
+    display: flex !important;
+
+    align-items: flex-end !important;
+
+    min-width: 250px !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+/* ----------------------------------------------------------
+   11. ACTION ROW
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .change-list .actions {
+
+    position: relative !important;
+
+    margin: 0 !important;
+
+    padding: 14px 16px !important;
+
+    min-height: 62px !important;
+
+    clear: both !important;
+}
+
+
+/* ----------------------------------------------------------
+   TABLE
+   ---------------------------------------------------------- */
+
+body.zv-mk-admin .change-list .results {
+
+    position: relative !important;
+
+    clear: both !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    overflow-x: auto !important;
+}
+
+
+/* ==========================================================
+   SIDEBAR CLOSED - DESKTOP
+   ========================================================== */
+
+/*
+   Your JS should add a collapsed class when desktop sidebar
+   is collapsed. This supports the common class names.
+*/
+
+@media (min-width: 992px) {
+
+    body.zv-mk-admin.zv-sidebar-collapsed .zv-topbar,
+    body.zv-mk-admin.sidebar-collapsed .zv-topbar {
+
+        left: 0 !important;
+    }
+
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .page-wrapper .page-body-wrapper .zv-page-body,
+
+    body.zv-mk-admin.sidebar-collapsed
+    .page-wrapper .page-body-wrapper .zv-page-body {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+
+/* ==========================================================
+   TABLET
+   ========================================================== */
+
+@media (max-width: 991px) {
+
+    body.zv-mk-admin .zv-topbar {
+
+        left: 0 !important;
+
+        width: 100% !important;
+
+        height: 70px !important;
+    }
+
+
+    body.zv-mk-admin
+    .page-wrapper
+    .page-body-wrapper
+    .zv-page-body {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        padding-top: 70px !important;
+    }
+
+
+    body.zv-mk-admin
+    .zv-page-body > .breadcrumbs {
+
+        padding:
+            16px
+            20px
+            7px
+            20px !important;
+    }
+
+
+    body.zv-mk-admin
+    .zv-admin-content {
+
+        padding:
+            8px
+            20px
+            32px
+            20px !important;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 767px) {
+
+    body.zv-mk-admin .zv-topbar {
+
+        height: 60px !important;
+    }
+
+
+    body.zv-mk-admin
+    .page-wrapper
+    .page-body-wrapper
+    .zv-page-body {
+
+        padding-top: 60px !important;
+    }
+
+
+    body.zv-mk-admin
+    .zv-page-body > .breadcrumbs {
+
+        padding:
+            13px
+            12px
+            6px
+            12px !important;
+    }
+
+
+    body.zv-mk-admin
+    .zv-admin-content {
+
+        padding:
+            6px
+            12px
+            26px
+            12px !important;
+    }
+
+
+    body.zv-mk-admin
+    .zv-admin-content > .page-header {
+
+        margin-bottom: 12px !important;
+    }
+
+
+    body.zv-mk-admin
+    .change-list
+    .object-tools {
+
+        justify-content: stretch !important;
+    }
+
+
+    body.zv-mk-admin
+    .change-list
+    .object-tools li {
+
+        width: 100% !important;
+    }
+
+
+    body.zv-mk-admin
+    .change-list
+    .object-tools a {
+
+        width: 100% !important;
+    }
+
+}
+
+/* =========================================================
+   ZENVIBE SIDEBAR - FINAL SINGLE COLLAPSE IMPLEMENTATION
+   ========================================================= */
+
+@media (min-width: 992px) {
+
+    /* ---------- OPEN ---------- */
+
+    body.zv-mk-admin #zvSidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+
+        width: 255px !important;
+        min-width: 255px !important;
+        height: 100vh !important;
+
+        transform: translateX(0) !important;
+
+        transition:
+            transform .25s ease,
+            width .25s ease !important;
+
+        z-index: 1100 !important;
+    }
+
+
+    body.zv-mk-admin .page-main-header.zv-topbar {
+        position: absolute !important;
+
+        top: 0 !important;
+        left: 255px !important;
+        right: 0 !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        margin-left: 0 !important;
+
+        transition:
+            left .25s ease !important;
+    }
+
+
+    body.zv-mk-admin
+    .page-wrapper
+    .page-body-wrapper
+    .zv-page-body {
+
+        margin-left: 255px !important;
+
+        width: calc(100% - 255px) !important;
+        max-width: calc(100% - 255px) !important;
+
+        transition:
+            margin-left .25s ease,
+            width .25s ease,
+            max-width .25s ease !important;
+    }
+
+
+
+    /* =====================================================
+       CLOSED
+       ===================================================== */
+
+    body.zv-mk-admin.zv-sidebar-collapsed #zvSidebar {
+
+        transform: translateX(-100%) !important;
+
+        width: 255px !important;
+        min-width: 255px !important;
+
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+
+    /* Header takes sidebar space */
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .page-main-header.zv-topbar {
+
+        left: 0 !important;
+        right: 0 !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        margin-left: 0 !important;
+    }
+
+
+    /* Main content takes sidebar space */
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .page-wrapper
+    .page-body-wrapper
+    .zv-page-body {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    /* Remove any Multikart wrapper offsets */
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .page-body-wrapper {
+
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .page-wrapper {
+
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    body.zv-mk-admin.zv-sidebar-collapsed
+    .zv-admin-content {
+
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+/* =========================================================
+   LOGGED OUT PAGE
+   ========================================================= */
+
+body.zv-mk-admin.zv-logged-out-page {
+    background: #f5f7fb !important;
+}
+
+body.zv-mk-admin.zv-logged-out-page .page-main-header,
+body.zv-mk-admin.zv-logged-out-page #zvSidebar,
+body.zv-mk-admin.zv-logged-out-page .breadcrumbs,
+body.zv-mk-admin.zv-logged-out-page .footer {
+    display: none !important;
+}
+
+body.zv-mk-admin.zv-logged-out-page .page-body-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+body.zv-mk-admin.zv-logged-out-page .zv-page-body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    background: #f5f7fb !important;
+}
+
+body.zv-mk-admin.zv-logged-out-page .zv-admin-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 30px !important;
+    margin: 0 !important;
+}
+
+.zv-logout-wrap {
+    width: 100%;
+    min-height: calc(100vh - 60px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zv-logout-card {
+    width: 100%;
+    max-width: 430px;
+
+    background: #ffffff;
+    border: 1px solid #e7eaf0;
+    border-radius: 14px;
+
+    padding: 42px 38px;
+
+    text-align: center;
+
+    box-shadow: 0 12px 35px rgba(25, 39, 70, 0.08);
+}
+
+.zv-logout-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+
+    margin-bottom: 32px;
+
+    text-align: left;
+}
+
+.zv-logout-logo .zv-logo-mark {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    background: #ff6b35;
+    color: #fff;
+
+    border-radius: 10px;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.zv-logout-logo > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.zv-logout-logo strong {
+    color: #172033;
+    font-size: 21px;
+    line-height: 1.1;
+}
+
+.zv-logout-logo small {
+    margin-top: 4px;
+
+    color: #768096;
+
+    font-size: 9px;
+    letter-spacing: 1.7px;
+}
+
+.zv-logout-icon {
+    width: 62px;
+    height: 62px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eaf8f1;
+    color: #2da56f;
+}
+
+.zv-logout-icon svg {
+    width: 29px;
+    height: 29px;
+}
+
+.zv-logout-card h1 {
+    margin: 0 0 10px;
+
+    color: #252d3d;
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.zv-logout-card p {
+    margin: 0 0 27px;
+
+    color: #7d8798;
+
+    font-size: 14px;
+}
+
+.zv-login-again-btn {
+    width: 100%;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ff6b35 !important;
+    color: #fff !important;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+
+    transition: .2s ease;
+}
+
+.zv-login-again-btn:hover {
+    background: #ed5d2a !important;
+    color: #fff !important;
+}
+
+.zv-return-site {
+    display: inline-block;
+
+    margin-top: 18px;
+
+    color: #65738b !important;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none !important;
+}
+
+.zv-return-site:hover {
+    color: #ff6b35 !important;
+}
+
+
+/* Dark mode logout */
+
+body.zv-mk-admin.zv-dark-admin.zv-logged-out-page,
+body.zv-mk-admin.zv-dark-admin.zv-logged-out-page .zv-page-body {
+    background: #191e25 !important;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-logout-card {
+    background: #242a32;
+    border-color: #353c47;
+
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .25);
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-logout-card h1,
+body.zv-mk-admin.zv-dark-admin .zv-logout-logo strong {
+    color: #f3f5f8;
+}
+
+body.zv-mk-admin.zv-dark-admin .zv-logout-card p,
+body.zv-mk-admin.zv-dark-admin .zv-logout-logo small {
+    color: #aeb7c4;
+}
+
+
+@media (max-width: 575px) {
+
+    body.zv-mk-admin.zv-logged-out-page .zv-admin-content {
+        padding: 18px !important;
+    }
+
+    .zv-logout-card {
+        padding: 34px 24px;
+    }
+}
+
+/* =========================================================
+   PRODUCT IMAGE INLINE - CLEAN ADMIN LAYOUT
+   ========================================================= */
+body.zv-mk-admin .inline-group .tabular{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+body.zv-mk-admin .inline-group .tabular table{width:100%!important;table-layout:auto!important;min-width:760px}
+body.zv-mk-admin .inline-group .tabular th,
+body.zv-mk-admin .inline-group .tabular td{padding:13px 12px!important;vertical-align:middle!important;line-height:1.4!important}
+body.zv-mk-admin .inline-group .tabular td.original{position:relative!important;width:auto!important;min-width:0!important}
+body.zv-mk-admin .inline-group .tabular td.original p,
+body.zv-mk-admin .inline-group .tabular .original p{position:static!important;float:none!important;width:auto!important;height:auto!important;margin:0 0 7px!important;padding:0!important;overflow:visible!important;white-space:normal!important;font-size:12px!important;line-height:1.45!important}
+body.zv-mk-admin .inline-group .file-upload{display:block!important;line-height:1.55!important;white-space:normal!important}
+body.zv-mk-admin .inline-group .file-upload a{display:inline-block!important;max-width:100%!important;word-break:break-word!important;color:#ff6b35!important}
+body.zv-mk-admin .inline-group input[type="file"]{display:block!important;width:min(100%,430px)!important;max-width:430px!important;margin-top:6px!important;background:transparent!important}
+body.zv-mk-admin .inline-group input[type="number"]{width:94px!important;min-width:94px!important;height:40px!important}
+body.zv-mk-admin .inline-group td.delete{text-align:center!important;width:92px!important}
+body.zv-mk-admin .inline-group .field-image_preview img{display:block!important;width:76px!important;height:62px!important;object-fit:contain!important;border:1px solid #e0e5ec!important;border-radius:7px!important;background:#fff!important}
+body.zv-mk-admin.zv-dark-admin .inline-group .tabular th{background:#2d3239!important;color:#d5dbe5!important}
+body.zv-mk-admin.zv-dark-admin .inline-group .tabular td{background:#272b31!important;color:#e8edf4!important;border-color:#3b424c!important}
+body.zv-mk-admin.zv-dark-admin .inline-group input[type="file"]{color:#d7dfeb!important}
+@media(max-width:767px){body.zv-mk-admin .inline-group .tabular table{min-width:690px!important}}

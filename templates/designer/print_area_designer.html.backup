@@ -1,0 +1,58 @@
+﻿{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print Area Â· {{ product.name }}</title>
+<style>
+:root{--navy:#0c2f57;--orange:#ff6b35;--blue:#2463ad;--line:#e4e8ef;--muted:#6f7b8f;--bg:#f5f7fb;--text:#1d2a3f}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:20}
+header a{color:var(--navy);text-decoration:none;font-weight:700}header h1{font-size:16px;margin:0}.shell{max-width:1220px;margin:26px auto;padding:0 20px 36px;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 14px rgba(12,47,87,.05)}
+.stage-card{padding:18px}.stage-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.stage-head h2{font-size:16px;margin:0}.tip{position:relative;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid #d9e0e9;background:#fff;color:var(--navy);font-weight:800;cursor:help}.tip span{display:none;position:absolute;z-index:50;right:0;top:34px;width:270px;padding:10px 12px;border-radius:9px;background:#12243c;color:#fff;font-size:12px;line-height:1.45;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.2)}.tip:hover span,.tip:focus span{display:block}
+.thumbs{display:flex;gap:9px;overflow:auto;padding:2px 1px 12px}.thumb{width:82px;flex:0 0 82px;border:2px solid transparent;border-radius:10px;background:#fff;padding:5px;cursor:pointer}.thumb.active{border-color:var(--orange);background:#fff8f4}.thumb img{width:68px;height:62px;object-fit:contain;display:block;background:#f7f9fc;border-radius:6px}.thumb small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px;color:#4b5870;font-size:10px;text-align:center}
+.stage{min-height:560px;display:flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#f7f9fc 25%,#fff 25%,#fff 75%,#f7f9fc 75%);background-size:28px 28px;border:1px solid #edf0f5;border-radius:12px;overflow:auto;padding:20px}.imgbox{position:relative;max-width:100%;user-select:none}.imgbox img{display:block;max-width:100%;max-height:520px;width:auto;height:auto}.area{position:absolute;border:2px dashed var(--orange);background:rgba(255,107,53,.12);cursor:move;min-width:20px;min-height:20px}.handle{position:absolute;width:15px;height:15px;border-radius:3px;background:var(--orange);right:-8px;bottom:-8px;cursor:nwse-resize}.area-label{position:absolute;left:5px;top:5px;background:#fff;color:#c54f24;border-radius:5px;padding:3px 6px;font-size:10px;font-weight:800;pointer-events:none}
+.panel{padding:20px;height:max-content;position:sticky;top:88px}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.panel h2{font-size:17px;margin:0}.selected-label{color:var(--muted);font-size:12px;margin:5px 0 17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:11px;font-weight:800;color:#526078;margin-bottom:5px}.field input{width:100%;height:39px;border:1px solid #dce2eb;border-radius:8px;padding:0 9px;font:inherit}.actions{display:grid;grid-template-columns:1fr 1.6fr;gap:8px;margin-top:18px}.actions button{height:42px;border-radius:8px;font-weight:800;cursor:pointer}.reset{border:1px solid #dce2eb;background:#fff;color:#3c4960}.save{border:0;background:var(--orange);color:#fff}.status{font-size:12px;min-height:18px;margin-top:10px}.status.ok{color:#17834f}.status.err{color:#c63f3f}.fallback{font-size:11px;color:#7f8999;margin-top:14px;padding-top:14px;border-top:1px solid #eef1f5}.badge{display:inline-flex;padding:5px 7px;border-radius:999px;background:#edf5ff;color:#255f9f;font-size:10px;font-weight:800}.no-images{padding:60px 20px;text-align:center;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.panel{position:static}.stage{min-height:430px}}@media(max-width:520px){header{padding:0 12px}.shell{padding:0 10px 24px}.stage{min-height:330px;padding:10px}.grid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><a href="/admin/designer/product/{{ product.id }}/change/">â† Back to product</a><h1>Print Area Designer</h1><span></span></header>
+<div class="shell">
+  <section class="card stage-card">
+    <div class="stage-head"><h2>{{ product.name }}</h2><button class="tip" type="button" aria-label="Help">?<span>Select an image, then drag and resize the orange box over the area customers are allowed to customise. Each image can keep a different print area.</span></button></div>
+    <div id="thumbs" class="thumbs"></div>
+    <div class="stage" id="stage"><div class="no-images" id="noImages" hidden>No product images are available yet.</div><div class="imgbox" id="imgBox" hidden><img id="productPhoto" alt=""><div class="area" id="areaBox"><span class="area-label">PRINT AREA</span><div class="handle" id="areaHandle"></div></div></div></div>
+  </section>
+  <aside class="card panel">
+    <div class="panel-head"><div><h2>Selected image</h2><div class="selected-label" id="selectedLabel">â€”</div></div><button class="tip" type="button" aria-label="Area values help">?<span>Values are percentages of the selected image, so the area remains aligned even when the source image resolution changes.</span></button></div>
+    <span class="badge" id="areaStatus">Uses default</span>
+    <div class="grid" style="margin-top:14px"><div class="field"><label>Left (%)</label><input type="number" id="valLeft" step="0.1" min="0" max="100"></div><div class="field"><label>Top (%)</label><input type="number" id="valTop" step="0.1" min="0" max="100"></div><div class="field"><label>Width (%)</label><input type="number" id="valWidth" step="0.1" min="1" max="100"></div><div class="field"><label>Height (%)</label><input type="number" id="valHeight" step="0.1" min="1" max="100"></div></div>
+    <div class="actions"><button class="reset" id="resetBtn" type="button">Reset</button><button class="save" id="saveBtn" type="button">Save this image</button></div><div class="status" id="statusMsg"></div>
+    <div class="fallback">Main image = product default. Extra images inherit the product default until you save an image-specific area.</div>
+  </aside>
+</div>
+<script>
+const productId={{ product.id }};
+const savePrintAreaUrl="{% url 'designer:save_print_area' product.id %}";
+const images={{ print_images_json|safe }};
+const thumbs=document.getElementById('thumbs'), imgBox=document.getElementById('imgBox'), photo=document.getElementById('productPhoto'), box=document.getElementById('areaBox'), handle=document.getElementById('areaHandle'), noImages=document.getElementById('noImages');
+const valLeft=document.getElementById('valLeft'),valTop=document.getElementById('valTop'),valWidth=document.getElementById('valWidth'),valHeight=document.getElementById('valHeight'),selectedLabel=document.getElementById('selectedLabel'),areaStatus=document.getElementById('areaStatus'),statusMsg=document.getElementById('statusMsg'),saveBtn=document.getElementById('saveBtn');
+let current=null,state={left:30,top:55,width:40,height:20},dragging=null,startX=0,startY=0,startState=null;
+function csrf(){return document.cookie.split('; ').find(x=>x.startsWith('csrftoken='))?.split('=')[1]||''}
+function clamp(){state.width=Math.max(1,Math.min(100,state.width));state.height=Math.max(1,Math.min(100,state.height));state.left=Math.max(0,Math.min(100-state.width,state.left));state.top=Math.max(0,Math.min(100-state.height,state.top));}
+function renderArea(){clamp();box.style.left=state.left+'%';box.style.top=state.top+'%';box.style.width=state.width+'%';box.style.height=state.height+'%';valLeft.value=state.left.toFixed(1);valTop.value=state.top.toFixed(1);valWidth.value=state.width.toFixed(1);valHeight.value=state.height.toFixed(1)}
+function selectImage(item){current=item;state={...item.area};photo.src=item.url;photo.alt=item.label;selectedLabel.textContent=item.label;areaStatus.textContent=item.has_custom_area?'Custom area saved':(item.image_id===null?'Product default':'Uses product default');imgBox.hidden=false;noImages.hidden=true;renderArea();[...thumbs.children].forEach((b,i)=>b.classList.toggle('active',images[i]===item));statusMsg.textContent=''}
+function renderThumbs(){if(!images.length){noImages.hidden=false;imgBox.hidden=true;saveBtn.disabled=true;return}images.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='thumb';b.innerHTML=`<img src="${item.url}" alt=""><small>${item.label}</small>`;b.onclick=()=>selectImage(item);thumbs.appendChild(b)});selectImage(images[0])}
+[valLeft,valTop,valWidth,valHeight].forEach(el=>el.addEventListener('input',()=>{state.left=parseFloat(valLeft.value)||0;state.top=parseFloat(valTop.value)||0;state.width=parseFloat(valWidth.value)||1;state.height=parseFloat(valHeight.value)||1;renderArea()}));
+box.addEventListener('pointerdown',e=>{if(e.target===handle)return;dragging='move';startX=e.clientX;startY=e.clientY;startState={...state};box.setPointerCapture?.(e.pointerId);e.preventDefault()});handle.addEventListener('pointerdown',e=>{dragging='resize';startX=e.clientX;startY=e.clientY;startState={...state};e.stopPropagation();e.preventDefault()});document.addEventListener('pointermove',e=>{if(!dragging)return;const rect=imgBox.getBoundingClientRect();const dx=(e.clientX-startX)/rect.width*100,dy=(e.clientY-startY)/rect.height*100;if(dragging==='move'){state.left=startState.left+dx;state.top=startState.top+dy}else{state.width=startState.width+dx;state.height=startState.height+dy}renderArea()});document.addEventListener('pointerup',()=>dragging=null);
+document.getElementById('resetBtn').onclick=()=>{state={...current.area};renderArea()};
+saveBtn.onclick=async()=>{if(!current)return;saveBtn.disabled=true;statusMsg.textContent='Savingâ€¦';statusMsg.className='status';try{const r=await fetch(savePrintAreaUrl,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},body:JSON.stringify({...state,image_id:current.image_id})});const responseText=await r.text();let data;try{data=JSON.parse(responseText)}catch(_){throw new Error(`Save failed (HTTP ${r.status}): server returned HTML instead of JSON. Check login/session or URL.`)}if(!r.ok||!data.ok)throw new Error(data.error||'Could not save');current.area={...state};current.has_custom_area=true;areaStatus.textContent='Custom area saved';statusMsg.textContent='Saved for this image.';statusMsg.className='status ok'}catch(err){statusMsg.textContent=err.message||'Could not save.';statusMsg.className='status err'}finally{saveBtn.disabled=false}};
+renderThumbs();
+</script>
+</body>
+</html>
+
+

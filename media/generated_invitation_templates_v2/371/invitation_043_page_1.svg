@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#101d4a" opacity="1"/>
+<polygon points="0,0 750,0 750,250 0,390" fill="#fffdf8" opacity="1"/>
+<polygon points="0,0 230,0 0,230" fill="#e6b95e" opacity="0.14"/>
+<polygon points="750,1050 520,1050 750,820" fill="#274383" opacity="0.18"/>
+<text x="385.0" y="351" text-anchor="middle" fill="#e6b95e" font-size="15" font-family="Montserrat" font-weight="650" opacity="1"><tspan x="385.0" dy="0">TOGETHER WITH THEIR FAMILIES</tspan></text>
+<text x="385.0" y="442" text-anchor="middle" fill="#fffdf8" font-size="52" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="385.0" dy="0">OLIVIA &amp; ETHAN</tspan></text>
+<text x="385.0" y="559" text-anchor="middle" fill="#fffdf8" font-size="18" font-family="DM Sans" font-weight="600" opacity="1"><tspan x="385.0" dy="0">SATURDAY · 18 OCTOBER 2026</tspan></text>
+<text x="385.0" y="599" text-anchor="middle" fill="#fffdf8" font-size="15" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="385.0" dy="0">THE GLASSHOUSE · MELBOURNE</tspan></text>
+<text x="385.0" y="673" text-anchor="middle" fill="#e6b95e" font-size="13" font-family="DM Sans" font-weight="650" opacity="1"><tspan x="385.0" dy="0">RSVP · 04XX XXX XXX · hello@example.com</tspan></text>
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#eaf0ff" opacity="0.025"/>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="1000" height="800">
+<rect x="0" y="0" width="1000" height="800" rx="0" ry="0" fill="#F3F0E7" stroke="none" stroke-width="0" opacity="1"/>
+<rect x="0" y="0" width="1000" height="500" rx="0" ry="0" fill="#173F35" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="113.60000000000001,450.0 168.8,450.0 141.20000000000002,171.2" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="242.40000000000003,450.0 297.6,450.0 270.00000000000006,220.4" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="371.20000000000005,450.0 426.40000000000003,450.0 398.80000000000007,269.6" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="500.0,450.0 555.2,450.0 527.6,171.2" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="628.8000000000001,450.0 684.0000000000001,450.0 656.4000000000001,220.4" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="757.6,450.0 812.8000000000001,450.0 785.2,269.6" fill="#2E6A56" stroke="none" stroke-width="0" opacity="0.75"/>
+<polygon points="886.4000000000001,450.0 941.6000000000001,450.0 914.0000000000001,171.2" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.75"/>
+<circle cx="40.0" cy="40.0" r="3" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="380.4" cy="290.1" r="4" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="720.8" cy="273.7" r="5" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="141.2" cy="257.3" r="6" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="481.6" cy="240.9" r="3" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="822.0" cy="224.5" r="4" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="242.4" cy="208.1" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="582.8" cy="191.7" r="6" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="923.2" cy="175.3" r="3" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="343.6" cy="158.9" r="4" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="684.0" cy="142.5" r="5" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="104.4" cy="126.1" r="6" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="444.8" cy="109.7" r="3" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="785.2" cy="93.3" r="4" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="205.6" cy="76.9" r="5" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="546.0" cy="60.5" r="6" fill="#B89555" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="886.4" cy="44.1" r="3" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<circle cx="306.8" cy="294.2" r="4" fill="#8FB8A1" stroke="none" stroke-width="0" opacity="0.8"/>
+<text x="500.0" y="630" fill="#173F35" font-family="Oswald" font-size="70" font-weight="700" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">NEW</tspan><tspan x="500.0" dy="65.8">PERSPECTIVES</tspan></text>
+<text x="500.0" y="768" fill="#173F35" font-family="Inter" font-size="23" font-weight="400" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">Contemporary art exhibition</tspan></text>
+<line x1="240" y1="820" x2="760" y2="820" stroke="#B89555" stroke-width="3" opacity="1"/>
+<line x1="60" y1="702" x2="940" y2="702" stroke="#8FB8A1" stroke-width="1" opacity="0.7"/>
+<text x="500.0" y="741" fill="#173F35" font-family="Inter" font-size="15" font-weight="500" text-anchor="middle" opacity="1"><tspan x="500.0" dy="0">zenvibe.example  â€¢  hello@example.com  â€¢  +61 400 000 000</tspan></text>
+<rect x="740" y="655" width="210" height="54" rx="27" ry="27" fill="#2E6A56" stroke="none" stroke-width="0" opacity="1"/>
+<text x="845.0" y="696" fill="#F3F0E7" font-family="Inter" font-size="28" font-weight="700" text-anchor="middle" opacity="1"><tspan x="845.0" dy="0">VIEW EXHIBITION</tspan></text>
+<text x="954" y="69" fill="#2E6A56" font-family="Inter" font-size="17" font-weight="700" text-anchor="end" opacity="1"><tspan x="954" dy="0">28</tspan></text>
+<circle cx="72" cy="92" r="5" fill="#B89555" stroke="none" stroke-width="0" opacity="1"/>
+</svg>

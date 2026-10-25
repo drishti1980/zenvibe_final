@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+<rect x="0" y="0" width="750" height="1050" rx="0" fill="#44205b" opacity="1"/>
+<rect x="0" y="0" width="155" height="1050" rx="0" fill="#fff9ff" opacity="1"/>
+<rect x="155" y="0" width="10" height="1050" rx="0" fill="#e3b7e8" opacity="1"/>
+<text x="76.0" y="448" text-anchor="middle" fill="#44205b" font-size="28" font-family="Cinzel" font-weight="700" opacity="1"><tspan x="76.0" dy="0">DETAILS</tspan></text>
+<text x="432.5" y="329" text-anchor="middle" fill="#e3b7e8" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="432.5" dy="0">SCHEDULE</tspan></text>
+<text x="432.5" y="373" text-anchor="middle" fill="#fff9ff" font-size="18" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="432.5" dy="0">4:30 PM · Arrival</tspan><tspan x="432.5" dy="27.0">5:00 PM · Ceremony / Welcome</tspan><tspan x="432.5" dy="27.0">6:00 PM · Drinks &amp; Celebration</tspan></text>
+<text x="432.5" y="579" text-anchor="middle" fill="#e3b7e8" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="432.5" dy="0">LOCATION</tspan></text>
+<text x="432.5" y="622" text-anchor="middle" fill="#fff9ff" font-size="17" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="432.5" dy="0">HARBOUR HALL · 6:00 PM</tspan><tspan x="432.5" dy="24.14">123 Celebration Avenue · Victoria</tspan></text>
+<text x="432.5" y="779" text-anchor="middle" fill="#e3b7e8" font-size="14" font-family="Montserrat" font-weight="700" opacity="1"><tspan x="432.5" dy="0">DRESS / NOTES</tspan></text>
+<text x="432.5" y="821" text-anchor="middle" fill="#fff9ff" font-size="16" font-family="DM Sans" font-weight="500" opacity="1"><tspan x="432.5" dy="0">Dress code: Cocktail</tspan><tspan x="432.5" dy="22.4">Parking available on site</tspan></text>
+</svg>
