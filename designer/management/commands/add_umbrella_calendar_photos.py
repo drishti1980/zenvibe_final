@@ -22,7 +22,7 @@ from designer.management.commands.build_umbrella_photo_library import (
 )
 
 class Command(BaseCommand):
-    help = "Add calendar photographs as replaceable layers to existing umbrella templates."
+    help = "Replace overlapping umbrella artwork with a single editable photo and caption."
 
     def add_arguments(self, parser):
         parser.add_argument("--product-id", type=int, default=205)
@@ -74,29 +74,42 @@ class Command(BaseCommand):
                 if not pages:
                     continue
                 page = dict(pages[0])
-                objects = [
-                    obj for obj in page.get("objects", [])
-                    if obj.get("id") != "zv_calendar_replaceable_photo"
-                ]
-                # Place the image on the top printable canopy, avoiding the
-                # existing editable brand text near the lower panel.
-                # Insertion before brand objects ensures headline stays legible.
-                photo = {
+                # Replace the previous full-canvas artwork instead of stacking photos.
+                # A single photo and editable caption occupy the front-bottom
+                # canopy wedge in the 1050x1000 mockup coordinate system.
+                # This is a conservative mockup preset, not a supplier dieline.
+                existing = list(page.get("objects") or [])
+                old_headline = next((str(o.get("text", "")) for o in existing
+                    if str(o.get("id", "")).endswith("_headline")), "YOUR BRAND")
+                old_subtitle = next((str(o.get("text", "")) for o in existing
+                    if str(o.get("id", "")).endswith("_subtitle")), "")
+                objects = [{
                     "id": "zv_calendar_replaceable_photo",
-                    "name": "Replace Photo — Calendar Artwork",
-                    "type": "image",
-                    "src": urls[index % len(urls)],
-                    "left": 275, "top": 175, "width": 500, "height": 420,
+                    "name": "Replace Photo — Umbrella Panel",
+                    "type": "image", "src": urls[index % len(urls)],
+                    "left": 465, "top": 665, "width": 120, "height": 115,
                     "scaleX": 1, "scaleY": 1, "angle": 0, "opacity": 1,
                     "selectable": True, "evented": True,
                     "customerEditable": True, "replaceable": True,
-                }
-                insert_at = next(
-                    (i for i, obj in enumerate(objects)
-                     if obj.get("type") in ("textbox", "text")),
-                    len(objects),
-                )
-                objects.insert(insert_at, photo)
+                }, {
+                    "id": "zv_umbrella_panel_headline", "name": "Brand Text",
+                    "type": "textbox", "text": old_headline,
+                    "left": 425, "top": 795, "width": 200,
+                    "fontSize": 21, "fontFamily": "Poppins",
+                    "fontWeight": "700", "textAlign": "center",
+                    "fill": "#FFFFFF", "selectable": True,
+                    "evented": True, "customerEditable": True,
+                }]
+                if old_subtitle:
+                    objects.append({
+                        "id": "zv_umbrella_panel_subtitle", "name": "Tagline",
+                        "type": "textbox", "text": old_subtitle,
+                        "left": 435, "top": 831, "width": 180,
+                        "fontSize": 13, "fontFamily": "Poppins",
+                        "fontWeight": "600", "textAlign": "center",
+                        "fill": "#FFFFFF", "selectable": True,
+                        "evented": True, "customerEditable": True,
+                    })
                 page["objects"] = objects
                 pages[0] = page
                 payload["pages"] = pages
