@@ -1,4 +1,4 @@
-"""Seed editable 2027 calendars using Zenvibe's Fabric primitive template schema."""
+"""Luxury editable 12-month calendar layouts. Photo areas are editable placeholders."""
 import calendar
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -6,101 +6,117 @@ from designer.models import Product, DesignTemplate
 
 GENERATOR = "zenvibe-calendar-editable-v1"
 PALETTES = [
-    ("#182A3A", "#FAF7F0", "#D6A95D"),
-    ("#16463C", "#F5F7ED", "#B6CB8B"),
-    ("#503049", "#FFF8F5", "#E0A8AA"),
-    ("#123F60", "#F4FAFE", "#86C9D3"),
-    ("#503B2B", "#FFF8E8", "#DDBD7E"),
-]
-
-def rect(key, x, y, w, h, color):
-    return {"id":key,"type":"rect","left":round(x,2),"top":round(y,2),
-            "width":round(w,2),"height":round(h,2),"fill":color,
-            "selectable":True,"evented":True,"customerEditable":True}
-
-def text(key, x, y, w, value, size, color, align="left"):
-    return {"id":key,"type":"textbox","left":round(x,2),"top":round(y,2),
-            "width":round(w,2),"text":str(value),"fontFamily":"Arial",
-            "fontWeight":"700","fontSize":round(size,2),"fill":color,
-            "textAlign":align,"selectable":True,"evented":True,"customerEditable":True}
-
-def page(year, month, index, w, h):
-    dark, light, accent = PALETTES[index % 5]
-    base = (index // 5) % 20
-    margin = w * .065
-    obj = [rect("background",0,0,w,h,light)]
-    # Twenty distinct arrangements; each has five palette editions.
-    if base == 0: obj += [rect("header",0,0,w,h*.32,dark)]
-    elif base == 1: obj += [rect("left-rail",0,0,w*.16,h,dark)]
-    elif base == 2: obj += [rect("top-accent",0,0,w,h*.12,accent)]
-    elif base == 3: obj += [rect("frame",margin,h*.04,w-2*margin,h*.26,dark),rect("inset",margin+w*.02,h*.06,w-2*margin-w*.04,h*.22,light)]
-    elif base == 4: obj += [rect("split-left",0,0,w*.47,h*.29,dark),rect("split-right",w*.47,0,w*.53,h*.29,accent)]
-    elif base == 5: obj += [rect("bottom-band",0,h*.88,w,h*.12,dark)]
-    elif base == 6: obj += [rect("right-block",w*.68,0,w*.32,h*.31,dark)]
-    elif base == 7: obj += [rect("center-band",0,h*.17,w,h*.13,dark)]
-    elif base == 8: obj += [rect("thin-rail",margin,h*.03,w*.035,h*.28,accent)]
-    elif base == 9: obj += [rect("title-panel",margin,h*.05,w-2*margin,h*.25,dark)]
-    elif base == 10: obj += [rect("stripe-1",0,0,w,h*.07,dark),rect("stripe-2",0,h*.26,w,h*.05,accent)]
-    elif base == 11: obj += [rect("left-panel",0,0,w*.28,h*.35,accent)]
-    elif base == 12: obj += [rect("right-panel",w*.72,0,w*.28,h*.35,accent)]
-    elif base == 13: obj += [rect("double-left",0,0,w*.09,h,dark),rect("double-right",w*.91,0,w*.09,h,accent)]
-    elif base == 14: obj += [rect("title-rule",margin,h*.29,w-2*margin,h*.016,dark)]
-    elif base == 15: obj += [rect("header-block",0,0,w,h*.35,accent)]
-    elif base == 16: obj += [rect("top-left",0,0,w*.35,h*.31,dark)]
-    elif base == 17: obj += [rect("top-right",w*.65,0,w*.35,h*.31,dark)]
-    elif base == 18: obj += [rect("wide-inset",margin,h*.035,w-2*margin,h*.27,accent)]
-    else: obj += [rect("full-heading",0,0,w,h*.30,dark),rect("edge",0,0,w*.045,h,accent)]
-    heading_color = light if base in (0,7,9,19) else dark
-    heading_x = margin + (w*.13 if base in (1,13) else 0)
-    obj.extend([
-        text("brand",heading_x,h*.055,w*.72,"YOUR BRAND",max(13,w*.025),heading_color),
-        text("month",heading_x,h*.125,w*.78,calendar.month_name[month].upper(),max(28,w*.069),heading_color),
-        text("year",heading_x,h*.23,w*.60,year,max(17,w*.033),heading_color),
-    ])
-    grid_top = h*.39
-    grid_left = margin+w*.08 if base in (1,13) else margin
-    grid_width = w-grid_left-margin
-    cell_width = grid_width/7
-    cell_height = h*.075
-    for col, day in enumerate(("SUN","MON","TUE","WED","THU","FRI","SAT")):
-        obj.append(text("weekday-%d"%col,grid_left+col*cell_width,grid_top,cell_width,day,max(11,w*.019),dark,"center"))
-    for row, week in enumerate(calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)):
-        for col, day in enumerate(week):
+ ("#1C2934","#FAF8F3","#B99560"),("#153C35","#FBF8EF","#B7A27A"),
+ ("#34283C","#FFF9F3","#D6B6A2"),("#253F59","#F7F9FC","#B6A77E"),
+ ("#47362E","#FFF9EE","#D6AE78"),("#2D3332","#F4F0E9","#C4B7A0"),
+ ("#293850","#F5F3ED","#C2A269"),("#4C3541","#FFF7F6","#C79C9D"),
+ ("#263C37","#FAF7F0","#C7B88B"),("#313036","#F7F5F1","#D6C1A0")]
+def box(i,x,y,w,h,fill,stroke=None):
+    d={"id":i,"type":"rect","left":round(x,2),"top":round(y,2),"width":round(w,2),
+       "height":round(h,2),"fill":fill,"selectable":True,"evented":True,"customerEditable":True}
+    if stroke: d.update(stroke=stroke,strokeWidth=1.5)
+    return d
+def label(i,x,y,w,h,value,size,color,align="left",weight="600"):
+    return {"id":i,"type":"textbox","left":round(x,2),"top":round(y,2),
+            "width":round(w,2),"height":round(h,2),"text":str(value),
+            "fontFamily":"Arial","fontWeight":weight,"fontSize":round(size,2),
+            "fill":color,"textAlign":align,"selectable":True,"evented":True,"customerEditable":True}
+def photo_tiles(x,y,w,h,variant,dark,light,accent):
+    """Ten distinct collage structures; photo regions remain user-replaceable."""
+    pad=min(w,h)*.018
+    if variant==0: tiles=[(0,0,1,1)]
+    elif variant==1: tiles=[(0,0,.49,1),(.51,0,.49,1)]
+    elif variant==2: tiles=[(0,0,1,.49),(0,.51,1,.49)]
+    elif variant==3: tiles=[(0,0,.65,1),(.67,0,.33,.49),(.67,.51,.33,.49)]
+    elif variant==4: tiles=[(0,0,.33,.49),(.35,0,.65,1),(0,.51,.33,.49)]
+    elif variant==5: tiles=[(0,0,.49,.49),(.51,0,.49,.49),(0,.51,.49,.49),(.51,.51,.49,.49)]
+    elif variant==6: tiles=[(0,0,1,.63),(0,.65,.32,.35),(.34,.65,.32,.35),(.68,.65,.32,.35)]
+    elif variant==7: tiles=[(0,0,.32,1),(.34,0,.32,1),(.68,0,.32,1)]
+    elif variant==8: tiles=[(0,0,.49,.65),(.51,0,.49,.32),(.51,.34,.49,.66),(0,.67,.49,.33)]
+    else: tiles=[(0,0,.32,.49),(.34,0,.32,.49),(.68,0,.32,.49),(0,.51,.49,.49),(.51,.51,.49,.49)]
+    out=[]
+    for n,(a,b,c,d) in enumerate(tiles):
+        tx=x+a*w+pad; ty=y+b*h+pad; tw=c*w-2*pad; th=d*h-2*pad
+        out.append(box("photo-%d"%n,tx,ty,tw,th,("#E4DDD2","#D7DED8","#DFD7D8")[n%3],accent))
+        out.append(label("photo-hint-%d"%n,tx+tw*.06,ty+th*.39,tw*.88,th*.16,
+                         "ADD PHOTO",max(10,min(tw*.032,th*.12)),dark,"center","500"))
+    return out
+def page(year,month,index,w,h):
+    dark,light,accent=PALETTES[index%10]
+    composition=index//10
+    margin=min(w,h)*.035
+    # Photo and calendar rectangles never intersect. Different composition types
+    # change photo position and calendar proportions, not merely color.
+    if composition==0: photo=(0,0,w,h*.53); cal=(0,h*.53,w,h*.47)
+    elif composition==1: photo=(0,0,w,h*.63); cal=(0,h*.63,w,h*.37)
+    elif composition==2: photo=(0,0,w,h*.44); cal=(0,h*.44,w,h*.56)
+    elif composition==3: photo=(0,h*.47,w,h*.53); cal=(0,0,w,h*.47)
+    elif composition==4: photo=(0,h*.60,w,h*.40); cal=(0,0,w,h*.60)
+    elif composition==5: photo=(0,h*.39,w,h*.61); cal=(0,0,w,h*.39)
+    elif composition==6: photo=(0,0,w*.56,h); cal=(w*.56,0,w*.44,h)
+    elif composition==7: photo=(w*.44,0,w*.56,h); cal=(0,0,w*.44,h)
+    elif composition==8: photo=(0,0,w*.44,h); cal=(w*.44,0,w*.56,h)
+    else: photo=(w*.56,0,w*.44,h); cal=(0,0,w*.56,h)
+    px,py,pw,ph=photo; cx,cy,cw,ch=cal
+    o=[box("background",0,0,w,h,light)]
+    o+=photo_tiles(px,py,pw,ph,index%10,dark,light,accent)
+    o.append(box("calendar-panel",cx,cy,cw,ch,light))
+    m=min(cw,ch)*.07
+    inner_x=cx+m; inner_w=cw-2*m
+    title_h=ch*.15
+    o.append(label("month",inner_x,cy+ch*.055,inner_w,title_h,
+                   calendar.month_name[month].upper(),max(14,min(cw*.063,ch*.11)),dark,"center","700"))
+    o.append(label("year",inner_x,cy+ch*.21,inner_w,ch*.08,str(year),
+                   max(11,min(cw*.033,ch*.063)),accent,"center"))
+    o.append(box("divider",inner_x,cy+ch*.31,inner_w,max(1,ch*.003),accent))
+    # Seven columns and six date rows reserve fixed slots even in six-week months.
+    grid_top=cy+ch*.37; grid_h=ch*.51; colw=inner_w/7; rowh=grid_h/7
+    font=max(7,min(colw*.32,rowh*.43))
+    for col,day in enumerate(("S","M","T","W","T","F","S")):
+        o.append(label("weekday-%d"%col,inner_x+col*colw,grid_top,colw,rowh*.8,
+                       day,font*.83,dark,"center"))
+    for row,week in enumerate(calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)):
+        for col,day in enumerate(week):
             if day:
-                obj.append(text("date-%d"%day,grid_left+col*cell_width,grid_top+(row+1)*cell_height,cell_width,day,max(13,w*.027),dark,"center"))
-    obj += [rect("footer-line",margin,h*.91,w-2*margin,h*.004,accent),
-            text("footer",margin,h*.935,w-2*margin,"YOUR BRAND • YOUR STORY",max(11,w*.018),dark,"center")]
-    return {"name":calendar.month_name[month],"background":"#ffffff","objects":obj}
-
+                o.append(label("day-%d"%day,inner_x+col*colw,grid_top+(row+1)*rowh,
+                               colw,rowh*.8,day,font,dark,"center"))
+    o.append(label("brand",inner_x,cy+ch*.92,inner_w,ch*.045,"YOUR BRAND",
+                   max(8,min(cw*.025,ch*.035)),dark,"center"))
+    return {"name":calendar.month_name[month],"background":light,"objects":o}
 def payload(product,year,index):
     w,h=product.width,product.height
     return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
-            "designName":"Calendar %d - %03d"%(year,index+1),
-            "document":{"width":w,"height":h,"unit":"in",
-                        "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
-                        "profile":"calendar"},
-            "pages":[page(year,m,index,w,h) for m in range(1,13)],
-            "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
-
+      "designName":"Luxury Calendar %d - %03d"%(year,index+1),
+      "document":{"width":w,"height":h,"unit":"in",
+                  "physical":{"widthIn":float(product.print_width_in),
+                              "heightIn":float(product.print_height_in)},
+                  "profile":"calendar"},
+      "pages":[page(year,m,index,w,h) for m in range(1,13)],
+      "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
-    help = "Seed 100 editable 12-month calendar templates (20 layouts x 5 palette editions)."
-    def add_arguments(self, parser):
+    help="Seed 100 editable luxury 12-month calendar templates, optionally replacing old generated versions."
+    def add_arguments(self,parser):
         parser.add_argument("--product-id",type=int,required=True)
         parser.add_argument("--year",type=int,default=2027)
         parser.add_argument("--dry-run",action="store_true")
+        parser.add_argument("--replace",action="store_true")
     def handle(self,*args,**options):
         year=options["year"]
-        if not 1900 <= year <= 2100: raise CommandError("Invalid year")
+        if not 1900<=year<=2100: raise CommandError("Invalid year")
         try: product=Product.objects.get(pk=options["product_id"])
         except Product.DoesNotExist: raise CommandError("Product not found")
         if not product.print_width_in or not product.print_height_in:
-            raise CommandError("Configure product physical print dimensions in inches first")
+            raise CommandError("Configure physical print dimensions first")
         existing=DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR)
-        if existing.exists(): raise CommandError("Calendar generator records already exist; refusing duplicate seeding")
-        self.stdout.write("Product %s: 100 templates, 12 pages each; 20 layouts in 5 color editions"%product.id)
+        count=existing.count()
+        if count and not options["replace"]:
+            raise CommandError("%d generated templates exist; use --replace to replace them"%count)
+        self.stdout.write("Product %s: 100 luxury calendar layouts, 12 editable pages each; replacing %d"%(product.id,count if options["replace"] else 0))
         if options["dry_run"]: return
         with transaction.atomic():
-            for index in range(100):
-                data=payload(product,year,index)
-                DesignTemplate.objects.create(product=product,name=data["designName"],json_data=data,is_active=True)
-        self.stdout.write(self.style.SUCCESS("Created 100 calendar templates"))
+            if options["replace"]: existing.delete()
+            for i in range(100):
+                data=payload(product,year,i)
+                DesignTemplate.objects.create(product=product,name=data["designName"],
+                                              json_data=data,is_active=True)
+        self.stdout.write(self.style.SUCCESS("Created 100 luxury calendar templates"))
