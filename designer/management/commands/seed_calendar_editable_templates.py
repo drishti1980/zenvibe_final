@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v9"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8")
+GENERATOR="zenvibe-calendar-editable-v11"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -221,23 +221,21 @@ def page(year,month,index,w,h,urls):
  m=min(w,h)*.035
  # Twelve genuinely different compositions: split, full-bleed, triptych,
  # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
- portrait=h>=w*.95
- if portrait:
-  patterns=[
-   (.53,0),(.62,1),(.45,2),(.56,3),(.35,4),(.63,5),
-   (.66,6),(.50,7),(.58,8),(.49,9),(.32,10),(.60,11)]
-  fraction,mode=patterns[(style+variant)%len(patterns)]
-  photo=(m,m,w-2*m,h*fraction-m)
-  cal=(m,h*fraction+m*.3,w-2*m,h*(1-fraction)-m*1.3)
+ # Calendar product 222: never use cramped photo-left/date-right split layouts.
+ # Keep a full-width, legible calendar below or above the photographic composition.
+ # Ten variations retain different photo heights and alternate the reading order.
+ fractions=(.48,.56,.43,.51,.39,.54,.46,.58,.42,.50)
+ f=fractions[variant]
+ usable_h=h-2*m
+ gap=max(3,min(w,h)*.025)
+ photo_h=usable_h*f-gap/2
+ cal_h=usable_h*(1-f)-gap/2
+ if variant in (2,5,8):
+  cal=(m,m,w-2*m,cal_h)
+  photo=(m,m+cal_h+gap,w-2*m,photo_h)
  else:
-  fractions=[.53,.58,.48,.62,.43,.65,.57,.50,.60,.52,.45,.63]
-  f=fractions[(style+variant)%len(fractions)]
-  if (style+variant)%4==0:
-   photo=(w*(1-f)+m,m,w*f-2*m,h-2*m)
-   cal=(m,m,w*(1-f)-m,h-2*m)
-  else:
-   photo=(m,m,w*f-m,h-2*m)
-   cal=(w*f+m*.3,m,w*(1-f)-m*1.3,h-2*m)
+  photo=(m,m,w-2*m,photo_h)
+  cal=(m,m+photo_h+gap,w-2*m,cal_h)
  px,py,pw,ph=photo;cx,cy,cw,ch=cal
  o=[rect("paper",0,0,w,h,bg)]
  # Photography is layered, separately editable, and the collage is different
