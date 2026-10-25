@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v11"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10")
+GENERATOR="zenvibe-calendar-editable-v12"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10","zenvibe-calendar-editable-v11")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -218,13 +218,13 @@ def page(year,month,index,w,h,urls):
  family=index//10
  variant=index%10
  title,tag,dark,bg,accent,style=DESIGNS[family%len(DESIGNS)]
- m=min(w,h)*.035
+ m=min(w,h)*.045
  # Twelve genuinely different compositions: split, full-bleed, triptych,
  # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
  # Calendar product 222: never use cramped photo-left/date-right split layouts.
  # Keep a full-width, legible calendar below or above the photographic composition.
  # Ten variations retain different photo heights and alternate the reading order.
- fractions=(.48,.56,.43,.51,.39,.54,.46,.58,.42,.50)
+ fractions=(.46,.51,.44,.49,.42,.50,.47,.52,.43,.48)
  f=fractions[variant]
  usable_h=h-2*m
  gap=max(3,min(w,h)*.025)
@@ -237,7 +237,7 @@ def page(year,month,index,w,h,urls):
   photo=(m,m,w-2*m,photo_h)
   cal=(m,m+photo_h+gap,w-2*m,cal_h)
  px,py,pw,ph=photo;cx,cy,cw,ch=cal
- o=[rect("paper",0,0,w,h,bg)]
+ o=[rect("paper",0,0,w,h,bg),rect("outer-frame",m*.42,m*.42,w-m*.84,h-m*.84,"rgba(0,0,0,0)",dark,max(2,min(w,h)*.004))]
  # Photography is layered, separately editable, and the collage is different
  # for each of the twelve design families.
  gap=min(pw,ph)*.018
@@ -249,36 +249,33 @@ def page(year,month,index,w,h,urls):
  else:slots=[(px,py,pw,ph*.48-gap),(px,py+ph*.48,pw,ph*.52)]
  for j,(sx,sy,sw,sh) in enumerate(slots):
   o.append(photo_object("photo-%02d"%j,sx,sy,sw,sh,urls[(index*5+month+j*2)%len(urls)]))
-  o.append(rect("photo-frame-%02d"%j,sx,sy,sw,sh,"rgba(0,0,0,0)",accent,max(1,min(w,h)*.002)))
- # Title treatment differs by collection.
- if variant in (0,3,5,7,9):
-  bx=px+pw*.06;by=py+ph*.66;bw=pw*.88;bh=ph*.28
-  o.append(rect("title-panel",bx,by,bw,bh,bg))
-  title_color=dark
- elif variant in (1,2,6,8):
-  bx=px+pw*.055;by=py+ph*.65;bw=pw*.89;bh=ph*.28
-  o.append(rect("title-panel",bx,by,bw,bh,dark))
-  title_color="#FFFFFF"
- else:
-  bx=px+pw*.08;by=py+ph*.07;bw=pw*.84;bh=ph*.25
-  o.append(rect("title-panel",bx,by,bw,bh,bg))
-  title_color=dark
- o.append(txt("collection-title",bx+bw*.06,by+bh*.12,bw*.88,title,
-              max(11,min(bw*.065,bh*.28)),title_color,"center","700","Georgia"))
- o.append(txt("collection-subtitle",bx+bw*.06,by+bh*.62,bw*.88,tag,
-              max(7,min(bw*.024,bh*.12)),title_color,"center","500","Arial"))
+  o.append(rect("photo-frame-%02d"%j,sx,sy,sw,sh,"rgba(0,0,0,0)",bg,max(2,min(w,h)*.004)))
+ # Separate editorial caption from the photography to prevent lost text.
+ # A contrasting solid plaque is always legible, even on bright photographs.
+ bx=px+pw*.075
+ bw=pw*.85
+ bh=ph*.20
+ by=py+ph*.74
+ plaque=dark if variant in (1,3,6,8) else bg
+ title_color="#FFFFFF" if plaque==dark else dark
+ o.append(rect("title-shadow",bx+pw*.009,by+ph*.01,bw,bh,accent))
+ o.append(rect("title-panel",bx,by,bw,bh,plaque,accent,max(1,min(w,h)*.002)))
+ o.append(txt("collection-title",bx+bw*.055,by+bh*.13,bw*.89,title,
+              max(13,min(bw*.052,bh*.26)),title_color,"center","700","Georgia"))
+ o.append(txt("collection-subtitle",bx+bw*.055,by+bh*.65,bw*.89,tag,
+              max(9,min(bw*.026,bh*.14)),title_color,"center","600","Arial"))
  # Date area uses generous white space and restrained grid lines.
- o.append(rect("calendar-paper",cx,cy,cw,ch,"#FFFFFF"))
- o.append(rect("calendar-header",cx,cy,cw,ch*.18,dark if style in (1,6,8,10) else bg))
- header_text="#FFFFFF" if style in (1,6,8,10) else dark
+ o.append(rect("calendar-paper",cx,cy,cw,ch,"#FFFFFF",dark,max(2,min(w,h)*.003)))
+ o.append(rect("calendar-header",cx,cy,cw,ch*.18,dark))
+ header_text="#FFFFFF"
  o.append(txt("month-title",cx+cw*.05,cy+ch*.025,cw*.90,
               calendar.month_name[month].upper()+"  "+str(year),
-              max(11,min(cw*.065,ch*.085)),header_text,"center","700","Georgia"))
+              max(14,min(cw*.067,ch*.105)),header_text,"center","700","Georgia"))
  # Ten different date treatments: pastel chips, dark weekends, colour bands,
  # rounded dots, minimal ruled, editorial, checker, outlined, highlighted, blocks.
  gx=cx+cw*.045;gy=cy+ch*.235;gw=cw*.91
  row=ch*.091;cell=gw/7
- fs=max(7,min(cell*.33,row*.38))
+ fs=max(9,min(cell*.35,row*.40))
  date_style=variant
  weekdays=("SUN","MON","TUE","WED","THU","FRI","SAT")
  for col,label in enumerate(weekdays):
@@ -296,7 +293,7 @@ def page(year,month,index,w,h,urls):
                  accent if col==0 else bg))
    label_color=dark
   o.append(txt("weekday-%d"%col,hx,gy+row*.10,cell,label,
-               max(6,fs*.65),label_color,"center","700","Arial"))
+               max(8,fs*.72),label_color,"center","700","Arial"))
  weeks=calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)
  for ri in range(6):
   week=weeks[ri] if ri<len(weeks) else [0]*7
@@ -308,30 +305,31 @@ def page(year,month,index,w,h,urls):
    elif date_style==2:fill=bg if ri%2 else "#FFFFFF"
    elif date_style==3:fill=dark if weekend else bg
    elif date_style==4:fill="#FFFFFF"
-   elif date_style==5:fill=accent if weekend else "#FFFFFF"
+   elif date_style==5:fill=bg if weekend else "#FFFFFF"
    elif date_style==6:fill=bg if (ri+col)%2 else "#FFFFFF"
    elif date_style==7:fill="#FFFFFF"
    elif date_style==8:fill=bg if weekend else "#FFFFFF"
-   else:fill=accent if weekend else bg
+   else:fill=bg if weekend else "#FFFFFF"
    stroke=accent if date_style in (1,7,8) else "#E7E4E0"
    o.append(rect("date-cell-%d-%d"%(ri,col),x,y,cell*.975,row*.94,
                  fill,stroke,max(.5,min(w,h)*.0008)))
    if not day:continue
    if date_style in (1,5,8):
-    o.append(circle("date-dot-%d"%day,x+cell*.29,y+row*.16,
-                    min(cell,row)*.20,accent if date_style!=8 else dark))
+    o.append(circle("date-dot-%d"%day,x+cell*.25,y+row*.13,
+                    min(cell,row)*.22,dark))
     ink="#FFFFFF"
-    dx=x+cell*.29
-    dy=y+row*.20
-    dw=cell*.40
+    dx=x+cell*.25
+    dy=y+row*.17
+    dw=cell*.44
     align="center"
    elif date_style in (3,9) and weekend:
     ink="#FFFFFF";dx=x+cell*.08;dy=y+row*.11;dw=cell*.8;align="left"
    else:
-    ink=accent if weekend else dark
+    ink=dark
     dx=x+cell*.08;dy=y+row*.11;dw=cell*.8;align="left"
    o.append(txt("day-%d"%day,dx,dy,dw,str(day),fs,ink,align,"700","Arial"))
- o.append(txt("footer",cx+cw*.07,cy+ch*.90,cw*.86,"YOUR MEMORIES • YOUR YEAR",
+ o.append(rect("footer-rule",cx+cw*.06,cy+ch*.895,cw*.88,max(1,min(w,h)*.002),accent))
+ o.append(txt("footer",cx+cw*.07,cy+ch*.92,cw*.86,"YOUR MEMORIES • YOUR YEAR",
               max(7,min(cw*.023,ch*.028)),dark,"center","500","Arial"))
  return {"name":calendar.month_name[month],"background":bg,"objects":o}
 def payload(product,year,i,urls):
