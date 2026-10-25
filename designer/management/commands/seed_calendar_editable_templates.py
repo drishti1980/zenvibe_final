@@ -1,23 +1,23 @@
-"""Editorial luxury calendars: 100 editable layouts, 12 pages, no empty photo boxes."""
+"""Vibrant editorial calendars: editable graphic artwork and 12 readable months."""
 import calendar
 import math
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v2"
-OLD="zenvibe-calendar-editable-v1"
+GENERATOR="zenvibe-calendar-editable-v3"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2")
 PALETTES=[
-("#142A28","#F9F4E9","#BD9461","#D9D2BE"),
-("#1F2B42","#FAF7F1","#C59B68","#D7DCE3"),
-("#452B38","#FFF7F3","#B68D86","#E7D4CE"),
-("#273E36","#F8F6EA","#B6A275","#DDE5D9"),
-("#39313D","#F9F4F1","#CEAB82","#E3D6E4"),
-("#243D4A","#F4F8F7","#A8B9AC","#DAE4E1"),
-("#583B32","#FBF5EB","#CDA078","#F0DCCB"),
-("#26344A","#F9F6EF","#C6B19A","#DDE2E8"),
-("#3D4136","#FCF8F1","#C7AB6E","#E3E4D6"),
-("#423342","#FAF6F8","#D2A7AF","#E8DCE7")]
+("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
+("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
+("#173F3B","#FFF6DF","#FF7B39","#70E4C1"),
+("#42136F","#FFF2FB","#F74BA3","#7FE5FA"),
+("#142C56","#FFF9DA","#FFB000","#FF5C75"),
+("#4A144B","#FFF4E9","#F85B44","#7DDDD4"),
+("#123B7A","#F5F8FF","#FFCF33","#FF5B9C"),
+("#1D4940","#FFF7EA","#FC6176","#A3D943"),
+("#452061","#FFF9F0","#FF793F","#42D3E5"),
+("#172B64","#FFF3EC","#F3496C","#72DBB5")]
 THEMES=[
 ("THE ART OF LIVING","A YEAR OF BEAUTIFUL MOMENTS"),
 ("THE QUIET COLLECTION","TIMELESS DAYS, BEAUTIFULLY KEPT"),
@@ -39,48 +39,48 @@ def circle(i,x,y,r,fill,stroke=None):
  return {"id":i,"type":"circle","left":round(x,2),"top":round(y,2),"radius":round(r,2),"fill":fill,"stroke":stroke or fill,"strokeWidth":1,"selectable":True,"evented":True,"customerEditable":True}
 def artwork(i,x,y,w,h,variant,dark,accent,soft):
  """Native editable graphic illustrations instead of uneditable empty photo placeholders."""
- o=[rect("art-back",x,y,w,h,soft)]
+ o=[rect("art-back",x,y,w,h,dark)]
  unit=min(w,h)
  if variant==0: # Art deco fan
   for k in range(9):
-   o.append(rect("deco-%d"%k,x+w*(.1+k*.09),y+h*.16,w*.016,h*.7,accent if k%2 else dark))
+   o.append(rect("deco-%d"%k,x+w*(.1+k*.09),y+h*.16,w*.016,h*.7,accent if k%2 else soft))
  elif variant==1: # Sunrise over layered horizon
   o.append(circle("sun",x+w*.58,y+h*.14,unit*.19,accent))
-  for k in range(4):o.append(rect("land-%d"%k,x,y+h*(.58+k*.1),w,h*.105,(dark,accent,soft,dark)[k]))
+  for k in range(4):o.append(rect("land-%d"%k,x,y+h*(.58+k*.1),w,h*.105,(soft,accent,soft,accent)[k]))
  elif variant==2: # Modern abstract composition
-  o += [circle("orb-1",x+w*.1,y+h*.09,unit*.27,accent),circle("orb-2",x+w*.53,y+h*.32,unit*.23,dark),rect("bar",x+w*.12,y+h*.69,w*.76,h*.065,accent)]
+  o += [circle("orb-1",x+w*.1,y+h*.09,unit*.27,accent),circle("orb-2",x+w*.53,y+h*.32,unit*.23,soft),rect("bar",x+w*.12,y+h*.69,w*.76,h*.065,accent)]
  elif variant==3: # Botanical stems and leaves
   for k in range(5):
    xx=x+w*(.16+k*.17)
    o.append(rect("stem-%d"%k,xx,y+h*.2,w*.007,h*.65,dark))
-   for q in range(3):o.append(circle("leaf-%d-%d"%(k,q),xx-w*.055,y+h*(.25+q*.17),unit*.045,accent))
+   for q in range(3):o.append(circle("leaf-%d-%d"%(k,q),xx-w*.055,y+h*(.25+q*.17),unit*.045,accent if q%2 else soft))
  elif variant==4: # Architectural arches
   for k in range(3):
    xx=x+w*(.1+k*.29)
-   o += [rect("pillar-%d"%k,xx,y+h*.28,w*.19,h*.52,dark if k==1 else accent),
+   o += [rect("pillar-%d"%k,xx,y+h*.28,w*.19,h*.52,soft if k==1 else accent),
          circle("arch-%d"%k,xx,y+h*.16,w*.095,dark if k==1 else accent)]
  elif variant==5: # Night sky
   o.append(circle("moon",x+w*.55,y+h*.1,unit*.19,accent))
   for k in range(18):
    xx=x+w*(.07+((k*37)%83)/100)
    yy=y+h*(.07+((k*23)%69)/100)
-   o.append(circle("star-%d"%k,xx,yy,max(1,unit*.004),dark))
+   o.append(circle("star-%d"%k,xx,yy,max(1,unit*.004),soft))
  elif variant==6: # Geometric textile
   for k in range(7):
-   o.append(rect("stripe-%d"%k,x+w*(k/7),y,w*.045,h,accent if k%2 else dark))
-  o.append(circle("medallion",x+w*.34,y+h*.27,unit*.17,soft))
+   o.append(rect("stripe-%d"%k,x+w*(k/7),y,w*.045,h,accent if k%2 else soft))
+  o.append(circle("medallion",x+w*.34,y+h*.27,unit*.17,accent))
  elif variant==7: # Gallery frame
-  o += [rect("outer-frame",x+w*.1,y+h*.1,w*.8,h*.8,soft,dark,3),
+  o += [rect("outer-frame",x+w*.1,y+h*.1,w*.8,h*.8,soft,accent,3),
         rect("inner-frame",x+w*.16,y+h*.17,w*.68,h*.66,accent),
-        circle("gallery-disc",x+w*.34,y+h*.29,unit*.18,dark)]
+        circle("gallery-disc",x+w*.34,y+h*.29,unit*.18,soft)]
  elif variant==8: # Minimal editorial bands
-  o += [rect("large-band",x,y+h*.12,w,h*.26,dark),rect("small-band",x+w*.12,y+h*.48,w*.76,h*.11,accent),
-        rect("fine-band",x+w*.22,y+h*.68,w*.56,h*.018,dark)]
+  o += [rect("large-band",x,y+h*.12,w,h*.26,accent),rect("small-band",x+w*.12,y+h*.48,w*.76,h*.11,accent),
+        rect("fine-band",x+w*.22,y+h*.68,w*.56,h*.018,soft)]
  else: # Abstract tiled mosaic
   for r in range(3):
    for c in range(4):
     o.append(rect("tile-%d-%d"%(r,c),x+w*(.06+c*.225),y+h*(.08+r*.29),w*.19,h*.24,
-                  (accent,dark,soft)[(r+c)%3]))
+                  (accent,soft,"#FFFFFF")[(r+c)%3]))
  return o
 def page(year,month,index,w,h):
  dark,bg,accent,soft=PALETTES[index%10]
@@ -102,12 +102,12 @@ def page(year,month,index,w,h):
  o.append(rect("masthead",ax+aw*.06,ay+ah*.68,aw*.88,ah*.24,bg))
  o.append(txt("theme",ax+aw*.1,ay+ah*.715,aw*.8,theme,max(10,min(aw*.04,ah*.06)),dark,"center","700"))
  o.append(txt("tagline",ax+aw*.08,ay+ah*.82,aw*.84,tag,max(8,min(aw*.018,ah*.032)),dark,"center","400","Arial"))
- o.append(rect("calendar-background",px,py,pw,ph,bg))
- o.append(rect("top-rule",px,py,pw,max(1,ph*.005),accent))
+ o.append(rect("calendar-background",px,py,pw,ph,bg))\n o.append(rect("calendar-accent",px,py,pw,ph*.035,accent))
+ o.append(rect("top-rule",px,py+ph*.04,pw,max(1,ph*.006),dark))
  o.append(txt("month",px,py+ph*.055,pw,calendar.month_name[month].upper(),
               max(13,min(pw*.065,ph*.10)),dark,"center","700"))
  o.append(txt("year",px,py+ph*.18,pw,str(year),max(10,min(pw*.03,ph*.05)),accent,"center","600","Arial"))
- o.append(rect("divider",px+pw*.07,py+ph*.29,pw*.86,max(1,ph*.003),accent))
+ o.append(rect("divider",px+pw*.07,py+ph*.29,pw*.86,max(1,ph*.009),accent))
  gx=px+pw*.075;gw=pw*.85;gy=py+ph*.36;row=ph*.075;cw=gw/7
  fs=max(8,min(cw*.4,row*.52))
  for col,name in enumerate(("S","M","T","W","T","F","S")):
@@ -140,9 +140,9 @@ class Command(BaseCommand):
   try:p=Product.objects.get(pk=o["product_id"])
   except Product.DoesNotExist:raise CommandError("Product not found")
   if not p.print_width_in or not p.print_height_in:raise CommandError("Configure print dimensions first")
-  qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,OLD])
+  qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,*OLD])
   if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
-  self.stdout.write("Preparing 100 editable illustrated calendars, 12 pages each")
+  self.stdout.write("Preparing 100 vibrant illustrated calendars, 12 pages each")
   if o["dry_run"]:return
   with transaction.atomic():
    if o["replace"]:qs.delete()
