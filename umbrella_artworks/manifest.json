@@ -1,0 +1,602 @@
+[
+  {
+    "name": "Corporate — Signature Crest",
+    "artwork": "umbrella-001.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Botanical Cascade",
+    "artwork": "umbrella-002.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Sunrise Horizon",
+    "artwork": "umbrella-003.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Art Deco Fan",
+    "artwork": "umbrella-004.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Celebration Confetti",
+    "artwork": "umbrella-005.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Heritage Monogram",
+    "artwork": "umbrella-006.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Diagonal Statement",
+    "artwork": "umbrella-007.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Festival Garland",
+    "artwork": "umbrella-008.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Illustrated Landscape",
+    "artwork": "umbrella-009.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Corporate — Minimal Editorial",
+    "artwork": "umbrella-010.svg",
+    "headline": "NORTH & CO",
+    "subtitle": "Professional identity"
+  },
+  {
+    "name": "Wedding — Signature Crest",
+    "artwork": "umbrella-011.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Botanical Cascade",
+    "artwork": "umbrella-012.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Sunrise Horizon",
+    "artwork": "umbrella-013.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Art Deco Fan",
+    "artwork": "umbrella-014.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Celebration Confetti",
+    "artwork": "umbrella-015.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Heritage Monogram",
+    "artwork": "umbrella-016.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Diagonal Statement",
+    "artwork": "umbrella-017.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Festival Garland",
+    "artwork": "umbrella-018.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Illustrated Landscape",
+    "artwork": "umbrella-019.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Wedding — Minimal Editorial",
+    "artwork": "umbrella-020.svg",
+    "headline": "LOVE & ALWAYS",
+    "subtitle": "A celebration of love"
+  },
+  {
+    "name": "Birthday — Signature Crest",
+    "artwork": "umbrella-021.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Botanical Cascade",
+    "artwork": "umbrella-022.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Sunrise Horizon",
+    "artwork": "umbrella-023.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Art Deco Fan",
+    "artwork": "umbrella-024.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Celebration Confetti",
+    "artwork": "umbrella-025.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Heritage Monogram",
+    "artwork": "umbrella-026.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Diagonal Statement",
+    "artwork": "umbrella-027.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Festival Garland",
+    "artwork": "umbrella-028.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Illustrated Landscape",
+    "artwork": "umbrella-029.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Birthday — Minimal Editorial",
+    "artwork": "umbrella-030.svg",
+    "headline": "LET'S CELEBRATE",
+    "subtitle": "Make every moment count"
+  },
+  {
+    "name": "Festival — Signature Crest",
+    "artwork": "umbrella-031.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Botanical Cascade",
+    "artwork": "umbrella-032.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Sunrise Horizon",
+    "artwork": "umbrella-033.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Art Deco Fan",
+    "artwork": "umbrella-034.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Celebration Confetti",
+    "artwork": "umbrella-035.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Heritage Monogram",
+    "artwork": "umbrella-036.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Diagonal Statement",
+    "artwork": "umbrella-037.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Festival Garland",
+    "artwork": "umbrella-038.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Illustrated Landscape",
+    "artwork": "umbrella-039.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Festival — Minimal Editorial",
+    "artwork": "umbrella-040.svg",
+    "headline": "GOOD VIBES",
+    "subtitle": "A season of joy"
+  },
+  {
+    "name": "Sports — Signature Crest",
+    "artwork": "umbrella-041.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Botanical Cascade",
+    "artwork": "umbrella-042.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Sunrise Horizon",
+    "artwork": "umbrella-043.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Art Deco Fan",
+    "artwork": "umbrella-044.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Celebration Confetti",
+    "artwork": "umbrella-045.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Heritage Monogram",
+    "artwork": "umbrella-046.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Diagonal Statement",
+    "artwork": "umbrella-047.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Festival Garland",
+    "artwork": "umbrella-048.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Illustrated Landscape",
+    "artwork": "umbrella-049.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Sports — Minimal Editorial",
+    "artwork": "umbrella-050.svg",
+    "headline": "THE CHAMPIONS",
+    "subtitle": "One team, one dream"
+  },
+  {
+    "name": "Travel — Signature Crest",
+    "artwork": "umbrella-051.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Botanical Cascade",
+    "artwork": "umbrella-052.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Sunrise Horizon",
+    "artwork": "umbrella-053.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Art Deco Fan",
+    "artwork": "umbrella-054.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Celebration Confetti",
+    "artwork": "umbrella-055.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Heritage Monogram",
+    "artwork": "umbrella-056.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Diagonal Statement",
+    "artwork": "umbrella-057.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Festival Garland",
+    "artwork": "umbrella-058.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Illustrated Landscape",
+    "artwork": "umbrella-059.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Travel — Minimal Editorial",
+    "artwork": "umbrella-060.svg",
+    "headline": "WANDER MORE",
+    "subtitle": "Adventure awaits"
+  },
+  {
+    "name": "Botanical — Signature Crest",
+    "artwork": "umbrella-061.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Botanical Cascade",
+    "artwork": "umbrella-062.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Sunrise Horizon",
+    "artwork": "umbrella-063.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Art Deco Fan",
+    "artwork": "umbrella-064.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Celebration Confetti",
+    "artwork": "umbrella-065.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Heritage Monogram",
+    "artwork": "umbrella-066.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Diagonal Statement",
+    "artwork": "umbrella-067.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Festival Garland",
+    "artwork": "umbrella-068.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Illustrated Landscape",
+    "artwork": "umbrella-069.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Botanical — Minimal Editorial",
+    "artwork": "umbrella-070.svg",
+    "headline": "WILD BLOOM",
+    "subtitle": "Inspired by nature"
+  },
+  {
+    "name": "Luxury — Signature Crest",
+    "artwork": "umbrella-071.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Botanical Cascade",
+    "artwork": "umbrella-072.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Sunrise Horizon",
+    "artwork": "umbrella-073.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Art Deco Fan",
+    "artwork": "umbrella-074.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Celebration Confetti",
+    "artwork": "umbrella-075.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Heritage Monogram",
+    "artwork": "umbrella-076.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Diagonal Statement",
+    "artwork": "umbrella-077.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Festival Garland",
+    "artwork": "umbrella-078.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Illustrated Landscape",
+    "artwork": "umbrella-079.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Luxury — Minimal Editorial",
+    "artwork": "umbrella-080.svg",
+    "headline": "ATELIER",
+    "subtitle": "Signature collection"
+  },
+  {
+    "name": "Photography — Signature Crest",
+    "artwork": "umbrella-081.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Botanical Cascade",
+    "artwork": "umbrella-082.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Sunrise Horizon",
+    "artwork": "umbrella-083.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Art Deco Fan",
+    "artwork": "umbrella-084.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Celebration Confetti",
+    "artwork": "umbrella-085.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Heritage Monogram",
+    "artwork": "umbrella-086.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Diagonal Statement",
+    "artwork": "umbrella-087.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Festival Garland",
+    "artwork": "umbrella-088.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Illustrated Landscape",
+    "artwork": "umbrella-089.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Photography — Minimal Editorial",
+    "artwork": "umbrella-090.svg",
+    "headline": "YOUR MEMORIES",
+    "subtitle": "Personalise your moments"
+  },
+  {
+    "name": "Community — Signature Crest",
+    "artwork": "umbrella-091.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Botanical Cascade",
+    "artwork": "umbrella-092.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Sunrise Horizon",
+    "artwork": "umbrella-093.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Art Deco Fan",
+    "artwork": "umbrella-094.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Celebration Confetti",
+    "artwork": "umbrella-095.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Heritage Monogram",
+    "artwork": "umbrella-096.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Diagonal Statement",
+    "artwork": "umbrella-097.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Festival Garland",
+    "artwork": "umbrella-098.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Illustrated Landscape",
+    "artwork": "umbrella-099.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  },
+  {
+    "name": "Community — Minimal Editorial",
+    "artwork": "umbrella-100.svg",
+    "headline": "BETTER TOGETHER",
+    "subtitle": "Make an impact"
+  }
+]
