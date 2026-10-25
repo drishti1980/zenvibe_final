@@ -1,6 +1,7 @@
-"""Photo-led calendars with editable photo objects and readable monthly planners."""
+"""Photo-led calendars with correctly sized editable photos and monthly planners."""
 import calendar
 import math
+import hashlib
 from io import BytesIO
 from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -10,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v7"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6")
+GENERATOR="zenvibe-calendar-editable-v8"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -103,13 +104,30 @@ PHOTO_URLS=[
  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1000&q=85",
  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1000&q=85",
 ]
+def _fitted_photo(src,w,h):
+ """Pre-crop to the exact Fabric object's dimensions.
+ The editor otherwise loads the original intrinsic size and can cover the calendar.
+ """
+ if w<=0 or h<=0:raise CommandError("Invalid photo slot dimensions")
+ path=src.split("/media/",1)[1] if "/media/" in src else src.lstrip("/")
+ key=hashlib.sha256(("%s|%.3f|%.3f"%(path,w,h)).encode()).hexdigest()[:20]
+ target="calendar_assets/fitted/%s.jpg"%key
+ if not default_storage.exists(target):
+  with default_storage.open(path,"rb") as f:
+   original=Image.open(f).convert("RGB")
+   fitted=ImageOps.fit(original,(max(1,round(w)),max(1,round(h))),method=Image.Resampling.LANCZOS)
+  out=BytesIO();fitted.save(out,format="JPEG",quality=90)
+  default_storage.save(target,ContentFile(out.getvalue()))
+ return default_storage.url(target)
+
 def photo_object(name,x,y,w,h,src):
+ fitted=_fitted_photo(src,w,h)
  return {"id":name,"type":"image","left":round(x,2),"top":round(y,2),
-         "width":round(w,2),"height":round(h,2),"src":src,"baseSrc":src,
-         "scaleX":1,"scaleY":1,"selectable":True,"evented":True,
-         "customerEditable":True,"manualReplacement":True,
-         "fieldType":"calendar-photo","backgroundAsset":False,
-         "replaceable":True,"crossOrigin":"anonymous"}
+         "width":round(w),"height":round(h),"src":fitted,"baseSrc":fitted,
+         "scaleX":1,"scaleY":1,"originX":"left","originY":"top",
+         "selectable":True,"evented":True,"customerEditable":True,
+         "manualReplacement":True,"fieldType":"calendar-photo",
+         "backgroundAsset":False,"replaceable":True,"crossOrigin":"anonymous"}
 
 def photo_collage(x,y,w,h,index,month,dark,accent,urls):
  # Ten composition families, varied further by index and month.
