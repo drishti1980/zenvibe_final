@@ -1,122 +1,152 @@
-"""Luxury editable 12-month calendar layouts. Photo areas are editable placeholders."""
+"""Editorial luxury calendars: 100 editable layouts, 12 pages, no empty photo boxes."""
 import calendar
+import math
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR = "zenvibe-calendar-editable-v1"
-PALETTES = [
- ("#1C2934","#FAF8F3","#B99560"),("#153C35","#FBF8EF","#B7A27A"),
- ("#34283C","#FFF9F3","#D6B6A2"),("#253F59","#F7F9FC","#B6A77E"),
- ("#47362E","#FFF9EE","#D6AE78"),("#2D3332","#F4F0E9","#C4B7A0"),
- ("#293850","#F5F3ED","#C2A269"),("#4C3541","#FFF7F6","#C79C9D"),
- ("#263C37","#FAF7F0","#C7B88B"),("#313036","#F7F5F1","#D6C1A0")]
-def box(i,x,y,w,h,fill,stroke=None):
-    d={"id":i,"type":"rect","left":round(x,2),"top":round(y,2),"width":round(w,2),
-       "height":round(h,2),"fill":fill,"selectable":True,"evented":True,"customerEditable":True}
-    if stroke: d.update(stroke=stroke,strokeWidth=1.5)
-    return d
-def label(i,x,y,w,h,value,size,color,align="left",weight="600"):
-    return {"id":i,"type":"textbox","left":round(x,2),"top":round(y,2),
-            "width":round(w,2),"height":round(h,2),"text":str(value),
-            "fontFamily":"Arial","fontWeight":weight,"fontSize":round(size,2),
-            "fill":color,"textAlign":align,"selectable":True,"evented":True,"customerEditable":True}
-def photo_tiles(x,y,w,h,variant,dark,light,accent):
-    """Ten distinct collage structures; photo regions remain user-replaceable."""
-    pad=min(w,h)*.018
-    if variant==0: tiles=[(0,0,1,1)]
-    elif variant==1: tiles=[(0,0,.49,1),(.51,0,.49,1)]
-    elif variant==2: tiles=[(0,0,1,.49),(0,.51,1,.49)]
-    elif variant==3: tiles=[(0,0,.65,1),(.67,0,.33,.49),(.67,.51,.33,.49)]
-    elif variant==4: tiles=[(0,0,.33,.49),(.35,0,.65,1),(0,.51,.33,.49)]
-    elif variant==5: tiles=[(0,0,.49,.49),(.51,0,.49,.49),(0,.51,.49,.49),(.51,.51,.49,.49)]
-    elif variant==6: tiles=[(0,0,1,.63),(0,.65,.32,.35),(.34,.65,.32,.35),(.68,.65,.32,.35)]
-    elif variant==7: tiles=[(0,0,.32,1),(.34,0,.32,1),(.68,0,.32,1)]
-    elif variant==8: tiles=[(0,0,.49,.65),(.51,0,.49,.32),(.51,.34,.49,.66),(0,.67,.49,.33)]
-    else: tiles=[(0,0,.32,.49),(.34,0,.32,.49),(.68,0,.32,.49),(0,.51,.49,.49),(.51,.51,.49,.49)]
-    out=[]
-    for n,(a,b,c,d) in enumerate(tiles):
-        tx=x+a*w+pad; ty=y+b*h+pad; tw=c*w-2*pad; th=d*h-2*pad
-        out.append(box("photo-%d"%n,tx,ty,tw,th,("#E4DDD2","#D7DED8","#DFD7D8")[n%3],accent))
-        out.append(label("photo-hint-%d"%n,tx+tw*.06,ty+th*.39,tw*.88,th*.16,
-                         "ADD PHOTO",max(10,min(tw*.032,th*.12)),dark,"center","500"))
-    return out
+GENERATOR="zenvibe-calendar-editable-v2"
+OLD="zenvibe-calendar-editable-v1"
+PALETTES=[
+("#142A28","#F9F4E9","#BD9461","#D9D2BE"),
+("#1F2B42","#FAF7F1","#C59B68","#D7DCE3"),
+("#452B38","#FFF7F3","#B68D86","#E7D4CE"),
+("#273E36","#F8F6EA","#B6A275","#DDE5D9"),
+("#39313D","#F9F4F1","#CEAB82","#E3D6E4"),
+("#243D4A","#F4F8F7","#A8B9AC","#DAE4E1"),
+("#583B32","#FBF5EB","#CDA078","#F0DCCB"),
+("#26344A","#F9F6EF","#C6B19A","#DDE2E8"),
+("#3D4136","#FCF8F1","#C7AB6E","#E3E4D6"),
+("#423342","#FAF6F8","#D2A7AF","#E8DCE7")]
+THEMES=[
+("THE ART OF LIVING","A YEAR OF BEAUTIFUL MOMENTS"),
+("THE QUIET COLLECTION","TIMELESS DAYS, BEAUTIFULLY KEPT"),
+("GOLDEN HOUR","MAKE EVERY MOMENT COUNT"),
+("BOTANICAL NOTES","GROW THROUGH EVERY SEASON"),
+("ATELIER","CURATED FOR YOUR EVERYDAY"),
+("THE TRAVEL EDITION","COLLECT MOMENTS, NOT THINGS"),
+("HERITAGE","A STORY WORTH REMEMBERING"),
+("THE MODERN HOME","LITTLE MOMENTS, BIG MEMORIES"),
+("STUDIO DAYS","CREATE YOUR OWN STORY"),
+("A YEAR IN BLOOM","TWELVE CHAPTERS TO CHERISH")]
+def rect(i,x,y,w,h,fill,stroke=None,sw=1):
+ d={"id":i,"type":"rect","left":round(x,2),"top":round(y,2),"width":round(w,2),"height":round(h,2),"fill":fill,"selectable":True,"evented":True,"customerEditable":True}
+ if stroke:d.update(stroke=stroke,strokeWidth=sw)
+ return d
+def txt(i,x,y,w,s,size,color,align="left",weight="500",font="Georgia"):
+ return {"id":i,"type":"textbox","left":round(x,2),"top":round(y,2),"width":round(w,2),"text":str(s),"fontSize":round(size,2),"fontFamily":font,"fontWeight":weight,"fill":color,"textAlign":align,"selectable":True,"evented":True,"customerEditable":True}
+def circle(i,x,y,r,fill,stroke=None):
+ return {"id":i,"type":"circle","left":round(x,2),"top":round(y,2),"radius":round(r,2),"fill":fill,"stroke":stroke or fill,"strokeWidth":1,"selectable":True,"evented":True,"customerEditable":True}
+def artwork(i,x,y,w,h,variant,dark,accent,soft):
+ """Native editable graphic illustrations instead of uneditable empty photo placeholders."""
+ o=[rect("art-back",x,y,w,h,soft)]
+ unit=min(w,h)
+ if variant==0: # Art deco fan
+  for k in range(9):
+   o.append(rect("deco-%d"%k,x+w*(.1+k*.09),y+h*.16,w*.016,h*.7,accent if k%2 else dark))
+ elif variant==1: # Sunrise over layered horizon
+  o.append(circle("sun",x+w*.58,y+h*.14,unit*.19,accent))
+  for k in range(4):o.append(rect("land-%d"%k,x,y+h*(.58+k*.1),w,h*.105,(dark,accent,soft,dark)[k]))
+ elif variant==2: # Modern abstract composition
+  o += [circle("orb-1",x+w*.1,y+h*.09,unit*.27,accent),circle("orb-2",x+w*.53,y+h*.32,unit*.23,dark),rect("bar",x+w*.12,y+h*.69,w*.76,h*.065,accent)]
+ elif variant==3: # Botanical stems and leaves
+  for k in range(5):
+   xx=x+w*(.16+k*.17)
+   o.append(rect("stem-%d"%k,xx,y+h*.2,w*.007,h*.65,dark))
+   for q in range(3):o.append(circle("leaf-%d-%d"%(k,q),xx-w*.055,y+h*(.25+q*.17),unit*.045,accent))
+ elif variant==4: # Architectural arches
+  for k in range(3):
+   xx=x+w*(.1+k*.29)
+   o += [rect("pillar-%d"%k,xx,y+h*.28,w*.19,h*.52,dark if k==1 else accent),
+         circle("arch-%d"%k,xx,y+h*.16,w*.095,dark if k==1 else accent)]
+ elif variant==5: # Night sky
+  o.append(circle("moon",x+w*.55,y+h*.1,unit*.19,accent))
+  for k in range(18):
+   xx=x+w*(.07+((k*37)%83)/100)
+   yy=y+h*(.07+((k*23)%69)/100)
+   o.append(circle("star-%d"%k,xx,yy,max(1,unit*.004),dark))
+ elif variant==6: # Geometric textile
+  for k in range(7):
+   o.append(rect("stripe-%d"%k,x+w*(k/7),y,w*.045,h,accent if k%2 else dark))
+  o.append(circle("medallion",x+w*.34,y+h*.27,unit*.17,soft))
+ elif variant==7: # Gallery frame
+  o += [rect("outer-frame",x+w*.1,y+h*.1,w*.8,h*.8,soft,dark,3),
+        rect("inner-frame",x+w*.16,y+h*.17,w*.68,h*.66,accent),
+        circle("gallery-disc",x+w*.34,y+h*.29,unit*.18,dark)]
+ elif variant==8: # Minimal editorial bands
+  o += [rect("large-band",x,y+h*.12,w,h*.26,dark),rect("small-band",x+w*.12,y+h*.48,w*.76,h*.11,accent),
+        rect("fine-band",x+w*.22,y+h*.68,w*.56,h*.018,dark)]
+ else: # Abstract tiled mosaic
+  for r in range(3):
+   for c in range(4):
+    o.append(rect("tile-%d-%d"%(r,c),x+w*(.06+c*.225),y+h*(.08+r*.29),w*.19,h*.24,
+                  (accent,dark,soft)[(r+c)%3]))
+ return o
 def page(year,month,index,w,h):
-    dark,light,accent=PALETTES[index%10]
-    composition=index//10
-    margin=min(w,h)*.035
-    # Photo and calendar rectangles never intersect. Different composition types
-    # change photo position and calendar proportions, not merely color.
-    if composition==0: photo=(0,0,w,h*.53); cal=(0,h*.53,w,h*.47)
-    elif composition==1: photo=(0,0,w,h*.63); cal=(0,h*.63,w,h*.37)
-    elif composition==2: photo=(0,0,w,h*.44); cal=(0,h*.44,w,h*.56)
-    elif composition==3: photo=(0,h*.47,w,h*.53); cal=(0,0,w,h*.47)
-    elif composition==4: photo=(0,h*.60,w,h*.40); cal=(0,0,w,h*.60)
-    elif composition==5: photo=(0,h*.39,w,h*.61); cal=(0,0,w,h*.39)
-    elif composition==6: photo=(0,0,w*.56,h); cal=(w*.56,0,w*.44,h)
-    elif composition==7: photo=(w*.44,0,w*.56,h); cal=(0,0,w*.44,h)
-    elif composition==8: photo=(0,0,w*.44,h); cal=(w*.44,0,w*.56,h)
-    else: photo=(w*.56,0,w*.44,h); cal=(0,0,w*.56,h)
-    px,py,pw,ph=photo; cx,cy,cw,ch=cal
-    o=[box("background",0,0,w,h,light)]
-    o+=photo_tiles(px,py,pw,ph,index%10,dark,light,accent)
-    o.append(box("calendar-panel",cx,cy,cw,ch,light))
-    m=min(cw,ch)*.07
-    inner_x=cx+m; inner_w=cw-2*m
-    title_h=ch*.15
-    o.append(label("month",inner_x,cy+ch*.055,inner_w,title_h,
-                   calendar.month_name[month].upper(),max(14,min(cw*.063,ch*.11)),dark,"center","700"))
-    o.append(label("year",inner_x,cy+ch*.21,inner_w,ch*.08,str(year),
-                   max(11,min(cw*.033,ch*.063)),accent,"center"))
-    o.append(box("divider",inner_x,cy+ch*.31,inner_w,max(1,ch*.003),accent))
-    # Seven columns and six date rows reserve fixed slots even in six-week months.
-    grid_top=cy+ch*.37; grid_h=ch*.51; colw=inner_w/7; rowh=grid_h/7
-    font=max(7,min(colw*.32,rowh*.43))
-    for col,day in enumerate(("S","M","T","W","T","F","S")):
-        o.append(label("weekday-%d"%col,inner_x+col*colw,grid_top,colw,rowh*.8,
-                       day,font*.83,dark,"center"))
-    for row,week in enumerate(calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)):
-        for col,day in enumerate(week):
-            if day:
-                o.append(label("day-%d"%day,inner_x+col*colw,grid_top+(row+1)*rowh,
-                               colw,rowh*.8,day,font,dark,"center"))
-    o.append(label("brand",inner_x,cy+ch*.92,inner_w,ch*.045,"YOUR BRAND",
-                   max(8,min(cw*.025,ch*.035)),dark,"center"))
-    return {"name":calendar.month_name[month],"background":light,"objects":o}
-def payload(product,year,index):
-    w,h=product.width,product.height
-    return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
-      "designName":"Luxury Calendar %d - %03d"%(year,index+1),
-      "document":{"width":w,"height":h,"unit":"in",
-                  "physical":{"widthIn":float(product.print_width_in),
-                              "heightIn":float(product.print_height_in)},
-                  "profile":"calendar"},
-      "pages":[page(year,m,index,w,h) for m in range(1,13)],
-      "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
+ dark,bg,accent,soft=PALETTES[index%10]
+ theme,tag=THEMES[index//10]
+ # Use a print-safe magazine layout: decorative artwork above calendar, no overlay.
+ # Ten themes and ten different artwork systems; each combination is editable.
+ m=min(w,h)*.045
+ vertical=h>=w*.95
+ if vertical:
+  art=(m,m,w-2*m,h*.44)
+  panel=(m,h*.52,w-2*m,h*.43)
+ else:
+  art=(m,m,w*.48-m,h-2*m)
+  panel=(w*.53,m,w*.43,h-2*m)
+ ax,ay,aw,ah=art;px,py,pw,ph=panel
+ o=[rect("paper",0,0,w,h,bg)]
+ o+=artwork(index,ax,ay,aw,ah,index%10,dark,accent,soft)
+ # A strong editorial masthead over artwork; bounded separately from date grid.
+ o.append(rect("masthead",ax+aw*.06,ay+ah*.68,aw*.88,ah*.24,bg))
+ o.append(txt("theme",ax+aw*.1,ay+ah*.715,aw*.8,theme,max(10,min(aw*.04,ah*.06)),dark,"center","700"))
+ o.append(txt("tagline",ax+aw*.08,ay+ah*.82,aw*.84,tag,max(8,min(aw*.018,ah*.032)),dark,"center","400","Arial"))
+ o.append(rect("calendar-background",px,py,pw,ph,bg))
+ o.append(rect("top-rule",px,py,pw,max(1,ph*.005),accent))
+ o.append(txt("month",px,py+ph*.055,pw,calendar.month_name[month].upper(),
+              max(13,min(pw*.065,ph*.10)),dark,"center","700"))
+ o.append(txt("year",px,py+ph*.18,pw,str(year),max(10,min(pw*.03,ph*.05)),accent,"center","600","Arial"))
+ o.append(rect("divider",px+pw*.07,py+ph*.29,pw*.86,max(1,ph*.003),accent))
+ gx=px+pw*.075;gw=pw*.85;gy=py+ph*.36;row=ph*.075;cw=gw/7
+ fs=max(8,min(cw*.4,row*.52))
+ for col,name in enumerate(("S","M","T","W","T","F","S")):
+  o.append(txt("weekday-%d"%col,gx+col*cw,gy,cw,name,fs*.8,dark,"center","700","Arial"))
+ for ri,week in enumerate(calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)):
+  for col,day in enumerate(week):
+   if day:
+    o.append(txt("date-%d"%day,gx+col*cw,gy+(ri+1)*row,cw,day,fs,dark,"center","400","Arial"))
+ o.append(rect("bottom-rule",px+pw*.07,py+ph*.88,pw*.86,max(1,ph*.003),accent))
+ o.append(txt("brand",px+pw*.05,py+ph*.92,pw*.9,"YOUR BRAND",max(8,min(pw*.022,ph*.035)),dark,"center","600","Arial"))
+ return {"name":calendar.month_name[month],"background":bg,"objects":o}
+def payload(product,year,i):
+ w,h=product.width,product.height
+ return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
+         "designName":"Luxury %s %d - %03d"%(THEMES[i//10][0].title(),year,i+1),
+         "document":{"width":w,"height":h,"unit":"in",
+                     "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
+                     "profile":"calendar"},
+         "pages":[page(year,m,i,w,h) for m in range(1,13)],
+         "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
-    help="Seed 100 editable luxury 12-month calendar templates, optionally replacing old generated versions."
-    def add_arguments(self,parser):
-        parser.add_argument("--product-id",type=int,required=True)
-        parser.add_argument("--year",type=int,default=2027)
-        parser.add_argument("--dry-run",action="store_true")
-        parser.add_argument("--replace",action="store_true")
-    def handle(self,*args,**options):
-        year=options["year"]
-        if not 1900<=year<=2100: raise CommandError("Invalid year")
-        try: product=Product.objects.get(pk=options["product_id"])
-        except Product.DoesNotExist: raise CommandError("Product not found")
-        if not product.print_width_in or not product.print_height_in:
-            raise CommandError("Configure physical print dimensions first")
-        existing=DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR)
-        count=existing.count()
-        if count and not options["replace"]:
-            raise CommandError("%d generated templates exist; use --replace to replace them"%count)
-        self.stdout.write("Product %s: 100 luxury calendar layouts, 12 editable pages each; replacing %d"%(product.id,count if options["replace"] else 0))
-        if options["dry_run"]: return
-        with transaction.atomic():
-            if options["replace"]: existing.delete()
-            for i in range(100):
-                data=payload(product,year,i)
-                DesignTemplate.objects.create(product=product,name=data["designName"],
-                                              json_data=data,is_active=True)
-        self.stdout.write(self.style.SUCCESS("Created 100 luxury calendar templates"))
+ help="Generate 100 illustrated, editable calendar layouts with 12 months."
+ def add_arguments(self,p):
+  p.add_argument("--product-id",type=int,required=True)
+  p.add_argument("--year",type=int,default=2027)
+  p.add_argument("--dry-run",action="store_true")
+  p.add_argument("--replace",action="store_true")
+ def handle(self,*a,**o):
+  if not 1900<=o["year"]<=2100:raise CommandError("Invalid year")
+  try:p=Product.objects.get(pk=o["product_id"])
+  except Product.DoesNotExist:raise CommandError("Product not found")
+  if not p.print_width_in or not p.print_height_in:raise CommandError("Configure print dimensions first")
+  qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,OLD])
+  if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
+  self.stdout.write("Preparing 100 editable illustrated calendars, 12 pages each")
+  if o["dry_run"]:return
+  with transaction.atomic():
+   if o["replace"]:qs.delete()
+   for i in range(100):
+    data=payload(p,o["year"],i)
+    DesignTemplate.objects.create(product=p,name=data["designName"],json_data=data,is_active=True)
+  self.stdout.write(self.style.SUCCESS("Created 100 editable illustrated calendars"))
