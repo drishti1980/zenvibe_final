@@ -10,8 +10,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v6"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5")
+GENERATOR="zenvibe-calendar-editable-v7"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -182,69 +182,101 @@ def _preview(data,urls):
  out=BytesIO();image.save(out,format="JPEG",quality=90)
  return ContentFile(out.getvalue())
 
+DESIGNS=[
+ ("Family Moments","Moments That Matter","#355A42","#F8F0E3","#CBA16B",0),
+ ("Travel The World","Collect Beautiful Places","#145B9B","#FFF4E8","#FFAA46",1),
+ ("Paws & Joy","Love Is A Four-Legged Word","#385D32","#FFF9E8","#D6A46C",2),
+ ("Floral Elegance","A Year In Bloom","#853C67","#FFF1F5","#E8A6BC",3),
+ ("Modern Minimal","Good Plans. Brighter Days.","#263B2D","#F8F5EB","#C5B9A3",4),
+ ("Photo Collage","Collect Moments Not Things","#CB5A87","#FFF4D9","#F3B54A",5),
+ ("Nature Escape","Explore Breathe Belong","#123F40","#F3F6EF","#84C7B2",6),
+ ("Kids Fun","Little Moments, Big Memories","#1965B5","#FFF9DB","#FBCB3A",7),
+ ("Luxury Classic","A Year Of New Beginnings","#191919","#FFF8E8","#CDAE65",8),
+ ("Food & Lifestyle","Good Food Good Mood","#7C4937","#FFF7E9","#E6A469",9),
+ ("Office Planner","Plan Focus Achieve","#264C3B","#FAF8F1","#B7C7A7",10),
+ ("Seasons Collection","Four Seasons One Amazing Year","#42517C","#F8F5F1","#C1A4D7",11),
+]
 def page(year,month,index,w,h,urls):
- dark,bg,accent,soft=PALETTES[index%10]
- theme,tag=THEMES[index//10]
- variant=index%10
- m=min(w,h)*.038
- # Distinct calendar compositions: five portrait and five landscape arrangements.
- # Dates occupy a real planning grid, rather than tiny floating numbers.
- if h>=w*.95:
-  layouts=[
-   ((m,m,w-2*m,h*.35),(m,h*.41,w-2*m,h*.55)),
-   ((m,m,w-2*m,h*.27),(m,h*.33,w-2*m,h*.63)),
-   ((m,m,w-2*m,h*.42),(m,h*.48,w-2*m,h*.48)),
-   ((m,m,w-2*m,h*.32),(m,h*.38,w-2*m,h*.58)),
-   ((m,m,w-2*m,h*.38),(m,h*.44,w-2*m,h*.52))]
-  art,panel=layouts[variant%5]
+ title,tag,dark,bg,accent,style=DESIGNS[index]
+ m=min(w,h)*.035
+ # Twelve genuinely different compositions: split, full-bleed, triptych,
+ # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
+ portrait=h>=w*.95
+ if portrait:
+  patterns=[
+   (.53,0),(.62,1),(.45,2),(.56,3),(.35,4),(.63,5),
+   (.66,6),(.50,7),(.58,8),(.49,9),(.32,10),(.60,11)]
+  fraction,mode=patterns[style]
+  photo=(m,m,w-2*m,h*fraction-m)
+  cal=(m,h*fraction+m*.3,w-2*m,h*(1-fraction)-m*1.3)
  else:
-  layouts=[
-   ((m,m,w*.43,h-2*m),(w*.47,m,w*.49,h-2*m)),
-   ((w*.55,m,w*.41,h-2*m),(m,m,w*.51,h-2*m)),
-   ((m,m,w*.37,h-2*m),(w*.41,m,w*.55,h-2*m)),
-   ((w*.61,m,w*.35,h-2*m),(m,m,w*.57,h-2*m)),
-   ((m,m,w*.47,h-2*m),(w*.51,m,w*.45,h-2*m))]
-  art,panel=layouts[variant%5]
- ax,ay,aw,ah=art
- px,py,pw,ph=panel
+  fractions=[.53,.58,.48,.62,.43,.65,.57,.50,.60,.52,.45,.63]
+  f=fractions[style]
+  if style in (3,7,10):
+   photo=(w*(1-f)+m,m,w*f-2*m,h-2*m)
+   cal=(m,m,w*(1-f)-m,h-2*m)
+  else:
+   photo=(m,m,w*f-m,h-2*m)
+   cal=(w*f+m*.3,m,w*(1-f)-m*1.3,h-2*m)
+ px,py,pw,ph=photo;cx,cy,cw,ch=cal
  o=[rect("paper",0,0,w,h,bg)]
- o+=photo_collage(ax,ay,aw,ah,index,month,dark,accent,urls)
- # Strong graphic header with editable text, independent of the calendar grid.
- o.append(rect("editorial-label",ax+aw*.05,ay+ah*.72,aw*.9,ah*.23,bg))
- o.append(txt("theme",ax+aw*.075,ay+ah*.75,aw*.85,theme,max(10,min(aw*.046,ah*.09)),dark,"center","700"))
- o.append(txt("tagline",ax+aw*.08,ay+ah*.86,aw*.84,tag,max(7,min(aw*.018,ah*.035)),dark,"center","500","Arial"))
- o.append(rect("calendar-panel",px,py,pw,ph,"#FFFFFF",accent,max(1,min(w,h)*.003)))
- o.append(rect("calendar-banner",px,py,pw,ph*.21,dark))
- o.append(txt("month",px+pw*.035,py+ph*.035,pw*.93,calendar.month_name[month].upper(),
-              max(13,min(pw*.075,ph*.11)), "#FFFFFF","center","700","Arial"))
- o.append(txt("year",px+pw*.1,py+ph*.145,pw*.8,str(year),max(9,min(pw*.028,ph*.045)),soft,"center","600","Arial"))
- gx=px+pw*.035;gw=pw*.93;gy=py+ph*.27
- cw=gw/7
- available=ph*.64
- row=available/7
- fs=max(7,min(cw*.39,row*.33))
- # Calendar dates live inside individual visible, editable cells.
- for col,name in enumerate(("SUN","MON","TUE","WED","THU","FRI","SAT")):
-  o.append(rect("heading-bg-%d"%col,gx+col*cw,gy,cw*.985,row*.78,accent if col in (0,6) else soft))
-  o.append(txt("weekday-%d"%col,gx+col*cw,gy+row*.12,cw,name,max(6,fs*.68),dark,"center","700","Arial"))
+ # Photography is layered, separately editable, and the collage is different
+ # for each of the twelve design families.
+ gap=min(pw,ph)*.018
+ if style in (0,4,6,8):slots=[(px,py,pw,ph)]
+ elif style in (1,10):slots=[(px,py,pw*.68-gap,ph),(px+pw*.68,py,pw*.32,ph)]
+ elif style in (2,3):slots=[(px,py,pw,ph*.65-gap),(px,py+ph*.65,pw*.48-gap,ph*.35),(px+pw*.48,py+ph*.65,pw*.52,ph*.35)]
+ elif style in (5,11):slots=[(px,py,pw*.49-gap,ph*.49-gap),(px+pw*.49,py,pw*.51,ph*.49-gap),(px,py+ph*.49,pw*.49-gap,ph*.51),(px+pw*.49,py+ph*.49,pw*.51,ph*.51)]
+ elif style==7:slots=[(px,py,pw*.55-gap,ph),(px+pw*.55,py,pw*.45,ph*.48-gap),(px+pw*.55,py+ph*.48,pw*.45,ph*.52)]
+ else:slots=[(px,py,pw,ph*.48-gap),(px,py+ph*.48,pw,ph*.52)]
+ for j,(sx,sy,sw,sh) in enumerate(slots):
+  o.append(photo_object("photo-%02d"%j,sx,sy,sw,sh,urls[(style*5+month+j*2)%len(urls)]))
+  o.append(rect("photo-frame-%02d"%j,sx,sy,sw,sh,"rgba(0,0,0,0)",accent,max(1,min(w,h)*.002)))
+ # Title treatment differs by collection.
+ if style in (0,3,5,7,9,11):
+  bx=px+pw*.06;by=py+ph*.66;bw=pw*.88;bh=ph*.28
+  o.append(rect("title-panel",bx,by,bw,bh,bg))
+  title_color=dark
+ elif style in (1,2,6,8):
+  bx=px+pw*.055;by=py+ph*.65;bw=pw*.89;bh=ph*.28
+  o.append(rect("title-panel",bx,by,bw,bh,dark))
+  title_color="#FFFFFF"
+ else:
+  bx=px+pw*.08;by=py+ph*.07;bw=pw*.84;bh=ph*.25
+  o.append(rect("title-panel",bx,by,bw,bh,bg))
+  title_color=dark
+ o.append(txt("collection-title",bx+bw*.06,by+bh*.12,bw*.88,title,
+              max(11,min(bw*.065,bh*.28)),title_color,"center","700","Georgia"))
+ o.append(txt("collection-subtitle",bx+bw*.06,by+bh*.62,bw*.88,tag,
+              max(7,min(bw*.024,bh*.12)),title_color,"center","500","Arial"))
+ # Date area uses generous white space and restrained grid lines.
+ o.append(rect("calendar-paper",cx,cy,cw,ch,"#FFFFFF"))
+ o.append(rect("calendar-header",cx,cy,cw,ch*.18,dark if style in (1,6,8,10) else bg))
+ header_text="#FFFFFF" if style in (1,6,8,10) else dark
+ o.append(txt("month-title",cx+cw*.05,cy+ch*.025,cw*.90,
+              calendar.month_name[month].upper()+"  "+str(year),
+              max(11,min(cw*.065,ch*.085)),header_text,"center","700","Georgia"))
+ gx=cx+cw*.045;gy=cy+ch*.235;gw=cw*.91;row=ch*.09;cell=gw/7
+ fs=max(7,min(cell*.32,row*.36))
+ for col,label in enumerate(("SUN","MON","TUE","WED","THU","FRI","SAT")):
+  o.append(txt("weekday-%d"%col,gx+col*cell,gy,cell,label,max(6,fs*.65),dark,"center","700","Arial"))
  weeks=calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)
  for ri in range(6):
   week=weeks[ri] if ri<len(weeks) else [0]*7
   for col,day in enumerate(week):
-   cx=gx+col*cw
-   cy=gy+(ri+1)*row
-   o.append(rect("cell-%d-%d"%(ri,col),cx,cy,cw*.985,row*.96,
-                 "#FFF5F8" if col in (0,6) else "#FFFFFF",soft,max(.5,min(w,h)*.001)))
+   x=gx+col*cell;y=gy+(ri+1)*row
+   o.append(rect("date-cell-%d-%d"%(ri,col),x,y,cell*.985,row*.96,
+                 "#FFF7F0" if col in (0,6) else "#FFFFFF","#E5E1DA",max(.5,min(w,h)*.0007)))
    if day:
-    o.append(txt("date-%d"%day,cx+cw*.08,cy+row*.08,cw*.8,str(day),fs,
-                 accent if col==0 else dark,"left","700","Arial"))
- o.append(txt("brand",px+pw*.06,py+ph*.94,pw*.88,"PERSONALISE YOUR YEAR",
-              max(7,min(pw*.022,ph*.025)),dark,"center","600","Arial"))
+    o.append(txt("day-%d"%day,x+cell*.07,y+row*.1,cell*.86,str(day),fs,
+                 accent if col==0 else dark,"left","500","Arial"))
+ o.append(txt("footer",cx+cw*.07,cy+ch*.90,cw*.86,"YOUR MEMORIES • YOUR YEAR",
+              max(7,min(cw*.023,ch*.028)),dark,"center","500","Arial"))
  return {"name":calendar.month_name[month],"background":bg,"objects":o}
 def payload(product,year,i,urls):
  w,h=product.width,product.height
  return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
-         "designName":"Photo Calendar %s %d - %03d"%(THEMES[i//10][0].title(),year,i+1),
+         "designName":"Photo Calendar %s %d - %03d"%(DESIGNS[i][0],year,i+1),
          "document":{"width":w,"height":h,"unit":"in",
                      "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
                      "profile":"calendar"},
@@ -252,7 +284,7 @@ def payload(product,year,i,urls):
          "photoSlotsEditable":True,"requiresImageCors":True,
          "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
- help="Generate 100 illustrated, editable calendar layouts with 12 months."
+ help="Generate 12 distinct premium photo-calendar families with 12 months."
  def add_arguments(self,p):
   p.add_argument("--product-id",type=int,required=True)
   p.add_argument("--year",type=int,default=2027)
@@ -265,13 +297,13 @@ class Command(BaseCommand):
   if not p.print_width_in or not p.print_height_in:raise CommandError("Configure print dimensions first")
   qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,*OLD])
   if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
-  self.stdout.write("Preparing 100 photo-led calendars, 12 pages each")
+  self.stdout.write("Preparing 12 distinct photo-calendar designs, 12 pages each")
   if o["dry_run"]:return
   urls=_download_photos()
   with transaction.atomic():
    if o["replace"]:qs.delete()
-   for i in range(100):
+   for i in range(len(DESIGNS)):
     data=payload(p,o["year"],i,urls)
     template=DesignTemplate.objects.create(product=p,name=data["designName"],json_data=data,is_active=True)
     template.preview.save("calendar_%d_%03d.jpg"%(o["year"],i+1),_preview(data,urls),save=True)
-  self.stdout.write(self.style.SUCCESS("Created 100 editable illustrated calendars"))
+  self.stdout.write(self.style.SUCCESS("Created 12 distinct editable photo-calendar designs"))
