@@ -1,12 +1,12 @@
-"""Vibrant editorial calendars: editable graphic artwork and 12 readable months."""
+"""Photo-led calendars with editable photo objects and readable monthly planners."""
 import calendar
 import math
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v4"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3")
+GENERATOR="zenvibe-calendar-editable-v5"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -82,6 +82,43 @@ def artwork(i,x,y,w,h,variant,dark,accent,soft):
     o.append(rect("tile-%d-%d"%(r,c),x+w*(.06+c*.225),y+h*(.08+r*.29),w*.19,h*.24,
                   (accent,soft,"#FFFFFF")[(r+c)%3]))
  return o
+# Curated photographic references; replace with locally hosted licensed images before production.
+# The images are editable Fabric objects rather than painted into a flat background.
+PHOTO_URLS=[
+ "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=1000&q=85",
+ "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1000&q=85",
+ "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1000&q=85",
+ "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1000&q=85",
+ "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1000&q=85",
+ "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1000&q=85",
+ "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=1000&q=85",
+ "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=1000&q=85",
+ "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1000&q=85",
+ "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1000&q=85",
+ "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1000&q=85",
+ "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1000&q=85",
+]
+def photo_object(name,x,y,w,h,src):
+ return {"id":name,"type":"image","left":round(x,2),"top":round(y,2),
+         "width":round(w,2),"height":round(h,2),"src":src,
+         "selectable":True,"evented":True,"customerEditable":True,
+         "replaceable":True,"objectRole":"customer-photo","crossOrigin":"anonymous"}
+
+def photo_collage(x,y,w,h,index,month,dark,accent):
+ # Ten composition families, varied further by index and month.
+ mode=index%10
+ gap=min(w,h)*.018
+ if mode in (0,5): boxes=[(x,y,w,h)]
+ elif mode in (1,6):boxes=[(x,y,w*.61-gap/2,h),(x+w*.61+gap/2,y,w*.39-gap/2,h)]
+ elif mode in (2,7):boxes=[(x,y,w,h*.57-gap/2),(x,y+h*.57+gap/2,w,h*.43-gap/2)]
+ elif mode in (3,8):boxes=[(x,y,w*.54-gap/2,h),(x+w*.54+gap/2,y,w*.46-gap/2,h*.49-gap/2),(x+w*.54+gap/2,y+h*.49+gap/2,w*.46-gap/2,h*.51-gap/2)]
+ else:boxes=[(x,y,w*.5-gap/2,h*.5-gap/2),(x+w*.5+gap/2,y,w*.5-gap/2,h*.5-gap/2),(x,y+h*.5+gap/2,w*.5-gap/2,h*.5-gap/2),(x+w*.5+gap/2,y+h*.5+gap/2,w*.5-gap/2,h*.5-gap/2)]
+ result=[rect("photo-area",x,y,w,h,dark)]
+ for j,(bx,by,bw,bh) in enumerate(boxes):
+  result.append(photo_object("replace-photo-%d"%j,bx,by,bw,bh,PHOTO_URLS[(index*7+month+j*3)%len(PHOTO_URLS)]))
+  result.append(rect("photo-border-%d"%j,bx,by,bw,bh,"rgba(0,0,0,0)",accent,max(1,min(w,h)*.006)))
+ return result
+
 def page(year,month,index,w,h):
  dark,bg,accent,soft=PALETTES[index%10]
  theme,tag=THEMES[index//10]
@@ -108,7 +145,7 @@ def page(year,month,index,w,h):
  ax,ay,aw,ah=art
  px,py,pw,ph=panel
  o=[rect("paper",0,0,w,h,bg)]
- o+=artwork(index,ax,ay,aw,ah,variant,dark,accent,soft)
+ o+=photo_collage(ax,ay,aw,ah,index,month,dark,accent)
  # Strong graphic header with editable text, independent of the calendar grid.
  o.append(rect("editorial-label",ax+aw*.05,ay+ah*.72,aw*.9,ah*.23,bg))
  o.append(txt("theme",ax+aw*.075,ay+ah*.75,aw*.85,theme,max(10,min(aw*.046,ah*.09)),dark,"center","700"))
@@ -144,11 +181,11 @@ def page(year,month,index,w,h):
 def payload(product,year,i):
  w,h=product.width,product.height
  return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
-         "designName":"Luxury %s %d - %03d"%(THEMES[i//10][0].title(),year,i+1),
+         "designName":"Photo Calendar %s %d - %03d"%(THEMES[i//10][0].title(),year,i+1),
          "document":{"width":w,"height":h,"unit":"in",
                      "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
                      "profile":"calendar"},
-         "pages":[page(year,m,i,w,h) for m in range(1,13)],
+         "pages":[page(year,m,i,w,h) for m in range(1,13)],\n         "photoSlotsEditable":True,"requiresImageCors":True,
          "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
  help="Generate 100 illustrated, editable calendar layouts with 12 months."
@@ -164,7 +201,7 @@ class Command(BaseCommand):
   if not p.print_width_in or not p.print_height_in:raise CommandError("Configure print dimensions first")
   qs=DesignTemplate.objects.filter(product=p,json_data__generator__in=[GENERATOR,*OLD])
   if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
-  self.stdout.write("Preparing 100 vibrant illustrated calendars, 12 pages each")
+  self.stdout.write("Preparing 100 photo-led calendars, 12 pages each")
   if o["dry_run"]:return
   with transaction.atomic():
    if o["replace"]:qs.delete()
