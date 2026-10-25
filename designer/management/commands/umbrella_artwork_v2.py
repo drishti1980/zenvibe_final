@@ -155,7 +155,9 @@ def build_umbrella_v2(product, idx, rect, circle, text, line):
     foot_y=750 if y < 500 else 250
     if not overlaps(405,foot_y,240,34) and safe(525,foot_y+15,120):
         out.append(text("collection_caption",405,foot_y,240,title.upper(),17,secondary,"700"))
-    # Branding is always the uppermost layer.\n    out.extend(plaque)\n    for i,obj in enumerate(out):
+    # Branding is always the uppermost layer.
+    out.extend(plaque)
+    for i,obj in enumerate(out):
         obj["id"]=f"umbrella_{idx+1:03d}_{i:03d}"
         obj["customerEditable"]=True
         obj["selectable"]=True
