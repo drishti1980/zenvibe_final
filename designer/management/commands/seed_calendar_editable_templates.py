@@ -102,7 +102,8 @@ def page(year,month,index,w,h):
  o.append(rect("masthead",ax+aw*.06,ay+ah*.68,aw*.88,ah*.24,bg))
  o.append(txt("theme",ax+aw*.1,ay+ah*.715,aw*.8,theme,max(10,min(aw*.04,ah*.06)),dark,"center","700"))
  o.append(txt("tagline",ax+aw*.08,ay+ah*.82,aw*.84,tag,max(8,min(aw*.018,ah*.032)),dark,"center","400","Arial"))
- o.append(rect("calendar-background",px,py,pw,ph,bg))\n o.append(rect("calendar-accent",px,py,pw,ph*.035,accent))
+ o.append(rect("calendar-background",px,py,pw,ph,bg))
+ o.append(rect("calendar-accent",px,py,pw,ph*.035,accent))
  o.append(rect("top-rule",px,py+ph*.04,pw,max(1,ph*.006),dark))
  o.append(txt("month",px,py+ph*.055,pw,calendar.month_name[month].upper(),
               max(13,min(pw*.065,ph*.10)),dark,"center","700"))
