@@ -370,12 +370,16 @@ class Command(BaseCommand):
         for kind,product,prefix in targets:
             W=int(product.width or DEFAULT_W); H=int(product.height or DEFAULT_H)
             for i in range(count):
-                design_name,finish,bg,front,back,dna=build_design(kind,i,W,H)
+                # Standard and Premium share the same canonical 100-design library.
+                # Product-specific pricing and finish are configured on Product, not artwork.
+                design_name,finish,bg,front,back,dna=build_design('standard',i,W,H)
                 sig=structure_signature(front,back)
-                if sig in signatures: raise CommandError(f'Duplicate structure detected: {kind} {i+1}')
-                signatures.add(sig)
+                if (kind,sig) in signatures: raise CommandError(f'Duplicate structure detected: {kind} {i+1}')
+                signatures.add((kind,sig))
                 full_name=f'{prefix} {i+1:03d} · {design_name} · {finish}'
                 payload=fabric_json(product,kind,i,full_name,finish,bg,front,back,dna)
+                payload['sharedDesignLibrary']='zenvibe-business-cards-canonical-100'
+                payload['sharedDesignIndex']=i+1
                 if not all(p['objects'] for p in payload['pages']): raise CommandError(f'Empty page {full_name}')
                 if opts['dry_run']:
                     self.stdout.write(f'DRY RUN {kind:8s} {i+1:03d}: {full_name}')
