@@ -1,12 +1,17 @@
 """Photo-led calendars with editable photo objects and readable monthly planners."""
 import calendar
 import math
+from io import BytesIO
+from urllib.request import Request, urlopen
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v5"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4")
+GENERATOR="zenvibe-calendar-editable-v6"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -100,11 +105,13 @@ PHOTO_URLS=[
 ]
 def photo_object(name,x,y,w,h,src):
  return {"id":name,"type":"image","left":round(x,2),"top":round(y,2),
-         "width":round(w,2),"height":round(h,2),"src":src,
-         "selectable":True,"evented":True,"customerEditable":True,
-         "replaceable":True,"objectRole":"customer-photo","crossOrigin":"anonymous"}
+         "width":round(w,2),"height":round(h,2),"src":src,"baseSrc":src,
+         "scaleX":1,"scaleY":1,"selectable":True,"evented":True,
+         "customerEditable":True,"manualReplacement":True,
+         "fieldType":"calendar-photo","backgroundAsset":False,
+         "replaceable":True,"crossOrigin":"anonymous"}
 
-def photo_collage(x,y,w,h,index,month,dark,accent):
+def photo_collage(x,y,w,h,index,month,dark,accent,urls):
  # Ten composition families, varied further by index and month.
  mode=index%10
  gap=min(w,h)*.018
@@ -115,11 +122,67 @@ def photo_collage(x,y,w,h,index,month,dark,accent):
  else:boxes=[(x,y,w*.5-gap/2,h*.5-gap/2),(x+w*.5+gap/2,y,w*.5-gap/2,h*.5-gap/2),(x,y+h*.5+gap/2,w*.5-gap/2,h*.5-gap/2),(x+w*.5+gap/2,y+h*.5+gap/2,w*.5-gap/2,h*.5-gap/2)]
  result=[rect("photo-area",x,y,w,h,dark)]
  for j,(bx,by,bw,bh) in enumerate(boxes):
-  result.append(photo_object("replace-photo-%d"%j,bx,by,bw,bh,PHOTO_URLS[(index*7+month+j*3)%len(PHOTO_URLS)]))
+  result.append(photo_object("replace-photo-%d"%j,bx,by,bw,bh,urls[(index*7+month+j*3)%len(urls)]))
   result.append(rect("photo-border-%d"%j,bx,by,bw,bh,"rgba(0,0,0,0)",accent,max(1,min(w,h)*.006)))
  return result
 
-def page(year,month,index,w,h):
+def _download_photos():
+ """Store photos locally so the editor and preview use the same origin."""
+ urls=[]
+ for i,url in enumerate(PHOTO_URLS):
+  path="calendar_assets/2027/photo_%02d.jpg"%i
+  if not default_storage.exists(path):
+   req=Request(url,headers={"User-Agent":"Mozilla/5.0"})
+   try:
+    with urlopen(req,timeout=15) as response:
+     data=response.read(5_000_000)
+    img=Image.open(BytesIO(data)).convert("RGB")
+    img.thumbnail((1400,1400))
+    out=BytesIO();img.save(out,format="JPEG",quality=86)
+    default_storage.save(path,ContentFile(out.getvalue()))
+   except Exception as exc:
+    raise CommandError("Could not download calendar photo %d: %s. No templates were replaced."%(i,exc))
+  urls.append(default_storage.url(path))
+ return urls
+
+def _preview(data,urls):
+ """Make a real JPG gallery preview with photo collages and readable dates."""
+ pg=data["pages"][0];w=float(data["document"]["width"]);h=float(data["document"]["height"])
+ scale=min(840/max(w,1),1120/max(h,1))
+ W=max(240,int(w*scale));H=max(320,int(h*scale))
+ image=Image.new("RGB",(W,H),"#FFFFFF");d=ImageDraw.Draw(image)
+ def xy(o):
+  return [int(o["left"]*scale),int(o["top"]*scale),int((o["left"]+o["width"])*scale),int((o["top"]+o["height"])*scale)]
+ for obj in pg["objects"]:
+  kind=obj.get("type")
+  if kind=="rect":
+   box=xy(obj)
+   fill=obj.get("fill","#FFFFFF")
+   if fill.startswith("rgba"):continue
+   d.rectangle(box,fill=fill)
+  elif kind=="image":
+   src=obj.get("src","")
+   try:
+    path=src.split("/media/",1)[1] if "/media/" in src else src.lstrip("/")
+    with default_storage.open(path,"rb") as f:photo=Image.open(f).convert("RGB")
+    box=xy(obj);ww=max(1,box[2]-box[0]);hh=max(1,box[3]-box[1])
+    image.paste(ImageOps.fit(photo,(ww,hh)),(box[0],box[1]))
+   except Exception as exc:
+    raise CommandError("Preview photo unavailable: %s (%s)"%(src,exc))
+  elif kind=="textbox":
+   size=max(9,int(obj.get("fontSize",12)*scale))
+   try:font=ImageFont.truetype("arial.ttf",size)
+   except OSError:font=ImageFont.load_default()
+   value=str(obj.get("text",""))
+   x=int(obj["left"]*scale);y=int(obj["top"]*scale)
+   if obj.get("textAlign")=="center":
+    width=d.textbbox((0,0),value,font=font)[2]
+    x+=max(0,(int(obj.get("width",0)*scale)-width)//2)
+   d.text((x,y),value,font=font,fill=obj.get("fill","#142A28"))
+ out=BytesIO();image.save(out,format="JPEG",quality=90)
+ return ContentFile(out.getvalue())
+
+def page(year,month,index,w,h,urls):
  dark,bg,accent,soft=PALETTES[index%10]
  theme,tag=THEMES[index//10]
  variant=index%10
@@ -145,7 +208,7 @@ def page(year,month,index,w,h):
  ax,ay,aw,ah=art
  px,py,pw,ph=panel
  o=[rect("paper",0,0,w,h,bg)]
- o+=photo_collage(ax,ay,aw,ah,index,month,dark,accent)
+ o+=photo_collage(ax,ay,aw,ah,index,month,dark,accent,urls)
  # Strong graphic header with editable text, independent of the calendar grid.
  o.append(rect("editorial-label",ax+aw*.05,ay+ah*.72,aw*.9,ah*.23,bg))
  o.append(txt("theme",ax+aw*.075,ay+ah*.75,aw*.85,theme,max(10,min(aw*.046,ah*.09)),dark,"center","700"))
@@ -178,14 +241,14 @@ def page(year,month,index,w,h):
  o.append(txt("brand",px+pw*.06,py+ph*.94,pw*.88,"PERSONALISE YOUR YEAR",
               max(7,min(pw*.022,ph*.025)),dark,"center","600","Arial"))
  return {"name":calendar.month_name[month],"background":bg,"objects":o}
-def payload(product,year,i):
+def payload(product,year,i,urls):
  w,h=product.width,product.height
  return {"version":2,"generator":GENERATOR,"templateType":"editable-master",
          "designName":"Photo Calendar %s %d - %03d"%(THEMES[i//10][0].title(),year,i+1),
          "document":{"width":w,"height":h,"unit":"in",
                      "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
                      "profile":"calendar"},
-         "pages":[page(year,m,i,w,h) for m in range(1,13)],
+         "pages":[page(year,m,i,w,h,urls) for m in range(1,13)],
          "photoSlotsEditable":True,"requiresImageCors":True,
          "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
@@ -204,9 +267,11 @@ class Command(BaseCommand):
   if qs.exists() and not o["replace"]:raise CommandError("Existing generated calendars; use --replace")
   self.stdout.write("Preparing 100 photo-led calendars, 12 pages each")
   if o["dry_run"]:return
+  urls=_download_photos()
   with transaction.atomic():
    if o["replace"]:qs.delete()
    for i in range(100):
-    data=payload(p,o["year"],i)
-    DesignTemplate.objects.create(product=p,name=data["designName"],json_data=data,is_active=True)
+    data=payload(p,o["year"],i,urls)
+    template=DesignTemplate.objects.create(product=p,name=data["designName"],json_data=data,is_active=True)
+    template.preview.save("calendar_%d_%03d.jpg"%(o["year"],i+1),_preview(data,urls),save=True)
   self.stdout.write(self.style.SUCCESS("Created 100 editable illustrated calendars"))
