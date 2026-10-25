@@ -1178,7 +1178,17 @@ function loadPage(i){
     if(!img || !img.width || !img.height){
       console.error('ZenVibe: template image failed to load',o.src);pending--;finish();return;
     }
-    img.set({...common(o),scaleX:o.scaleX||((o.width||250)/img.width),scaleY:o.scaleY||((o.height||180)/img.height),cropX:o.cropX||0,cropY:o.cropY||0});img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset)canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
+    img.set({...common(o),scaleX:((o.width||img.width)/img.width)*(o.scaleX||1),scaleY:((o.height||img.height)/img.height)*(o.scaleY||1),cropX:o.cropX||0,cropY:o.cropY||0});
+    // Fabric does not automatically revive nested clipPath in this custom loader.
+    if(o.clipPath && o.clipPath.type==='polygon' && Array.isArray(o.clipPath.points)){
+      const points=o.clipPath.points;
+      const minX=Math.min(...points.map(p=>p.x)),minY=Math.min(...points.map(p=>p.y));
+      img.clipPath=new fabric.Polygon(points.map(p=>({x:p.x-minX,y:p.y-minY})),{
+        left:minX,top:minY,absolutePositioned:true,fill:'#000',
+        selectable:false,evented:false
+      });
+    }
+    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset)canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
   function zvApplyCoasterShape(){
     if(Number(P.id)!==415)return;
     const shape=String(OPT.selected_shape||new URLSearchParams(location.search).get('shape')||'square').toLowerCase();
