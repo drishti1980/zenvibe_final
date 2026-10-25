@@ -185,7 +185,8 @@ def payload(product,year,i):
          "document":{"width":w,"height":h,"unit":"in",
                      "physical":{"widthIn":float(product.print_width_in),"heightIn":float(product.print_height_in)},
                      "profile":"calendar"},
-         "pages":[page(year,m,i,w,h) for m in range(1,13)],\n         "photoSlotsEditable":True,"requiresImageCors":True,
+         "pages":[page(year,m,i,w,h) for m in range(1,13)],
+         "photoSlotsEditable":True,"requiresImageCors":True,
          "editable":True,"editorNative":True,"editorSchema":"fabric-primitives-v1"}
 class Command(BaseCommand):
  help="Generate 100 illustrated, editable calendar layouts with 12 months."
