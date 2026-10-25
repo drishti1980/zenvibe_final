@@ -18,7 +18,7 @@ from xml.sax.saxutils import escape
 
 from django.conf import settings
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 ROOT = Path(settings.BASE_DIR) / "umbrella_artworks" / "luxury"
 # One colour system per creative direction; no random shapes or rainbow palette.
@@ -138,8 +138,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--apply", action="store_true")
         parser.add_argument("--product-id", type=int, default=205)
+        parser.add_argument("--allow-repeated-layouts", action="store_true", help="Explicitly allow ten repeated base compositions across the 100 files")
 
     def handle(self, *args, **opts):
+        if opts["apply"] and not opts["allow_repeated_layouts"]:
+            raise CommandError("Refusing to replace active templates: this generator repeats 10 base layouts across 100 files. Supply 100 independently composed designs before importing; use --allow-repeated-layouts only for testing.")
         ROOT.mkdir(parents=True, exist_ok=True)
         manifest=[]
         for index in range(100):
