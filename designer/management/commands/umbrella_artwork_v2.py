@@ -53,6 +53,47 @@ def build_umbrella_v2(product, idx, rect, circle, text, line):
     def bar(key,x,y,ww,hh,color):
         if all(safe(px,py) for px,py in [(x,y),(x+ww,y),(x,y+hh),(x+ww,y+hh)]) and not overlaps(x,y,ww,hh):
             out.append(rect(key,x,y,ww,hh,color))
+    # High-impact editable canopy compositions: large panel artwork, not
+    # tiny ornaments on an otherwise identical black product photograph.
+    # This artwork sits beneath the text plaque; mockup remains editor-owned.
+    import colorsys
+    hue = ((idx * 0.618033988749895) % 1.0)
+    rgb = colorsys.hsv_to_rgb(hue, .67, .92)
+    vivid = "#" + "".join(f"{round(c*255):02X}" for c in rgb)
+    alternate = ["#FDF4E7","#FFE5A3","#B8E4F9","#FBCFE8","#D9F99D",
+                 "#C4B5FD","#FED7AA","#99F6E4","#F8FAFC","#FCA5A5"][idx%10]
+    # Each of the 100 uses a different canopy colour/shape arrangement.
+    # 10 structural systems x 10 themes; never use full-page rectangles.
+    if layout == 0: # big opposite panels
+        for j,(px,py) in enumerate([(335,320),(715,680)]):
+            out.append(circle(f"large_panel_{j}",px,py,105,vivid if j==0 else alternate))
+    elif layout == 1: # horizontal ribbons
+        for j,yy in enumerate([315,660]):
+            out.append(rect(f"ribbon_{j}",320,yy,410,45,vivid if j==0 else alternate))
+    elif layout == 2: # four corner medallions
+        for j,(px,py) in enumerate([(335,335),(715,335),(335,665),(715,665)]):
+            out.append(circle(f"corner_{j}",px,py,60,vivid if j%2 else alternate))
+    elif layout == 3: # tall opposing banners
+        for j,xx in enumerate([310,690]):
+            out.append(rect(f"banner_{j}",xx,370,48,260,vivid if j==0 else alternate))
+    elif layout == 4: # mosaic tiles
+        for j,(px,py) in enumerate([(300,310),(680,310),(300,645),(680,645)]):
+            out.append(rect(f"tile_{j}",px,py,70,70,vivid if j%2 else alternate))
+    elif layout == 5: # wide upper crescent
+        for j,(px,py) in enumerate([(415,310),(635,310)]):
+            out.append(circle(f"upper_orb_{j}",px,py,100,vivid if j==0 else alternate))
+    elif layout == 6: # wide lower crescent
+        for j,(px,py) in enumerate([(415,680),(635,680)]):
+            out.append(circle(f"lower_orb_{j}",px,py,100,vivid if j==0 else alternate))
+    elif layout == 7: # left graphic column
+        for j,yy in enumerate([325,485,645]):
+            out.append(circle(f"left_column_{j}",335,yy,55,vivid if j%2 else alternate))
+    elif layout == 8: # right graphic column
+        for j,yy in enumerate([325,485,645]):
+            out.append(circle(f"right_column_{j}",715,yy,55,vivid if j%2 else alternate))
+    else: # distinct large corner wedges
+        for j,(px,py) in enumerate([(355,355),(695,645)]):
+            out.append(circle(f"diagonal_{j}",px,py,110,vivid if j==0 else alternate))
     # Ten structurally distinct positions, with generous non-overlap margins.
     positions=[
         (365,295,320,78),(365,610,320,78),(395,365,260,90),
@@ -63,9 +104,9 @@ def build_umbrella_v2(product, idx, rect, circle, text, line):
     x,y,ww,hh=positions[layout]
     reserve(x-14,y-18,ww+28,hh+96)
     # High-contrast editable brand label with a backing plaque.
-    out.append(rect("brand_plaque",x-10,y-8,ww+20,hh+18,primary))
-    out.append(text("brand",x+12,y+7,ww-24,brand,29,secondary,"800","center"))
-    out.append(text("tagline",x+12,y+48,ww-24,tag,15,secondary,"600","center"))
+    plaque = [rect("brand_plaque",x-10,y-8,ww+20,hh+18,primary),
+              text("brand",x+12,y+7,ww-24,brand,29,secondary,"800","center"),
+              text("tagline",x+12,y+48,ww-24,tag,15,secondary,"600","center")]
     # Different decorative geometry and positioning per composition.
     anchors=[
       [(285,570),(760,570),(315,710),(730,710)],
@@ -114,7 +155,7 @@ def build_umbrella_v2(product, idx, rect, circle, text, line):
     foot_y=750 if y < 500 else 250
     if not overlaps(405,foot_y,240,34) and safe(525,foot_y+15,120):
         out.append(text("collection_caption",405,foot_y,240,title.upper(),17,secondary,"700"))
-    for i,obj in enumerate(out):
+    # Branding is always the uppermost layer.\n    out.extend(plaque)\n    for i,obj in enumerate(out):
         obj["id"]=f"umbrella_{idx+1:03d}_{i:03d}"
         obj["customerEditable"]=True
         obj["selectable"]=True
