@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v10"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9")
+GENERATOR="zenvibe-calendar-editable-v9"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -219,36 +219,25 @@ def page(year,month,index,w,h,urls):
  variant=index%10
  title,tag,dark,bg,accent,style=DESIGNS[family%len(DESIGNS)]
  m=min(w,h)*.035
- # Layout formats change the physical position of BOTH the photography and dates.
- # This avoids ten near-identical top-photo / bottom-grid templates.
+ # Twelve genuinely different compositions: split, full-bleed, triptych,
+ # sidebars, photo strips, checkerboard, gallery and magazine arrangements.
  portrait=h>=w*.95
  if portrait:
-  usable_w=w-2*m;usable_h=h-2*m;g=m*.45
-  # photo, calendar rectangles in local printable coordinates
-  if variant==0: photo=(m,m,usable_w,usable_h*.54-g);cal=(m,m+usable_h*.54,usable_w,usable_h*.46)
-  elif variant==1: cal=(m,m,usable_w,usable_h*.52-g);photo=(m,m+usable_h*.52,usable_w,usable_h*.48)
-  elif variant==2: photo=(m,m,usable_w*.53-g,usable_h);cal=(m+usable_w*.53,m,usable_w*.47,usable_h)
-  elif variant==3: cal=(m,m,usable_w*.54-g,usable_h);photo=(m+usable_w*.54,m,usable_w*.46,usable_h)
-  elif variant==4: photo=(m,m,usable_w,usable_h*.34-g);cal=(m,m+usable_h*.34,usable_w,usable_h*.66)
-  elif variant==5: cal=(m,m,usable_w,usable_h*.63-g);photo=(m,m+usable_h*.63,usable_w,usable_h*.37)
-  elif variant==6: photo=(m,m,usable_w*.43-g,usable_h);cal=(m+usable_w*.43,m,usable_w*.57,usable_h)
-  elif variant==7: cal=(m,m,usable_w*.62-g,usable_h);photo=(m+usable_w*.62,m,usable_w*.38,usable_h)
-  elif variant==8: photo=(m,m,usable_w,usable_h*.46-g);cal=(m,m+usable_h*.46,usable_w,usable_h*.54)
-  else: cal=(m,m,usable_w,usable_h*.42-g);photo=(m,m+usable_h*.42,usable_w,usable_h*.58)
+  patterns=[
+   (.53,0),(.62,1),(.45,2),(.56,3),(.35,4),(.63,5),
+   (.66,6),(.50,7),(.58,8),(.49,9),(.32,10),(.60,11)]
+  fraction,mode=patterns[(style+variant)%len(patterns)]
+  photo=(m,m,w-2*m,h*fraction-m)
+  cal=(m,h*fraction+m*.3,w-2*m,h*(1-fraction)-m*1.3)
  else:
-  usable_w=w-2*m;usable_h=h-2*m;g=m*.45
-  if variant in (0,4,8):
-   f=(.55,.42,.63)[variant//4]
-   photo=(m,m,usable_w*f-g,usable_h);cal=(m+usable_w*f,m,usable_w*(1-f),usable_h)
-  elif variant in (1,5,9):
-   f=(.52,.60,.46)[(variant-1)//4]
-   cal=(m,m,usable_w*f-g,usable_h);photo=(m+usable_w*f,m,usable_w*(1-f),usable_h)
-  elif variant in (2,6):
-   f=.48 if variant==2 else .32
-   photo=(m,m,usable_w,usable_h*f-g);cal=(m,m+usable_h*f,usable_w,usable_h*(1-f))
+  fractions=[.53,.58,.48,.62,.43,.65,.57,.50,.60,.52,.45,.63]
+  f=fractions[(style+variant)%len(fractions)]
+  if (style+variant)%4==0:
+   photo=(w*(1-f)+m,m,w*f-2*m,h-2*m)
+   cal=(m,m,w*(1-f)-m,h-2*m)
   else:
-   f=.53 if variant==3 else .61
-   cal=(m,m,usable_w,usable_h*f-g);photo=(m,m+usable_h*f,usable_w,usable_h*(1-f))
+   photo=(m,m,w*f-m,h-2*m)
+   cal=(w*f+m*.3,m,w*(1-f)-m*1.3,h-2*m)
  px,py,pw,ph=photo;cx,cy,cw,ch=cal
  o=[rect("paper",0,0,w,h,bg)]
  # Photography is layered, separately editable, and the collage is different
@@ -282,8 +271,8 @@ def page(year,month,index,w,h,urls):
               max(7,min(bw*.024,bh*.12)),title_color,"center","500","Arial"))
  # Date area uses generous white space and restrained grid lines.
  o.append(rect("calendar-paper",cx,cy,cw,ch,"#FFFFFF"))
- o.append(rect("calendar-header",cx,cy,cw,ch*.18,dark if variant in (1,3,5,7,9) else bg))
- header_text="#FFFFFF" if variant in (1,3,5,7,9) else dark
+ o.append(rect("calendar-header",cx,cy,cw,ch*.18,dark if style in (1,6,8,10) else bg))
+ header_text="#FFFFFF" if style in (1,6,8,10) else dark
  o.append(txt("month-title",cx+cw*.05,cy+ch*.025,cw*.90,
               calendar.month_name[month].upper()+"  "+str(year),
               max(11,min(cw*.065,ch*.085)),header_text,"center","700","Georgia"))
