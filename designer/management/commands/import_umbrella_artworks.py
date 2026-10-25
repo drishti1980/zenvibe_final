@@ -100,7 +100,7 @@ class Command(BaseCommand):
                 for key in ("d","points","x","y","x1","y1","x2","y2",
                             "cx","cy","r","rx","ry","width","height","transform"):
                     if key in attrs:
-                        val=re.sub(r"[-+]?(?:\\d*\\.)?\\d+", "#", str(attrs[key]))
+                        val=re.sub(r"[-+]?(?:\d*\.)?\d+", "#", str(attrs[key]))
                         geometry.append((key,val))
                 pieces.append((tag,tuple(geometry)))
             return tuple(pieces)
