@@ -136,17 +136,30 @@ class Command(BaseCommand):
                         "angle":0,"opacity":1,"selectable":True,"evented":True,
                         "customerEditable":True,"replaceable":True,
                     })
-                for suffix,key,y,size in [
-                    ("headline","headline",670,40),("subtitle","subtitle",730,23)
+                # Large, readable brand lockup on the lower canopy panel.
+                # Opaque dark plate protects contrast on all seven umbrella colours.
+                headline=str(item.get("headline","")).strip()
+                subtitle=str(item.get("subtitle","")).strip()
+                if headline or subtitle:
+                    objects.append({
+                        "id":f"umbrella_{i+1:03d}_brand_backing",
+                        "name":"Brand backing","type":"rect",
+                        "left":275,"top":675,"width":500,"height":135,
+                        "fill":"#142332","rx":12,"ry":12,
+                        "scaleX":1,"scaleY":1,"angle":0,"opacity":0.96,
+                        "selectable":True,"evented":True,"customerEditable":True,
+                    })
+                for suffix,value,y,size,weight,color in [
+                    ("headline",headline,690,43,"800","#FFFFFF"),
+                    ("subtitle",subtitle,755,21,"600","#F4D99C"),
                 ]:
-                    value=str(item.get(key,"")).strip()
                     if value:
                         objects.append({
                             "id":f"umbrella_{i+1:03d}_{suffix}",
-                            "name":key.title(),"type":"textbox","text":value,
-                            "left":285,"top":y,"width":480,"fontSize":size,
-                            "fontFamily":"Poppins","fontWeight":"700",
-                            "textAlign":"center","fill":"#FFFFFF",
+                            "name":suffix.title(),"type":"textbox","text":value,
+                            "left":300,"top":y,"width":450,"fontSize":size,
+                            "fontFamily":"Poppins","fontWeight":weight,
+                            "textAlign":"center","fill":color,
                             "scaleX":1,"scaleY":1,"angle":0,"opacity":1,
                             "selectable":True,"evented":True,"customerEditable":True,
                         })
