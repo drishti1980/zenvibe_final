@@ -1535,15 +1535,33 @@ class Command(BaseCommand):
             # Keeping rows from the current generator caused stale Freshener IDs/design JSON
             # to survive previous fixes.
             if opts["replace"]:
-                DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR).delete()
-            existing=DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR).count()
+                # Umbrella rebuild must also replace previous named library rows
+                # even when their generator tag was missing or different.
+                if family(product) == "umbrella":
+                    old_generated = DesignTemplate.objects.filter(
+                        product=product,
+                        name__startswith="Umbrella "
+                    ).exclude(name__startswith="Umbrella Luxury ")
+                else:
+                    DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR).delete()
+            existing=0 if opts["replace"] and family(product) == "umbrella" else DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR).count()
             target=max(0,opts["count"]-existing)
             for n in range(existing,existing+target):
                 data=payload(product,n)
-                DesignTemplate.objects.create(product=product,name=data["designName"],json_data=data,is_active=True)
+                if family(product) == "umbrella":
+                    DesignTemplate.objects.update_or_create(
+                        product=product, name=data["designName"],
+                        defaults={"json_data":data,"is_active":True},
+                    )
+                else:
+                    DesignTemplate.objects.create(product=product,name=data["designName"],json_data=data,is_active=True)
             final_count=DesignTemplate.objects.filter(product=product,json_data__generator=GENERATOR,is_active=True).count()
             if opts["replace"] and final_count >= opts["count"]:
-                old_generated.delete()
+                if family(product) == "umbrella":
+                    # Preserve old records for recovery; do not show them in gallery.
+                    old_generated.exclude(json_data__generator=GENERATOR).update(is_active=False)
+                else:
+                    old_generated.delete()
             total+=target
             ruler=physical(product)
             self.stdout.write(f"{product.id} — {product.name}: {existing+target} templates; ruler={'%.3f x %.3f in'%ruler if ruler else 'ADMIN CONFIG REQUIRED'}")
