@@ -5,8 +5,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v3"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2")
+GENERATOR="zenvibe-calendar-editable-v4"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -85,40 +85,61 @@ def artwork(i,x,y,w,h,variant,dark,accent,soft):
 def page(year,month,index,w,h):
  dark,bg,accent,soft=PALETTES[index%10]
  theme,tag=THEMES[index//10]
- # Use a print-safe magazine layout: decorative artwork above calendar, no overlay.
- # Ten themes and ten different artwork systems; each combination is editable.
- m=min(w,h)*.045
- vertical=h>=w*.95
- if vertical:
-  art=(m,m,w-2*m,h*.44)
-  panel=(m,h*.52,w-2*m,h*.43)
+ variant=index%10
+ m=min(w,h)*.038
+ # Distinct calendar compositions: five portrait and five landscape arrangements.
+ # Dates occupy a real planning grid, rather than tiny floating numbers.
+ if h>=w*.95:
+  layouts=[
+   ((m,m,w-2*m,h*.35),(m,h*.41,w-2*m,h*.55)),
+   ((m,m,w-2*m,h*.27),(m,h*.33,w-2*m,h*.63)),
+   ((m,m,w-2*m,h*.42),(m,h*.48,w-2*m,h*.48)),
+   ((m,m,w-2*m,h*.32),(m,h*.38,w-2*m,h*.58)),
+   ((m,m,w-2*m,h*.38),(m,h*.44,w-2*m,h*.52))]
+  art,panel=layouts[variant%5]
  else:
-  art=(m,m,w*.48-m,h-2*m)
-  panel=(w*.53,m,w*.43,h-2*m)
- ax,ay,aw,ah=art;px,py,pw,ph=panel
+  layouts=[
+   ((m,m,w*.43,h-2*m),(w*.47,m,w*.49,h-2*m)),
+   ((w*.55,m,w*.41,h-2*m),(m,m,w*.51,h-2*m)),
+   ((m,m,w*.37,h-2*m),(w*.41,m,w*.55,h-2*m)),
+   ((w*.61,m,w*.35,h-2*m),(m,m,w*.57,h-2*m)),
+   ((m,m,w*.47,h-2*m),(w*.51,m,w*.45,h-2*m))]
+  art,panel=layouts[variant%5]
+ ax,ay,aw,ah=art
+ px,py,pw,ph=panel
  o=[rect("paper",0,0,w,h,bg)]
- o+=artwork(index,ax,ay,aw,ah,index%10,dark,accent,soft)
- # A strong editorial masthead over artwork; bounded separately from date grid.
- o.append(rect("masthead",ax+aw*.06,ay+ah*.68,aw*.88,ah*.24,bg))
- o.append(txt("theme",ax+aw*.1,ay+ah*.715,aw*.8,theme,max(10,min(aw*.04,ah*.06)),dark,"center","700"))
- o.append(txt("tagline",ax+aw*.08,ay+ah*.82,aw*.84,tag,max(8,min(aw*.018,ah*.032)),dark,"center","400","Arial"))
- o.append(rect("calendar-background",px,py,pw,ph,bg))
- o.append(rect("calendar-accent",px,py,pw,ph*.035,accent))
- o.append(rect("top-rule",px,py+ph*.04,pw,max(1,ph*.006),dark))
- o.append(txt("month",px,py+ph*.055,pw,calendar.month_name[month].upper(),
-              max(13,min(pw*.065,ph*.10)),dark,"center","700"))
- o.append(txt("year",px,py+ph*.18,pw,str(year),max(10,min(pw*.03,ph*.05)),accent,"center","600","Arial"))
- o.append(rect("divider",px+pw*.07,py+ph*.29,pw*.86,max(1,ph*.009),accent))
- gx=px+pw*.075;gw=pw*.85;gy=py+ph*.36;row=ph*.075;cw=gw/7
- fs=max(8,min(cw*.4,row*.52))
- for col,name in enumerate(("S","M","T","W","T","F","S")):
-  o.append(txt("weekday-%d"%col,gx+col*cw,gy,cw,name,fs*.8,dark,"center","700","Arial"))
- for ri,week in enumerate(calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)):
+ o+=artwork(index,ax,ay,aw,ah,variant,dark,accent,soft)
+ # Strong graphic header with editable text, independent of the calendar grid.
+ o.append(rect("editorial-label",ax+aw*.05,ay+ah*.72,aw*.9,ah*.23,bg))
+ o.append(txt("theme",ax+aw*.075,ay+ah*.75,aw*.85,theme,max(10,min(aw*.046,ah*.09)),dark,"center","700"))
+ o.append(txt("tagline",ax+aw*.08,ay+ah*.86,aw*.84,tag,max(7,min(aw*.018,ah*.035)),dark,"center","500","Arial"))
+ o.append(rect("calendar-panel",px,py,pw,ph,"#FFFFFF",accent,max(1,min(w,h)*.003)))
+ o.append(rect("calendar-banner",px,py,pw,ph*.21,dark))
+ o.append(txt("month",px+pw*.035,py+ph*.035,pw*.93,calendar.month_name[month].upper(),
+              max(13,min(pw*.075,ph*.11)), "#FFFFFF","center","700","Arial"))
+ o.append(txt("year",px+pw*.1,py+ph*.145,pw*.8,str(year),max(9,min(pw*.028,ph*.045)),soft,"center","600","Arial"))
+ gx=px+pw*.035;gw=pw*.93;gy=py+ph*.27
+ cw=gw/7
+ available=ph*.64
+ row=available/7
+ fs=max(7,min(cw*.39,row*.33))
+ # Calendar dates live inside individual visible, editable cells.
+ for col,name in enumerate(("SUN","MON","TUE","WED","THU","FRI","SAT")):
+  o.append(rect("heading-bg-%d"%col,gx+col*cw,gy,cw*.985,row*.78,accent if col in (0,6) else soft))
+  o.append(txt("weekday-%d"%col,gx+col*cw,gy+row*.12,cw,name,max(6,fs*.68),dark,"center","700","Arial"))
+ weeks=calendar.Calendar(firstweekday=6).monthdayscalendar(year,month)
+ for ri in range(6):
+  week=weeks[ri] if ri<len(weeks) else [0]*7
   for col,day in enumerate(week):
+   cx=gx+col*cw
+   cy=gy+(ri+1)*row
+   o.append(rect("cell-%d-%d"%(ri,col),cx,cy,cw*.985,row*.96,
+                 "#FFF5F8" if col in (0,6) else "#FFFFFF",soft,max(.5,min(w,h)*.001)))
    if day:
-    o.append(txt("date-%d"%day,gx+col*cw,gy+(ri+1)*row,cw,day,fs,dark,"center","400","Arial"))
- o.append(rect("bottom-rule",px+pw*.07,py+ph*.88,pw*.86,max(1,ph*.003),accent))
- o.append(txt("brand",px+pw*.05,py+ph*.92,pw*.9,"YOUR BRAND",max(8,min(pw*.022,ph*.035)),dark,"center","600","Arial"))
+    o.append(txt("date-%d"%day,cx+cw*.08,cy+row*.08,cw*.8,str(day),fs,
+                 accent if col==0 else dark,"left","700","Arial"))
+ o.append(txt("brand",px+pw*.06,py+ph*.94,pw*.88,"PERSONALISE YOUR YEAR",
+              max(7,min(pw*.022,ph*.025)),dark,"center","600","Arial"))
  return {"name":calendar.month_name[month],"background":bg,"objects":o}
 def payload(product,year,i):
  w,h=product.width,product.height
