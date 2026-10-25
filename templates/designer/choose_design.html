@@ -2241,7 +2241,19 @@
                 canopy.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
                 ctx.closePath();ctx.clip();
                 ctx.scale(1/scale,1/scale);
-                objects.forEach(o=>drawFabricLike(ctx,o,scale,scale));
+                objects.forEach(o=>{
+                    if(o.id==='zv_calendar_replaceable_photo'){
+                        ctx.save();ctx.beginPath();
+                        ctx.moveTo(525*scale,500*scale);
+                        ctx.lineTo(720*scale,945*scale);
+                        ctx.lineTo(330*scale,945*scale);
+                        ctx.closePath();ctx.clip();
+                        drawFabricLike(ctx,o,scale,scale);
+                        ctx.restore();
+                    }else{
+                        drawFabricLike(ctx,o,scale,scale);
+                    }
+                });
                 ctx.restore();
                 // Keep seams and centre hub visible above the artwork.
                 ctx.save();ctx.scale(scale,scale);
