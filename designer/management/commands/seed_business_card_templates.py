@@ -350,6 +350,7 @@ class Command(BaseCommand):
         p.add_argument('--count',type=int,default=100)
         p.add_argument('--replace-generated',action='store_true')
         p.add_argument('--dry-run',action='store_true')
+        p.add_argument('--premium-only',action='store_true',help='Only generate Premium Business Cards; leave Standard templates unchanged.')
 
     def handle(self,*args,**opts):
         count=opts['count']
@@ -358,12 +359,15 @@ class Command(BaseCommand):
             std=Product.objects.get(pk=opts['standard_product_id']); prem=Product.objects.get(pk=opts['premium_product_id'])
         except Product.DoesNotExist as e: raise CommandError(str(e))
         if opts['replace_generated'] and not opts['dry_run']:
-            q=DesignTemplate.objects.filter(name__startswith=PREFIX_STANDARD) | DesignTemplate.objects.filter(name__startswith=PREFIX_PREMIUM)
+            q=DesignTemplate.objects.filter(product=prem,name__startswith=PREFIX_PREMIUM)
+            if not opts['premium_only']:
+                q=q | DesignTemplate.objects.filter(product=std,name__startswith=PREFIX_STANDARD)
             deleted=q.count(); q.delete(); self.stdout.write(f'Deleted {deleted} previous V2 generated templates.')
 
         total=0; signatures=set(); export_root=Path(settings.BASE_DIR)/'generated_business_card_svg_v2'
         if not opts['dry_run']: export_root.mkdir(parents=True,exist_ok=True)
-        for kind,product,prefix in [('standard',std,PREFIX_STANDARD),('premium',prem,PREFIX_PREMIUM)]:
+        targets=[('premium',prem,PREFIX_PREMIUM)] if opts['premium_only'] else [('standard',std,PREFIX_STANDARD),('premium',prem,PREFIX_PREMIUM)]
+        for kind,product,prefix in targets:
             W=int(product.width or DEFAULT_W); H=int(product.height or DEFAULT_H)
             for i in range(count):
                 design_name,finish,bg,front,back,dna=build_design(kind,i,W,H)
