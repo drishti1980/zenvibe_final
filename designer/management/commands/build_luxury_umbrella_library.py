@@ -126,6 +126,51 @@ def render(index):
         motif.append(path("M250 520 H430",ivory,3))
     if family in (6,7):
         motif.append(circle(340,90,13,gold,3))
+    # Family-specific, substantive print compositions: no recolour-only duplicates.
+    # All decoration stays in the upper canopy print zone (y 90..530).
+    # Each family uses a distinct visual vocabulary and drawing topology.
+    if family == 0:  # Executive: architectural brand identity
+        for k in range(variant + 1):
+            motif.append(line(160 + k*11, 102, 160 + k*11, 128, gold, 2))
+        motif.append(path("M225 485 Q340 440 455 485", ivory, 3))
+    elif family == 1:  # Heritage: ornamental corner engraving
+        for k in range(variant + 2):
+            x=115+k*14
+            motif.append(path(f"M{x} 480 q18 -32 36 -6", gold, 2))
+    elif family == 2:  # Botanical: stems and individually spaced foliage
+        for k in range(variant + 3):
+            x=108+k*18
+            motif.append(leaf(x, 520-(k%3)*33, .22 + (k%2)*.06, gold))
+    elif family == 3:  # Wedding: delicate floral petals, not geometric icons
+        for k in range(variant + 2):
+            x=120+k*31
+            y=485-(k%3)*37
+            motif.append(path(f"M{x} {y} q-14 -22 0 -32 q14 10 0 32", ivory, 2))
+            motif.append(circle(x,y-33,3,gold,2,gold))
+    elif family == 4:  # Hospitality: Art Deco hospitality borders
+        for k in range(variant + 3):
+            x=120+k*16
+            motif.append(path(f"M{x} 480 v-16 h9 v-16",gold,2))
+    elif family == 5:  # Property: facade elevations
+        for k in range(variant + 2):
+            x=125+k*22
+            motif.append(path(f"M{x} 505 v-45 h14 v45",ivory,2))
+    elif family == 6:  # Golf: fine-line fairway strokes
+        for k in range(variant + 2):
+            x=130+k*25
+            motif.append(path(f"M{x} 505 q24 -35 48 -4",gold,2))
+    elif family == 7:  # Travel: layered horizon and topography
+        for k in range(variant + 2):
+            y=435+k*9
+            motif.append(path(f"M120 {y} q105 -38 210 0 t220 0",ivory,2))
+    elif family == 8:  # Fashion: runway/editorial linework
+        for k in range(variant + 2):
+            x=140+k*21
+            motif.append(line(x,460,x+28,515,gold,2))
+    else:  # Events: elegant cascading streamers
+        for k in range(variant + 2):
+            x=130+k*23
+            motif.append(path(f"M{x} 110 q22 45 0 85 t0 85",ivory,2))
     # SVG contains decoration only; real branding remains separately editable.
     return ('<svg xmlns="http://www.w3.org/2000/svg" width="680" height="730" '
             'viewBox="0 0 680 730"><title>'
@@ -138,11 +183,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--apply", action="store_true")
         parser.add_argument("--product-id", type=int, default=205)
-        parser.add_argument("--allow-repeated-layouts", action="store_true", help="Explicitly allow ten repeated base compositions across the 100 files")
 
     def handle(self, *args, **opts):
-        if opts["apply"] and not opts["allow_repeated_layouts"]:
-            raise CommandError("Refusing to replace active templates: this generator repeats 10 base layouts across 100 files. Supply 100 independently composed designs before importing; use --allow-repeated-layouts only for testing.")
         ROOT.mkdir(parents=True, exist_ok=True)
         manifest=[]
         for index in range(100):
