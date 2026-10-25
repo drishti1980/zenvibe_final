@@ -91,10 +91,12 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
 
 # Keep website authentication independent across demo project mounts.
-SESSION_COOKIE_PATH = "/zenvibe/"
-CSRF_COOKIE_PATH = "/zenvibe/"
+#SESSION_COOKIE_PATH = "/zenvibe/"
+#CSRF_COOKIE_PATH = "/zenvibe/"
+SESSION_COOKIE_PATH = f"/{URL_PREFIX}/" if URL_PREFIX else "/"
+CSRF_COOKIE_PATH = f"/{URL_PREFIX}/" if URL_PREFIX else "/"
 
 # Parse the browser's most-specific cookie before legacy root duplicates.
-import sys as _tb_cookie_sys
-_tb_cookie_sys.path.insert(0, str(BASE_DIR.parent))
-MIDDLEWARE = ["project_cookie_middleware.ProjectCookieMiddleware"] + list(MIDDLEWARE)
+#import sys as _tb_cookie_sys
+#_tb_cookie_sys.path.insert(0, str(BASE_DIR.parent))
+#MIDDLEWARE = ["project_cookie_middleware.ProjectCookieMiddleware"] + list(MIDDLEWARE)
