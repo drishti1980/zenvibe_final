@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import Product, DesignTemplate
 
-GENERATOR="zenvibe-calendar-editable-v12"
-OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10","zenvibe-calendar-editable-v11")
+GENERATOR="zenvibe-calendar-editable-v13"
+OLD=("zenvibe-calendar-editable-v1","zenvibe-calendar-editable-v2","zenvibe-calendar-editable-v3","zenvibe-calendar-editable-v4","zenvibe-calendar-editable-v5","zenvibe-calendar-editable-v6","zenvibe-calendar-editable-v7","zenvibe-calendar-editable-v8","zenvibe-calendar-editable-v9","zenvibe-calendar-editable-v10","zenvibe-calendar-editable-v11","zenvibe-calendar-editable-v12")
 PALETTES=[
 ("#30106B","#FFF4C9","#FF5E5B","#00D7B4"),
 ("#102A78","#FFF5EA","#FF3D8D","#FFC93C"),
@@ -176,8 +176,14 @@ def _preview(data,urls):
   if kind=="rect":
    box=xy(obj)
    fill=obj.get("fill","#FFFFFF")
-   if fill.startswith("rgba"):continue
-   d.rectangle(box,fill=fill)
+   stroke=obj.get("stroke")
+   if fill.startswith("rgba"):
+    if stroke:d.rectangle(box,outline=stroke,width=max(1,int(obj.get("strokeWidth",1)*scale)))
+    continue
+   d.rectangle(box,fill=fill,outline=stroke,width=max(1,int(obj.get("strokeWidth",1)*scale)) if stroke else 1)
+  elif kind=="circle":
+   x=int(obj["left"]*scale);y=int(obj["top"]*scale);rr=max(1,int(obj["radius"]*scale))
+   d.ellipse((x,y,x+rr*2,y+rr*2),fill=obj.get("fill","#243B35"))
   elif kind=="image":
    src=obj.get("src","")
    try:
@@ -240,13 +246,15 @@ def page(year,month,index,w,h,urls):
  o=[rect("paper",0,0,w,h,bg),rect("outer-frame",m*.42,m*.42,w-m*.84,h-m*.84,"rgba(0,0,0,0)",dark,max(2,min(w,h)*.004))]
  # Photography is layered, separately editable, and the collage is different
  # for each of the twelve design families.
- gap=min(pw,ph)*.018
+ gap=min(pw,ph)*(.012+.002*(family%5))
+ split=.40+.035*(family%6)
+ split2=.37+.045*((family+variant)%6)
  if variant in (0,5):slots=[(px,py,pw,ph)]
- elif variant in (1,6):slots=[(px,py,pw*.68-gap,ph),(px+pw*.68,py,pw*.32,ph)]
- elif variant in (2,7):slots=[(px,py,pw,ph*.65-gap),(px,py+ph*.65,pw*.48-gap,ph*.35),(px+pw*.48,py+ph*.65,pw*.52,ph*.35)]
- elif variant in (3,8):slots=[(px,py,pw*.49-gap,ph*.49-gap),(px+pw*.49,py,pw*.51,ph*.49-gap),(px,py+ph*.49,pw*.49-gap,ph*.51),(px+pw*.49,py+ph*.49,pw*.51,ph*.51)]
- elif variant==4:slots=[(px,py,pw*.55-gap,ph),(px+pw*.55,py,pw*.45,ph*.48-gap),(px+pw*.55,py+ph*.48,pw*.45,ph*.52)]
- else:slots=[(px,py,pw,ph*.48-gap),(px,py+ph*.48,pw,ph*.52)]
+ elif variant in (1,6):slots=[(px,py,pw*split-gap,ph),(px+pw*split,py,pw*(1-split),ph)]
+ elif variant in (2,7):slots=[(px,py,pw,ph*split2-gap),(px,py+ph*split2,pw*split-gap,ph*(1-split2)),(px+pw*split,py+ph*split2,pw*(1-split),ph*(1-split2))]
+ elif variant in (3,8):slots=[(px,py,pw*split-gap,ph*split2-gap),(px+pw*split,py,pw*(1-split),ph*split2-gap),(px,py+ph*split2,pw*split-gap,ph*(1-split2)),(px+pw*split,py+ph*split2,pw*(1-split),ph*(1-split2))]
+ elif variant==4:slots=[(px,py,pw*split-gap,ph),(px+pw*split,py,pw*(1-split),ph*split2-gap),(px+pw*split,py+ph*split2,pw*(1-split),ph*(1-split2))]
+ else:slots=[(px,py,pw,ph*split2-gap),(px,py+ph*split2,pw,ph*(1-split2))]
  for j,(sx,sy,sw,sh) in enumerate(slots):
   o.append(photo_object("photo-%02d"%j,sx,sy,sw,sh,urls[(index*5+month+j*2)%len(urls)]))
   o.append(rect("photo-frame-%02d"%j,sx,sy,sw,sh,"rgba(0,0,0,0)",bg,max(2,min(w,h)*.004)))
@@ -290,7 +298,7 @@ def page(year,month,index,w,h,urls):
    label_color=dark
   else:
    o.append(rect("weekday-band-%d"%col,hx,gy,cell*.97,row*.72,
-                 accent if col==0 else bg))
+                 bg))
    label_color=dark
   o.append(txt("weekday-%d"%col,hx,gy+row*.10,cell,label,
                max(8,fs*.72),label_color,"center","700","Arial"))
@@ -322,7 +330,7 @@ def page(year,month,index,w,h,urls):
     dy=y+row*.17
     dw=cell*.44
     align="center"
-   elif date_style in (3,9) and weekend:
+   elif date_style==3 and weekend:
     ink="#FFFFFF";dx=x+cell*.08;dy=y+row*.11;dw=cell*.8;align="left"
    else:
     ink=dark
