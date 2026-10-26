@@ -1101,7 +1101,8 @@ function loadPage(i){
         // while keeping every text/vector/image as an independent editable object.
         const matchingAreas=cfg.printAreas.filter(a=>!a.surfaceId || Number(a.surfaceId)===Number((OPT.print_surfaces||OPT.printSurfaces||[])[i]?.id||0));
         const areas=matchingAreas.length?matchingAreas:cfg.printAreas;
-        const srcW=Math.max(1,Number(ZV_BASE_W)||W), srcH=Math.max(1,Number(ZV_BASE_H)||H);
+        const coasterSource=Number(P.id)===415 && Number(p.width)>0 && Number(p.height)>0;
+        const srcW=Math.max(1,coasterSource?Number(p.width):(Number(ZV_BASE_W)||W)), srcH=Math.max(1,coasterSource?Number(p.height):(Number(ZV_BASE_H)||H));
         const mapIntoArea=(o,area,suffix)=>{
           let l=W*Number(area.leftPct||0)/100, t=H*Number(area.topPct||0)/100;
           let aw=W*Number(area.widthPct||0)/100, ah=H*Number(area.heightPct||0)/100;
@@ -1188,7 +1189,7 @@ function loadPage(i){
         selectable:false,evented:false
       });
     }
-    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset)canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
+    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset || o.id==='illustrated-artwork' || o.objectId==='illustrated-artwork')canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
   function zvApplyCoasterShape(){
     if(Number(P.id)!==415)return;
     const shape=String(OPT.selected_shape||new URLSearchParams(location.search).get('shape')||'square').toLowerCase();
