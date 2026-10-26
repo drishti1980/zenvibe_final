@@ -48,7 +48,7 @@ def _absolute_path(data):
     SVG relative control points are relative to the command start, not to
     preceding control points. The original parser mispositioned curved art.
     """
-    tokens = re.findall(r"[MmLlHhVvQqCcZz]|[-+]?(?:\\d*\\.)?\\d+(?:[eE][-+]?\\d+)?", data)
+    tokens = re.findall(r"[MmLlHhVvQqCcZz]|[-+]?(?:\d*\.\d+|\d+\.?\d*)(?:[eE][-+]?\d+)?", data)
     arity = {"M": 2, "L": 2, "H": 1, "V": 1, "Q": 4, "C": 6, "Z": 0}
     result = []
     i = 0
@@ -56,7 +56,7 @@ def _absolute_path(data):
     current = (0.0, 0.0)
     start = (0.0, 0.0)
     while i < len(tokens):
-        if tokens[i].isalpha():
+        if len(tokens[i]) == 1 and tokens[i] in "MmLlHhVvQqCcZz":
             cmd = tokens[i]
             i += 1
         if cmd is None:
@@ -68,7 +68,7 @@ def _absolute_path(data):
             cmd = None
             continue
         count = arity[upper]
-        if i + count > len(tokens) or any(t.isalpha() for t in tokens[i:i + count]):
+        if i + count > len(tokens) or any(len(t) == 1 and t in "MmLlHhVvQqCcZz" for t in tokens[i:i + count]):
             raise ValueError(f"Incomplete SVG path command {cmd}")
         values = [float(v) for v in tokens[i:i + count]]
         i += count
