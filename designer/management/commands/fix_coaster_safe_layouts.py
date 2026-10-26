@@ -10,6 +10,7 @@ import copy
 import io
 import json
 import hashlib
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -125,8 +126,26 @@ class Command(BaseCommand):
                 y = (j // 10) * 140 + 4
                 sheet.paste(thumb, (x, y))
                 painter.text((x + 5, y + 114), f"{j+1:03d}", fill="#111827")
-            sheet_path = Path(settings.BASE_DIR) / "coaster_luxury_100_contact_sheet.png"
-            sheet.save(sheet_path)
+            # Windows can reject overwriting a PNG currently open in an image
+            # viewer (Errno 22/permission errors). Never reuse the same filename.
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+            sheet_path = Path(settings.BASE_DIR) / f"coaster_luxury_100_contact_sheet_{timestamp}.png"
+            try:
+                sheet.save(str(sheet_path), format="PNG")
+            except OSError as exc:
+                # Preview creation must not crash validation when the project
+                # directory is locked or non-writable.
+                fallback = Path(tempfile.gettempdir()) / f"zenvibe_coaster_contact_sheet_{timestamp}.png"
+                try:
+                    sheet.save(str(fallback), format="PNG")
+                    sheet_path = fallback
+                    self.stdout.write(self.style.WARNING(
+                        f"Project directory preview save failed ({exc}); saved to temporary directory instead."
+                    ))
+                except OSError as fallback_exc:
+                    raise CommandError(
+                        f"Unable to save contact sheet to project or temp folder: {fallback_exc}"
+                    ) from fallback_exc
             self.stdout.write(f"Visual review sheet: {sheet_path}")
         if options["dry_run"]:
             for template, objects, png in staged[:10]:
