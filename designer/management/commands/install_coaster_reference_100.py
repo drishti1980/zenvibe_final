@@ -222,6 +222,60 @@ def make_artwork(index):
                 ob["fontSize"]=max(45,float(ob.get("fontSize",30)))
     return o,category
 
+
+def align_text_objects(objects):
+    """Normalize editable Fabric textboxes to a centered safe composition.
+
+    Estimate width using Pillow so text never exceeds its actual textbox,
+    and place the title/subtitle together as a centered vertical stack.
+    """
+    from PIL import ImageFont
+    titles=[]
+    subs=[]
+    for obj in objects:
+        if obj.get("type") not in ("textbox","text","i-text"):
+            continue
+        key=str(obj.get("id",""))
+        if key.startswith(("title-","minimal-title-","coffee-script-","coast-one-","coast-two-",
+                           "script-one-","script-two-","sunset-script-","sunset-subtitle-",
+                           "mountain-script-","minimal-subtitle-")):
+            titles.append(obj)
+        elif key.startswith(("subtitle-",)):
+            subs.append(obj)
+    items=sorted(titles+subs,key=lambda ob:float(ob.get("top",0)))
+    if not items:
+        return
+    max_width=640
+    for ob in items:
+        value=str(ob.get("text",""))
+        family=str(ob.get("fontFamily",""))
+        size=float(ob.get("fontSize",60))
+        # Pillow font measurement matches the gallery renderer's fallback fonts.
+        serif=("serif" in family.lower() or "cinzel" in family.lower()
+               or "garamond" in family.lower() or "vibes" in family.lower())
+        font_name="DejaVuSerif.ttf" if serif else "DejaVuSans.ttf"
+        try:
+            ft=ImageFont.truetype(font_name,max(1,int(size)))
+            bbox=ft.getbbox(value)
+            measured=bbox[2]-bbox[0]
+        except OSError:
+            measured=len(value)*size*.65
+        if measured>max_width:
+            size=max(22,size*max_width/measured*.93)
+        ob["fontSize"]=round(size,2)
+        ob["width"]=max_width
+        ob["left"]=180
+        ob["textAlign"]="center"
+        ob["originX"]="left"
+        ob["originY"]="top"
+        ob["angle"]=0
+    # Keep lettering within a consistent safe center band, with optical spacing.
+    total=sum(float(ob["fontSize"])*1.32 for ob in items)
+    y=500-total/2
+    for ob in items:
+        ob["top"]=round(y,2)
+        y+=float(ob["fontSize"])*1.32
+
 class Command(BaseCommand):
     help="Replace 100 existing coaster artworks using 24 supplied design directions."
     def add_arguments(self,parser):
@@ -243,12 +297,13 @@ class Command(BaseCommand):
             if not isinstance(t.json_data,dict) or not t.json_data.get("pages"):
                 raise CommandError("Invalid editable pages on template %s"%t.pk)
             objects,category=make_artwork(i)
+            align_text_objects(objects)
             data=copy.deepcopy(t.json_data)
             for page in data["pages"]:
                 page["objects"]=copy.deepcopy(objects)
             for page in data.get("adminPages",[]):
                 page["objects"]=copy.deepcopy(objects)
-            data["generator"]="zenvibe-coaster-reference-24-v2"
+            data["generator"]="zenvibe-coaster-reference-24-v3-aligned"
             data["artworkCategory"]=category
             data["artworkReferenceIndex"]=i%24+1
             image=render(objects,opts["shape"])
@@ -269,7 +324,7 @@ class Command(BaseCommand):
             for i,(t,data,png,category) in enumerate(prepared):
                 t.json_data=data
                 t.name=("%03d | %s"%(i+1,category))[:140]
-                t.preview.save("coaster-elegant-v2-%s-%03d.png"%(t.pk,i+1),
+                t.preview.save("coaster-aligned-v3-%s-%03d.png"%(t.pk,i+1),
                                ContentFile(png),save=False)
                 t.save(update_fields=["json_data","name","preview"])
         self.stdout.write(self.style.SUCCESS("Installed 100 reference-inspired editable coasters"))
