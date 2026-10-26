@@ -261,27 +261,126 @@ def safe_artwork(product,index):
                         line(f"{k}_cross{j}_{t}",x,y,xx,yy,ink,3)
     # No two template indexes share this combination of geometry and placement.
     pattern_at("signature_surface", (index*7+index//10)%10)
-    # Four substantially different editorial structures for each illustrated subject.
-    if layout==0:
-        motif_at("hero",500,315,1.05)
-        txt("title",heading,150,548,700,65,ink,"Georgia","bold",80)
-        txt("caption",caption,220,645,560,26,gold,spacing=145)
-        line("bottom_rule",340,708,660,708,ink,3)
-    elif layout==1:
-        motif_at("left_illustration",330,480,.93)
-        txt("title",heading,520,350,345,58,ink,"Georgia","bold",25)
-        txt("caption",caption,525,545,325,23,gold,spacing=80)
-        line("vertical_rule",505,330,505,675,gold,4)
-    elif layout==2:
-        motif_at("top_right",665,315,.68)
-        motif_at("lower_left",320,685,.57)
-        txt("title",heading,195,445,610,63,ink,"Georgia","bold",70)
-        txt("caption",caption,280,548,440,24,gold,spacing=90)
+    # ART-FIRST gallery: no mandatory text, brand badges or edition numbers.
+    # 100 compositions are mapped to 100 distinct subject/geometry combinations.
+    # Artwork is built from editable Fabric shapes rather than a flattened image.
+    # Each card has a full-surface composition and can optionally receive text
+    # from the customer in the editor.
+    def fill_art(k,mode):
+        if mode==0:  # botanical woodcut, asymmetric foliage
+            for j in range(17):
+                a=18+j*21+index*3
+                x,y=polar(180+(j%4)*52,a)
+                branch(f"{k}_foliage{j}",x,y,95+(j%3)*19,a+115,5+(j%3))
+            for j in range(5):
+                a=45+j*72+index*4
+                x,y=polar(190,a)
+                flower_at(f"{k}_flower{j}",x,y,55+(j%2)*22,9)
+        elif mode==1:  # densely layered decorative ceramic mandala
+            for ring in range(3):
+                n=12+ring*8+(index%3)*4
+                radius=95+ring*104
+                for j in range(n):
+                    a=j*360/n+(index*11)%360
+                    x,y=polar(radius,a)
+                    petal(f"{k}_mandala{ring}_{j}",x,y,52+ring*9,a+90,
+                          gold if (j+ring)%3 else ink)
+            disk(k+"_jewel",500,500,57,ink)
+            disk(k+"_jewel_inset",500,500,31,gold)
+        elif mode==2:  # bold stained glass, interlocking colour fields
+            for j in range(14):
+                a=j*360/14+index*7
+                x,y=polar(330,a)
+                xx,yy=polar(95,a+12)
+                panel(f"{k}_glass{j}",[(500,500),(xx,yy),(x,y)],
+                      ink if j%3==0 else gold)
+            for j in range(8):
+                a=j*45
+                x,y=polar(220,a)
+                disk(f"{k}_glass_center{j}",x,y,28,paper,ink,5)
+        elif mode==3:  # landscape illustration with multiple horizon layers
+            disk(k+"_sun",650,320,100,gold)
+            for j in range(8):
+                yy=420+j*64
+                coords=[(110,900),(110,yy+30*math.sin(j+index))]
+                for t in range(10):
+                    x=120+t*82
+                    y=yy+math.sin(t*.9+j*.7+index*.13)*55
+                    coords.append((x,y))
+                coords.append((890,900))
+                panel(f"{k}_landscape{j}",coords,ink if j%2 else gold)
+        elif mode==4:  # full-bleed floral textile
+            for j in range(14):
+                a=j*137.508+index*19
+                r=65+(j*73)%285
+                x,y=polar(r,a)
+                flower_at(f"{k}_textile{j}",x,y,49+(j*13)%39,7+j%4)
+                branch(f"{k}_textile_leaf{j}",x,y,73,a+75,4)
+        elif mode==5:  # wood engraved concentric tree and branches
+            for j in range(24):
+                a=j*15+index*3
+                x,y=polar(65,a)
+                branch(f"{k}_tree{j}",x,y,250,a,6)
+            disk(k+"_trunk",500,500,43,ink)
+            for j in range(5):
+                a=j*72
+                x,y=polar(250,a)
+                flower_at(f"{k}_tree_bloom{j}",x,y,42,7)
+        elif mode==6:  # abstract terrazzo / resin fragments
+            for j in range(48):
+                a=(j*137.508+index*17)%360
+                r=25+(j*79+index*9)%350
+                x,y=polar(r,a)
+                size=14+(j*11+index)%35
+                panel(f"{k}_resin{j}",[(x-size,y-size*.3),(x+size*.4,y-size),
+                      (x+size,y+size*.6),(x-size*.6,y+size)],
+                      ink if j%4==0 else gold)
+        elif mode==7:  # Japanese-inspired wave and fan illustration
+            for j in range(13):
+                y=205+j*48
+                bez(f"{k}_wave{j}",f"115 {y} C 280 {y-135-index%40} 415 {y+135} 545 {y} C 680 {y-115} 770 {y+105} 885 {y}",ink if j%3==0 else gold,5)
+            disk(k+"_rising_sun",500,365,97,gold)
+        elif mode==8:  # ornate geometric wood lattice
+            for j in range(9):
+                for h in range(9):
+                    x=220+j*70;y=220+h*70
+                    if (x-500)**2+(y-500)**2>345**2:continue
+                    r=23+((j+h+index)%3)*6
+                    panel(f"{k}_lattice{j}_{h}",[(x,y-r),(x+r,y),(x,y+r),(x-r,y)],
+                          ink if (j+h)%3==0 else gold)
+                    disk(f"{k}_lattice_center{j}_{h}",x,y,4,paper)
+        else:  # paisley / folk art
+            for j in range(11):
+                a=j*360/11+index*5
+                x,y=polar(240,a)
+                petal(f"{k}_paisley{j}",x,y,155,a+25,ink if j%2 else gold)
+                petal(f"{k}_paisley_inset{j}",x,y,103,a+25,paper)
+                flower_at(f"{k}_paisley_bud{j}",x,y,35,7)
+    # Main artwork is the focus; no small repeated centre icons.
+    # Unique 100-way pairing: primary and secondary treatments vary by index.
+    primary = index % 10
+    secondary = (index // 10 + (index % 10)*3) % 10
+    fill_art("primary",primary)
+    # Secondary overlays add detail without turning every template into
+    # the same centre label. Use sparingly to preserve visual hierarchy.
+    if index % 4 == 0:
+        for j in range(5):
+            a=(j*72+index*17)%360
+            x,y=polar(315,a)
+            flower_at(f"accent_bloom{j}",x,y,35,7)
+    elif index % 4 == 1:
+        for j in range(7):
+            a=(j*360/7+index*9)%360
+            x,y=polar(312,a)
+            petal(f"accent_engraving{j}",x,y,62,a+90,ink)
+    elif index % 4 == 2:
+        for j in range(9):
+            a=(j*40+index*13)%360
+            x,y=polar(320,a)
+            panel(f"accent_mosaic{j}",[(x,y-18),(x+18,y),(x,y+18),(x-18,y)],gold)
     else:
-        motif_at("large_centerpiece",500,475,1.25)
-        add("title_panel","rect",left=200,top=625,width=600,height=155,fill=paper)
-        line("panel_top",270,639,730,639,gold,3)
-        txt("title",heading,230,659,540,56,ink,"Georgia","bold",65)
-        txt("caption",caption,300,728,400,21,gold,spacing=95)
-    txt("edition",f"ARTWORK {index+1:03d}",385,842,230,17,ink,spacing=70)
+        for j in range(7):
+            a=(j*360/7+index*11)%360
+            x,y=polar(285,a)
+            branch(f"accent_vine{j}",x,y,60,a+125,4)
     return objects
