@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import io
 import math
+from PIL import Image, ImageDraw
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -166,11 +167,11 @@ def make_artwork(index):
     elif style=="darkmarble":
         for j in range(8):
             add(rect("gold-vein-"+str(j),125+j*100,110+(j%2)*105,3,220,accent))
-        add(rect("square-frame",220,280,560,440,"transparent",accent,4))
+        ring("gold-round-frame",355,accent,4)
         heading(390,88);sub(525,48)
     elif style=="eucalyptus":
         sprig("euca-left",165,260);sprig("euca-right",835,260,-1)
-        add(rect("sage-frame",220,305,560,390,"transparent",accent,4))
+        ring("sage-round-frame",355,accent,3)
         heading(410,73);sub(520,48)
     elif style=="mountain":
         disk("mist-sun",720,255,95,"#E5DED1")
@@ -212,6 +213,13 @@ def make_artwork(index):
             disk("variant-dot-"+str(x),x,790,9,accent)
     elif variation==4:
         ring("variant-inner-hairline",440,ink,2)
+    for ob in o:
+        if ob.get("type") == "textbox":
+            key=ob.get("id","")
+            if key.startswith(("title-","minimal-title-","coffee-script-","coast-one-","coast-two-","script-one-","script-two-","sunset-script-","sunset-subtitle-","mountain-script-")):
+                ob["fontSize"]=max(100,float(ob.get("fontSize",70)))
+            elif key.startswith(("subtitle-","minimal-subtitle-")):
+                ob["fontSize"]=max(45,float(ob.get("fontSize",30)))
     return o,category
 
 class Command(BaseCommand):
@@ -240,10 +248,16 @@ class Command(BaseCommand):
                 page["objects"]=copy.deepcopy(objects)
             for page in data.get("adminPages",[]):
                 page["objects"]=copy.deepcopy(objects)
-            data["generator"]="zenvibe-coaster-reference-24-v1"
+            data["generator"]="zenvibe-coaster-reference-24-v2"
             data["artworkCategory"]=category
             data["artworkReferenceIndex"]=i%24+1
             image=render(objects,opts["shape"])
+            if opts["shape"]=="circle":
+                rgba=image.convert("RGBA")
+                mask=Image.new("L",rgba.size,0)
+                ImageDraw.Draw(mask).ellipse((1,1,rgba.width-2,rgba.height-2),fill=255)
+                rgba.putalpha(mask)
+                image=rgba
             buffer=io.BytesIO()
             image.save(buffer,format="PNG",optimize=True)
             prepared.append((t,data,buffer.getvalue(),category))
@@ -255,7 +269,7 @@ class Command(BaseCommand):
             for i,(t,data,png,category) in enumerate(prepared):
                 t.json_data=data
                 t.name=("%03d | %s"%(i+1,category))[:140]
-                t.preview.save("coaster-reference-%s-%03d.png"%(t.pk,i+1),
+                t.preview.save("coaster-elegant-v2-%s-%03d.png"%(t.pk,i+1),
                                ContentFile(png),save=False)
                 t.save(update_fields=["json_data","name","preview"])
         self.stdout.write(self.style.SUCCESS("Installed 100 reference-inspired editable coasters"))
