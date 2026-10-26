@@ -136,13 +136,13 @@ def make_artwork(index):
             disk("chip-"+str(j),x,y,9+(j%3)*7,accent if j%2 else ink)
         heading(370,66);sub(490,59)
     elif style=="minimal":
-        sprig("sage",200,315)
+        sprig("sage",115,285)
         text("minimal-title",title,365,390,475,70)
         text("minimal-subtitle",subtitle,365,495,475,54)
     elif style=="coffee":
-        disk("coffee-cup",655,330,175,"#E9D9C7")
-        disk("espresso",655,330,137,"#694329")
-        disk("latte-heart",650,315,49,"#E8D5B7")
+        disk("coffee-cup",715,245,105,"#E9D9C7")
+        disk("espresso",715,245,79,"#694329")
+        disk("latte-heart",715,245,29,"#E8D5B7")
         for j in range(7):
             add(ellipse("bean-"+str(j),90+j*100,720+(j%2)*25,17,31,accent,j*14))
         text("coffee-script",title,125,350,750,150,ink,"Great Vibes")
@@ -245,7 +245,7 @@ def align_text_objects(objects):
     items=sorted(titles+subs,key=lambda ob:float(ob.get("top",0)))
     if not items:
         return
-    max_width=640
+    max_width=600
     for ob in items:
         value=str(ob.get("text",""))
         family=str(ob.get("fontFamily",""))
@@ -264,7 +264,7 @@ def align_text_objects(objects):
             size=max(22,size*max_width/measured*.93)
         ob["fontSize"]=round(size,2)
         ob["width"]=max_width
-        ob["left"]=180
+        ob["left"]=200
         ob["textAlign"]="center"
         ob["originX"]="left"
         ob["originY"]="top"
@@ -275,6 +275,15 @@ def align_text_objects(objects):
     for ob in items:
         ob["top"]=round(y,2)
         y+=float(ob["fontSize"])*1.32
+    # Style-specific safe positioning prevents decoration from colliding with copy.
+    ids={str(o.get("id","")) for o in objects}
+    if "coffee-cup" in ids:
+        for ob in items:
+            ob["top"]=round(float(ob["top"])+80,2)
+    if "sage-stem" in ids:
+        for ob in items:
+            ob["left"]=255
+            ob["width"]=490
 
 class Command(BaseCommand):
     help="Replace 100 existing coaster artworks using 24 supplied design directions."
