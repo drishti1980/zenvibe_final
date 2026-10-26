@@ -14,6 +14,10 @@ NAMES=["BOTANICAL HOUSE","ATELIER NO. 8","HERITAGE FLORAL","THE GARDEN",
        "THE MONOGRAM","SIGNATURE COLLECTION"]
 def safe_artwork(product,index):
     if not 0 <= index < 100: raise ValueError("index must be 0..99")
+    # Once curated SVGs are installed, never fall back to recycled procedural art.
+    from .coaster_curated_svg import ART_DIR, load_curated_artwork
+    if ART_DIR.is_dir():
+        return load_curated_artwork(index)
     theme=index%10
     variation=index//10
     paper,ink,gold=PALETTES[(theme+variation*3)%10]
