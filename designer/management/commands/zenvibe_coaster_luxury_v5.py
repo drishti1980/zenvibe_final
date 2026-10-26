@@ -75,174 +75,144 @@ def safe_artwork(product,index):
         for k in range(4):
             petal(f"{key}_bud{k}",x+(k-1.5)*45*s,y+(18 if k%2 else -18)*s,21*s,90 if k%2 else 270,ink)
     add("canvas_paper","rect",left=0,top=0,width=1000,height=1000,fill=paper)
-    # Each family has a distinct visual architecture; the variations alter motif
-    # geometry and placement, not just palette. The bleed background is full-size.
-    if theme==0: # engraved botanical wreath
-        n=7+variation
-        for j in range(n):
-            a=j*360/n+variation*8
-            x,y=polar(298,a)
-            branch(f"engraved_branch{j}",x,y,75,a+125,4+variation%3)
-        frame("botanical_keyline",358,2)
-    elif theme==1: # architectural art deco fan
-        for sector in range(4+variation%3):
-            angle=sector*360/(4+variation%3)+variation*6
+    # V7: 100 separate compositions: 25 distinct subjects, four layouts each.
+    # No ring/dot template families. Text hierarchy varies by subject/layout.
+    # The individual decorative pieces are editable Fabric objects.
+    SUBJECTS = [
+        ("WILD IRIS","BOTANICAL ATELIER","floral"),("THE VOW","WEDDING COLLECTION","ribbon"),
+        ("MIDNIGHT JAZZ","THE LOUNGE","music"),("CASA AZUL","CERAMIC STUDIO","tile"),
+        ("GOLDEN HOUR","THE COAST","sun"),("THE ORCHARD","HARVEST HOUSE","fruit"),
+        ("NORTH STAR","THE EXPLORER","star"),("FLEUR DE LIS","MAISON ROYALE","fleur"),
+        ("THE COFFEE CLUB","EST. 2026","coffee"),("THE OLIVE GROVE","MEDITERRANEAN","olive"),
+        ("NO. 27","ART DECO EDITION","deco"),("THE PALM HOUSE","TROPICAL BOTANICS","palm"),
+        ("LOVE LETTER","A CELEBRATION","heart"),("THE GARDEN PARTY","SUMMER EDITION","butterfly"),
+        ("SAIL AWAY","THE MARINA","sail"),("THE BEEKEEPER","HONEY & CO.","bee"),
+        ("MOUNTAIN AIR","WILDERNESS CLUB","mountain"),("THE PEONY","FLORAL SOCIETY","peony"),
+        ("VINTAGE CELLAR","RESERVE COLLECTION","grape"),("THE ARTIST","CREATIVE STUDIO","brush"),
+        ("THE HIGHLANDS","HERITAGE EDITION","thistle"),("THE MOON ROOM","NIGHT COLLECTION","moon"),
+        ("LITTLE PARIS","CAFE SOCIETY","tower"),("THE KEEPSAKE","FOREVER & ALWAYS","key"),
+        ("WILD MEADOW","NATURE COLLECTION","daisy"),
+    ]
+    subject = index % 25
+    layout = index // 25
+    heading, caption, motif = SUBJECTS[subject]
+    # Each subject has its own background and contrast pairing.
+    paper, ink, gold = PALETTES[(subject*7+layout*3)%10]
+    objects.clear()
+    add("canvas_paper","rect",left=0,top=0,width=1000,height=1000,fill=paper)
+    def bez(k, pts, color=ink, sw=4):
+        path(k,"M "+pts,"transparent",color,sw)
+    def flower_at(k,x,y,r,n=7):
+        for t in range(n):
+            a=t*360/n
+            petal(f"{k}_petal{t}",x,y,r,a,gold if t%2 else ink)
+        disk(k+"_center",x,y,r*.13,paper,ink,2)
+    def motif_at(k,x,y,s):
+        if motif in ("floral","peony","daisy"):
+            flower_at(k,x,y,85*s,9 if motif=="peony" else 7)
+            for j in range(3):
+                branch(f"{k}_stem{j}",x+(j-1)*30*s,y+35*s,85*s,70+j*20,4)
+        elif motif in ("olive","palm","thistle"):
+            for j in range(4):
+                branch(f"{k}_branch{j}",x-80*s+j*53*s,y+70*s,160*s,230+j*24,7)
+            if motif=="thistle": flower_at(k+"_head",x,y-50*s,70*s,11)
+        elif motif in ("tile","deco","fleur"):
+            for j in range(6):
+                a=j*60
+                px,py=x+110*s*math.cos(math.radians(a)),y+110*s*math.sin(math.radians(a))
+                petal(f"{k}_tile{j}",px,py,100*s,a+90,ink if j%2 else gold)
+            disk(k+"_center",x,y,30*s,gold)
+        elif motif in ("sun","star","moon"):
+            if motif=="moon":
+                disk(k+"_moon",x,y,105*s,ink)
+                disk(k+"_cutout",x+42*s,y-24*s,94*s,paper)
+            else:
+                disk(k+"_core",x,y,65*s,gold)
+            for j in range(12 if motif=="sun" else 8):
+                a=j*(30 if motif=="sun" else 45)
+                px=x+95*s*math.cos(math.radians(a));py=y+95*s*math.sin(math.radians(a))
+                qx=x+150*s*math.cos(math.radians(a));qy=y+150*s*math.sin(math.radians(a))
+                line(f"{k}_ray{j}",px,py,qx,qy,ink,3)
+        elif motif in ("fruit","grape"):
             for j in range(9):
-                a=angle-24+j*6
-                x,y=polar(218,a);xx,yy=polar(345,a)
-                line(f"fan{sector}_ray{j}",x,y,xx,yy,gold if j%2 else ink,2.7)
-            x,y=polar(328,angle)
-            medallion(f"fan{sector}_jewel",x,y,16)
-        frame("deco_border",362,2)
-    elif theme==2: # tile mosaic, actual interlocking diamonds
-        for ring in range(3):
-            n=16+ring*8+variation%4*4
-            radius=226+ring*58
-            for j in range(n):
-                a=360*j/n+variation*7
-                x,y=polar(radius,a)
-                rr=11+ring*3
-                path(f"tile{ring}_{j}",f"M {x:.1f} {y-rr:.1f} L {x+rr:.1f} {y:.1f} L {x:.1f} {y+rr:.1f} L {x-rr:.1f} {y:.1f} Z",ink if (j+ring)%3==0 else gold)
-        frame("tile_border",364,1)
-    elif theme==3: # oversized painted flowers, asymmetrical arrangement
-        positions=[(265,280,80),(730,310,94),(285,720,76),(748,730,83)]
-        for j,(x,y,r) in enumerate(positions):
-            shift=variation*6*(1 if j%2 else -1)
-            flower(f"painted_bloom{j}",x+shift,y-shift,r,7+(j+variation)%3,variation*13)
-            branch(f"painted_sprig{j}",x+shift,y-shift,r*.9,45+j*90,4)
-    elif theme==4: # blue-and-cream porcelain scrollwork
-        frame("porcelain_rim",360,3)
-        for j in range(6+variation%3):
-            a=j*360/(6+variation%3)+variation*9
-            x,y=polar(290,a)
-            flower(f"porcelain_rosette{j}",x,y,49,6,a)
-            branch(f"porcelain_vine{j}",x,y,68,a+145,4)
-    elif theme==5: # intricate heritage engraving, corner clusters
-        frame("engraving_frame",361,2)
-        for j in range(4):
-            a=45+j*90+variation*3
-            x,y=polar(298,a)
-            medallion(f"engraving_crest{j}",x,y,39)
-            branch(f"engraving_scroll{j}",x,y,79,a+90,5)
-        flourish("engraving_top",500,193,.65)
-        flourish("engraving_bottom",500,807,.65,-1)
-    elif theme==6: # ornate radial paisley-inspired petals
-        n=8+variation%5
-        for j in range(n):
-            a=j*360/n+variation*11
-            x,y=polar(226,a)
-            petal(f"royal_outer{j}",x,y,117,a,gold)
-            petal(f"royal_inlay{j}",x,y,86,a,ink)
-            x2,y2=polar(334,a)
-            disk(f"royal_pearl{j}",x2,y2,7,paper,ink,2)
-        frame("royal_rim",362,1)
-    elif theme==7: # folk art birds and flora, using editable silhouettes
-        for j in range(4+variation%3):
-            a=j*360/(4+variation%3)+variation*8
-            x,y=polar(300,a)
-            flower(f"folk_daisy{j}",x,y,49,8,a)
-            branch(f"folk_vine{j}",x,y,82,a+165,5)
-        for j in range(2):
-            x=245+j*510;y=490+(-1)**j*42
-            path(f"bird{j}",f"M {x-48} {y} Q {x-10} {y-58} {x+31} {y-4} Q {x+8} {y+41} {x-48} {y} Z",ink)
-            petal(f"bird_wing{j}",x-2,y-4,46,25 if j else 155,gold)
-            disk(f"bird_eye{j}",x+13,y-12,4,paper)
-    elif theme==8: # refined monogram-style corner ornamentation
-        frame("monogram_outline",362,2)
-        for j in range(4):
-            a=45+j*90
-            x,y=polar(285,a)
-            flourish(f"monogram_flourish{j}",x,y,.48,1 if j%2 else -1)
-            medallion(f"monogram_seal{j}",x,y,24)
-    else: # hand-drawn garden garland, detailed leaves and berries
-        for j in range(12+variation):
-            a=j*360/(12+variation)+variation*3
-            x,y=polar(300,a)
-            branch(f"garland_branch{j}",x,y,56,a+130,4)
-            if j%3==0: flower(f"garland_flower{j}",x,y,40,6,a)
-        frame("garland_keyline",360,1)
-    # Ten authored layout directions for every art family. Unlike the previous
-    # version these change the major composition and silhouette, not only
-    # counts, rotations or colour. All objects are editable Fabric primitives.
-    if variation == 0:  # grand floral corners
-        for j,(x,y,a) in enumerate(((277,282,40),(720,718,220))):
-            flower(f"composition_corner_{j}",x,y,66,9,a)
-            branch(f"composition_sprig_{j}",x,y,91,a+155,6)
-    elif variation == 1:  # asymmetric left botanical engraving
-        for j in range(5):
-            y=275+j*111
-            branch(f"composition_left_{j}",228,y,104,(-45+j*13),6)
-        flower("composition_top_bloom",500,235,80,11,10)
-    elif variation == 2:  # architectural top-and-bottom flourishes
-        flourish("composition_top_scroll",500,224,1.04)
-        flourish("composition_bottom_scroll",500,776,1.04,-1)
-        for j in range(5):
-            x=325+j*88
-            petal(f"composition_upper_leaf{j}",x,277,49,270,gold)
-            petal(f"composition_lower_leaf{j}",x,723,49,90,ink)
-    elif variation == 3:  # porcelain floral tile corners
-        for j,(x,y) in enumerate(((270,280),(730,280),(270,720),(730,720))):
-            flower(f"composition_tile_{j}",x,y,64,8,j*18)
-            disk(f"composition_tile_dot_{j}",x,y,10,paper,ink,2)
-    elif variation == 4:  # geometric diagonal fan with jewel ends
-        for j in range(9):
-            x=205+j*73
-            line(f"composition_fan_top_{j}",x,210,500,315,gold if j%2 else ink,2)
-            line(f"composition_fan_bottom_{j}",x,790,500,685,gold if j%2 else ink,2)
-        medallion("composition_crown",500,216,36)
-        medallion("composition_foot",500,784,36)
-    elif variation == 5:  # illustrated right-side cascading garland
-        for j in range(5):
-            y=255+j*117
-            branch(f"composition_right_{j}",775,y,96,160+j*8,5)
-            if j%2==0:
-                flower(f"composition_right_bloom_{j}",752,y,52,7,j*13)
-        flourish("composition_left_scroll",270,500,.55)
-    elif variation == 6:  # four ornamental medallions, not plain rings
-        for j,(x,y) in enumerate(((500,212),(786,500),(500,788),(214,500))):
-            medallion(f"composition_crest_{j}",x,y,52)
-        for j in range(4):
-            a=45+j*90
-            x,y=polar(306,a)
-            petal(f"composition_diagonal_{j}",x,y,72,a+180,gold)
-    elif variation == 7:  # airy flower arch
-        for j in range(7):
-            a=205+j*21
-            x,y=polar(315,a)
-            flower(f"composition_arch_{j}",x,y,45+(j%3)*6,7,j*9)
-        flourish("composition_lower_calligraphy",500,750,.9)
-    elif variation == 8:  # fine engraved sunburst and scalloped edge
-        for j in range(24):
-            a=j*15
-            x,y=polar(290,a)
-            xx,yy=polar(353,a)
-            line(f"composition_engraved_ray_{j}",x,y,xx,yy,ink if j%3==0 else gold,2)
-        for j in range(12):
-            a=j*30
-            x,y=polar(344,a)
-            petal(f"composition_scallop_{j}",x,y,34,a+180,gold)
-    else:  # grand heirloom garden, six large illustrated roses
-        for j in range(6):
-            a=j*60+30
-            x,y=polar(295,a)
-            flower(f"composition_rose_{j}",x,y,70,10,j*13)
-            branch(f"composition_rose_branch_{j}",x,y,70,a+145,5)
-    # Edition number is genuinely editable and differentiates all 100 records.
-    # Type hierarchy is a deliberate editorial element, not a repeated central
-    # badge. Different families use different brand treatments.
-    if theme in (0,2,4,6,9):
-        disk("ivory_letterpress_field",500,500,184,paper)
-        txt("brand","YOUR BRAND",331,465,338,51,ink,weight="bold",spacing=65)
-        txt("subtitle",NAMES[theme],335,543,330,19,gold,spacing=110)
-        line("fine_rule",407,532,593,532,gold,2)
-    elif theme in (1,5,8):
-        add("architectural_label","rect",left=309,top=432,width=382,height=144,fill=paper)
-        line("label_top",342,444,658,444,gold,3)
-        txt("brand","YOUR BRAND",330,468,340,52,ink,weight="bold",spacing=55)
-        txt("subtitle",NAMES[theme],343,543,314,18,gold,spacing=100)
+                px=x+((j%3)-1)*48*s;py=y+(j//3-1)*50*s
+                disk(f"{k}_fruit{j}",px,py,29*s,ink if j%2 else gold)
+            branch(k+"_leaf",x-40*s,y-105*s,120*s,315,6)
+        elif motif in ("coffee","bee"):
+            if motif=="coffee":
+                disk(k+"_saucer",x,y+50*s,100*s,gold)
+                disk(k+"_cup",x,y+40*s,77*s,paper,ink,8)
+                for j in range(3):
+                    bez(f"{k}_steam{j}",f"{x-45*s+j*40*s:.1f} {y-55*s:.1f} Q {x-70*s+j*40*s:.1f} {y-110*s:.1f} {x-35*s+j*40*s:.1f} {y-145*s:.1f}",ink,5)
+            else:
+                oval(k+"_body",x,y,36*s,70*s,ink)
+                for j in (-1,1):
+                    oval(f"{k}_wing{j}",x+j*62*s,y-36*s,59*s,37*s,gold,j*25)
+                for j in range(4):
+                    line(f"{k}_stripe{j}",x-25*s,y-35*s+j*23*s,x+25*s,y-35*s+j*23*s,paper,5)
+        elif motif in ("mountain","sail","tower"):
+            if motif=="mountain":
+                for j in range(3):
+                    dx=(j-1)*95*s
+                    path(f"{k}_peak{j}",f"M {x+dx-110*s:.1f} {y+100*s:.1f} L {x+dx:.1f} {y-115*s:.1f} L {x+dx+110*s:.1f} {y+100*s:.1f} Z",gold if j==1 else ink)
+            elif motif=="sail":
+                path(k+"_sail",f"M {x:.1f} {y-160*s:.1f} L {x:.1f} {y+90*s:.1f} L {x+120*s:.1f} {y+90*s:.1f} Z",gold)
+                line(k+"_mast",x,y-170*s,x,y+130*s,ink,7)
+                bez(k+"_hull",f"{x-135*s:.1f} {y+115*s:.1f} Q {x:.1f} {y+190*s:.1f} {x+145*s:.1f} {y+115*s:.1f}",ink,10)
+            else:
+                for j in range(4):
+                    yy=y-120*s+j*68*s
+                    line(f"{k}_floor{j}",x-(70-j*12)*s,yy,x+(70-j*12)*s,yy,ink,9)
+                line(k+"_towerleft",x-72*s,y+145*s,x-24*s,y-145*s,gold,8)
+                line(k+"_towerright",x+72*s,y+145*s,x+24*s,y-145*s,gold,8)
+        elif motif in ("ribbon","heart","key"):
+            if motif=="heart":
+                path(k+"_heart",f"M {x:.1f} {y+115*s:.1f} C {x-240*s:.1f} {y-20*s:.1f} {x-100*s:.1f} {y-180*s:.1f} {x:.1f} {y-80*s:.1f} C {x+100*s:.1f} {y-180*s:.1f} {x+240*s:.1f} {y-20*s:.1f} {x:.1f} {y+115*s:.1f} Z",gold)
+            elif motif=="key":
+                disk(k+"_bow",x-70*s,y-45*s,67*s,"transparent",ink,11)
+                line(k+"_shaft",x-20*s,y+3*s,x+140*s,y+140*s,gold,16)
+                line(k+"_tooth",x+110*s,y+115*s,x+150*s,y+65*s,ink,11)
+            else:
+                for j in range(5):
+                    bez(f"{k}_ribbon{j}",f"{x-145*s:.1f} {y+(j-2)*25*s:.1f} C {x-40*s:.1f} {y-115*s+j*12*s:.1f} {x+45*s:.1f} {y+120*s-j*12*s:.1f} {x+145*s:.1f} {y+(j-2)*25*s:.1f}",gold if j%2 else ink,5)
+        elif motif in ("butterfly","music","brush"):
+            if motif=="butterfly":
+                for side in (-1,1):
+                    oval(f"{k}_wing{side}a",x+side*70*s,y-55*s,72*s,93*s,gold,side*25)
+                    oval(f"{k}_wing{side}b",x+side*65*s,y+50*s,56*s,64*s,ink,side*20)
+                oval(k+"_body",x,y,12*s,105*s,ink)
+            elif motif=="music":
+                for j in range(3):
+                    dx=(j-1)*90*s
+                    disk(f"{k}_note{j}",x+dx,y+75*s,29*s,ink)
+                    line(f"{k}_staff{j}",x+dx+25*s,y+75*s,x+dx+25*s,y-115*s,gold,8)
+            else:
+                for j in range(5):
+                    a=j*36
+                    petal(f"{k}_stroke{j}",x-85*s+j*42*s,y-30*s,160*s,a,gold if j%2 else ink)
+        else:
+            flower_at(k,x,y,90*s,8)
+    # Four substantially different editorial structures for each illustrated subject.
+    if layout==0:
+        motif_at("hero",500,315,1.05)
+        txt("title",heading,150,548,700,65,ink,"Georgia","bold",80)
+        txt("caption",caption,220,645,560,26,gold,spacing=145)
+        line("bottom_rule",340,708,660,708,ink,3)
+    elif layout==1:
+        motif_at("left_illustration",330,480,.93)
+        txt("title",heading,520,350,345,58,ink,"Georgia","bold",25)
+        txt("caption",caption,525,545,325,23,gold,spacing=80)
+        line("vertical_rule",505,330,505,675,gold,4)
+    elif layout==2:
+        motif_at("top_right",665,315,.68)
+        motif_at("lower_left",320,685,.57)
+        txt("title",heading,195,445,610,63,ink,"Georgia","bold",70)
+        txt("caption",caption,280,548,440,24,gold,spacing=90)
     else:
-        add("botanical_label","rect",left=312,top=435,width=376,height=139,fill=paper)
-        txt("brand","YOUR BRAND",333,462,334,52,ink,weight="bold",spacing=60)
-        flourish("label_flourish",500,542,.52)
-    txt("edition",f"NO. {index+1:03d}",405,602,190,15,gold,spacing=110)
+        motif_at("large_centerpiece",500,475,1.25)
+        add("title_panel","rect",left=200,top=625,width=600,height=155,fill=paper)
+        line("panel_top",270,639,730,639,gold,3)
+        txt("title",heading,230,659,540,56,ink,"Georgia","bold",65)
+        txt("caption",caption,300,728,400,21,gold,spacing=95)
+    txt("edition",f"ARTWORK {index+1:03d}",385,842,230,17,ink,spacing=70)
     return objects
