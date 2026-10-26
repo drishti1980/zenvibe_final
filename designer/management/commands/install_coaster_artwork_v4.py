@@ -168,16 +168,16 @@ def generate(index):
         flower(400,400,38,accent)
         # Clear the center for readable editable lettering.
         d.ellipse((248,248,552,552),fill=rgba(bg,255))
-    # Reserve a central text zone. A translucent center medallion separates
-    # type from ornamental illustrations, except for scenic designs.
-    if style not in (6,16,20,21,9,8,11):
-        d.rounded_rectangle((178,313,622,514),radius=65,
-                            fill=rgba(bg,255))
-        if style in (0,13,19):d.rounded_rectangle((181,316,619,511),radius=64,outline=rgba(accent,185),width=2)
-    # Mask a genuinely clear central lettering area after all ornamentation.
-    # Drawing the panel last prevents branches and veins crossing the title.
+    # A feathered central clearing replaces the old opaque rectangles.
+    # The previous panels created obvious hard-edged cut-outs through every
+    # flower, leaf, coffee cup and marble vein.
     if style not in (6,16,20):
-        d.rounded_rectangle((166,235,634,575),radius=52,fill=rgba(bg,255))
+        clear=Image.new("L",(SIZE,SIZE),0)
+        md=ImageDraw.Draw(clear)
+        md.ellipse((165,238,635,562),fill=255)
+        clear=clear.filter(ImageFilter.GaussianBlur(55))
+        smooth=Image.new("RGBA",(SIZE,SIZE),rgba(bg))
+        im=Image.composite(smooth,im,clear)
     return im,title,subtitle,ink,bg,theme
 
 def layout_text(title,subtitle,color):
@@ -227,7 +227,7 @@ class Command(BaseCommand):
             texts=layout_text(title,subtitle,ink)
             data=copy.deepcopy(t.json_data or {})
             data["width"]=1000;data["height"]=1000
-            data["generator"]="zenvibe-coaster-artwork-v7-safe-title"
+            data["generator"]="zenvibe-coaster-artwork-v8-feathered"
             data["artworkCategory"]=theme
             data["pages"]=[{"width":1000,"height":1000,"objects":[obj]+texts}]
             data["adminPages"]=copy.deepcopy(data["pages"])
@@ -249,6 +249,6 @@ class Command(BaseCommand):
             for i,(t,data,png,theme) in enumerate(prepared):
                 t.json_data=data
                 t.name=f"{i+1:03d} | {theme}"
-                t.preview.save(f"coaster-artwork-v6-{t.pk}.png",ContentFile(png),save=False)
+                t.preview.save(f"coaster-artwork-v8-{t.pk}.png",ContentFile(png),save=False)
                 t.save(update_fields=["json_data","name","preview"])
         self.stdout.write(self.style.SUCCESS("Installed 100 artwork-led coaster templates"))
