@@ -8,7 +8,6 @@ are preserved. Artwork is deliberately rebuilt only on explicit --apply.
 """
 import copy
 import json
-import math
 from datetime import datetime
 from pathlib import Path
 
@@ -16,9 +15,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import DesignTemplate
-from designer.management.commands.seed_promotional_product_templates import (
-    GENERATOR, build_coaster,
-)
+from designer.management.commands.seed_promotional_product_templates import build_coaster
 
 
 def safe_artwork(product, index):
@@ -62,17 +59,29 @@ class Command(BaseCommand):
         parser.add_argument("--product-id", type=int)
         parser.add_argument("--dry-run", action="store_true")
         parser.add_argument("--apply", action="store_true")
+        parser.add_argument("--confirm-replace-artwork", action="store_true",
+                            help="Required to replace generated template artwork")
 
     def handle(self, *args, **options):
         if options["apply"] == options["dry_run"]:
             raise CommandError("Specify exactly one of --dry-run or --apply")
 
+        # Generator versions differ: existing coaster records use
+        # zenvibe-promotional-luxury-v26 rather than the seed constant.
+        # Match known generated coaster records without including manual designs.
         qs = DesignTemplate.objects.select_related("product").filter(
             product__name__icontains="coaster", is_active=True,
-            json_data__generator=GENERATOR,
+            json_data__generator__startswith="zenvibe-promotional-",
         ).order_by("product_id", "id")
         if options["product_id"]:
             qs = qs.filter(product_id=options["product_id"])
+        if options["apply"] and not options["product_id"]:
+            raise CommandError("--apply requires --product-id to limit the change.")
+        if options["apply"] and not options["confirm_replace_artwork"]:
+            raise CommandError(
+                "This operation replaces generated artwork. Review --dry-run, then "
+                "pass --confirm-replace-artwork to proceed."
+            )
         templates = list(qs)
         if not templates:
             raise CommandError("No matching generated coaster templates found.")
