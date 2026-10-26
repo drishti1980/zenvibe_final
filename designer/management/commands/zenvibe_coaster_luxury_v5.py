@@ -16,8 +16,8 @@ LABELS = ['BOTANICAL','ART DECO','MOSAIC','TERRAZZO','FLORAL','MARITIME','FOLK A
 def safe_artwork(product, index):
     if not 0 <= index < 100:
         raise ValueError('index must be 0..99')
-    family = index // 10  # ten distinct art families
-    composition = index % 10  # ten distinct compositions in each family
+    family = index % 10  # alternate artwork families in adjacent gallery cards
+    composition = index // 10  # ten compositions within each family
     rng = random.Random(770001 + index * 9187)
     ink, paper, accent = INKS[family], PAPERS[family], ACCENTS[family]
     obj = []
@@ -140,21 +140,63 @@ def safe_artwork(product, index):
             circle(f'ornament_cut_{j}',x,y,9,paper)
             x2,y2=polar(500,500,339,a)
             ellipse(f'ornament_tip_{j}',x2,y2,7,15,ink,a)
-    # Distinct layout treatments. All essential type is within 190px radius.
-    plaque=paper
-    if composition in (0,3,6,9):
-        circle('central_plaque',500,500,206,plaque,accent,4)
-        circle('plaque_inset',500,500,193,'transparent',ink,2)
-    elif composition in (1,4,7):
-        rect('central_plaque',298,411,404,178,plaque)
-        line('plaque_top',328,414,672,414,accent,5)
-        line('plaque_bottom',328,585,672,585,accent,5)
+    # Editorial branding treatments deliberately vary by family.
+    # No repeated circular plaque. Artwork stays prominent.
+    # Every important text box is inside the circle's central safe zone.
+    if family == 0:
+        rect('letterpress_label',312,427,376,154,paper)
+        text('brand','YOUR BRAND',329,455,342,52,ink)
+        line('label_rule',388,521,612,521,accent,3)
+        text('collection','BOTANICAL ATELIER',349,545,302,18,ink)
+    elif family == 1:
+        rect('deco_nameplate',305,430,390,145,paper)
+        line('deco_nameplate_top',335,440,665,440,accent,5)
+        text('brand','YOUR BRAND',324,465,352,54,ink)
+        text('collection','THE ART DECO EDITION',340,539,320,17,ink)
+    elif family == 2:
+        rect('mosaic_nameplate',295,437,410,131,paper)
+        text('brand','YOUR BRAND',310,453,380,57,ink)
+        text('collection','MOSAIC STUDIO',330,529,340,20,accent)
+    elif family == 3:
+        rect('terrazzo_nameplate',307,437,386,132,paper)
+        text('brand','YOUR BRAND',322,453,356,57,ink)
+        text('collection','TERRAZZO COLLECTION',340,530,320,18,accent)
+    elif family == 4:
+        circle('floral_centre',500,500,179,paper)
+        text('brand','YOUR BRAND',332,451,336,52,ink)
+        line('floral_rule',401,516,599,516,accent,3)
+        text('collection','FLORAL GARDEN',343,542,314,19,ink)
+    elif family == 5:
+        rect('maritime_nameplate',320,420,360,161,paper)
+        text('collection','COASTAL STUDIO',352,440,296,19,accent)
+        text('brand','YOUR BRAND',331,487,338,51,ink)
+        line('maritime_rule',401,556,599,556,accent,3)
+    elif family == 6:
+        rect('folk_nameplate',304,425,392,157,paper)
+        text('brand','YOUR BRAND',319,456,362,53,ink)
+        line('folk_rule',379,519,621,519,accent,4)
+        text('collection','FOLK ART EDITION',345,546,310,18,ink)
+    elif family == 7:
+        circle('heritage_nameplate',500,500,184,paper)
+        text('collection','EST. 2026',370,431,260,19,accent)
+        text('brand','YOUR BRAND',331,479,338,52,ink)
+        text('heritage_footer','HERITAGE COLLECTION',337,549,326,17,accent)
+    elif family == 8:
+        rect('abstract_nameplate',292,435,416,133,paper)
+        rect('abstract_edge',292,435,9,133,accent)
+        text('brand','YOUR BRAND',317,452,362,55,ink)
+        text('collection','MODERN ABSTRACT',345,531,310,19,accent)
     else:
-        circle('central_plaque',500,500,210,plaque)
-        for j in range(6):
-            x,y=polar(500,500,198,rotation+j*60)
-            circle(f'plaque_bead_{j}',x,y,5,accent)
-    text('brand','YOUR BRAND',316,454,368,53,ink)
-    line('brand_rule',395,523,605,523,accent,4)
-    text('collection',LABELS[family],338,549,324,21,ink)
+        circle('ornament_centre',500,500,182,paper)
+        text('brand','YOUR BRAND',326,459,348,55,ink)
+        line('ornament_rule',406,522,594,522,accent,3)
+        text('collection','ORNAMENTAL EDITION',340,550,320,18,ink)
+    # Each of the ten compositions has a distinct signature ornament
+    # in the remaining negative space, without obscuring the label.
+    if composition in (1,3,5,7,9):
+        for j in range(3):
+            x=455+j*45
+            circle(f'signature_gem_{j}',x,620,4+j%2,accent)
+    elif composition in (2,4,6,8):
+        line('signature_stroke',440,618,560,618,accent,2)
     return obj
