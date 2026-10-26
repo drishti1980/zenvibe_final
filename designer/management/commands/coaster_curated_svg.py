@@ -43,32 +43,56 @@ def _colour(style, key, fallback="transparent"):
     return value
 
 def _absolute_path(data):
-    """Expand the M/q SVG subset used by curated coaster motifs for previews."""
-    tokens = re.findall(r"[MmLlQqCcZz]|[-+]?(?:\d*\.)?\d+", data)
-    out = []
+    """Normalize SVG M/L/H/V/Q/C/Z paths, including implicit repeated operands.
+
+    SVG relative control points are relative to the command start, not to
+    preceding control points. The original parser mispositioned curved art.
+    """
+    tokens = re.findall(r"[MmLlHhVvQqCcZz]|[-+]?(?:\\d*\\.)?\\d+(?:[eE][-+]?\\d+)?", data)
+    arity = {"M": 2, "L": 2, "H": 1, "V": 1, "Q": 4, "C": 6, "Z": 0}
+    result = []
     i = 0
+    cmd = None
     current = (0.0, 0.0)
+    start = (0.0, 0.0)
     while i < len(tokens):
-        cmd = tokens[i]
-        i += 1
-        count = {"M": 2, "m": 2, "L": 2, "l": 2,
-                 "Q": 4, "q": 4, "C": 6, "c": 6, "Z": 0, "z": 0}.get(cmd)
-        if count is None:
-            raise ValueError(f"Unsupported SVG path command: {cmd}")
-        if count == 0:
-            out.append("Z")
+        if tokens[i].isalpha():
+            cmd = tokens[i]
+            i += 1
+        if cmd is None:
+            raise ValueError("SVG path is missing a command")
+        upper = cmd.upper()
+        if upper == "Z":
+            result.append("Z")
+            current = start
+            cmd = None
             continue
-        values = [float(v) for v in tokens[i:i+count]]
+        count = arity[upper]
+        if i + count > len(tokens) or any(t.isalpha() for t in tokens[i:i + count]):
+            raise ValueError(f"Incomplete SVG path command {cmd}")
+        values = [float(v) for v in tokens[i:i + count]]
         i += count
-        if len(values) != count:
-            raise ValueError("Incomplete SVG path command")
-        if cmd.islower():
-            for j in range(0, count, 2):
-                values[j] += current[0]
-                values[j+1] += current[1]
+        ox, oy = current
+        relative = cmd.islower()
+        if upper == "H":
+            x = values[0] + ox if relative else values[0]
+            values = [x, oy]
+            upper = "L"
+        elif upper == "V":
+            y = values[0] + oy if relative else values[0]
+            values = [ox, y]
+            upper = "L"
+        elif relative:
+            for j in range(0, len(values), 2):
+                values[j] += ox
+                values[j + 1] += oy
         current = (values[-2], values[-1])
-        out.append(cmd.upper() + " " + " ".join(f"{v:.3f}" for v in values))
-    return " ".join(out)
+        if upper == "M":
+            start = current
+            # SVG subsequent coordinate pairs after M are implicit L commands.
+            cmd = "l" if relative else "L"
+        result.append(upper + " " + " ".join(f"{v:.3f}" for v in values))
+    return " ".join(result)
 
 def _parse_svg(file_path, index):
     root = ET.parse(file_path).getroot()
