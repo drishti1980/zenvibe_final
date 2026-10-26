@@ -53,9 +53,9 @@ def safe_artwork(product, index):
                          width=1000, height=1000, fill=background,
                          stroke=None, strokeWidth=0)]
 
-    def ring(name, radius, width=4, color=None):
+    def ring(name, radius, width=4, color=None, cy=500):
         objects.append(primitive(name, "circle", left=500-radius,
-                                 top=500-radius, radius=radius,
+                                 top=cy-radius, radius=radius,
                                  fill="transparent", stroke=color or gold,
                                  strokeWidth=width))
 
@@ -79,14 +79,14 @@ def safe_artwork(product, index):
 
     # Ten clearly differentiated, non-overlapping emblem arrangements.
     if system == 0:
-        ring("crest", 49, 4)
+        ring("crest", 49, 4, cy=355)
         label("crest_letter", "Z", 467, 309, 66, 45, ink)
     elif system == 1:
         bar("ornament_top", 414, 341, 172, 5)
         bar("ornament_bottom", 444, 378, 112, 3)
     elif system == 2:
-        ring("seal_outer", 57, 3)
-        ring("seal_inner", 45, 2, ink)
+        ring("seal_outer", 57, 3, cy=355)
+        ring("seal_inner", 45, 2, ink, cy=355)
     elif system == 3:
         for n in range(5):
             x=436+n*28
@@ -99,7 +99,7 @@ def safe_artwork(product, index):
         bar("monogram_top", 444, 318, 112, 4)
         label("monogram", "ZV", 440, 337, 120, 43, ink)
     elif system == 6:
-        ring("medallion", 51, 4)
+        ring("medallion", 51, 4, cy=355)
         label("emblem", "01", 453, 332, 94, 34, ink)
     elif system == 7:
         bar("accent_left", 402, 354, 80, 4)
