@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#F7E7E8"/>
+<path d="M 135 140 C 230 40 500 270 865 140" fill="none" stroke="#763B4B" stroke-width="4"/>
+<path d="M 135 178 C 230 78 500 308 865 178" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 216 C 230 116 500 346 865 216" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 254 C 230 154 500 384 865 254" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 292 C 230 192 500 422 865 292" fill="none" stroke="#763B4B" stroke-width="4"/>
+<path d="M 135 330 C 230 230 500 460 865 330" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 368 C 230 268 500 498 865 368" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 406 C 230 306 500 536 865 406" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 444 C 230 344 500 574 865 444" fill="none" stroke="#763B4B" stroke-width="4"/>
+<path d="M 135 482 C 230 382 500 612 865 482" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 520 C 230 420 500 650 865 520" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 558 C 230 458 500 688 865 558" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 596 C 230 496 500 726 865 596" fill="none" stroke="#763B4B" stroke-width="4"/>
+<path d="M 135 634 C 230 534 500 764 865 634" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 672 C 230 572 500 802 865 672" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 710 C 230 610 500 840 865 710" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 748 C 230 648 500 878 865 748" fill="none" stroke="#763B4B" stroke-width="4"/>
+<path d="M 135 786 C 230 686 500 916 865 786" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 824 C 230 724 500 954 865 824" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<path d="M 135 862 C 230 762 500 992 865 862" fill="none" stroke="#C88A9B" stroke-width="4"/>
+<circle cx="500.0" cy="320.0" r="95.0" fill="#F7E7E8" stroke="#763B4B" stroke-width="8"/>
+</svg>
