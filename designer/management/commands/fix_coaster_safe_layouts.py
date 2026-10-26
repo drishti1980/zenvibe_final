@@ -9,9 +9,11 @@ are preserved. Artwork is deliberately rebuilt only on explicit --apply.
 import copy
 import io
 import json
+import hashlib
 from datetime import datetime
 from pathlib import Path
 
+from PIL import Image, ImageDraw
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -31,6 +33,7 @@ class Command(BaseCommand):
         parser.add_argument("--dry-run", action="store_true")
         parser.add_argument("--apply", action="store_true")
         parser.add_argument("--preview-shape", choices=("circle", "square"), default="circle")
+        parser.add_argument("--contact-sheet", action="store_true", help="Save a 10x10 visual review sheet")
         parser.add_argument("--confirm-replace-artwork", action="store_true",
                             help="Required to replace generated template artwork")
 
@@ -83,6 +86,22 @@ class Command(BaseCommand):
                     f"Template {template.id} failed artwork/preview validation: {exc}"
                 ) from exc
 
+        hashes = [hashlib.sha256(png).hexdigest() for _, _, png in staged]
+        if len(hashes) != len(set(hashes)):
+            raise CommandError("Duplicate rendered coaster previews detected; no database changes.")
+        if options["contact_sheet"]:
+            sheet = Image.new("RGB", (1200, 1400), "#f3f4f6")
+            painter = ImageDraw.Draw(sheet)
+            for j, (template, artwork, png) in enumerate(staged[:100]):
+                thumb = Image.open(io.BytesIO(png)).convert("RGB")
+                thumb.thumbnail((112, 112))
+                x = (j % 10) * 120 + 4
+                y = (j // 10) * 140 + 4
+                sheet.paste(thumb, (x, y))
+                painter.text((x + 5, y + 114), f"{j+1:03d}", fill="#111827")
+            sheet_path = Path(settings.BASE_DIR) / "coaster_luxury_100_contact_sheet.png"
+            sheet.save(sheet_path)
+            self.stdout.write(f"Visual review sheet: {sheet_path}")
         if options["dry_run"]:
             for template, objects, png in staged[:10]:
                 self.stdout.write(
