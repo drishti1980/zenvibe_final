@@ -41,86 +41,125 @@ def primitive(identifier, kind, **properties):
 
 
 def safe_artwork(product, index):
-    """100 curated editable variations: 10 visual systems x 10 art directions.
+    """Ten distinct editorial compositions, each with ten themed art directions.
 
-    Meaningful objects are within a central circular safe region. Decorative
-    motifs occupy a dedicated upper band; text occupies separate lower bands.
+    A 1000px square document is shared across all coaster shapes. Every
+    non-background element fits the central 640px square (safe for a round
+    coaster); backgrounds bleed to the cut edge.
     """
-    background, ink, gold = PALETTES[(index // 10) % 10]
-    theme, subtitle = THEMES[index % 10]
-    system = index % 10
-    objects = [primitive("background", "rect", left=0, top=0,
-                         width=1000, height=1000, fill=background,
-                         stroke=None, strokeWidth=0)]
+    import math
 
-    def ring(name, radius, width=4, color=None, cy=500):
-        objects.append(primitive(name, "circle", left=500-radius,
-                                 top=cy-radius, radius=radius,
-                                 fill="transparent", stroke=color or gold,
-                                 strokeWidth=width))
+    direction = index // 10
+    layout = index % 10
+    background, ink, accent = PALETTES[direction % len(PALETTES)]
+    theme, subtitle = THEMES[direction % len(THEMES)]
+    o = []
 
-    def bar(name, x, y, w, h=3):
-        objects.append(primitive(name, "rect", left=x, top=y, width=w,
-                                 height=h, fill=gold, stroke=None, strokeWidth=0))
+    def add(name, kind, **props):
+        o.append(primitive(name, kind, **props))
 
-    def label(name, value, x, y, width, size, color, font="Georgia"):
-        objects.append(primitive(name, "textbox", left=x, top=y, width=width,
-                                 text=value, fontSize=size, fontFamily=font,
-                                 fontWeight="700", textAlign="center",
-                                 lineHeight=1.08, fill=color, stroke=None,
-                                 strokeWidth=0))
+    def rect(name, x, y, w, h, color):
+        add(name, "rect", left=x, top=y, width=w, height=h,
+            fill=color, stroke=None, strokeWidth=0)
 
-    # Outer accent border stays safely inside the circular cut edge.
-    if system in (0, 2, 4, 6, 8):
-        ring("fine_border", 334, 4)
-    elif system in (1, 5, 9):
-        ring("fine_border", 330, 3)
-        ring("inner_border", 317, 2, ink)
+    def dot(name, x, y, r, color):
+        add(name, "circle", left=x-r, top=y-r, radius=r,
+            fill=color, stroke=None, strokeWidth=0)
 
-    # Ten clearly differentiated, non-overlapping emblem arrangements.
-    if system == 0:
-        ring("crest", 49, 4, cy=355)
-        label("crest_letter", "Z", 467, 309, 66, 45, ink)
-    elif system == 1:
-        bar("ornament_top", 414, 341, 172, 5)
-        bar("ornament_bottom", 444, 378, 112, 3)
-    elif system == 2:
-        ring("seal_outer", 57, 3, cy=355)
-        ring("seal_inner", 45, 2, ink, cy=355)
-    elif system == 3:
-        for n in range(5):
-            x=436+n*28
-            objects.append(primitive("star_%s" % n, "circle",
-                left=x, top=350, radius=7 if n!=2 else 11,
-                fill=gold, stroke=None, strokeWidth=0))
-    elif system == 4:
-        label("emblem", "✦", 465, 320, 70, 58, gold)
-    elif system == 5:
-        bar("monogram_top", 444, 318, 112, 4)
-        label("monogram", "ZV", 440, 337, 120, 43, ink)
-    elif system == 6:
-        ring("medallion", 51, 4, cy=355)
-        label("emblem", "01", 453, 332, 94, 34, ink)
-    elif system == 7:
-        bar("accent_left", 402, 354, 80, 4)
-        bar("accent_right", 518, 354, 80, 4)
-        objects.append(primitive("center_dot", "circle",
-            left=491, top=347, radius=9, fill=gold,
-            stroke=None, strokeWidth=0))
-    elif system == 8:
-        ring("medallion", 51, 4)
-        label("emblem", "A", 470, 324, 60, 48, ink)
-    else:
-        bar("rule_a", 430, 338, 140, 4)
-        bar("rule_b", 450, 358, 100, 3)
-        bar("rule_c", 470, 377, 60, 3)
+    def ring(name, x, y, r, color, sw=3):
+        add(name, "circle", left=x-r, top=y-r, radius=r,
+            fill="transparent", stroke=color, strokeWidth=sw)
 
-    # Fixed bands and generous whitespace: no collision with ornaments.
-    label("brand", "YOUR BRAND", 270, 441, 460, 52, ink)
-    label("theme", theme, 330, 524, 340, 24, gold, "Poppins")
-    label("subtitle", subtitle, 320, 570, 360, 16, ink, "Poppins")
-    bar("footer_accent", 445, 631, 110, 3)
-    return objects
+    def line(name, x1, y1, x2, y2, color, sw=3):
+        add(name, "line", left=min(x1,x2), top=min(y1,y2),
+            x1=x1, y1=y1, x2=x2, y2=y2,
+            fill=None, stroke=color, strokeWidth=sw)
+
+    def label(name, value, x, y, w, size, color, family="Georgia",
+              align="center", weight="700"):
+        add(name, "textbox", left=x, top=y, width=w, text=value,
+            fontSize=size, fontFamily=family, fontWeight=weight,
+            textAlign=align, lineHeight=1.08,
+            fill=color, stroke=None, strokeWidth=0)
+
+    rect("background", 0, 0, 1000, 1000, background)
+    # Rich but restrained motifs; each layout has its own geometry.
+    if layout == 0:  # Heritage seal
+        ring("outer_seal",500,500,320,accent,5)
+        ring("inner_seal",500,500,306,accent,2)
+        label("monogram","ZV",420,310,160,88,accent)
+        line("rule",360,437,640,437,accent)
+        label("brand","YOUR BRAND",260,463,480,52,ink)
+        label("tag",subtitle,315,548,370,19,accent,"Poppins")
+    elif layout == 1:  # Modern editorial, offset typographic hierarchy
+        rect("left_panel",205,255,12,485,accent)
+        label("eyebrow",theme,260,294,460,24,accent,"Poppins","left")
+        label("brand","YOUR\\nBRAND",258,378,485,91,ink,"Georgia","left")
+        line("rule",265,616,665,616,accent,5)
+        label("tag",subtitle,265,649,450,19,ink,"Poppins","left")
+    elif layout == 2:  # Botanical sprig with negative space
+        for n in range(7):
+            y=280+n*55
+            line("stem_%s"%n,330,y,360,y+32,accent,3)
+            dot("leaf_%s"%n,321 if n%2 else 370,y+12,12,accent)
+        label("brand","YOUR BRAND",400,383,355,58,ink,"Georgia","left")
+        label("tag",theme,400,475,330,24,accent,"Poppins","left")
+        line("rule",402,531,688,531,accent)
+        label("detail",subtitle,400,559,330,17,ink,"Poppins","left")
+    elif layout == 3:  # Architectural geometry
+        rect("arch_left",300,284,9,320,accent)
+        rect("arch_right",691,284,9,320,accent)
+        line("arch_top",305,284,695,284,accent,5)
+        label("brand","YOUR BRAND",318,400,364,54,ink)
+        label("tag",theme,350,493,300,25,accent,"Poppins")
+        label("detail",subtitle,330,552,340,16,ink,"Poppins")
+    elif layout == 4:  # Fine dining hospitality
+        label("eyebrow","THE "+theme,340,289,320,22,accent,"Poppins")
+        line("rule_top",365,343,635,343,accent,3)
+        label("brand","YOUR BRAND",257,396,486,66,ink)
+        line("rule_bottom",365,506,635,506,accent,3)
+        label("detail",subtitle,330,553,340,20,accent,"Poppins")
+        dot("footer",500,623,7,accent)
+    elif layout == 5:  # Monogram letterpress
+        label("large_initial","Z",318,271,364,180,accent)
+        label("brand","YOUR BRAND",310,506,380,50,ink)
+        line("rule",403,585,597,585,accent,3)
+        label("detail",theme,352,611,296,19,accent,"Poppins")
+    elif layout == 6:  # Art deco rays, separated from type
+        for n in range(9):
+            a=math.pi+(n*math.pi/8)
+            x1=500+72*math.cos(a); y1=371+72*math.sin(a)
+            x2=500+119*math.cos(a); y2=371+119*math.sin(a)
+            line("ray_%s"%n,x1,y1,x2,y2,accent,4)
+        dot("sun",500,371,37,accent)
+        label("brand","YOUR BRAND",273,483,454,59,ink)
+        label("tag",theme,338,578,324,23,accent,"Poppins")
+    elif layout == 7:  # Boutique label
+        rect("accent_block",304,294,392,86,accent)
+        label("eyebrow",theme,324,315,352,36,background,"Poppins")
+        label("brand","YOUR BRAND",255,425,490,66,ink)
+        label("tag",subtitle,325,540,350,21,accent,"Poppins")
+        line("rule",392,606,608,606,accent)
+    elif layout == 8:  # Gallery composition
+        rect("art_block",304,273,152,152,accent)
+        ring("art_cutout",380,349,55,background,10)
+        line("art_line",510,296,684,296,accent,4)
+        label("eyebrow",theme,509,333,190,23,accent,"Poppins","left")
+        label("brand","YOUR BRAND",290,484,420,64,ink)
+        label("tag",subtitle,315,576,370,19,accent,"Poppins")
+    else:  # Scandinavian minimal
+        dot("art_dot",500,328,34,accent)
+        line("art_rule",445,389,555,389,accent,4)
+        label("brand","YOUR BRAND",270,463,460,62,ink)
+        label("tag",theme,360,563,280,22,accent,"Poppins")
+        label("detail",subtitle,330,615,340,16,ink,"Poppins")
+
+    # Small thematic details change per art direction without modifying
+    # the structure, typography or safe area.
+    if direction in (1, 4, 7) and layout in (0, 4, 7, 9):
+        dot("signature_dot_left",348,677,5,accent)
+        dot("signature_dot_right",652,677,5,accent)
+    return o
 
 
 class Command(BaseCommand):
@@ -187,7 +226,7 @@ class Command(BaseCommand):
                     for page in updated.get(key, []):
                         if isinstance(page, dict):
                             page["objects"] = copy.deepcopy(artwork)
-                updated["coasterSafeLayoutVersion"] = 1
+                updated["coasterSafeLayoutVersion"] = 2
                 template.json_data = updated
                 template.save(update_fields=["json_data"])
 
