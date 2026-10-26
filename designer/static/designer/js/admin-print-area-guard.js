@@ -102,13 +102,31 @@ function enforce(o){
 function removeGuides(){
   canvas.getObjects().filter(o=>o.zvPrintAreaGuide).forEach(o=>canvas.remove(o));
 }
+function isCircularCoaster(){
+  const ref=referenceObject();
+  const image=String(ref?.baseSrc||ref?._element?.src||'').toLowerCase();
+  const product=String(OPT.product_name||OPT.productName||CFG.productName||'').toLowerCase();
+  const shape=String(CFG.shape||CFG.productShape||OPT.selectedShape||'').toLowerCase();
+  // Image-specific detection takes precedence when switching product shapes.
+  if(/(?:square|rectangle|rectangular)[-_ ]?coaster|coaster[-_ ]?(?:square|rectangle)/.test(image))return false;
+  if(/(?:round|circle|circular)[-_ ]?coaster|coaster[-_ ]?(?:round|circle)/.test(image))return true;
+  return /coaster/.test(product) && /round|circle/.test(shape+' '+product);
+}
 function drawGuides(){
   if(!canvas)return;
   removeGuides();
   areas().forEach((a,i)=>{
     const r=rect(a);
-    const g=new fabric.Rect({
-      left:r.left,top:r.top,width:r.width,height:r.height,
+    const circular=isCircularCoaster();
+    // A circle's safe zone must be inset from the actual circular cut edge.
+    const inset=circular ? Math.min(r.width,r.height)*0.055 : 0;
+    const guideProps=circular ? {
+      left:r.left+r.width/2,top:r.top+r.height/2,
+      radius:Math.max(1,Math.min(r.width,r.height)/2-inset),
+      originX:'center',originY:'center'
+    } : {left:r.left,top:r.top,width:r.width,height:r.height};
+    const g=new (circular?fabric.Circle:fabric.Rect)({
+      ...guideProps,
       fill:'rgba(0,0,0,0)',stroke:'#16a34a',strokeWidth:2,
       strokeDashArray:[10,7],selectable:false,evented:false,
       excludeFromExport:true,zvPrintAreaGuide:true,
