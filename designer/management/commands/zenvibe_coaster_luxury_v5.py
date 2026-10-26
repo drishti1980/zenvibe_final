@@ -1,202 +1,180 @@
-"""Zenvibe coaster collection v5: 100 deterministic editable vector compositions.
-
-Fabric-compatible objects. Shared 1000x1000 artwork supports circle and square.
-All decoration stays in a circular safe radius of 360; background full bleed.
-No third-party libraries required.
-"""
+"""Original luxury coaster vector artwork. Every motif remains individually editable in Fabric."""
 from __future__ import annotations
 import math
 import random
 
-INKS = ['#183B35','#1B3451','#482B40','#563A2E','#263F44','#34314E','#355044','#593E4E','#283B5B','#4E4235']
-PAPERS = ['#F7F1E7','#F0F5F2','#FFF4ED','#F5EDE2','#F2F5F3','#F4F0F8','#F6F0DE','#F9EDEB','#EAF1F6','#F4EDE4']
-ACCENTS = ['#C69B57','#8AAEB0','#D38A76','#B89465','#6A9C97','#B59BD0','#BBA45B','#D19C9D','#8BA7CF','#A98C68']
-LABELS = ['BOTANICAL','ART DECO','MOSAIC','TERRAZZO','FLORAL','MARITIME','FOLK ART','HERITAGE','ABSTRACT','ORNAMENT']
-
-def safe_artwork(product, index):
-    if not 0 <= index < 100:
-        raise ValueError('index must be 0..99')
-    family = index % 10  # alternate artwork families in adjacent gallery cards
-    composition = index // 10  # ten compositions within each family
-    rng = random.Random(770001 + index * 9187)
-    ink, paper, accent = INKS[family], PAPERS[family], ACCENTS[family]
-    obj = []
-    def add(name, typ, **kwargs):
-        data = dict(id=name, name=name.replace('_',' ').title(), type=typ,
-                    left=0, top=0, scaleX=1, scaleY=1, angle=0,
-                    opacity=1, selectable=True, evented=True, customerEditable=True)
-        data.update(kwargs)
-        obj.append(data)
-    def circle(name,x,y,r,fill,stroke=None,sw=0):
-        add(name,'circle',left=x-r,top=y-r,radius=r,fill=fill,stroke=stroke,strokeWidth=sw)
-    def ellipse(name,x,y,rx,ry,fill,ang=0):
-        add(name,'ellipse',left=x-rx,top=y-ry,rx=rx,ry=ry,fill=fill,
-            angle=ang,stroke=None,strokeWidth=0)
-    def rect(name,x,y,w,h,fill):
-        add(name,'rect',left=x,top=y,width=w,height=h,fill=fill,stroke=None,strokeWidth=0)
-    def line(name,x1,y1,x2,y2,color,width=3):
-        add(name,'line',left=x1,top=y1,x1=x1,y1=y1,x2=x2,y2=y2,
-            stroke=color,strokeWidth=width,fill=None)
-    def text(name,content,x,y,w,size,color,weight='700'):
-        add(name,'textbox',left=x,top=y,width=w,text=content,fontFamily='Georgia',
-            fontSize=size,fontWeight=weight,textAlign='center',lineHeight=1.12,
-            fill=color,stroke=None,strokeWidth=0)
-    def flower(name,x,y,r,petals=8):
-        for k in range(petals):
-            a=2*math.pi*k/petals
-            ellipse(f'{name}_petal_{k}',x+math.cos(a)*r*.52,
-                    y+math.sin(a)*r*.52,r*.21,r*.39,
-                    accent if k%2 else ink,math.degrees(a)+90)
-        circle(f'{name}_centre',x,y,r*.16,paper)
-    def leaf(name,x,y,a,s=1):
-        a=math.radians(a)
-        ex=x+math.cos(a)*45*s;ey=y+math.sin(a)*45*s
-        line(f'{name}_stem',x,y,ex,ey,ink,3)
-        for k in range(3):
-            p=(k+1)/4
-            xx=x+(ex-x)*p;yy=y+(ey-y)*p
-            ellipse(f'{name}_leaf_{k}_a',xx-9*s,yy-9*s,8*s,16*s,accent,math.degrees(a)-30)
-            ellipse(f'{name}_leaf_{k}_b',xx+9*s,yy+9*s,8*s,16*s,ink,math.degrees(a)+30)
-    def polar(cx,cy,r,a):
-        a=math.radians(a)
-        return cx+r*math.cos(a),cy+r*math.sin(a)
-    def inside(x,y,margin=15):
-        return math.hypot(x-500,y-500)<355-margin
-    rect('full_bleed_background',0,0,1000,1000,paper)
-    # Ten families with varied motif placement. Every index changes actual
-    # geometry (scale, count, distribution, rotation and arrangement).
-    count=8+composition*2
-    rotation=(composition*17)%360
-    if family==0:  # Botanical engraving
-        for j in range(count):
-            a=rotation+j*360/count
-            x,y=polar(500,500,270+(j%3)*22,a)
-            leaf(f'botanical_{j}',x,y,a+180,.8+(j%4)*.13)
-        for j in range(6+composition):
-            a=rotation+j*360/(6+composition)
-            x,y=polar(500,500,338,a)
-            circle(f'botanical_berry_{j}',x,y,5+(j%3),accent)
-    elif family==1:  # Art Deco arches and sunbursts
-        for j in range(count):
-            a=rotation+j*360/count
-            x1,y1=polar(500,500,225,a);x2,y2=polar(500,500,330,a)
-            line(f'deco_ray_{j}',x1,y1,x2,y2,ink,3+(j%3))
-            x,y=polar(500,500,332,a)
-            circle(f'deco_tip_{j}',x,y,7,accent)
-        for j in range(2+composition%4):
-            circle(f'deco_ring_{j}',500,500,285+j*16,'transparent',accent,2)
-    elif family==2:  # Handcut mosaic tesserae
-        for j in range(70+composition*11):
-            a=rng.uniform(0,360);r=rng.uniform(220,341)
-            x,y=polar(500,500,r,a)
-            if j%4==0: circle(f'mosaic_disc_{j}',x,y,rng.randint(7,16),ink)
-            else: ellipse(f'mosaic_tile_{j}',x,y,rng.randint(6,15),rng.randint(8,19),accent if j%3 else ink,rng.randrange(180))
-    elif family==3:  # Terrazzo fragments, different density and stone size
-        for j in range(65+composition*15):
-            a=rng.uniform(0,360);r=rng.uniform(225,346)
-            x,y=polar(500,500,r,a)
-            if j%5==0:circle(f'stone_{j}',x,y,rng.randint(6,17),ink)
-            else:ellipse(f'chip_{j}',x,y,rng.randint(6,21),rng.randint(10,26),accent if j%2 else ink,rng.randrange(180))
-    elif family==4:  # Flower garland, petals
-        for j in range(count):
-            a=rotation+j*360/count
-            x,y=polar(500,500,292,a)
-            flower(f'floral_{j}',x,y,36+(j%3)*9,6+(j%3)*2)
-    elif family==5:  # Maritime shells and wave segments
-        for j in range(count):
-            a=rotation+j*360/count
-            x,y=polar(500,500,285,a)
-            for k in range(5):
-                px,py=polar(x,y,10+k*7,a+90)
-                ellipse(f'shell_{j}_{k}',px,py,6+k,12+k,ink if k%2 else accent,a)
-        for j in range(12+composition*2):
-            a=rotation+j*360/(12+composition*2)
-            x,y=polar(500,500,347,a)
-            circle(f'pearl_{j}',x,y,4,accent)
-    elif family==6:  # Folk-art flowers and hand-painted leaves
-        for j in range(count):
-            a=rotation+j*360/count
-            x,y=polar(500,500,290,a)
-            if j%2: flower(f'folk_flower_{j}',x,y,43,5)
-            else:leaf(f'folk_leaf_{j}',x,y,a+180,1.0)
-    elif family==7:  # Heritage filigree wreath
-        for ring in range(2+composition%3):
-            n=14+ring*6+composition
+PALETTES = [
+ ("#F4EDE1","#173D35","#B58C51"),("#F7F2E8","#273B60","#BC9456"),
+ ("#F5EDE7","#713F4B","#C49C72"),("#F1EEE8","#2D3432","#B89A6C"),
+ ("#E9F0EB","#255B55","#C4A16D"),("#F8F0E5","#65412E","#C09B67"),
+ ("#F1EEF3","#403653","#AD8CBB"),("#F3EDE2","#2D5265","#B5A079"),
+ ("#F7F2E7","#68533A","#C8A875"),("#E9F0F0","#31515D","#BD9C6A")]
+NAMES=["BOTANICAL HOUSE","ATELIER NO. 8","HERITAGE FLORAL","THE GARDEN",
+       "COASTAL CERAMIC","ARTISAN STUDIO","ROYAL ORNAMENT","MODERN HEIRLOOM",
+       "THE MONOGRAM","SIGNATURE COLLECTION"]
+def safe_artwork(product,index):
+    if not 0 <= index < 100: raise ValueError("index must be 0..99")
+    theme=index%10
+    variation=index//10
+    paper,ink,gold=PALETTES[(theme+variation*3)%10]
+    rng=random.Random(90037+index*7919)
+    objects=[]
+    def add(key,kind,**kw):
+        obj=dict(id=f"lux{index}_{key}",name=key.replace("_"," ").title(),
+                 type=kind,left=0,top=0,scaleX=1,scaleY=1,angle=0,
+                 opacity=1,selectable=True,evented=True,customerEditable=True)
+        obj.update(kw);objects.append(obj)
+    def path(key,d,color,stroke=None,sw=0):
+        add(key,"path",path=d,fill=color,stroke=stroke,strokeWidth=sw,
+            strokeLineCap="round",strokeLineJoin="round")
+    def disk(key,x,y,r,color,outline=None,sw=0):
+        add(key,"circle",left=x-r,top=y-r,radius=r,fill=color,
+            stroke=outline,strokeWidth=sw)
+    def oval(key,x,y,rx,ry,color,angle=0):
+        add(key,"ellipse",left=x-rx,top=y-ry,rx=rx,ry=ry,angle=angle,fill=color)
+    def txt(key,value,x,y,w,size,color,font="Georgia",weight="normal",spacing=1):
+        add(key,"textbox",left=x,top=y,width=w,text=value,fontFamily=font,
+            fontSize=size,fontWeight=weight,charSpacing=spacing,textAlign="center",
+            lineHeight=1.12,fill=color)
+    def polar(r,a,cx=500,cy=500):
+        a=math.radians(a);return cx+r*math.cos(a),cy+r*math.sin(a)
+    def line(key,x,y,xx,yy,color,width=2):
+        path(key,f"M {x:.2f} {y:.2f} L {xx:.2f} {yy:.2f}","",color,width)
+    def petal(key,x,y,size,angle,color):
+        a=math.radians(angle);u=(math.cos(a),math.sin(a));v=(-u[1],u[0])
+        def p(t,s):return f"{x+u[0]*t+v[0]*s:.2f} {y+u[1]*t+v[1]*s:.2f}"
+        d=f"M {p(0,0)} Q {p(size*.52,-size*.48)} {p(size,0)} Q {p(size*.52,size*.48)} {p(0,0)} Z"
+        path(key,d,color)
+    def flower(key,x,y,r,n=7,rot=0):
+        for k in range(n):
+            petal(f"{key}_petal{k}",x,y,r,rot+k*360/n,ink if k%3==0 else gold)
+        disk(key+"_pistil",x,y,r*.13,paper)
+        disk(key+"_seed",x,y,r*.055,ink)
+    def branch(key,x,y,length,angle,leaves=5):
+        a=math.radians(angle)
+        ex=x+math.cos(a)*length;ey=y+math.sin(a)*length
+        line(key+"_stem",x,y,ex,ey,ink,2.5)
+        for k in range(leaves):
+            t=(k+1)/(leaves+1);bx=x+(ex-x)*t;by=y+(ey-y)*t
+            petal(f"{key}_leaf{k}a",bx,by,length*.19,angle+55,gold)
+            petal(f"{key}_leaf{k}b",bx,by,length*.19,angle-55,ink)
+    def frame(key,r,steps=1):
+        for k in range(steps):
+            disk(f"{key}_{k}",500,500,r-k*10,"transparent",
+                 gold if k%2==0 else ink,2 if k else 3)
+    def medallion(key,x,y,r):
+        disk(key+"_outer",x,y,r,ink)
+        disk(key+"_inner",x,y,r*.84,paper)
+        for j in range(8):
+            px,py=polar(r*.68,j*45,x,y)
+            petal(f"{key}_orn{j}",px,py,r*.28,j*45,gold)
+        disk(key+"_core",x,y,r*.2,ink)
+    def flourish(key,x,y,s,flip=1):
+        # Bezier filigree; not a ring or scattered dot
+        path(key,f"M {x-130*s:.1f} {y:.1f} C {x-72*s:.1f} {y-45*s*flip:.1f} {x-36*s:.1f} {y+42*s*flip:.1f} {x:.1f} {y:.1f} C {x+34*s:.1f} {y-35*s*flip:.1f} {x+83*s:.1f} {y+26*s*flip:.1f} {x+130*s:.1f} {y:.1f}","transparent",gold,3)
+        for k in range(4):
+            petal(f"{key}_bud{k}",x+(k-1.5)*45*s,y+(18 if k%2 else -18)*s,21*s,90 if k%2 else 270,ink)
+    add("canvas_paper","rect",left=0,top=0,width=1000,height=1000,fill=paper)
+    # Each family has a distinct visual architecture; the variations alter motif
+    # geometry and placement, not just palette. The bleed background is full-size.
+    if theme==0: # engraved botanical wreath
+        n=7+variation
+        for j in range(n):
+            a=j*360/n+variation*8
+            x,y=polar(298,a)
+            branch(f"engraved_branch{j}",x,y,75,a+125,4+variation%3)
+        frame("botanical_keyline",358,2)
+    elif theme==1: # architectural art deco fan
+        for sector in range(4+variation%3):
+            angle=sector*360/(4+variation%3)+variation*6
+            for j in range(9):
+                a=angle-24+j*6
+                x,y=polar(218,a);xx,yy=polar(345,a)
+                line(f"fan{sector}_ray{j}",x,y,xx,yy,gold if j%2 else ink,2.7)
+            x,y=polar(328,angle)
+            medallion(f"fan{sector}_jewel",x,y,16)
+        frame("deco_border",362,2)
+    elif theme==2: # tile mosaic, actual interlocking diamonds
+        for ring in range(3):
+            n=16+ring*8+variation%4*4
+            radius=226+ring*58
             for j in range(n):
-                a=rotation+j*360/n
-                x,y=polar(500,500,245+ring*39,a)
-                ellipse(f'filigree_{ring}_{j}',x,y,7+ring*2,16+ring*3,accent if j%2 else ink,a+90)
-    elif family==8:  # Organic abstract paper cut-outs
-        for j in range(38+composition*7):
-            a=rng.uniform(0,360);r=rng.uniform(225,339)
-            x,y=polar(500,500,r,a)
-            if j%6==0:circle(f'abstract_disc_{j}',x,y,rng.randint(9,28),ink)
-            else:ellipse(f'abstract_form_{j}',x,y,rng.randint(8,23),rng.randint(17,42),accent if j%3 else ink,rng.randrange(180))
-    else:  # Ornament radial medallions
-        for j in range(count):
-            a=rotation+j*360/count
-            x,y=polar(500,500,290,a)
-            circle(f'ornament_disc_{j}',x,y,21+(j%3)*3,accent)
-            circle(f'ornament_cut_{j}',x,y,9,paper)
-            x2,y2=polar(500,500,339,a)
-            ellipse(f'ornament_tip_{j}',x2,y2,7,15,ink,a)
-    # Editorial branding treatments deliberately vary by family.
-    # No repeated circular plaque. Artwork stays prominent.
-    # Every important text box is inside the circle's central safe zone.
-    if family == 0:
-        rect('letterpress_label',312,427,376,154,paper)
-        text('brand','YOUR BRAND',329,455,342,52,ink)
-        line('label_rule',388,521,612,521,accent,3)
-        text('collection','BOTANICAL ATELIER',349,545,302,18,ink)
-    elif family == 1:
-        rect('deco_nameplate',305,430,390,145,paper)
-        line('deco_nameplate_top',335,440,665,440,accent,5)
-        text('brand','YOUR BRAND',324,465,352,54,ink)
-        text('collection','THE ART DECO EDITION',340,539,320,17,ink)
-    elif family == 2:
-        rect('mosaic_nameplate',295,437,410,131,paper)
-        text('brand','YOUR BRAND',310,453,380,57,ink)
-        text('collection','MOSAIC STUDIO',330,529,340,20,accent)
-    elif family == 3:
-        rect('terrazzo_nameplate',307,437,386,132,paper)
-        text('brand','YOUR BRAND',322,453,356,57,ink)
-        text('collection','TERRAZZO COLLECTION',340,530,320,18,accent)
-    elif family == 4:
-        circle('floral_centre',500,500,179,paper)
-        text('brand','YOUR BRAND',332,451,336,52,ink)
-        line('floral_rule',401,516,599,516,accent,3)
-        text('collection','FLORAL GARDEN',343,542,314,19,ink)
-    elif family == 5:
-        rect('maritime_nameplate',320,420,360,161,paper)
-        text('collection','COASTAL STUDIO',352,440,296,19,accent)
-        text('brand','YOUR BRAND',331,487,338,51,ink)
-        line('maritime_rule',401,556,599,556,accent,3)
-    elif family == 6:
-        rect('folk_nameplate',304,425,392,157,paper)
-        text('brand','YOUR BRAND',319,456,362,53,ink)
-        line('folk_rule',379,519,621,519,accent,4)
-        text('collection','FOLK ART EDITION',345,546,310,18,ink)
-    elif family == 7:
-        circle('heritage_nameplate',500,500,184,paper)
-        text('collection','EST. 2026',370,431,260,19,accent)
-        text('brand','YOUR BRAND',331,479,338,52,ink)
-        text('heritage_footer','HERITAGE COLLECTION',337,549,326,17,accent)
-    elif family == 8:
-        rect('abstract_nameplate',292,435,416,133,paper)
-        rect('abstract_edge',292,435,9,133,accent)
-        text('brand','YOUR BRAND',317,452,362,55,ink)
-        text('collection','MODERN ABSTRACT',345,531,310,19,accent)
+                a=360*j/n+variation*7
+                x,y=polar(radius,a)
+                rr=11+ring*3
+                path(f"tile{ring}_{j}",f"M {x:.1f} {y-rr:.1f} L {x+rr:.1f} {y:.1f} L {x:.1f} {y+rr:.1f} L {x-rr:.1f} {y:.1f} Z",ink if (j+ring)%3==0 else gold)
+        frame("tile_border",364,1)
+    elif theme==3: # oversized painted flowers, asymmetrical arrangement
+        positions=[(265,280,80),(730,310,94),(285,720,76),(748,730,83)]
+        for j,(x,y,r) in enumerate(positions):
+            shift=variation*6*(1 if j%2 else -1)
+            flower(f"painted_bloom{j}",x+shift,y-shift,r,7+(j+variation)%3,variation*13)
+            branch(f"painted_sprig{j}",x+shift,y-shift,r*.9,45+j*90,4)
+    elif theme==4: # blue-and-cream porcelain scrollwork
+        frame("porcelain_rim",360,3)
+        for j in range(6+variation%3):
+            a=j*360/(6+variation%3)+variation*9
+            x,y=polar(290,a)
+            flower(f"porcelain_rosette{j}",x,y,49,6,a)
+            branch(f"porcelain_vine{j}",x,y,68,a+145,4)
+    elif theme==5: # intricate heritage engraving, corner clusters
+        frame("engraving_frame",361,2)
+        for j in range(4):
+            a=45+j*90+variation*3
+            x,y=polar(298,a)
+            medallion(f"engraving_crest{j}",x,y,39)
+            branch(f"engraving_scroll{j}",x,y,79,a+90,5)
+        flourish("engraving_top",500,193,.65)
+        flourish("engraving_bottom",500,807,.65,-1)
+    elif theme==6: # ornate radial paisley-inspired petals
+        n=8+variation%5
+        for j in range(n):
+            a=j*360/n+variation*11
+            x,y=polar(226,a)
+            petal(f"royal_outer{j}",x,y,117,a,gold)
+            petal(f"royal_inlay{j}",x,y,86,a,ink)
+            x2,y2=polar(334,a)
+            disk(f"royal_pearl{j}",x2,y2,7,paper,ink,2)
+        frame("royal_rim",362,1)
+    elif theme==7: # folk art birds and flora, using editable silhouettes
+        for j in range(4+variation%3):
+            a=j*360/(4+variation%3)+variation*8
+            x,y=polar(300,a)
+            flower(f"folk_daisy{j}",x,y,49,8,a)
+            branch(f"folk_vine{j}",x,y,82,a+165,5)
+        for j in range(2):
+            x=245+j*510;y=490+(-1)**j*42
+            path(f"bird{j}",f"M {x-48} {y} Q {x-10} {y-58} {x+31} {y-4} Q {x+8} {y+41} {x-48} {y} Z",ink)
+            petal(f"bird_wing{j}",x-2,y-4,46,25 if j else 155,gold)
+            disk(f"bird_eye{j}",x+13,y-12,4,paper)
+    elif theme==8: # refined monogram-style corner ornamentation
+        frame("monogram_outline",362,2)
+        for j in range(4):
+            a=45+j*90
+            x,y=polar(285,a)
+            flourish(f"monogram_flourish{j}",x,y,.48,1 if j%2 else -1)
+            medallion(f"monogram_seal{j}",x,y,24)
+    else: # hand-drawn garden garland, detailed leaves and berries
+        for j in range(12+variation):
+            a=j*360/(12+variation)+variation*3
+            x,y=polar(300,a)
+            branch(f"garland_branch{j}",x,y,56,a+130,4)
+            if j%3==0: flower(f"garland_flower{j}",x,y,40,6,a)
+        frame("garland_keyline",360,1)
+    # Type hierarchy is a deliberate editorial element, not a repeated central
+    # badge. Different families use different brand treatments.
+    if theme in (0,2,4,6,9):
+        disk("ivory_letterpress_field",500,500,184,paper)
+        txt("brand","YOUR BRAND",331,465,338,51,ink,weight="bold",spacing=65)
+        txt("subtitle",NAMES[theme],335,543,330,19,gold,spacing=110)
+        line("fine_rule",407,532,593,532,gold,2)
+    elif theme in (1,5,8):
+        add("architectural_label","rect",left=309,top=432,width=382,height=144,fill=paper)
+        line("label_top",342,444,658,444,gold,3)
+        txt("brand","YOUR BRAND",330,468,340,52,ink,weight="bold",spacing=55)
+        txt("subtitle",NAMES[theme],343,543,314,18,gold,spacing=100)
     else:
-        circle('ornament_centre',500,500,182,paper)
-        text('brand','YOUR BRAND',326,459,348,55,ink)
-        line('ornament_rule',406,522,594,522,accent,3)
-        text('collection','ORNAMENTAL EDITION',340,550,320,18,ink)
-    # Each of the ten compositions has a distinct signature ornament
-    # in the remaining negative space, without obscuring the label.
-    if composition in (1,3,5,7,9):
-        for j in range(3):
-            x=455+j*45
-            circle(f'signature_gem_{j}',x,620,4+j%2,accent)
-    elif composition in (2,4,6,8):
-        line('signature_stroke',440,618,560,618,accent,2)
-    return obj
+        add("botanical_label","rect",left=312,top=435,width=376,height=139,fill=paper)
+        txt("brand","YOUR BRAND",333,462,334,52,ink,weight="bold",spacing=60)
+        flourish("label_flourish",500,542,.52)
+    return objects
