@@ -25,7 +25,9 @@ def safe_artwork(product,index):
     rnd=random.Random(index*7919+13)
     objects=[]
     def obj(name,kind,**kw):
-        objects.append(dict(id=name,name=name.replace('_',' ').title(),type=kind,scaleX=1,scaleY=1,angle=0,opacity=1,selectable=True,evented=True,customerEditable=True,**kw))
+        properties=dict(id=name,name=name.replace('_',' ').title(),type=kind,scaleX=1,scaleY=1,angle=0,opacity=1,selectable=True,evented=True,customerEditable=True)
+        properties.update(kw)
+        objects.append(properties)
     def rect(name,x,y,w,h,c):
         obj(name,'rect',left=x,top=y,width=w,height=h,fill=c,stroke=None,strokeWidth=0)
     def circ(name,x,y,r,c,stroke=None,sw=0):
