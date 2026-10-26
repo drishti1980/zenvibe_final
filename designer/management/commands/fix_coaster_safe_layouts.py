@@ -13,7 +13,7 @@ import hashlib
 from datetime import datetime
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageChops, ImageStat
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -89,6 +89,32 @@ class Command(BaseCommand):
         hashes = [hashlib.sha256(png).hexdigest() for _, _, png in staged]
         if len(hashes) != len(set(hashes)):
             raise CommandError("Duplicate rendered coaster previews detected; no database changes.")
+        # Fail closed on near-identical layouts. Byte hashes alone only detect
+        # exact copies; a recoloured duplicate still has different PNG bytes.
+        # Compare structural edge maps so palette changes do not hide repeats.
+        def silhouette(png):
+            im = Image.open(io.BytesIO(png)).convert("L").resize((48, 48))
+            # Edge structure is robust to recolouring and ignores flat backgrounds.
+            from PIL import ImageFilter
+            im = im.filter(ImageFilter.FIND_EDGES)
+            return [1 if p > 38 else 0 for p in im.getdata()]
+        signatures = [silhouette(png) for _, _, png in staged]
+        near_duplicates = []
+        for a in range(len(signatures)):
+            for b in range(a + 1, len(signatures)):
+                difference = sum(x != y for x, y in zip(signatures[a], signatures[b]))
+                if difference < 30:
+                    near_duplicates.append((a + 1, b + 1, difference))
+        if near_duplicates:
+            self.stdout.write(self.style.WARNING(
+                f"Found {len(near_duplicates)} near-identical edge compositions. "
+                f"Examples: {near_duplicates[:12]}. These need redesigned artwork."
+            ))
+            if options["apply"]:
+                raise CommandError(
+                    "Refusing to publish visually repetitive coaster artwork. "
+                    "Redesign the flagged compositions and rerun --dry-run."
+                )
         if options["contact_sheet"]:
             sheet = Image.new("RGB", (1200, 1400), "#f3f4f6")
             painter = ImageDraw.Draw(sheet)
@@ -138,7 +164,7 @@ class Command(BaseCommand):
                 updated["coasterArtworkIndex"] = next(i for i, item in enumerate(staged) if item[0].pk == template.pk)
                 template.json_data = updated
                 art_idx = updated['coasterArtworkIndex']
-                template.name = f'{NAMES[art_idx % 10]} — Artwork {art_idx + 1:03d}'
+                template.name = f'{art_idx + 1:03d} — {NAMES[art_idx % 10]} — Original Artwork'
                 filename = (
                     f"coaster-{template.id}-{options['preview_shape']}-luxury-v6.png"
                 )
