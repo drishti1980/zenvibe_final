@@ -30,7 +30,7 @@ def line(name,x,y,w,h,color,weight=3):
     return editable(dict(id=name,type="rect",left=round(x,2),top=round(y,2),width=round(max(1,w),2),height=round(max(1,h),2),fill=color))
 def objects_for(index):
     """25 composition types, 4 carefully coordinated palettes each; all JSON primitives."""
-    theme=index%25; colorway=index//25
+    theme=index%len(TITLES); colorway=index//len(TITLES)
     p=(theme*3+colorway*7)%len(PAPERS)
     paper,ink,gold=PAPERS[p],INKS[p],GOLDS[p]
     soft=PAPERS[(p+3)%len(PAPERS)]
