@@ -19,7 +19,7 @@ from django.core.files.base import ContentFile
 from designer.models import DesignTemplate
 
 
-from .zenvibe_coaster_luxury_v5 import safe_artwork
+from .zenvibe_coaster_luxury_v5 import safe_artwork, NAMES
 from .rebuild_coaster_previews import render
 
 
@@ -114,16 +114,21 @@ class Command(BaseCommand):
                     for page in updated.get(key, []):
                         if isinstance(page, dict):
                             page["objects"] = copy.deepcopy(artwork)
-                updated["coasterSafeLayoutVersion"] = 4
+                updated["coasterSafeLayoutVersion"] = 6
+                updated["coasterArtworkGenerator"] = "luxury-v6-vector"
+                updated["coasterArtworkIndex"] = next(i for i, item in enumerate(staged) if item[0].pk == template.pk)
                 template.json_data = updated
+                art_idx = updated['coasterArtworkIndex']
+                template.name = f'{NAMES[art_idx % 10]} — Artwork {art_idx + 1:03d}'
                 filename = (
-                    f"coaster-{template.id}-{options['preview_shape']}-v4.png"
+                    f"coaster-{template.id}-{options['preview_shape']}-luxury-v6.png"
                 )
                 template.preview.save(
                     filename, ContentFile(preview_bytes), save=False
                 )
-                template.save(update_fields=["json_data", "preview"])
+                template.save(update_fields=["json_data", "preview", "name"])
 
         self.stdout.write(self.style.SUCCESS(
-            f"Updated {len(templates)} templates; backup: {backup_file}"
+            f"Updated {len(templates)} templates and gallery names/previews; backup: {backup_file}. "
+            "Refresh the gallery and confirm the first card name has changed."
         ))
