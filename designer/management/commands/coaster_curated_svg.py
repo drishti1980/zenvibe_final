@@ -42,6 +42,34 @@ def _colour(style, key, fallback="transparent"):
         return "transparent"
     return value
 
+def _absolute_path(data):
+    """Expand the M/q SVG subset used by curated coaster motifs for previews."""
+    tokens = re.findall(r"[MmLlQqCcZz]|[-+]?(?:\\d*\\.)?\\d+", data)
+    out = []
+    i = 0
+    current = (0.0, 0.0)
+    while i < len(tokens):
+        cmd = tokens[i]
+        i += 1
+        count = {"M": 2, "m": 2, "L": 2, "l": 2,
+                 "Q": 4, "q": 4, "C": 6, "c": 6, "Z": 0, "z": 0}.get(cmd)
+        if count is None:
+            raise ValueError(f"Unsupported SVG path command: {cmd}")
+        if count == 0:
+            out.append("Z")
+            continue
+        values = [float(v) for v in tokens[i:i+count]]
+        i += count
+        if len(values) != count:
+            raise ValueError("Incomplete SVG path command")
+        if cmd.islower():
+            for j in range(0, count, 2):
+                values[j] += current[0]
+                values[j+1] += current[1]
+        current = (values[-2], values[-1])
+        out.append(cmd.upper() + " " + " ".join(f"{v:.3f}" for v in values))
+    return " ".join(out)
+
 def _parse_svg(file_path, index):
     root = ET.parse(file_path).getroot()
     viewbox = [_num(x) for x in root.attrib.get("viewBox", "0 0 1000 1000").split()]
@@ -72,7 +100,7 @@ def _parse_svg(file_path, index):
                         stroke=_colour(style, "stroke"),
                         strokeWidth=_num(style.get("stroke-width")))
             if kind == "path":
-                base["path"] = child.get("d", "")
+                base["path"] = _absolute_path(child.get("d", ""))
                 if not base["path"]:
                     continue
             elif kind == "circle":
