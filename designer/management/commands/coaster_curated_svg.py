@@ -44,7 +44,7 @@ def _colour(style, key, fallback="transparent"):
 
 def _absolute_path(data):
     """Expand the M/q SVG subset used by curated coaster motifs for previews."""
-    tokens = re.findall(r"[MmLlQqCcZz]|[-+]?(?:\\d*\\.)?\\d+", data)
+    tokens = re.findall(r"[MmLlQqCcZz]|[-+]?(?:\d*\.)?\d+", data)
     out = []
     i = 0
     current = (0.0, 0.0)
