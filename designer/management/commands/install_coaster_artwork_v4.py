@@ -177,7 +177,7 @@ def generate(index):
     # Mask a genuinely clear central lettering area after all ornamentation.
     # Drawing the panel last prevents branches and veins crossing the title.
     if style not in (6,16,20):
-        d.rounded_rectangle((166,305,634,522),radius=52,fill=rgba(bg,255))
+        d.rounded_rectangle((166,235,634,575),radius=52,fill=rgba(bg,255))
     return im,title,subtitle,ink,bg,theme
 
 def layout_text(title,subtitle,color):
@@ -227,7 +227,7 @@ class Command(BaseCommand):
             texts=layout_text(title,subtitle,ink)
             data=copy.deepcopy(t.json_data or {})
             data["width"]=1000;data["height"]=1000
-            data["generator"]="zenvibe-coaster-artwork-v6-clear-type"
+            data["generator"]="zenvibe-coaster-artwork-v7-safe-title"
             data["artworkCategory"]=theme
             data["pages"]=[{"width":1000,"height":1000,"objects":[obj]+texts}]
             data["adminPages"]=copy.deepcopy(data["pages"])
