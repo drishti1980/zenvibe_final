@@ -15,41 +15,112 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import DesignTemplate
-from designer.management.commands.seed_promotional_product_templates import build_coaster
+
+
+PALETTES = [
+    ("#121C2B", "#FFF9EC", "#C6A56C"), ("#163D39", "#F7F5EA", "#C8A96B"),
+    ("#321E2D", "#FFF2F1", "#D9A6B5"), ("#182E4B", "#F7FAFF", "#A9C6DD"),
+    ("#3B2821", "#FFF6E8", "#D3A172"), ("#F4EEE3", "#243443", "#B3834D"),
+    ("#F0F5F0", "#20483D", "#78A99C"), ("#261D3C", "#F9F3FF", "#B6A1D9"),
+    ("#F9F0EE", "#4B2939", "#BE8395"), ("#18272B", "#F6F6EE", "#A7C6BB"),
+]
+THEMES = [
+    ("HERITAGE", "EST. 2026"), ("ATELIER", "HANDCRAFTED"),
+    ("SIGNATURE", "PREMIUM EDITION"), ("STUDIO", "DESIGNED FOR YOU"),
+    ("CLASSIC", "TIMELESS QUALITY"), ("BOUTIQUE", "MADE WITH CARE"),
+    ("MONOGRAM", "PERSONAL COLLECTION"), ("MODERN", "SIMPLY DISTINCTIVE"),
+    ("PRESTIGE", "THE FINEST DETAILS"), ("ESSENTIAL", "YOUR PERSONAL STYLE"),
+]
+
+
+def primitive(identifier, kind, **properties):
+    return dict(id=identifier, name=identifier.replace("_", " ").title(),
+                type=kind, scaleX=1, scaleY=1, angle=0, opacity=1,
+                customerEditable=True, selectable=True, evented=True,
+                **properties)
 
 
 def safe_artwork(product, index):
-    """Generate editable artwork, safely contained in both square and circle."""
-    width, height, objects = build_coaster(product, index)
-    if width != 1000 or height != 1000:
-        raise CommandError("Unexpected coaster canvas dimensions")
+    """100 curated editable variations: 10 visual systems x 10 art directions.
 
-    # Retain the generator's distinctive artwork, but uniformly scale it
-    # into the inscribed circular-safe square. The background is rebuilt
-    # separately to cover the full print area.
-    background = next((o for o in objects if o.get("id") == "background"), None)
-    fill = background.get("fill", "#FFFFFF") if background else "#FFFFFF"
-    foreground = [copy.deepcopy(o) for o in objects if o.get("id") != "background"]
+    Meaningful objects are within a central circular safe region. Decorative
+    motifs occupy a dedicated upper band; text occupies separate lower bands.
+    """
+    background, ink, gold = PALETTES[(index // 10) % 10]
+    theme, subtitle = THEMES[index % 10]
+    system = index % 10
+    objects = [primitive("background", "rect", left=0, top=0,
+                         width=1000, height=1000, fill=background,
+                         stroke=None, strokeWidth=0)]
 
-    # Keep entire source composition within the central 600x600 square,
-    # whose furthest corner is only 424px from the circle centre.
-    scale = 0.60
-    offset = 200
-    for obj in foreground:
-        for coord in ("left", "top", "x1", "x2", "y1", "y2"):
-            if isinstance(obj.get(coord), (int, float)):
-                obj[coord] = offset + obj[coord] * scale
-        for dim in ("width", "height", "radius", "rx", "ry", "strokeWidth", "fontSize"):
-            if isinstance(obj.get(dim), (int, float)):
-                obj[dim] *= scale
+    def ring(name, radius, width=4, color=None):
+        objects.append(primitive(name, "circle", left=500-radius,
+                                 top=500-radius, radius=radius,
+                                 fill="transparent", stroke=color or gold,
+                                 strokeWidth=width))
 
-    return [{
-        "id": "background", "name": "Background", "type": "rect",
-        "left": 0, "top": 0, "width": 1000, "height": 1000,
-        "fill": fill, "stroke": None, "strokeWidth": 0,
-        "scaleX": 1, "scaleY": 1, "angle": 0, "opacity": 1,
-        "customerEditable": True, "selectable": True, "evented": True,
-    }] + foreground
+    def bar(name, x, y, w, h=3):
+        objects.append(primitive(name, "rect", left=x, top=y, width=w,
+                                 height=h, fill=gold, stroke=None, strokeWidth=0))
+
+    def label(name, value, x, y, width, size, color, font="Georgia"):
+        objects.append(primitive(name, "textbox", left=x, top=y, width=width,
+                                 text=value, fontSize=size, fontFamily=font,
+                                 fontWeight="700", textAlign="center",
+                                 lineHeight=1.08, fill=color, stroke=None,
+                                 strokeWidth=0))
+
+    # Outer accent border stays safely inside the circular cut edge.
+    if system in (0, 2, 4, 6, 8):
+        ring("fine_border", 334, 4)
+    elif system in (1, 5, 9):
+        ring("fine_border", 330, 3)
+        ring("inner_border", 317, 2, ink)
+
+    # Ten clearly differentiated, non-overlapping emblem arrangements.
+    if system == 0:
+        ring("crest", 49, 4)
+        label("crest_letter", "Z", 467, 309, 66, 45, ink)
+    elif system == 1:
+        bar("ornament_top", 414, 341, 172, 5)
+        bar("ornament_bottom", 444, 378, 112, 3)
+    elif system == 2:
+        ring("seal_outer", 57, 3)
+        ring("seal_inner", 45, 2, ink)
+    elif system == 3:
+        for n in range(5):
+            x=436+n*28
+            objects.append(primitive("star_%s" % n, "circle",
+                left=x, top=350, radius=7 if n!=2 else 11,
+                fill=gold, stroke=None, strokeWidth=0))
+    elif system == 4:
+        label("emblem", "✦", 465, 320, 70, 58, gold)
+    elif system == 5:
+        bar("monogram_top", 444, 318, 112, 4)
+        label("monogram", "ZV", 440, 337, 120, 43, ink)
+    elif system == 6:
+        ring("medallion", 51, 4)
+        label("emblem", "01", 453, 332, 94, 34, ink)
+    elif system == 7:
+        bar("accent_left", 402, 354, 80, 4)
+        bar("accent_right", 518, 354, 80, 4)
+        objects.append(primitive("center_dot", "circle",
+            left=491, top=347, radius=9, fill=gold,
+            stroke=None, strokeWidth=0))
+    elif system == 8:
+        ring("medallion", 51, 4)
+        label("emblem", "A", 470, 324, 60, 48, ink)
+    else:
+        bar("rule_a", 430, 338, 140, 4)
+        bar("rule_b", 450, 358, 100, 3)
+        bar("rule_c", 470, 377, 60, 3)
+
+    # Fixed bands and generous whitespace: no collision with ornaments.
+    label("brand", "YOUR BRAND", 270, 441, 460, 52, ink)
+    label("theme", theme, 330, 524, 340, 24, gold, "Poppins")
+    label("subtitle", subtitle, 320, 570, 360, 16, ink, "Poppins")
+    bar("footer_accent", 445, 631, 110, 3)
+    return objects
 
 
 class Command(BaseCommand):
