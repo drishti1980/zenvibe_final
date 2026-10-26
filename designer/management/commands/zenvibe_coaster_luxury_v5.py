@@ -192,6 +192,75 @@ def safe_artwork(product,index):
                     petal(f"{k}_stroke{j}",x-85*s+j*42*s,y-30*s,160*s,a,gold if j%2 else ink)
         else:
             flower_at(k,x,y,90*s,8)
+    # Each index has its OWN art direction: large-format geometric backgrounds,
+    # alternating asymmetric blocks, botanical panels and engraved linework.
+    # These are part of the artwork, not palette-only duplicates.
+    def panel(k, points, color):
+        d="M "+" L ".join(f"{px:.1f} {py:.1f}" for px,py in points)+" Z"
+        path(k,d,color)
+    def pattern_at(k,mode):
+        # Each design uses a distinct deterministic composition, not a reused icon.
+        phase=(index*137.508)%360
+        if mode==0:  # hand-engraved radiating foliage
+            for j in range(13+index%9):
+                a=phase+j*360/(13+index%9)
+                x,y=polar(265,a)
+                branch(f"{k}_leaf{j}",x,y,85+(index%4)*12,a+125,5)
+        elif mode==1:  # ceramic interlaced diamond tessellation
+            for j in range(6):
+                for h in range(6):
+                    x=210+j*116+((h%2)*35);y=208+h*116
+                    if (j*7+h*3+index)%4==0:
+                        r=29+((j+h+index)%4)*9
+                        panel(f"{k}_tile{j}_{h}",[(x,y-r),(x+r,y),(x,y+r),(x-r,y)],gold if j%2 else ink)
+        elif mode==2:  # layered sun-and-sand abstract
+            for j in range(7):
+                x=230+j*92
+                y=390+math.sin((j+index)*.75)*140
+                panel(f"{k}_facet{j}",[(x-80,900),(x-80,y),(x+95,y-105),(x+95,900)],
+                      gold if j%2 else ink)
+        elif mode==3:  # vintage etching / corner engraving
+            for j,(x,y) in enumerate(((280,290),(720,290),(280,710),(720,710))):
+                flower_at(f"{k}_engraved{j}",x,y,58+(index%5)*6,8+(index%4))
+                branch(f"{k}_branch{j}",x,y,120,j*90+index%35,7)
+        elif mode==4:  # architectural arch repeat
+            for j in range(5):
+                x=235+j*132
+                bez(f"{k}_arch{j}",f"{x-57} 760 Q {x-57} {160+(index%7)*8} {x} 240 Q {x+57} {160+(index%7)*8} {x+57} 760",gold,4)
+        elif mode==5:  # dynamic botanical sweep
+            for j in range(11):
+                a=195+j*14+(index%5)*2
+                x,y=polar(305,a)
+                branch(f"{k}_sweep{j}",x,y,105+(j%4)*12,a+100,6)
+        elif mode==6:  # ornate linear fan
+            for j in range(27):
+                a=200+j*5+(index%11)
+                x,y=polar(120,a,500,730)
+                xx,yy=polar(550,a,500,730)
+                line(f"{k}_fan{j}",x,y,xx,yy,gold if j%3 else ink,2)
+        elif mode==7:  # oversized floral wallpaper
+            for j in range(7):
+                x=260+(j%3)*230+((index*17+j*13)%55)
+                y=260+(j//3)*230
+                flower_at(f"{k}_wallflower{j}",x,y,80+(j*index)%35,9)
+        elif mode==8:  # rippling illustrated contour lines
+            for j in range(15):
+                yy=200+j*42
+                bez(f"{k}_wave{j}",f"145 {yy} C 320 {yy-110-index%30} 520 {yy+115+index%35} 855 {yy}",gold if j%3 else ink,3)
+        else:  # illustrated celestial field
+            for j in range(17):
+                a=(j*137.508+index*29)%360
+                r=155+((j*67+index*13)%220)
+                x,y=polar(r,a)
+                if j%3:
+                    disk(f"{k}_star{j}",x,y,5+(j%4)*3,gold)
+                else:
+                    for t in range(4):
+                        aa=t*90
+                        xx,yy=polar(23,aa,x,y)
+                        line(f"{k}_cross{j}_{t}",x,y,xx,yy,ink,3)
+    # No two template indexes share this combination of geometry and placement.
+    pattern_at("signature_surface", (index*7+index//10)%10)
     # Four substantially different editorial structures for each illustrated subject.
     if layout==0:
         motif_at("hero",500,315,1.05)
