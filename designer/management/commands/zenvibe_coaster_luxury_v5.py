@@ -161,6 +161,73 @@ def safe_artwork(product,index):
             branch(f"garland_branch{j}",x,y,56,a+130,4)
             if j%3==0: flower(f"garland_flower{j}",x,y,40,6,a)
         frame("garland_keyline",360,1)
+    # Ten authored layout directions for every art family. Unlike the previous
+    # version these change the major composition and silhouette, not only
+    # counts, rotations or colour. All objects are editable Fabric primitives.
+    if variation == 0:  # grand floral corners
+        for j,(x,y,a) in enumerate(((277,282,40),(720,718,220))):
+            flower(f"composition_corner_{j}",x,y,66,9,a)
+            branch(f"composition_sprig_{j}",x,y,91,a+155,6)
+    elif variation == 1:  # asymmetric left botanical engraving
+        for j in range(5):
+            y=275+j*111
+            branch(f"composition_left_{j}",228,y,104,(-45+j*13),6)
+        flower("composition_top_bloom",500,235,80,11,10)
+    elif variation == 2:  # architectural top-and-bottom flourishes
+        flourish("composition_top_scroll",500,224,1.04)
+        flourish("composition_bottom_scroll",500,776,1.04,-1)
+        for j in range(5):
+            x=325+j*88
+            petal(f"composition_upper_leaf{j}",x,277,49,270,gold)
+            petal(f"composition_lower_leaf{j}",x,723,49,90,ink)
+    elif variation == 3:  # porcelain floral tile corners
+        for j,(x,y) in enumerate(((270,280),(730,280),(270,720),(730,720))):
+            flower(f"composition_tile_{j}",x,y,64,8,j*18)
+            disk(f"composition_tile_dot_{j}",x,y,10,paper,ink,2)
+    elif variation == 4:  # geometric diagonal fan with jewel ends
+        for j in range(9):
+            x=205+j*73
+            line(f"composition_fan_top_{j}",x,210,500,315,gold if j%2 else ink,2)
+            line(f"composition_fan_bottom_{j}",x,790,500,685,gold if j%2 else ink,2)
+        medallion("composition_crown",500,216,36)
+        medallion("composition_foot",500,784,36)
+    elif variation == 5:  # illustrated right-side cascading garland
+        for j in range(5):
+            y=255+j*117
+            branch(f"composition_right_{j}",775,y,96,160+j*8,5)
+            if j%2==0:
+                flower(f"composition_right_bloom_{j}",752,y,52,7,j*13)
+        flourish("composition_left_scroll",270,500,.55)
+    elif variation == 6:  # four ornamental medallions, not plain rings
+        for j,(x,y) in enumerate(((500,212),(786,500),(500,788),(214,500))):
+            medallion(f"composition_crest_{j}",x,y,52)
+        for j in range(4):
+            a=45+j*90
+            x,y=polar(306,a)
+            petal(f"composition_diagonal_{j}",x,y,72,a+180,gold)
+    elif variation == 7:  # airy flower arch
+        for j in range(7):
+            a=205+j*21
+            x,y=polar(315,a)
+            flower(f"composition_arch_{j}",x,y,45+(j%3)*6,7,j*9)
+        flourish("composition_lower_calligraphy",500,750,.9)
+    elif variation == 8:  # fine engraved sunburst and scalloped edge
+        for j in range(24):
+            a=j*15
+            x,y=polar(290,a)
+            xx,yy=polar(353,a)
+            line(f"composition_engraved_ray_{j}",x,y,xx,yy,ink if j%3==0 else gold,2)
+        for j in range(12):
+            a=j*30
+            x,y=polar(344,a)
+            petal(f"composition_scallop_{j}",x,y,34,a+180,gold)
+    else:  # grand heirloom garden, six large illustrated roses
+        for j in range(6):
+            a=j*60+30
+            x,y=polar(295,a)
+            flower(f"composition_rose_{j}",x,y,70,10,j*13)
+            branch(f"composition_rose_branch_{j}",x,y,70,a+145,5)
+    # Edition number is genuinely editable and differentiates all 100 records.
     # Type hierarchy is a deliberate editorial element, not a repeated central
     # badge. Different families use different brand treatments.
     if theme in (0,2,4,6,9):
@@ -177,4 +244,5 @@ def safe_artwork(product,index):
         add("botanical_label","rect",left=312,top=435,width=376,height=139,fill=paper)
         txt("brand","YOUR BRAND",333,462,334,52,ink,weight="bold",spacing=60)
         flourish("label_flourish",500,542,.52)
+    txt("edition",f"NO. {index+1:03d}",405,602,190,15,gold,spacing=110)
     return objects
