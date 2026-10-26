@@ -19,7 +19,7 @@ from django.core.files.base import ContentFile
 from designer.models import DesignTemplate
 
 
-from .zenvibe_coaster_luxury import safe_artwork
+from .zenvibe_coaster_luxury_v5 import safe_artwork
 from .rebuild_coaster_previews import render
 
 
