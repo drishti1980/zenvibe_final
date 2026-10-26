@@ -48,7 +48,7 @@ class Command(BaseCommand):
         for index,template in enumerate(templates):
             if index < 24:
                 raw=references[index].read_bytes()
-                if not raw.startswith(b"\\xff\\xd8"):
+                if not raw.startswith(bytes((0xFF, 0xD8))):
                     raise CommandError(f"Not a JPEG: {references[index].name}")
                 staged.append((template,index,raw,None))
             else:
