@@ -32,7 +32,7 @@ def font(size, family=""):
 
 def draw_vector_path(draw, value, fill, stroke, width):
     """Render the M/L/Q/C/Z path subset emitted by coaster artwork."""
-    tokens=re.findall(r"[MLQCZmlqcz]|[-+]?(?:\\d*\\.)?\\d+",str(value or ""))
+    tokens=re.findall(r"[MLQCZmlqcz]|[-+]?(?:\d*\.)?\d+",str(value or ""))
     i=0;current=(0.,0.);start=(0.,0.);points=[]
     def flush(close=False):
         nonlocal points
