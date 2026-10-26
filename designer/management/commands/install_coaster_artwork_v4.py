@@ -166,6 +166,8 @@ def generate(index):
                 x=400+math.cos(a)*radius;y=400+math.sin(a)*radius
                 ellipse(x,y,19+ring*5,30+ring*8,rgba(accent,150),3)
         flower(400,400,38,accent)
+        # Clear the center for readable editable lettering.
+        d.ellipse((248,248,552,552),fill=rgba(bg,250))
     # Reserve a central text zone. A translucent center medallion separates
     # type from ornamental illustrations, except for scenic designs.
     if style not in (6,16,20,21,9,8,11):
@@ -211,21 +213,22 @@ class Command(BaseCommand):
         prepared=[]
         for i,t in enumerate(qs):
             image,title,subtitle,ink,bg,theme=generate(i)
+            image=image.resize((1000,1000),Image.Resampling.LANCZOS)
             buffer=io.BytesIO();image.save(buffer,"PNG",optimize=True)
             data_url="data:image/png;base64,"+base64.b64encode(buffer.getvalue()).decode("ascii")
             # Background is replaceable in the editor. The type stays native Fabric.
             obj={"id":"illustrated-artwork","type":"image","left":0,"top":0,
-                 "width":800,"height":800,"scaleX":1.25,"scaleY":1.25,
+                 "width":1000,"height":1000,"scaleX":1,"scaleY":1,
                  "src":data_url,"selectable":True,"evented":True,"customerEditable":True}
             texts=layout_text(title,subtitle,ink)
             data=copy.deepcopy(t.json_data or {})
             data["width"]=1000;data["height"]=1000
-            data["generator"]="zenvibe-coaster-artwork-v4"
+            data["generator"]="zenvibe-coaster-artwork-v5-canvas"
             data["artworkCategory"]=theme
             data["pages"]=[{"width":1000,"height":1000,"objects":[obj]+texts}]
             data["adminPages"]=copy.deepcopy(data["pages"])
             # Gallery preview is composited from the same background and text.
-            preview=image.copy();d=ImageDraw.Draw(preview)
+            preview=image.resize((800,800),Image.Resampling.LANCZOS);d=ImageDraw.Draw(preview)
             for ob in texts:
                 ft=font(round(ob["fontSize"]*.8),True)
                 value=ob["text"];bbox=d.textbbox((0,0),value,font=ft)
@@ -242,6 +245,6 @@ class Command(BaseCommand):
             for i,(t,data,png,theme) in enumerate(prepared):
                 t.json_data=data
                 t.name=f"{i+1:03d} | {theme}"
-                t.preview.save(f"coaster-artwork-v4-{t.pk}.png",ContentFile(png),save=False)
+                t.preview.save(f"coaster-artwork-v5-{t.pk}.png",ContentFile(png),save=False)
                 t.save(update_fields=["json_data","name","preview"])
         self.stdout.write(self.style.SUCCESS("Installed 100 artwork-led coaster templates"))
