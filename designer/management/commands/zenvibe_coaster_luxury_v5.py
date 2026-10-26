@@ -14,6 +14,15 @@ NAMES=["BOTANICAL HOUSE","ATELIER NO. 8","HERITAGE FLORAL","THE GARDEN",
        "THE MONOGRAM","SIGNATURE COLLECTION"]
 def safe_artwork(product,index):
     if not 0 <= index < 100: raise ValueError("index must be 0..99")
+    # Use the existing 100-composition editable promotional library instead of
+    # the old ten repeating medallion artworks. Circle and square use the
+    # identical objects; shape clipping is applied by the editor/print mask.
+    from .seed_promotional_product_templates import build_coaster
+    width, height, objects = build_coaster(product, index)
+    if width != 1000 or height != 1000 or not objects:
+        raise ValueError("Invalid shared coaster composition")
+    return objects
+
     theme=index%10
     variation=index//10
     paper,ink,gold=PALETTES[(theme+variation*3)%10]
