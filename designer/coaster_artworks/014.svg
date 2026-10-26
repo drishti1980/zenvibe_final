@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+<rect width="1000" height="1000" fill="#E8F1F4"/>
+<path d="M 135 140 C 238 40 493 270 865 140" fill="none" stroke="#174D77" stroke-width="4"/>
+<path d="M 135 178 C 238 78 493 308 865 178" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 216 C 238 116 493 346 865 216" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 254 C 238 154 493 384 865 254" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 292 C 238 192 493 422 865 292" fill="none" stroke="#174D77" stroke-width="4"/>
+<path d="M 135 330 C 238 230 493 460 865 330" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 368 C 238 268 493 498 865 368" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 406 C 238 306 493 536 865 406" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 444 C 238 344 493 574 865 444" fill="none" stroke="#174D77" stroke-width="4"/>
+<path d="M 135 482 C 238 382 493 612 865 482" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 520 C 238 420 493 650 865 520" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 558 C 238 458 493 688 865 558" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 596 C 238 496 493 726 865 596" fill="none" stroke="#174D77" stroke-width="4"/>
+<path d="M 135 634 C 238 534 493 764 865 634" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 672 C 238 572 493 802 865 672" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 710 C 238 610 493 840 865 710" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 748 C 238 648 493 878 865 748" fill="none" stroke="#174D77" stroke-width="4"/>
+<path d="M 135 786 C 238 686 493 916 865 786" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 824 C 238 724 493 954 865 824" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<path d="M 135 862 C 238 762 493 992 865 862" fill="none" stroke="#5C9BC0" stroke-width="4"/>
+<circle cx="500.0" cy="320.0" r="95.0" fill="#E8F1F4" stroke="#174D77" stroke-width="8"/>
+</svg>
