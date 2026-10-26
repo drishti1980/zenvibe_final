@@ -8,6 +8,7 @@ from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 from designer.models import DesignTemplate
 from PIL import Image, ImageDraw, ImageFont, ImageColor
+import re
 
 SIZE=800
 SCALE=SIZE/1000
@@ -28,6 +29,47 @@ def font(size, family=""):
         except OSError: pass
     return ImageFont.load_default()
 
+
+def draw_vector_path(draw, value, fill, stroke, width):
+    """Render the M/L/Q/C/Z path subset emitted by coaster artwork."""
+    tokens=re.findall(r"[MLQCZmlqcz]|[-+]?(?:\\d*\\.)?\\d+",str(value or ""))
+    i=0;current=(0.,0.);start=(0.,0.);points=[]
+    def flush(close=False):
+        nonlocal points
+        if len(points)>1:
+            xy=[(round(x*SCALE),round(y*SCALE)) for x,y in points]
+            if close:
+                if fill: draw.polygon(xy,fill=fill)
+                if stroke: draw.line(xy+[xy[0]],fill=stroke,width=width,joint="curve")
+            elif stroke:
+                draw.line(xy,fill=stroke,width=width,joint="curve")
+        points=[]
+    while i<len(tokens):
+        cmd=tokens[i].upper();i+=1
+        if cmd=="Z":
+            flush(True);current=start;continue
+        count={"M":2,"L":2,"Q":4,"C":6}.get(cmd)
+        if not count or i+count>len(tokens):break
+        nums=list(map(float,tokens[i:i+count]));i+=count
+        if cmd=="M":
+            flush();current=(nums[0],nums[1]);start=current;points=[current]
+        elif cmd=="L":
+            current=(nums[0],nums[1]);points.append(current)
+        elif cmd=="Q":
+            x0,y0=current;cx,cy,x1,y1=nums
+            for j in range(1,21):
+                t=j/20;s=1-t
+                points.append((s*s*x0+2*s*t*cx+t*t*x1,s*s*y0+2*s*t*cy+t*t*y1))
+            current=(x1,y1)
+        elif cmd=="C":
+            x0,y0=current;ax,ay,bx,by,x1,y1=nums
+            for j in range(1,25):
+                t=j/24;s=1-t
+                points.append((s**3*x0+3*s*s*t*ax+3*s*t*t*bx+t**3*x1,
+                               s**3*y0+3*s*s*t*ay+3*s*t*t*by+t**3*y1))
+            current=(x1,y1)
+    flush()
+
 def render(objects,shape):
     im=Image.new("RGB",(SIZE,SIZE),"#ffffff")
     d=ImageDraw.Draw(im)
@@ -41,7 +83,9 @@ def render(objects,shape):
         fill=rgb(ob.get("fill"))
         stroke=rgb(ob.get("stroke"))
         sw=max(1,round(float(ob.get("strokeWidth") or 1)*SCALE))
-        if kind=="rect":
+        if kind=="path":
+            draw_vector_path(d,ob.get("path"),fill,stroke,sw)
+        elif kind=="rect":
             w=float(ob.get("width") or 0)*SCALE*sx
             h=float(ob.get("height") or 0)*SCALE*sy
             d.rectangle((x,y,x+w,y+h),fill=fill,outline=stroke,width=sw)
