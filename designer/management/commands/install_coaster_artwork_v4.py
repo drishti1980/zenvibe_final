@@ -168,6 +168,55 @@ def generate(index):
         flower(400,400,38,accent)
         # Clear the center for readable editable lettering.
         d.ellipse((248,248,552,552),fill=rgba(bg,255))
+    # Every index gets its own composition, not merely a recolored 24-style
+    # cycle. Place varied large motifs outside the protected lettering zone.
+    variant=index//24
+    if variant:
+        variant_rng=random.Random(91837+index*3571)
+        if variant==1:
+            # Asymmetric corner garland, contrasting the base radial arrangement.
+            for j in range(7):
+                a=-2.6+j*.19
+                x=400+math.cos(a)*315;y=400+math.sin(a)*315
+                branch(x,y,a+math.pi*.7,variant_rng.randint(45,100),ink,2)
+            for j in range(4):
+                flower(145+j*57,650-j*28,variant_rng.randint(12,27),accent)
+        elif variant==2:
+            # Architectural nested arches, deliberately offset from the center.
+            for j in range(5):
+                inset=j*18
+                d.arc((90+inset,70+inset,710-inset,730-inset),
+                      195,345,fill=rgba(accent,110+j*20),width=2+j%2)
+            for j in range(13):
+                x=variant_rng.randint(70,730)
+                y=variant_rng.choice([85,715])
+                ellipse(x,y,variant_rng.randint(3,9),variant_rng.randint(5,16),
+                        rgba(ink,170))
+        elif variant==3:
+            # Art-deco rays and corner fans, no repeated flower-ring layout.
+            for j in range(15):
+                a=(j/14)*math.pi
+                for center_x,center_y in ((90,710),(710,90)):
+                    length=variant_rng.randint(90,215)
+                    d.line((center_x,center_y,
+                            center_x+math.cos(a)*length,
+                            center_y-math.sin(a)*length),
+                           fill=rgba(accent,120+j*5),width=2)
+            for j in range(3):
+                arc_ring(275+j*18,accent,1)
+        else:
+            # Floating petals and curved foliage: distinct from geometric motifs.
+            for j in range(23):
+                a=variant_rng.random()*math.tau
+                rad=variant_rng.uniform(255,380)
+                x=400+math.cos(a)*rad;y=400+math.sin(a)*rad
+                ellipse(x,y,variant_rng.randint(7,24),
+                        variant_rng.randint(13,34),
+                        rgba(variant_rng.choice([accent,ink,bg]),175))
+            for j in range(4):
+                a=j*math.pi/2+.35
+                branch(400+math.cos(a)*360,400+math.sin(a)*360,
+                       a+math.pi,variant_rng.randint(65,110),ink,2)
     # A feathered central clearing replaces the old opaque rectangles.
     # The previous panels created obvious hard-edged cut-outs through every
     # flower, leaf, coffee cup and marble vein.
@@ -227,8 +276,9 @@ class Command(BaseCommand):
             texts=layout_text(title,subtitle,ink)
             data=copy.deepcopy(t.json_data or {})
             data["width"]=1000;data["height"]=1000
-            data["generator"]="zenvibe-coaster-artwork-v8-feathered"
+            data["generator"]="zenvibe-coaster-artwork-v9-compositions"
             data["artworkCategory"]=theme
+            data["artworkComposition"]=i+1
             data["pages"]=[{"width":1000,"height":1000,"objects":[obj]+texts}]
             data["adminPages"]=copy.deepcopy(data["pages"])
             # Gallery preview is composited from the same background and text.
@@ -249,6 +299,6 @@ class Command(BaseCommand):
             for i,(t,data,png,theme) in enumerate(prepared):
                 t.json_data=data
                 t.name=f"{i+1:03d} | {theme}"
-                t.preview.save(f"coaster-artwork-v8-{t.pk}.png",ContentFile(png),save=False)
+                t.preview.save(f"coaster-artwork-v9-{t.pk}.png",ContentFile(png),save=False)
                 t.save(update_fields=["json_data","name","preview"])
         self.stdout.write(self.style.SUCCESS("Installed 100 artwork-led coaster templates"))
