@@ -7,6 +7,7 @@ Existing template IDs, print rulers, product photos, and non-generated designs
 are preserved. Artwork is deliberately rebuilt only on explicit --apply.
 """
 import copy
+import io
 import json
 from datetime import datetime
 from pathlib import Path
@@ -14,10 +15,12 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.core.files.base import ContentFile
 from designer.models import DesignTemplate
 
 
 from .zenvibe_coaster_luxury import safe_artwork
+from .rebuild_coaster_previews import render
 
 
 class Command(BaseCommand):
@@ -27,6 +30,7 @@ class Command(BaseCommand):
         parser.add_argument("--product-id", type=int)
         parser.add_argument("--dry-run", action="store_true")
         parser.add_argument("--apply", action="store_true")
+        parser.add_argument("--preview-shape", choices=("circle", "square"), default="circle")
         parser.add_argument("--confirm-replace-artwork", action="store_true",
                             help="Required to replace generated template artwork")
 
@@ -55,10 +59,40 @@ class Command(BaseCommand):
             raise CommandError("No matching generated coaster templates found.")
 
         self.stdout.write(f"Matched {len(templates)} generated coaster templates.")
+        # Render and validate the actual artwork for every template BEFORE
+        # modifying any database row. This catches generator exceptions even
+        # in dry-run mode and avoids stale gallery preview files.
+        staged = []
+        counters = {}
+        for template in templates:
+            idx = counters.get(template.product_id, 0)
+            counters[template.product_id] = idx + 1
+            try:
+                objects = safe_artwork(template.product, idx)
+                if not isinstance(objects, list) or not objects:
+                    raise ValueError("empty artwork")
+                object_ids = [obj.get("id") for obj in objects]
+                if len(set(object_ids)) != len(object_ids):
+                    raise ValueError("duplicate object IDs")
+                image = render(objects, options["preview_shape"])
+                buffer = io.BytesIO()
+                image.save(buffer, format="PNG", optimize=True)
+                staged.append((template, objects, buffer.getvalue()))
+            except Exception as exc:
+                raise CommandError(
+                    f"Template {template.id} failed artwork/preview validation: {exc}"
+                ) from exc
+
         if options["dry_run"]:
-            for template in templates[:10]:
-                self.stdout.write(f"Would update {template.id}: {template.name}")
-            self.stdout.write("Dry run complete; nothing changed.")
+            for template, objects, png in staged[:10]:
+                self.stdout.write(
+                    f"Validated {template.id}: {template.name} "
+                    f"({len(objects)} editable objects, {len(png)} PNG bytes)"
+                )
+            self.stdout.write(
+                f"Dry run complete: validated {len(staged)} templates; "
+                "database and media unchanged."
+            )
             return
 
         backup_dir = Path(settings.BASE_DIR) / "coaster_template_backups"
@@ -73,20 +107,22 @@ class Command(BaseCommand):
         ], indent=2, default=str), encoding="utf-8")
         self.stdout.write(f"Backup written: {backup_file}")
 
-        counters = {}
         with transaction.atomic():
-            for template in templates:
-                idx = counters.get(template.product_id, 0)
-                counters[template.product_id] = idx + 1
+            for template, artwork, preview_bytes in staged:
                 updated = copy.deepcopy(template.json_data)
-                artwork = safe_artwork(template.product, idx)
                 for key in ("pages", "adminPages"):
                     for page in updated.get(key, []):
                         if isinstance(page, dict):
                             page["objects"] = copy.deepcopy(artwork)
-                updated["coasterSafeLayoutVersion"] = 3
+                updated["coasterSafeLayoutVersion"] = 4
                 template.json_data = updated
-                template.save(update_fields=["json_data"])
+                filename = (
+                    f"coaster-{template.id}-{options['preview_shape']}-v4.png"
+                )
+                template.preview.save(
+                    filename, ContentFile(preview_bytes), save=False
+                )
+                template.save(update_fields=["json_data", "preview"])
 
         self.stdout.write(self.style.SUCCESS(
             f"Updated {len(templates)} templates; backup: {backup_file}"
