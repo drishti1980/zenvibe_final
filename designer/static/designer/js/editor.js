@@ -1109,10 +1109,17 @@ function loadPage(i){
           // Freshener (419) follows the same full-print-area mapping used by
           // keychain/product cut-outs. Do NOT shrink artwork into a central card.
           // The selected physical die clips the full template after it is loaded.
-          const sx=aw/srcW, sy=ah/srcH;
+          // Coasters are authored on a square canvas. Preserve the source
+          // aspect ratio in BOTH die shapes; stretching a circle to the
+          // configured print rectangle produced the oval gallery/editor art.
+          const coasterFit=Number(P.id)===415;
+          const uniform=coasterFit?Math.min(aw/srcW,ah/srcH):null;
+          const sx=coasterFit?uniform:aw/srcW, sy=coasterFit?uniform:ah/srcH;
+          const ox=coasterFit?(aw-srcW*sx)/2:0;
+          const oy=coasterFit?(ah-srcH*sy)/2:0;
           const x={...o};
-          x.left=l+(Number(o.left??o.x??0)*sx);
-          x.top=t+(Number(o.top??o.y??0)*sy);
+          x.left=l+ox+(Number(o.left??o.x??0)*sx);
+          x.top=t+oy+(Number(o.top??o.y??0)*sy);
           x.scaleX=(Number(o.scaleX)||1)*sx;
           x.scaleY=(Number(o.scaleY)||1)*sy;
           if(suffix){x.objectId=(o.objectId||o.id||uid())+'-'+suffix;x.id=x.objectId;}
@@ -1189,7 +1196,7 @@ function loadPage(i){
         selectable:false,evented:false
       });
     }
-    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset || o.id==='illustrated-artwork' || o.objectId==='illustrated-artwork')canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
+    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset || o.id==='illustrated-artwork' || o.objectId==='illustrated-artwork' || o.id==='catalog-artwork' || o.objectId==='catalog-artwork')canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
   function zvApplyCoasterShape(){
     if(Number(P.id)!==415)return;
     const shape=String(OPT.selected_shape||new URLSearchParams(location.search).get('shape')||'square').toLowerCase();
