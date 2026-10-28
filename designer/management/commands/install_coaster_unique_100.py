@@ -19,7 +19,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageOps
 
 from designer.models import DesignTemplate
 from designer.management.commands.seed_calendar_editable_templates import PHOTO_URLS
@@ -267,7 +267,14 @@ class Command(BaseCommand):
                          "adminPages":[{"width":1000,"height":1000,"objects":[dict(o) for o in page["objects"]]}],
                          "generator":"zenvibe-coaster-unique-100-v1",
                          "artworkComposition":i+1,"constrainToPrintArea":True})
-            prepared.append((t,name,data,raw))
+            # Gallery is a circular coaster preview; retain the full square
+            # source in JSON so square selection is not pre-clipped.
+            preview=im.convert("RGBA")
+            alpha=Image.new("L",(SIZE,SIZE),0)
+            ImageDraw.Draw(alpha).ellipse((0,0,SIZE-1,SIZE-1),fill=255)
+            preview.putalpha(alpha)
+            preview_raw,_=image_data(preview)
+            prepared.append((t,name,data,preview_raw))
         # Complete all image preparation before any database writes.
         with transaction.atomic():
             for t,name,data,raw in prepared:
