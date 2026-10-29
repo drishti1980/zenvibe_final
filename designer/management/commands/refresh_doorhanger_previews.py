@@ -23,6 +23,44 @@ try:
 except (ImportError, OSError):
     cairosvg=None
 
+# Public Unsplash image IDs, one per industry theme. Photos are downloaded
+# only when --apply is run, then embedded as data URIs in the editable JSON.
+# This keeps the editor and preview independent of external image URLs.
+PHOTO_IDS = [
+    "photo-1497366754035-f200968a6e72",  # Corporate / office
+    "photo-1600596542815-ffad4c1539a9",  # Real estate
+    "photo-1517248135467-4c7edcad34c4",  # Restaurant
+    "photo-1488646953014-85cb44e25828",  # Travel
+    "photo-1540555700478-4be289fbecef",  # Wellness
+    "photo-1576091160399-112ba8d25d1d",  # Healthcare
+    "photo-1503676260728-1c00da094a0b",  # Education
+    "photo-1518770660439-4636190af475",  # Technology
+    "photo-1534438327276-14e5300c3a48",  # Fitness
+    "photo-1460925895917-afdab827c52f",  # Finance
+    "photo-1524504388940-b1c1722653e1",  # Beauty
+    "photo-1504307651254-35680f356dfd",  # Construction
+    "photo-1600607687920-4e2a09cf159d",  # Interior
+    "photo-1492144534655-ae79c964c9d7",  # Automotive
+    "photo-1511795409834-ef04bbd61622",  # Events
+    "photo-1483985988355-763728e1935b",  # Fashion
+    "photo-1452587925148-ce544e77e70d",  # Photography
+    "photo-1589829545856-d10d557cf95f",  # Legal
+    "photo-1552664730-d307ca884978",  # Marketing
+    "photo-1529156069898-49953e39b3ac",  # Community
+]
+
+def theme_photo_data_uri(idx):
+    from urllib.request import Request, urlopen
+    photo_id = PHOTO_IDS[idx % len(PHOTO_IDS)]
+    url = f"https://images.unsplash.com/{photo_id}?auto=format&fit=crop&w=700&h=700&q=80"
+    request = Request(url, headers={"User-Agent": "ZenvibeTemplateBuilder/1.0"})
+    with urlopen(request, timeout=12) as response:
+        content_type = response.headers.get_content_type()
+        content = response.read(2_500_001)
+    if len(content) > 2_500_000 or content_type not in ("image/jpeg", "image/png", "image/webp"):
+        raise ValueError("Photo response was not a supported image")
+    return "data:" + content_type + ";base64," + base64.b64encode(content).decode("ascii")
+
 def svg_image_href(src):
     if src.startswith("data:image/svg+xml;base64,"):
         return src
@@ -95,6 +133,7 @@ class Command(BaseCommand):
         if opts["dry_run"]:
             return
         changed=0
+        photo_cache = {}
         for t in rows:
             data=t.json_data
             if isinstance(data,str):
@@ -109,10 +148,30 @@ class Command(BaseCommand):
             idx=int(match.group(1))-1
             if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2"):
                 self.stdout.write(self.style.WARNING("Skipping non-original template %s"%t.pk));continue
+            theme_idx = idx % len(PHOTO_IDS)
+            if theme_idx not in photo_cache:
+                try:
+                    photo_cache[theme_idx] = theme_photo_data_uri(theme_idx)
+                except Exception as exc:
+                    photo_cache[theme_idx] = None
+                    self.stdout.write(self.style.WARNING(
+                        "Photo download unavailable for theme %s: %s" % (theme_idx + 1, exc)
+                    ))
             w=int(data.get("width",450));h=int(data.get("height",1100))
             pages=[]
             for side in range(2):
                 bg,objects=door_page(idx,side,w,h)
+                # Replace the generic placeholder on both sides with a real
+                # industry photo; preserve image objects for customer replacement.
+                photo_src = photo_cache.get(theme_idx)
+                if photo_src:
+                    for obj in objects:
+                        if obj.get("id") in ("photo_front", "photo_back"):
+                            obj["src"] = photo_src
+                            obj["baseSrc"] = photo_src
+                            obj["name"] = "Replace industry photo"
+                            obj["customerEditable"] = True
+                            obj["manualReplacement"] = True
                 # A consistent content panel protects text from diagonal
                 # backgrounds and makes the preview match the editable editor.
                 panel={"id":"door-content-panel","type":"rect","left":w*.065,
