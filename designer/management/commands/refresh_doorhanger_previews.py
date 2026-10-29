@@ -16,7 +16,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from designer.models import DesignTemplate, Product
 from designer.management.commands.seed_100_marketing_material_templates import (
-    GENERATOR_ID, door_page, KINDS, THEMES, uri,
+    GENERATOR_ID, door_page, KINDS, THEMES, PALETTES, uri,
 )
 try:
     import cairosvg
@@ -172,37 +172,68 @@ class Command(BaseCommand):
                             obj["name"] = "Replace industry photo"
                             obj["customerEditable"] = True
                             obj["manualReplacement"] = True
-                # A consistent content panel protects text from diagonal
-                # backgrounds and makes the preview match the editable editor.
-                panel={"id":"door-content-panel","type":"rect","left":w*.065,
-                       "top":h*.265,"width":w*.87,"height":h*.68,
-                       "fill":"#FFFFFF","opacity":.97,
-                       "selectable":False,"evented":False}
-                objects.insert(1,panel)
-                if side==0:
-                    positions={
-                        "photo_front":(.13,.30,.74,.22),
-                        "headline":(.12,.56,.76,None),
-                        "subhead":(.12,.66,.76,None),
-                        "offer":(.12,.76,.76,None),
-                        "contact":(.12,.87,.76,None),
+                # Compose a single full-bleed artwork. The previous inset
+                # white panel made the design look like a flyer inside a hanger.
+                # All content now sits directly on a unified background.
+                palette = PALETTES[(idx * 5 + side) % len(PALETTES)]
+                primary, paper, accent, white, dark = palette
+                background = {
+                    "id": "door-artwork-base", "type": "rect",
+                    "left": 0, "top": 0, "width": w, "height": h,
+                    "fill": paper, "opacity": 1,
+                    "selectable": False, "evented": False,
+                    "customerEditable": False,
+                }
+                objects.insert(1, background)
+                # Reserved top 20% for the door-hanger hole/cutout.
+                # Decorative colour bands are part of the artwork, not a
+                # second content card.
+                objects.insert(2, {
+                    "id": "door-artwork-header", "type": "rect",
+                    "left": 0, "top": 0, "width": w, "height": h * .225,
+                    "fill": primary, "opacity": 1,
+                    "selectable": False, "evented": False,
+                })
+                objects.insert(3, {
+                    "id": "door-artwork-accent", "type": "rect",
+                    "left": 0, "top": h * .225, "width": w,
+                    "height": max(4, h * .009),
+                    "fill": accent, "opacity": 1,
+                    "selectable": False, "evented": False,
+                })
+                if side == 0:
+                    positions = {
+                        "photo_front": (.075, .265, .85, .305),
+                        "headline": (.075, .61, .85, None),
+                        "subhead": (.075, .69, .85, None),
+                        "offer": (.075, .79, .85, None),
+                        "contact": (.075, .88, .85, None),
                     }
                     for obj in objects:
-                        oid=obj.get("id")
-                        if oid not in positions: continue
-                        xx,yy,ww,hh=positions[oid]
-                        obj["left"]=w*xx
-                        obj["top"]=h*yy
-                        obj["width"]=w*ww
-                        if hh is not None: obj["height"]=h*hh
-                        if oid!="photo_front":
-                            obj["fill"]="#203442"
-                            obj["textAlign"]="center"
-                            obj["fontSize"]=min(float(obj.get("fontSize",20)),w*.048 if oid=="headline" else w*.032)
+                        oid = obj.get("id")
+                        if oid not in positions:
+                            continue
+                        xx, yy, ww, hh = positions[oid]
+                        obj["left"] = round(w * xx, 2)
+                        obj["top"] = round(h * yy, 2)
+                        obj["width"] = round(w * ww, 2)
+                        if hh is not None:
+                            obj["height"] = round(h * hh, 2)
+                        if oid != "photo_front":
+                            obj["fill"] = dark if oid != "offer" else primary
+                            obj["textAlign"] = "center"
+                            obj["fontSize"] = round(min(
+                                float(obj.get("fontSize", 20)),
+                                w * (.053 if oid == "headline" else .037)
+                            ), 2)
                 else:
                     for obj in objects:
-                        if obj.get("type") in ("textbox","text"):
-                            obj["fill"]="#203442"
+                        if obj.get("type") in ("textbox", "text"):
+                            obj["fill"] = dark
+                            obj["width"] = min(float(obj.get("width", w)), w * .85)
+                # The first object is the original SVG background; the new
+                # full-bleed base covers its patterns consistently in the
+                # editor and in the rendered preview.
                 pages.append({"name":"Front" if side==0 else "Back",
                               "width":w,"height":h,"objects":objects})
                 if side==0:
