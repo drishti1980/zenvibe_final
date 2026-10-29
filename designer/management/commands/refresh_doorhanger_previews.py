@@ -177,6 +177,21 @@ class Command(BaseCommand):
                 # All content now sits directly on a unified background.
                 palette = PALETTES[(idx * 5 + side) % len(PALETTES)]
                 primary, paper, accent, white, dark = palette
+                # The preview used the original SVG background, which still
+                # contained the large inset panel. Replace that SVG too.
+                # Use the same background image for Fabric and the thumbnail.
+                bg = (
+                    f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" '
+                    f'height="{h}" viewBox="0 0 {w} {h}">'
+                    f'<rect width="{w}" height="{h}" fill="{paper}"/>'
+                    f'<rect width="{w}" height="{h * .225}" fill="{primary}"/>'
+                    f'<rect y="{h * .225}" width="{w}" height="{max(4, h * .009)}" fill="{accent}"/>'
+                    '</svg>'
+                )
+                for obj in objects:
+                    if obj.get("backgroundAsset") or str(obj.get("id", "")).startswith("bg_"):
+                        obj["src"] = uri(bg)
+                        obj["baseSrc"] = uri(bg)
                 background = {
                     "id": "door-artwork-base", "type": "rect",
                     "left": 0, "top": 0, "width": w, "height": h,
