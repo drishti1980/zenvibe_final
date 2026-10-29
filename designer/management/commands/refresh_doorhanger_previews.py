@@ -146,7 +146,7 @@ class Command(BaseCommand):
             if not match:
                 continue
             idx=int(match.group(1))-1
-            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2"):
+            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2","zenvibe-doorhanger-compositions-v3"):
                 self.stdout.write(self.style.WARNING("Skipping non-original template %s"%t.pk));continue
             theme_idx = idx % len(PHOTO_IDS)
             if theme_idx not in photo_cache:
@@ -180,14 +180,28 @@ class Command(BaseCommand):
                 # The preview used the original SVG background, which still
                 # contained the large inset panel. Replace that SVG too.
                 # Use the same background image for Fabric and the thumbnail.
-                bg = (
-                    f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" '
-                    f'height="{h}" viewBox="0 0 {w} {h}">'
-                    f'<rect width="{w}" height="{h}" fill="{paper}"/>'
-                    f'<rect width="{w}" height="{h * .225}" fill="{primary}"/>'
-                    f'<rect y="{h * .225}" width="{w}" height="{max(4, h * .009)}" fill="{accent}"/>'
-                    '</svg>'
-                )
+                # Twenty composition families, five distinct treatments each.
+                # The exact same SVG is used in Fabric and in the thumbnail.
+                family = idx % 20
+                variant = idx // 20
+                accent_shapes = []
+                if family % 4 == 0:
+                    accent_shapes.append(f'<rect width="{w}" height="{h * (.16 + variant*.012)}" fill="{primary}"/>')
+                elif family % 4 == 1:
+                    accent_shapes.append(f'<path d="M0 0 H{w} V{h*.15} L0 {h*(.24+variant*.01)}Z" fill="{primary}"/>')
+                elif family % 4 == 2:
+                    accent_shapes.append(f'<rect width="{w*.12}" height="{h}" fill="{primary}"/>')
+                    accent_shapes.append(f'<rect x="{w*.12}" width="{w*.018}" height="{h}" fill="{accent}"/>')
+                else:
+                    accent_shapes.append(f'<rect width="{w}" height="{h*.12}" fill="{primary}"/>')
+                    accent_shapes.append(f'<rect y="{h*.91}" width="{w}" height="{h*.09}" fill="{primary}"/>')
+                if variant % 2:
+                    accent_shapes.append(f'<rect x="{w*.07}" y="{h*.95}" width="{w*.86}" height="{max(2,h*.004)}" fill="{accent}"/>')
+                if variant >= 2:
+                    accent_shapes.append(f'<rect x="{w*.08}" y="{h*.25}" width="{w*.84}" height="{max(2,h*.003)}" fill="{accent}"/>')
+                bg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+                      f'viewBox="0 0 {w} {h}"><rect width="{w}" height="{h}" fill="{paper}"/>'
+                      + ''.join(accent_shapes) + '</svg>')
                 for obj in objects:
                     if obj.get("backgroundAsset") or str(obj.get("id", "")).startswith("bg_"):
                         obj["src"] = uri(bg)
@@ -199,31 +213,46 @@ class Command(BaseCommand):
                     "selectable": False, "evented": False,
                     "customerEditable": False,
                 }
-                objects.insert(1, background)
-                # Reserved top 20% for the door-hanger hole/cutout.
-                # Decorative colour bands are part of the artwork, not a
-                # second content card.
-                objects.insert(2, {
-                    "id": "door-artwork-header", "type": "rect",
-                    "left": 0, "top": 0, "width": w, "height": h * .225,
-                    "fill": primary, "opacity": 1,
-                    "selectable": False, "evented": False,
-                })
-                objects.insert(3, {
-                    "id": "door-artwork-accent", "type": "rect",
-                    "left": 0, "top": h * .225, "width": w,
-                    "height": max(4, h * .009),
-                    "fill": accent, "opacity": 1,
-                    "selectable": False, "evented": False,
-                })
+                # Background SVG already contains all decoration; avoid
+                # adding another opaque header that hides the variation.
                 if side == 0:
-                    positions = {
-                        "photo_front": (.075, .265, .85, .305),
-                        "headline": (.075, .61, .85, None),
-                        "subhead": (.075, .69, .85, None),
-                        "offer": (.075, .79, .85, None),
-                        "contact": (.075, .88, .85, None),
-                    }
+                    # Four photo/text compositions with five measured shifts.
+                    # All text zones remain disjoint and inside the canvas.
+                    mode = family % 4
+                    if mode == 0:
+                        positions = {
+                            "photo_front": (.075, .275, .85, .30),
+                            "headline": (.075, .605, .85, None),
+                            "subhead": (.075, .68, .85, None),
+                            "offer": (.075, .775, .85, None),
+                            "contact": (.075, .875, .85, None)}
+                    elif mode == 1:
+                        positions = {
+                            "headline": (.075, .285, .85, None),
+                            "subhead": (.075, .365, .85, None),
+                            "photo_front": (.075, .44, .85, .30),
+                            "offer": (.075, .79, .85, None),
+                            "contact": (.075, .88, .85, None)}
+                    elif mode == 2:
+                        positions = {
+                            "photo_front": (.20, .17, .73, .39),
+                            "headline": (.19, .61, .74, None),
+                            "subhead": (.19, .685, .74, None),
+                            "offer": (.19, .78, .74, None),
+                            "contact": (.19, .875, .74, None)}
+                    else:
+                        positions = {
+                            "headline": (.075, .24, .85, None),
+                            "subhead": (.075, .32, .85, None),
+                            "photo_front": (.075, .405, .85, .34),
+                            "offer": (.075, .79, .85, None),
+                            "contact": (.075, .885, .85, None)}
+                    # Distinct photo crop widths and offsets per treatment,
+                    # without colliding with adjacent text zones.
+                    if mode in (0, 1, 3):
+                        px,py,pw,ph = positions["photo_front"]
+                        shrink = variant * .018
+                        positions["photo_front"] = (px+shrink,py,pw-2*shrink,ph)
                     for obj in objects:
                         oid = obj.get("id")
                         if oid not in positions:
@@ -236,10 +265,10 @@ class Command(BaseCommand):
                             obj["height"] = round(h * hh, 2)
                         if oid != "photo_front":
                             obj["fill"] = dark if oid != "offer" else primary
-                            obj["textAlign"] = "center"
+                            obj["textAlign"] = "center" if variant % 2 == 0 else "left"
                             obj["fontSize"] = round(min(
-                                float(obj.get("fontSize", 20)),
-                                w * (.053 if oid == "headline" else .037)
+                                float(obj.get("fontSize", 20)) * (1 + variant*.045),
+                                w * (.065 if oid == "headline" else .04)
                             ), 2)
                 else:
                     for obj in objects:
@@ -262,7 +291,7 @@ class Command(BaseCommand):
                 except (OSError, ValueError):
                     pass
             data["pages"]=pages
-            data["generator"]="zenvibe-doorhanger-complete-preview-v2"
+            data["generator"]="zenvibe-doorhanger-compositions-v3"
             t.json_data=json.dumps(data,ensure_ascii=False)
             t.preview.save("doorhanger-complete-%03d-%s.%s"%(idx+1,t.pk,preview_ext),ContentFile(preview_bytes),save=False)
             with transaction.atomic():
