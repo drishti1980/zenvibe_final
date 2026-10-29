@@ -157,7 +157,25 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(
                         "Photo download unavailable for theme %s: %s" % (theme_idx + 1, exc)
                     ))
-            w=int(data.get("width",450));h=int(data.get("height",1100))
+            # The editor uses the product's configured canvas. Older generated
+            # templates retained their original 450px-wide dimensions, leaving
+            # an unprinted white strip when the product canvas was wider.
+            product = t.product
+            old_w = int(data.get("width") or 450)
+            old_h = int(data.get("height") or 1100)
+            product_w = float(getattr(product, "width", 0) or 0)
+            product_h = float(getattr(product, "height", 0) or 0)
+            # Product dimensions can be physical inches rather than pixels.
+            # Only adopt them when they are clearly editor pixel dimensions.
+            w = int(product_w) if product_w >= 200 else old_w
+            h = int(product_h) if product_h >= 200 else old_h
+            if w <= 0 or h <= 0:
+                raise CommandError("Invalid door-hanger canvas dimensions")
+            if (w, h) != (old_w, old_h):
+                self.stdout.write("Template %s: canvas %sx%s -> %sx%s" %
+                                  (t.pk, old_w, old_h, w, h))
+            data["width"] = w
+            data["height"] = h
             pages=[]
             for side in range(2):
                 bg,objects=door_page(idx,side,w,h)
@@ -290,6 +308,11 @@ class Command(BaseCommand):
                     preview_ext="png"
                 except (OSError, ValueError):
                     pass
+            # Keep the editor's page geometry and print-area metadata aligned
+            # with the same full-bleed artwork dimensions.
+            for page in pages:
+                page["width"] = w
+                page["height"] = h
             data["pages"]=pages
             data["generator"]="zenvibe-doorhanger-unique-v4"
             t.json_data=json.dumps(data,ensure_ascii=False)
