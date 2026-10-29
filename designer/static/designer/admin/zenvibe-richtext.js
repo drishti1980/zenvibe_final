@@ -80,6 +80,30 @@
       if (url) { cmd("createLink", url); sync(); }
     });
     toolbar.appendChild(link);
+    if (textarea.id === "id_description") {
+      const faq = button("＋ FAQ", "Insert expandable FAQ into Description");
+      faq.addEventListener("click", function () {
+        const selection = window.getSelection();
+        const savedRange = selection && selection.rangeCount && editor.contains(selection.anchorNode)
+          ? selection.getRangeAt(0).cloneRange() : null;
+        const question = window.prompt("FAQ question:");
+        if (!question || !question.trim()) return;
+        const answer = window.prompt("FAQ answer:");
+        if (answer === null) return;
+        const escape = function (v) { return v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); };
+        editor.focus();
+        if (savedRange && selection) { selection.removeAllRanges(); selection.addRange(savedRange); }
+        else {
+          const range = document.createRange(); range.selectNodeContents(editor); range.collapse(false);
+          selection.removeAllRanges(); selection.addRange(range);
+        }
+        cmd("insertHTML", '<details class="zv-description-faq"><summary>' +
+          escape(question.trim()) + '</summary><p>' + escape(answer.trim()).replace(/\\n/g, "<br>") +
+          '</p></details><p><br></p>');
+        sync();
+      });
+      toolbar.appendChild(faq);
+    }
     if (textarea.id === "id_body") {
       const photo = button("Image", "Insert hosted image");
       photo.addEventListener("click", function () {
