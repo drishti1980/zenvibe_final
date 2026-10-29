@@ -197,6 +197,15 @@ class ProductAdminForm(forms.ModelForm):
         help_text="Must be equal to or greater than the earliest delivery.",
     )
 
+    single_side_page_count = forms.IntegerField(
+        required=False, min_value=1, max_value=20, label="Single Side — editable pages",
+        help_text="Number of editor pages for Single Side. Leave blank to use existing behaviour.",
+    )
+    double_side_page_count = forms.IntegerField(
+        required=False, min_value=1, max_value=20, label="Double Side — editable pages",
+        help_text="Number of editor pages for Double Side. Leave blank to use existing behaviour.",
+    )
+
     class Meta:
         model = Product
         fields = "__all__"
@@ -211,6 +220,9 @@ class ProductAdminForm(forms.ModelForm):
         attrs = self.instance.source_attributes if (
             self.instance and isinstance(getattr(self.instance, "source_attributes", None), dict)
         ) else {}
+        page_counts = attrs.get("printing_side_page_counts") or {}
+        self.fields["single_side_page_count"].initial = page_counts.get("single")
+        self.fields["double_side_page_count"].initial = page_counts.get("double")
         self.fields["show_customize_button"].initial = attrs.get("show_customize_button", True) is not False
         self.fields["fastest_delivery_enabled"].initial = bool(
             attrs.get("fastest_delivery_enabled", False)
@@ -242,6 +254,17 @@ class ProductAdminForm(forms.ModelForm):
     def save(self, commit=True):
         obj = super().save(commit=False)
         attrs = dict(obj.source_attributes or {})
+        counts = dict(attrs.get("printing_side_page_counts") or {})
+        for key, field in (("single", "single_side_page_count"), ("double", "double_side_page_count")):
+            count = self.cleaned_data.get(field)
+            if count is None:
+                counts.pop(key, None)
+            else:
+                counts[key] = int(count)
+        if counts:
+            attrs["printing_side_page_counts"] = counts
+        else:
+            attrs.pop("printing_side_page_counts", None)
         attrs["show_customize_button"] = bool(self.cleaned_data.get("show_customize_button", True))
         attrs["fastest_delivery_enabled"] = bool(
             self.cleaned_data.get("fastest_delivery_enabled", False)
@@ -317,6 +340,7 @@ class ProductAdmin(admin.ModelAdmin):
                 "editor_layout_mode",
                 ("workspace_width_in", "workspace_height_in"),
                 ("constrain_to_print_area", "show_product_reference"),
+                ("single_side_page_count", "double_side_page_count"),
             ),
             "description": "Leave Existing / legacy behaviour selected to preserve current templates exactly. Workspace dimensions control OUTER inch rulers only; printable dimensions remain separate.",
         }),
