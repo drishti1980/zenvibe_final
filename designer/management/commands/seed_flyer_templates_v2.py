@@ -36,7 +36,7 @@ from designer.models import DesignTemplate, Product
 LIBRARY_VERSION = 2
 LIBRARY_KEY = "flyer_library_version"
 LIBRARY_FLAG = "flyer_library"
-GENERATOR_ID = "zenvibe-flyer-v2-pro-100"
+GENERATOR_ID = "zenvibe-flyer-v2-pro-100-artwork-refresh"
 PREFIX = "ZV2 Flyer"
 
 SOURCE_W = 800
@@ -370,7 +370,74 @@ def hero_event(o,p,x,y,w,h,variant=0):
         o.append(rect(x+w*.16+i*w*.11,y+h*.74,w*.06,h*.18,p["accent"] if i%2 else p["gold"],opacity=.8,name="Equalizer"))
 
 
-HERO_SYSTEMS = [hero_editorial, hero_product, hero_architecture, hero_botanical, hero_event]
+def hero_landscape(o,p,x,y,w,h,variant=0):
+    """Layered travel / outdoor landscape with a clear focal point."""
+    o.append(rect(x,y,w,h,p["soft"],name="Landscape sky"))
+    o.append(circle(x+w*.74,y+h*.25,min(w,h)*.13,p["gold"],name="Sun"))
+    o.append(polygon([(x,y+h*.70),(x+w*.30,y+h*.22),(x+w*.56,y+h*.70)],p["accent2"],name="Far mountain"))
+    o.append(polygon([(x+w*.20,y+h*.79),(x+w*.67,y+h*.15),(x+w,y+h*.79)],p["accent"],name="Main mountain"))
+    o.append(polygon([(x+w*.53,y+h*.34),(x+w*.67,y+h*.15),(x+w*.80,y+h*.34)],p["bg"],name="Snow cap"))
+    o.append(rect(x,y+h*.78,w,h*.22,p["ink"],name="Foreground"))
+    for i in range(5):
+        xx=x+w*(.08+i*.20)
+        o.append(polygon([(xx-13,y+h*.79),(xx,y+h*(.54+i%3*.035)),(xx+13,y+h*.79)],p["accent2"],name="Pine tree"))
+
+
+def hero_geometry(o,p,x,y,w,h,variant=0):
+    """Architectural geometric composition, not a recoloured stock panel."""
+    o.append(rect(x,y,w,h,p["soft"],name="Geometry canvas"))
+    o.append(circle(x+w*.53,y+h*.49,min(w,h)*.31,p["accent2"],name="Large disc"))
+    o.append(rect(x+w*.12,y+h*.15,w*.28,h*.70,p["ink"],name="Vertical block"))
+    o.append(polygon([(x+w*.48,y+h*.84),(x+w*.92,y+h*.21),(x+w*.92,y+h*.84)],p["gold"],name="Triangle"))
+    for i in range(6):
+        yy=y+h*(.12+i*.13)
+        o.append(line(x+w*.09,yy,x+w*.89,yy,p["bg"],sw=2,opacity=.55,name="Grid line"))
+
+
+def hero_cafe(o,p,x,y,w,h,variant=0):
+    """Editable café illustration with cup, saucer and steam."""
+    o.append(rect(x,y,w,h,p["soft"],name="Cafe background"))
+    o.append(ellipse(x+w*.51,y+h*.80,w*.32,h*.065,p["accent2"],name="Saucer"))
+    o.append(rect(x+w*.31,y+h*.35,w*.37,h*.38,p["bg"],stroke=p["ink"],sw=3,rx=16,ry=16,name="Cup"))
+    o.append(circle(x+w*.73,y+h*.51,min(w,h)*.12,"none",stroke=p["ink"],sw=9,name="Handle"))
+    o.append(ellipse(x+w*.495,y+h*.36,w*.18,h*.045,p["accent"],name="Coffee surface"))
+    for i in range(3):
+        xx=x+w*(.38+i*.10)
+        o.append(line(xx,y+h*.28,xx+w*.025,y+h*.12,p["accent"],sw=4,opacity=.7,name="Steam"))
+
+
+def hero_flower(o,p,x,y,w,h,variant=0):
+    """Large illustrated bloom with foliage."""
+    o.append(rect(x,y,w,h,p["soft"],name="Flower background"))
+    cx=x+w*.51; cy=y+h*.47; radius=min(w,h)*.18
+    for i in range(10):
+        angle=math.radians(i*36)
+        xx=cx+math.cos(angle)*radius
+        yy=cy+math.sin(angle)*radius
+        o.append(ellipse(xx,yy,radius*.58,radius*.28,p["accent2"] if i%2 else p["accent"],angle=i*36,name="Flower petal"))
+    o.append(circle(cx,cy,radius*.48,p["gold"],name="Flower centre"))
+    o.append(line(cx,cy+radius*.55,cx+w*.06,y+h*.93,p["ink"],sw=5,name="Stem"))
+    o.append(ellipse(cx-w*.10,y+h*.78,w*.13,h*.045,p["accent"],angle=25,name="Leaf"))
+    o.append(ellipse(cx+w*.12,y+h*.83,w*.13,h*.045,p["accent"],angle=-25,name="Leaf"))
+
+
+def hero_technology(o,p,x,y,w,h,variant=0):
+    """Editable tech network with an intentional central processor."""
+    o.append(rect(x,y,w,h,p["ink"],name="Technology background"))
+    cx=x+w*.5;cy=y+h*.5
+    for i in range(12):
+        angle=math.radians(i*30)
+        xx=cx+math.cos(angle)*w*.39; yy=cy+math.sin(angle)*h*.39
+        o.append(line(cx,cy,xx,yy,p["accent2"],sw=2,opacity=.65,name="Circuit trace"))
+        o.append(circle(xx,yy,6,p["gold"],name="Circuit node"))
+    o.append(rect(cx-w*.15,cy-h*.15,w*.30,h*.30,p["accent"],rx=14,ry=14,name="Processor"))
+    o.append(rect(cx-w*.10,cy-h*.10,w*.20,h*.20,p["soft"],rx=8,ry=8,name="Processor core"))
+
+
+HERO_SYSTEMS = [
+    hero_editorial, hero_product, hero_architecture, hero_botanical, hero_event,
+    hero_landscape, hero_geometry, hero_cafe, hero_flower, hero_technology,
+]
 
 
 # ---------------------------------------------------------------------------
@@ -807,7 +874,7 @@ def build_template(index):
     hero_idx=(index-1)%5
 
     layout=LAYOUTS[layout_idx]
-    hero=HERO_SYSTEMS[hero_idx]
+    hero=HERO_SYSTEMS[((index-1)//5 + hero_idx*3) % len(HERO_SYSTEMS)]
     content=SECTORS[index-1]
 
     p=deepcopy(PALETTES[(index*7 + layout_idx*3 + hero_idx) % len(PALETTES)])
