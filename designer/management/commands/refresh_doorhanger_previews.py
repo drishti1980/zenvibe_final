@@ -43,6 +43,9 @@ def svg_preview(bg,objects,w,h):
             if href:
                 out.append('<image x="%s" y="%s" width="%s" height="%s" href="%s" preserveAspectRatio="xMidYMid slice"/>'%
                            (x,y,width,height,escape(href,quote=True)))
+        elif o.get("type")=="rect":
+            out.append('<rect x="%s" y="%s" width="%s" height="%s" fill="%s" opacity="%s"/>'%
+                       (x,y,width,height,escape(o.get("fill","#FFFFFF"),quote=True),o.get("opacity",1)))
         elif o.get("type") in ("textbox","text"):
             font=escape(o.get("fontFamily","Arial"),quote=True)
             color=escape(o.get("fill","#202020"),quote=True)
@@ -53,7 +56,7 @@ def svg_preview(bg,objects,w,h):
             tx=x+(width/2 if align=="center" else width if align=="right" else 0)
             text=str(o.get("text",""))
             # Text wrap within the same width used by the editor.
-            maxchars=max(9,int(width/(size*.54)))
+            maxchars=max(9,int(width/(size*.67)))
             lines=[]
             for paragraph in text.split("\n"):
                 words=paragraph.split()
@@ -104,12 +107,43 @@ class Command(BaseCommand):
             if not match:
                 continue
             idx=int(match.group(1))-1
-            if data.get("generator")!=GENERATOR_ID:
+            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2"):
                 self.stdout.write(self.style.WARNING("Skipping non-original template %s"%t.pk));continue
             w=int(data.get("width",450));h=int(data.get("height",1100))
             pages=[]
             for side in range(2):
                 bg,objects=door_page(idx,side,w,h)
+                # A consistent content panel protects text from diagonal
+                # backgrounds and makes the preview match the editable editor.
+                panel={"id":"door-content-panel","type":"rect","left":w*.065,
+                       "top":h*.265,"width":w*.87,"height":h*.68,
+                       "fill":"#FFFFFF","opacity":.97,
+                       "selectable":False,"evented":False}
+                objects.insert(1,panel)
+                if side==0:
+                    positions={
+                        "photo_front":(.13,.30,.74,.22),
+                        "headline":(.12,.56,.76,None),
+                        "subhead":(.12,.66,.76,None),
+                        "offer":(.12,.76,.76,None),
+                        "contact":(.12,.87,.76,None),
+                    }
+                    for obj in objects:
+                        oid=obj.get("id")
+                        if oid not in positions: continue
+                        xx,yy,ww,hh=positions[oid]
+                        obj["left"]=w*xx
+                        obj["top"]=h*yy
+                        obj["width"]=w*ww
+                        if hh is not None: obj["height"]=h*hh
+                        if oid!="photo_front":
+                            obj["fill"]="#203442"
+                            obj["textAlign"]="center"
+                            obj["fontSize"]=min(float(obj.get("fontSize",20)),w*.048 if oid=="headline" else w*.032)
+                else:
+                    for obj in objects:
+                        if obj.get("type") in ("textbox","text"):
+                            obj["fill"]="#203442"
                 pages.append({"name":"Front" if side==0 else "Back",
                               "width":w,"height":h,"objects":objects})
                 if side==0:
