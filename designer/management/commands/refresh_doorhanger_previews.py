@@ -146,7 +146,7 @@ class Command(BaseCommand):
             if not match:
                 continue
             idx=int(match.group(1))-1
-            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2","zenvibe-doorhanger-compositions-v3","zenvibe-doorhanger-unique-v4"):
+            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2","zenvibe-doorhanger-compositions-v3","zenvibe-doorhanger-unique-v4","zenvibe-doorhanger-unique-v5"):
                 self.stdout.write(self.style.WARNING("Skipping non-original template %s"%t.pk));continue
             theme_idx = idx % len(PHOTO_IDS)
             if theme_idx not in photo_cache:
@@ -260,34 +260,67 @@ class Command(BaseCommand):
                         (.43,.32,.22,.30,.81,.90),  # magazine style
                     ]
                     py,ph,hy,sy,oy,cy = layouts[family]
-                    # Some layouts place text before the photo.
-                    pretitle = family in (1,3,5,7,9)
-                    photo_x = [.075,.10,.17,.075,.12,.07,.08,.13,.075,.10][family]
-                    photo_w = [.85,.80,.76,.85,.76,.86,.84,.74,.85,.80][family]
+                    # Every template gets its own measured composition, not
+                    # the same 10 layouts with a different palette.
+                    # Use variant-dependent photo proportions and placements,
+                    # keeping a clear 0.025H gap between artwork and type.
+                    photo_first = family in (0,2,4,6,8)
+                    shift = ((idx * 7) % 11 - 5) * .003
+                    photo_x = .10 + ((idx * 3) % 7) * .012
+                    photo_w = 1 - 2 * photo_x
+                    photo_h = .245 + ((idx * 11) % 9) * .009
+                    if photo_first:
+                        photo_y = .20 + ((idx * 13) % 8) * .008
+                        headline_y = photo_y + photo_h + .036
+                        subhead_y = headline_y + .069
+                    else:
+                        headline_y = .205 + ((idx * 13) % 9) * .006
+                        subhead_y = headline_y + .070
+                        photo_y = subhead_y + .075
+                    offer_y = max(.80, photo_y + photo_h + .055, subhead_y + .11)
+                    contact_y = .925
                     positions = {
-                        "photo_front": (photo_x,py,photo_w,ph),
-                        "headline": (.09,hy,.82,None),
-                        "subhead": (.09,sy,.82,None),
-                        "offer": (.09,oy,.82,None),
-                        "contact": (.09,cy,.82,None),
+                        "photo_front": (photo_x,photo_y,photo_w,photo_h),
+                        "headline": (.12,headline_y,.76,None),
+                        "subhead": (.12,subhead_y,.76,None),
+                        "offer": (.12,offer_y,.76,None),
+                        "contact": (.12,contact_y,.76,None),
                     }
-                    # Keep every text object inside a reserved vertical zone.
-                    # The original objects use a 450px-wide coordinate system.
                     for obj in objects:
                         oid = obj.get("id")
                         if oid not in positions:
                             continue
                         xx, yy, ww, hh = positions[oid]
-                        obj["left"] = round(w*xx,2)
-                        obj["top"] = round(h*yy,2)
-                        obj["width"] = round(w*ww,2)
+                        obj["left"] = round(w * xx, 2)
+                        obj["top"] = round(h * yy, 2)
+                        obj["width"] = round(w * ww, 2)
                         if hh is not None:
-                            obj["height"] = round(h*hh,2)
+                            obj["height"] = round(h * hh, 2)
                         if oid != "photo_front":
+                            # Explicitly centre ALL text. The previous
+                            # left-aligned variant clipped into the accent bar.
+                            obj["textAlign"] = "center"
+                            obj["originX"] = "left"
+                            obj["originY"] = "top"
+                            obj["angle"] = 0
+                            obj["scaleX"] = 1
+                            obj["scaleY"] = 1
                             obj["fill"] = dark if oid != "offer" else primary
-                            obj["textAlign"] = "center" if variant%3 == 0 else "left"
-                            obj["fontSize"] = round(min(float(obj.get("fontSize",20)),w*(.058 if oid=="headline" else .034)),2)
-                            obj["height"] = round(h*.052,2)
+                            ratio = {"headline": .067, "subhead": .038,
+                                     "offer": .040, "contact": .032}[oid]
+                            obj["fontSize"] = round(max(10, w * ratio), 2)
+                            obj["height"] = round(h * (.068 if oid == "headline" else .047), 2)
+                            if oid == "headline":
+                                obj["fontWeight"] = "bold"
+                    # Validate vertical collision before saving. A photo is
+                    # never allowed to cover headline, subtitle or CTA.
+                    photo_bottom = photo_y + photo_h
+                    if photo_first and photo_bottom + .025 > headline_y:
+                        raise CommandError("Photo/headline overlap on template %s" % t.pk)
+                    if not photo_first and subhead_y + .05 > photo_y:
+                        raise CommandError("Subtitle/photo overlap on template %s" % t.pk)
+                    if photo_bottom + .025 > offer_y:
+                        raise CommandError("Photo/offer overlap on template %s" % t.pk)
                 else:
                     for obj in objects:
                         if obj.get("type") in ("textbox", "text"):
@@ -314,7 +347,7 @@ class Command(BaseCommand):
                 page["width"] = w
                 page["height"] = h
             data["pages"]=pages
-            data["generator"]="zenvibe-doorhanger-unique-v4"
+            data["generator"]="zenvibe-doorhanger-unique-v5"
             t.json_data=json.dumps(data,ensure_ascii=False)
             t.preview.save("doorhanger-complete-%03d-%s.%s"%(idx+1,t.pk,preview_ext),ContentFile(preview_bytes),save=False)
             with transaction.atomic():
