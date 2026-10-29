@@ -20,7 +20,7 @@ from designer.management.commands.seed_100_marketing_material_templates import (
 )
 try:
     import cairosvg
-except ImportError:
+except (ImportError, OSError):
     cairosvg=None
 
 def svg_image_href(src):
@@ -82,8 +82,6 @@ class Command(BaseCommand):
     def handle(self,*args,**opts):
         if opts["dry_run"]==opts["apply"]:
             raise CommandError("Choose exactly one of --dry-run or --apply")
-        if not cairosvg:
-            raise CommandError("CairoSVG is required: pip install cairosvg")
         qs=DesignTemplate.objects.filter(is_active=True,name__startswith="ZV Door Hanger ")
         if opts["product_id"]:
             qs=qs.filter(product_id=opts["product_id"])
@@ -116,11 +114,18 @@ class Command(BaseCommand):
                               "width":w,"height":h,"objects":objects})
                 if side==0:
                     preview=svg_preview(bg,objects,w,h)
-            png=cairosvg.svg2png(bytestring=preview.encode("utf-8"),output_width=600)
+            preview_bytes=preview.encode("utf-8")
+            preview_ext="svg"
+            if cairosvg:
+                try:
+                    preview_bytes=cairosvg.svg2png(bytestring=preview_bytes,output_width=600)
+                    preview_ext="png"
+                except (OSError, ValueError):
+                    pass
             data["pages"]=pages
             data["generator"]="zenvibe-doorhanger-complete-preview-v2"
             t.json_data=json.dumps(data,ensure_ascii=False)
-            t.preview.save("doorhanger-complete-%03d-%s.png"%(idx+1,t.pk),ContentFile(png),save=False)
+            t.preview.save("doorhanger-complete-%03d-%s.%s"%(idx+1,t.pk,preview_ext),ContentFile(preview_bytes),save=False)
             with transaction.atomic():
                 t.save(update_fields=["json_data","preview"])
             changed+=1
