@@ -8,7 +8,6 @@
     "printing_method",
     "design_guidelines",
     "printing_guidelines",
-    "faqs",
     "body"
   ];
 
