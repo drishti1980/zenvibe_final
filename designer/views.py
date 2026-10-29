@@ -2072,6 +2072,21 @@ def editor(request, product_id):
         initial_quantity = minimum
     initial_quantity = max(minimum, min(maximum, initial_quantity))
 
+    # Some legacy template generators stored JSON as a serialized string in
+    # the JSONField. Normalize both formats before the editor accesses pages.
+    def _editor_json_object(value):
+        for _ in range(3):
+            if isinstance(value, str):
+                try:
+                    value = json.loads(value)
+                except (TypeError, ValueError):
+                    return {}
+            else:
+                break
+        return value if isinstance(value, dict) else {}
+
+    template_json = _editor_json_object(template_json)
+
     # Restricted product editors (Awards, Drinkware, etc.) are product-first:
     # the locked Product.image is the physical blank/reference and templates are
     # customer artwork only. Never allow a flattened template/master image to
@@ -2110,28 +2125,32 @@ def editor(request, product_id):
     if not editor_template_page_count:
         editor_template_page_count = len(product_options.get("print_surfaces") or []) or 1
 
-    template_catalog = [
-        {
+    template_catalog = []
+    for t in live_templates_for(product):
+        data = _editor_json_object(t.json_data)
+        document = data.get("document")
+        if not isinstance(document, dict):
+            document = {}
+        pages = data.get("pages")
+        if not isinstance(pages, list):
+            pages = []
+        first_page = pages[0] if pages and isinstance(pages[0], dict) else {}
+        template_catalog.append({
             "id": t.id,
             "name": t.name,
             "preview_url": (
                 f"{t.preview.url}?v={int(t.updated_at.timestamp()) if t.updated_at else 0}"
-                if t.preview
-                else ""
+                if t.preview else ""
             ),
             "url": (f"{reverse('designer:editor', args=[product.id])}?template={t.id}"
-                    + (f"&size={(t.json_data or {}).get('sizeKey')}" if (t.json_data or {}).get("sizeKey") else "")),
-            "size_key": (t.json_data or {}).get("sizeKey", ""),
-            # Lightweight editable-vector data lets the editor draw a real
-            # thumbnail when a generated template has no uploaded preview PNG.
-            "preview_width": (t.json_data or {}).get("document", {}).get("width", product.width),
-            "preview_height": (t.json_data or {}).get("document", {}).get("height", product.height),
-            "preview_objects": (((t.json_data or {}).get("pages") or [{}])[0].get("objects") or []),
-            "preview_background": (((t.json_data or {}).get("pages") or [{}])[0].get("background") or "#FFFFFF"),
+                    + (f"&size={data.get('sizeKey')}" if data.get("sizeKey") else "")),
+            "size_key": data.get("sizeKey", ""),
+            "preview_width": document.get("width", product.width),
+            "preview_height": document.get("height", product.height),
+            "preview_objects": first_page.get("objects") or [],
+            "preview_background": first_page.get("background") or "#FFFFFF",
             "kind": "database",
-        }
-        for t in live_templates_for(product)
-    ]
+        })
     # Coaster templates are shape-aware views of the SAME editable artwork.
     # Preserve the selected shape on every template URL so switching designs
     # never silently returns the product to square.
