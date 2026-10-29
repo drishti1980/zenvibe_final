@@ -146,7 +146,7 @@ class Command(BaseCommand):
             if not match:
                 continue
             idx=int(match.group(1))-1
-            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2","zenvibe-doorhanger-compositions-v3"):
+            if data.get("generator") not in (GENERATOR_ID,"zenvibe-doorhanger-complete-preview-v2","zenvibe-doorhanger-compositions-v3","zenvibe-doorhanger-unique-v4"):
                 self.stdout.write(self.style.WARNING("Skipping non-original template %s"%t.pk));continue
             theme_idx = idx % len(PHOTO_IDS)
             if theme_idx not in photo_cache:
@@ -180,25 +180,35 @@ class Command(BaseCommand):
                 # The preview used the original SVG background, which still
                 # contained the large inset panel. Replace that SVG too.
                 # Use the same background image for Fabric and the thumbnail.
-                # Twenty composition families, five distinct treatments each.
-                # The exact same SVG is used in Fabric and in the thumbnail.
-                family = idx % 20
-                variant = idx // 20
+                # Ten different background grammars x ten composition layouts.
+                # Every index 0..99 has a unique combination (not a colour cycle).
+                family = idx % 10
+                variant = idx // 10
                 accent_shapes = []
-                if family % 4 == 0:
-                    accent_shapes.append(f'<rect width="{w}" height="{h * (.16 + variant*.012)}" fill="{primary}"/>')
-                elif family % 4 == 1:
-                    accent_shapes.append(f'<path d="M0 0 H{w} V{h*.15} L0 {h*(.24+variant*.01)}Z" fill="{primary}"/>')
-                elif family % 4 == 2:
-                    accent_shapes.append(f'<rect width="{w*.12}" height="{h}" fill="{primary}"/>')
-                    accent_shapes.append(f'<rect x="{w*.12}" width="{w*.018}" height="{h}" fill="{accent}"/>')
+                def rect(x,y,ww,hh,color):
+                    return f'<rect x="{x*w}" y="{y*h}" width="{ww*w}" height="{hh*h}" fill="{color}"/>'
+                def circle(cx,cy,rr,color):
+                    return f'<circle cx="{cx*w}" cy="{cy*h}" r="{rr*w}" fill="{color}"/>'
+                if variant == 0:
+                    accent_shapes += [rect(0,0,1,.16,primary),rect(0,.16,1,.009,accent)]
+                elif variant == 1:
+                    accent_shapes += [rect(0,0,.13,1,primary),rect(.13,0,.015,1,accent)]
+                elif variant == 2:
+                    accent_shapes += [rect(0,0,1,.10,primary),rect(0,.92,1,.08,primary)]
+                elif variant == 3:
+                    accent_shapes += [circle(.90,.06,.35,primary),circle(.07,.95,.25,accent)]
+                elif variant == 4:
+                    accent_shapes += [rect(0,0,1,.13,primary),rect(.08,.15,.84,.006,accent),rect(.08,.95,.84,.006,accent)]
+                elif variant == 5:
+                    accent_shapes += [f'<path d="M0 0 H{w} V{h*.07} L0 {h*.24}Z" fill="{primary}"/>',rect(0,.95,1,.05,accent)]
+                elif variant == 6:
+                    accent_shapes += [rect(0,0,.06,1,accent),rect(.94,0,.06,1,primary),rect(.10,.04,.80,.008,primary)]
+                elif variant == 7:
+                    accent_shapes += [f'<path d="M0 0 H{w} V{h*.22} Q{w*.5} {h*.11} 0 {h*.22}Z" fill="{primary}"/>',rect(.08,.92,.84,.008,accent)]
+                elif variant == 8:
+                    accent_shapes += [rect(0,0,1,.09,primary),circle(.83,.91,.20,accent),rect(.07,.13,.012,.75,primary)]
                 else:
-                    accent_shapes.append(f'<rect width="{w}" height="{h*.12}" fill="{primary}"/>')
-                    accent_shapes.append(f'<rect y="{h*.91}" width="{w}" height="{h*.09}" fill="{primary}"/>')
-                if variant % 2:
-                    accent_shapes.append(f'<rect x="{w*.07}" y="{h*.95}" width="{w*.86}" height="{max(2,h*.004)}" fill="{accent}"/>')
-                if variant >= 2:
-                    accent_shapes.append(f'<rect x="{w*.08}" y="{h*.25}" width="{w*.84}" height="{max(2,h*.003)}" fill="{accent}"/>')
+                    accent_shapes += [rect(0,0,1,.08,primary),rect(0,.90,1,.10,primary),rect(.08,.13,.84,.008,accent)]
                 bg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
                       f'viewBox="0 0 {w} {h}"><rect width="{w}" height="{h}" fill="{paper}"/>'
                       + ''.join(accent_shapes) + '</svg>')
@@ -216,60 +226,50 @@ class Command(BaseCommand):
                 # Background SVG already contains all decoration; avoid
                 # adding another opaque header that hides the variation.
                 if side == 0:
-                    # Four photo/text compositions with five measured shifts.
-                    # All text zones remain disjoint and inside the canvas.
-                    mode = family % 4
-                    if mode == 0:
-                        positions = {
-                            "photo_front": (.075, .275, .85, .30),
-                            "headline": (.075, .605, .85, None),
-                            "subhead": (.075, .68, .85, None),
-                            "offer": (.075, .775, .85, None),
-                            "contact": (.075, .875, .85, None)}
-                    elif mode == 1:
-                        positions = {
-                            "headline": (.075, .285, .85, None),
-                            "subhead": (.075, .365, .85, None),
-                            "photo_front": (.075, .44, .85, .30),
-                            "offer": (.075, .79, .85, None),
-                            "contact": (.075, .88, .85, None)}
-                    elif mode == 2:
-                        positions = {
-                            "photo_front": (.20, .17, .73, .39),
-                            "headline": (.19, .61, .74, None),
-                            "subhead": (.19, .685, .74, None),
-                            "offer": (.19, .78, .74, None),
-                            "contact": (.19, .875, .74, None)}
-                    else:
-                        positions = {
-                            "headline": (.075, .24, .85, None),
-                            "subhead": (.075, .32, .85, None),
-                            "photo_front": (.075, .405, .85, .34),
-                            "offer": (.075, .79, .85, None),
-                            "contact": (.075, .885, .85, None)}
-                    # Distinct photo crop widths and offsets per treatment,
-                    # without colliding with adjacent text zones.
-                    if mode in (0, 1, 3):
-                        px,py,pw,ph = positions["photo_front"]
-                        shrink = variant * .018
-                        positions["photo_front"] = (px+shrink,py,pw-2*shrink,ph)
+                    # Ten measured compositions. Each photo occupies its own
+                    # band and every text block is separated from the next.
+                    # y coordinates are fractions of the physical print height.
+                    layouts = [
+                        (.24,.34,.61,.68,.78,.88),  # photo first
+                        (.42,.31,.23,.31,.79,.89),  # headline first
+                        (.18,.38,.61,.70,.80,.89),  # tall image
+                        (.40,.37,.22,.31,.81,.91),  # editorial
+                        (.29,.28,.60,.68,.78,.88),  # centered feature
+                        (.46,.28,.25,.33,.80,.89),  # copy then image
+                        (.20,.33,.58,.67,.78,.88),  # hero feature
+                        (.44,.30,.23,.32,.80,.89),  # top title
+                        (.31,.32,.65,.72,.81,.90),  # gallery style
+                        (.43,.32,.22,.30,.81,.90),  # magazine style
+                    ]
+                    py,ph,hy,sy,oy,cy = layouts[family]
+                    # Some layouts place text before the photo.
+                    pretitle = family in (1,3,5,7,9)
+                    photo_x = [.075,.10,.17,.075,.12,.07,.08,.13,.075,.10][family]
+                    photo_w = [.85,.80,.76,.85,.76,.86,.84,.74,.85,.80][family]
+                    positions = {
+                        "photo_front": (photo_x,py,photo_w,ph),
+                        "headline": (.09,hy,.82,None),
+                        "subhead": (.09,sy,.82,None),
+                        "offer": (.09,oy,.82,None),
+                        "contact": (.09,cy,.82,None),
+                    }
+                    # Keep every text object inside a reserved vertical zone.
+                    # The original objects use a 450px-wide coordinate system.
                     for obj in objects:
                         oid = obj.get("id")
                         if oid not in positions:
                             continue
                         xx, yy, ww, hh = positions[oid]
-                        obj["left"] = round(w * xx, 2)
-                        obj["top"] = round(h * yy, 2)
-                        obj["width"] = round(w * ww, 2)
+                        obj["left"] = round(w*xx,2)
+                        obj["top"] = round(h*yy,2)
+                        obj["width"] = round(w*ww,2)
                         if hh is not None:
-                            obj["height"] = round(h * hh, 2)
+                            obj["height"] = round(h*hh,2)
                         if oid != "photo_front":
                             obj["fill"] = dark if oid != "offer" else primary
-                            obj["textAlign"] = "center" if variant % 2 == 0 else "left"
-                            obj["fontSize"] = round(min(
-                                float(obj.get("fontSize", 20)) * (1 + variant*.045),
-                                w * (.065 if oid == "headline" else .04)
-                            ), 2)
+                            obj["textAlign"] = "center" if variant%3 == 0 else "left"
+                            obj["fontSize"] = round(min(float(obj.get("fontSize",20)),w*(.058 if oid=="headline" else .034)),2)
+                            obj["height"] = round(h*.052,2)
                 else:
                     for obj in objects:
                         if obj.get("type") in ("textbox", "text"):
@@ -291,7 +291,7 @@ class Command(BaseCommand):
                 except (OSError, ValueError):
                     pass
             data["pages"]=pages
-            data["generator"]="zenvibe-doorhanger-compositions-v3"
+            data["generator"]="zenvibe-doorhanger-unique-v4"
             t.json_data=json.dumps(data,ensure_ascii=False)
             t.preview.save("doorhanger-complete-%03d-%s.%s"%(idx+1,t.pk,preview_ext),ContentFile(preview_bytes),save=False)
             with transaction.atomic():
