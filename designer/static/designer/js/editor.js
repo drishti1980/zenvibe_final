@@ -1058,7 +1058,7 @@ function sync(){
 // The surrounding rectangle is an editor workspace, never printable artwork.
 // Normalized geometry is shared with universal-export.js.
 function zvIsTeardropFlag(){
-  return Number(P.id)===89 || /tear[\\s-]*drop.*flag/i.test(String(P.name||''));
+  return Number(P.id)===89 || /tear[\s-]*drop.*flag/i.test(String(P.name||''));
 }
 function zvFlagDiePoints(){
   const coords=[
