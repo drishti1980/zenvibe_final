@@ -24,12 +24,38 @@ async function render(page,index,settings){
  const el=document.createElement('canvas'),c=new f.StaticCanvas(el,{width,height,renderOnAddRemove:false});
  try{
   const data=fabricJson(page);
+  // Fabric clips the final export using the same teardrop die as the editor.
+  // Apply it again for *every* page, including saved non-active pages, because
+  // those pages may use the simpler ZenVibe object serialization.
+  const teardrop=page.printShape==='teardrop';
+  if(teardrop){
+   data.background='rgba(0,0,0,0)';
+   data.backgroundColor='rgba(0,0,0,0)';
+  }
   await new Promise((resolve,reject)=>{
    let settled=false;
    const done=()=>{if(!settled){settled=true;resolve()}};
    try{const result=c.loadFromJSON(data,done);if(result?.then)result.then(done,reject)}catch(e){reject(e)}
   });
-  c.setWidth(width);c.setHeight(height);c.renderAll();
+  c.setWidth(width);c.setHeight(height);
+  if(teardrop){
+   const coords=[
+    [.08,.995],[.08,.43],[.10,.31],[.17,.20],[.28,.12],
+    [.42,.065],[.59,.035],[.75,.04],[.88,.09],[.97,.17],
+    [.985,.26],[.955,.34],[.89,.44],[.79,.56],[.67,.69],
+    [.53,.81],[.37,.92]
+   ];
+   const points=coords.map(([x,y])=>({x:x*width,y:y*height}));
+   c.backgroundColor='rgba(0,0,0,0)';
+   c.getObjects().forEach(o=>{
+    if(o.excludeFromExport)return;
+    o.clipPath=new f.Polygon(points,{
+      absolutePositioned:true,fill:'#000',selectable:false,evented:false
+    });
+    o.dirty=true;
+   });
+  }
+  c.renderAll();
   return {canvas:c,width,height,wi,hi};
  }catch(e){c.dispose();throw e}
 }
