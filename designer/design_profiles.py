@@ -148,6 +148,10 @@ def design_profile_for(product):
         base = _profile("product", width, height, "Product artwork", "")
 
     result = dict(base)
+    # Flag die is independent of its rectangular artwork workspace and rulers.
+    # The customer editor / exporter use this metadata for the printable clip.
+    if "teardrop flag" in product_name or "tear drop flag" in product_name:
+        result["print_shape"] = "teardrop"
     result["base_width"] = int(getattr(product, "width", result["width"]) or result["width"])
     result["base_height"] = int(getattr(product, "height", result["height"]) or result["height"])
     result["category_slugs"] = slugs
