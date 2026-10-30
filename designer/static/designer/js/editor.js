@@ -1034,7 +1034,7 @@ function fromData(o){
   return x;
 }
 function toData(o){
-  const base={id:o.objectId||uid(),type:o.type==='i-text'?'text':o.type,left:o.left,top:o.top,angle:o.angle||0,opacity:o.opacity??1,fill:o.fill,flipX:!!o.flipX,flipY:!!o.flipY,visible:o.visible!==false,locked:!!o.lockMovementX,name:o.name||'',fieldType:o.fieldType||'',backgroundAsset:!!o.backgroundAsset,exactVisualMaster:!!o.exactVisualMaster,customerEditable:((o.backgroundAsset||o.exactVisualMaster)?false:o.customerEditable!==false),scaleX:o.scaleX,scaleY:o.scaleY,stroke:o.stroke,strokeWidth:o.strokeWidth,strokeDashArray:o.strokeDashArray,originX:o.originX||'left',originY:o.originY||'top',autoInvitationField:!!o.autoInvitationField,autoInvitationCover:!!o.autoInvitationCover,sourceNormalizedBox:o.sourceNormalizedBox||null,sourceConfidence:o.sourceConfidence??null,ocrOverlayPending:!!o.ocrOverlayPending,sourceText:o.sourceText||'',autoOcrText:!!o.autoOcrText,ocrCoverFor:o.ocrCoverFor||'',_zvPendingArtwork:!!o._zvPendingArtwork,visualFallback:!!o.visualFallback,manualReplacement:!!o.manualReplacement,manualTextPatch:!!o.manualTextPatch,replacementGroupId:o.replacementGroupId||'',adminTextEdited:!!o.adminTextEdited};
+  const base={id:o.objectId||uid(),type:o.type==='i-text'?'text':o.type,left:o.left,top:o.top,angle:o.angle||0,opacity:o.opacity??1,fill:o.fill,flipX:!!o.flipX,flipY:!!o.flipY,visible:o.visible!==false,locked:!!o.lockMovementX,name:o.name||'',fieldType:o.fieldType||'',backgroundAsset:!!o.backgroundAsset,exactVisualMaster:!!o.exactVisualMaster,customerEditable:((o.backgroundAsset||o.exactVisualMaster)?false:o.customerEditable!==false),scaleX:o.scaleX,scaleY:o.scaleY,stroke:o.stroke,strokeWidth:o.strokeWidth,strokeDashArray:o.strokeDashArray,originX:o.originX||'left',originY:o.originY||'top',autoInvitationField:!!o.autoInvitationField,autoInvitationCover:!!o.autoInvitationCover,sourceNormalizedBox:o.sourceNormalizedBox||null,sourceConfidence:o.sourceConfidence??null,ocrOverlayPending:!!o.ocrOverlayPending,sourceText:o.sourceText||'',autoOcrText:!!o.autoOcrText,ocrCoverFor:o.ocrCoverFor||'',_zvPendingArtwork:!!o._zvPendingArtwork,visualFallback:!!o.visualFallback,manualReplacement:!!o.manualReplacement,manualTextPatch:!!o.manualTextPatch,replacementGroupId:o.replacementGroupId||'',adminTextEdited:!!o.adminTextEdited,clipPath:(zvIsTeardropFlag()&&o.clipPath)?o.clipPath.toObject():undefined};
   if(isText(o)) return {...base,text:o.text,width:o.width,fontSize:o.fontSize,font:o.fontFamily,fontWeight:o.fontWeight,fontStyle:o.fontStyle,underline:o.underline,textAlign:o.textAlign,charSpacing:o.charSpacing,lineHeight:o.lineHeight};
   if(o.type==='image') return {...base,src:o.getSrc(),baseSrc:o.baseSrc||o.getSrc(),width:o.width,height:o.height,originalWidth:o.width,originalHeight:o.height,cropX:o.cropX||0,cropY:o.cropY||0,filters:(o.filters||[]).map(f=>f.toObject?f.toObject():f)};
   if(o.type==='polygon') return {...base,points:o.points,width:o.width,height:o.height};
@@ -1053,6 +1053,45 @@ function sync(){
     previewReferenceObjects:canvas.getObjects().filter(o=>o.zvProductMockup&&o.visible!==false).map(o=>o.toObject()),
     objects:canvas.getObjects().filter(o=>!o.excludeFromExport&&!o.zvProductMockup).map(toData)
   };
+}
+// Teardrop fabric occupies a die-cut outline within the portrait workspace.
+// The surrounding rectangle is an editor workspace, never printable artwork.
+// Normalized geometry is shared with universal-export.js.
+function zvIsTeardropFlag(){
+  return Number(P.id)===89 || /tear[\\s-]*drop.*flag/i.test(String(P.name||''));
+}
+function zvFlagDiePoints(){
+  const coords=[
+    [.08,.995],[.08,.43],[.10,.31],[.17,.20],[.28,.12],
+    [.42,.065],[.59,.035],[.75,.04],[.88,.09],[.97,.17],
+    [.985,.26],[.955,.34],[.89,.44],[.79,.56],[.67,.69],
+    [.53,.81],[.37,.92]
+  ];
+  return coords.map(([x,y])=>({x:x*W,y:y*H}));
+}
+function zvApplyTeardropDie(showCutLine=false){
+  if(!zvIsTeardropFlag())return;
+  const points=zvFlagDiePoints();
+  canvas.getObjects().forEach(o=>{
+    if(!o||o.excludeFromExport||o.zvProductMockup||o.zvPrintAreaGuide)return;
+    o.clipPath=new fabric.Polygon(points,{
+      absolutePositioned:true,fill:'#000',
+      selectable:false,evented:false
+    });
+    o.dirty=true;
+  });
+  if(showCutLine){
+    canvas.getObjects().filter(o=>o.zvTeardropCutGuide).forEach(o=>canvas.remove(o));
+    const guide=new fabric.Polygon(points,{
+      fill:'transparent',stroke:'#ef4444',strokeWidth:Math.max(1,W*.003),
+      strokeDashArray:[Math.max(5,W*.012),Math.max(3,W*.007)],
+      selectable:false,evented:false,excludeFromExport:true,
+      zvPrintAreaGuide:true,zvTeardropCutGuide:true,name:'Flag cut line'
+    });
+    canvas.add(guide);
+    canvas.bringToFront(guide);
+  }
+  canvas.requestRenderAll();
 }
 function loadPage(i){
   i=Math.max(0,Math.min(Number(i)||0,pages.length-1));
@@ -1080,7 +1119,7 @@ function loadPage(i){
   setCanvasScale(requestedZoom);
   const p=pages[i]||newPage();
   const adminCfg=OPT.editor_config||OPT.editorConfig||{};
-  canvas.backgroundColor=(adminCfg.enabled && adminCfg.mode==='print_area') ? 'rgba(255,255,255,0)' : (p.background||'#fff');
+  canvas.backgroundColor=zvIsTeardropFlag() ? 'rgba(255,255,255,0)' : ((adminCfg.enabled && adminCfg.mode==='print_area') ? 'rgba(255,255,255,0)' : (p.background||'#fff'));
   // V48 defensive migration: older V39-V47 masters can contain duplicate OCR
   // detections from several recognition passes. Keep the strongest/first region only.
   const seenOcr=[];
@@ -1227,6 +1266,7 @@ function loadPage(i){
   function zvFinishLoadedPage(){
     loading=false;
     zvApplyCoasterShape();
+    zvApplyTeardropDie(true);
     zvApplyMousePadShape();
     zvFitGolfBallArtwork();
     setCanvasScale(requestedZoom);
@@ -1251,7 +1291,7 @@ function addQuickEditableText(){
 }
 window.addQuickEditableText=addQuickEditableText;
 function renderAll(){drawHelpers();canvas.requestRenderAll();renderPages();renderLayers();syncPanel()}
-function snapshot(){sync();const state=clone(pages);history=history.slice(0,historyIndex+1);history.push(state);if(history.length>60)history.shift();historyIndex=history.length-1;scheduleLocalSave()}
+function snapshot(){zvApplyTeardropDie(false);sync();const state=clone(pages);history=history.slice(0,historyIndex+1);history.push(state);if(history.length>60)history.shift();historyIndex=history.length-1;scheduleLocalSave()}
 function restore(n){if(n<0||n>=history.length)return;historyIndex=n;pages=clone(history[n]);loadPage(Math.min(activePage,pages.length-1))}
 function renderPages(){
   const surfaces=zvAdminSurfaces();
@@ -1436,7 +1476,7 @@ function editorDocument(){return {version:3,document:{width:ZV_BASE_W,height:ZV_
 window.ZENVIBE_SAVE_CURRENT_DESIGN=()=>loading?Promise.reject(new Error('Wait for the current page to finish loading.')):save(false,false);
 function localKey(){return 'zenvibe-autosave-'+P.id+'-'+(designId||('template-'+(window.SOURCE_TEMPLATE_ID||'blank')))}
 function scheduleLocalSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{sync();localStorage.setItem(localKey(),JSON.stringify({...editorDocument(),name:$('designName').value,quantity:$('quantity').value,at:Date.now()}))},500)}
-async function save(autosave=false,toCart=false){sync();const status=autosave?$('autosaveStatus'):$('saveStatus');status.textContent=autosave?'Autosaving…':'Saving…';let preview='';try{
+async function save(autosave=false,toCart=false){zvApplyTeardropDie(false);sync();const status=autosave?$('autosaveStatus'):$('saveStatus');status.textContent=autosave?'Autosaving…':'Saving…';let preview='';try{
   // Fabric's excludeFromExport flag affects JSON serialization, not raster
   // toDataURL(). Hide every editor-only helper (print-area guides, grid,
   // safe/bleed lines, selection overlays) while generating the cart proof.
@@ -1751,6 +1791,7 @@ if(window.ZenvibeExport){
     getCurrentPage:()=>activePage,
     getFilename:()=>($('designName')?.value||P.name||'zenvibe-design'),
     getPages:()=>{
+      zvApplyTeardropDie(false);
       sync();
       return pages.map((p,i)=>{
         const size=zvLogicalSizeForPage(i,pages[i]);
@@ -1764,6 +1805,7 @@ if(window.ZenvibeExport){
           name:p.name||'Page '+(i+1),
           width:size.width,height:size.height,
           widthIn:physical.width,heightIn:physical.height,
+          printShape:zvIsTeardropFlag()?'teardrop':null,
           json
         };
       });
