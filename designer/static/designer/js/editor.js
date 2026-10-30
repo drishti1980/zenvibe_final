@@ -1090,6 +1090,20 @@ function zvApplyTeardropDie(showCutLine=false){
     });
     canvas.add(guide);
     canvas.bringToFront(guide);
+    // Non-printing inset is a visual safe-zone reminder, not a second
+    // editable white card. It never appears on customer download.
+    const safePoints=points.map(p=>({
+      x:W*.50+(p.x-W*.50)*.87,
+      y:H*.50+(p.y-H*.50)*.88
+    }));
+    const safe=new fabric.Polygon(safePoints,{
+      fill:'transparent',stroke:'#22c55e',strokeWidth:Math.max(1,W*.002),
+      strokeDashArray:[Math.max(4,W*.010),Math.max(3,W*.008)],
+      selectable:false,evented:false,excludeFromExport:true,
+      zvPrintAreaGuide:true,zvTeardropCutGuide:true,name:'Flag safe zone'
+    });
+    canvas.add(safe);
+    canvas.bringToFront(safe);
   }
   canvas.requestRenderAll();
 }
