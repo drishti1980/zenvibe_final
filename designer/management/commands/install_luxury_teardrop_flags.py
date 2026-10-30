@@ -188,10 +188,6 @@ def add_decor(objects, concept, variant, dark, light, metallic):
             objects.append(line(x,360,x+25,170,metallic,sw=3,name="Garden stem"))
             objects.append(ellipse(x+25,185,16,44,light if j%2 else metallic,angle=j*14,name="Garden leaf"))
 
-    # Independently varying lower-tail emblem; text is deliberately absent here.
-    for j in range(variant+1):
-        x=96+j*20
-        objects.append(line(x,1140,x+12,1220+variant*7,metallic,sw=2,opacity=.45,name="Tail signature"))
 
 def build(index, side=0):
     concept=index//5
@@ -203,23 +199,31 @@ def build(index, side=0):
         gold,ink=ink,gold
     objects=[rect(0,0,W,H,bg,name="Printable fabric artwork")]
     add_decor(objects,concept,variant,bg,ink,gold)
-    # Twenty art directions x five layouts. Text always remains within the
-    # narrower lower section of the physical teardrop.
+    # Full-bleed background of the SAME colour clears the letterpress field.
+    # It is deliberately not an inset white card. Decoration is confined to
+    # the art-led header and cannot cross any editable headline.
+    objects.append(rect(0,320,W,H-320,bg,name="Open typography field"))
+    objects.append(line(100,320,520,320,gold,sw=3,opacity=.75,name="Foil divider"))
+    for j in range(variant+1):
+        x=96+j*20
+        objects.append(line(x,1140,x+12,1220+variant*7,gold,sw=2,
+                            opacity=.45,name="Tail signature"))
+    # Every text band has fixed safe spacing and is inside the narrowing die.
     layouts=[
-        (150,350,57,660,830),
-        (145,405,52,680,875),
-        (156,375,54,655,855),
-        (140,430,50,695,900),
-        (165,385,53,675,865),
+        (150,450,57,715,910),
+        (145,465,52,725,918),
+        (156,475,54,735,925),
+        (140,485,50,745,930),
+        (165,490,53,755,938),
     ]
     x,hy,size,sy,oy=layouts[variant]
     headline_text=headline if side==0 else ("DISCOVER MORE" if concept%2==0 else "YOUR MOMENT")
     brand_text=title.upper() if side==0 else "BE PART OF IT"
-    add_text(objects,brand_text,155,267,310,22,ink,bold=True,font="Arial",tag="Editable brand")
+    add_text(objects,brand_text,155,355,310,22,ink,bold=True,font="Arial",tag="Editable brand")
     add_text(objects,headline_text,x,hy,370,size,ink,bold=True,font="Georgia",tag="Editable headline")
     add_text(objects,sub,135,sy,330,23,ink,tag="Editable supporting copy")
     add_text(objects,"EXPLORE  •  TODAY",116,oy,245,21,gold,bold=True,font="Arial",tag="Editable call to action")
-    add_text(objects,"YOUR LOGO HERE",108,1060,210,15,ink,bold=True,font="Arial",tag="Editable logo label")
+    add_text(objects,"YOUR LOGO HERE",105,1090,215,15,ink,bold=True,font="Arial",tag="Editable logo label")
 
     texts=[o for o in objects if o.get("type") in ("text","textbox")]
     for left,right in zip(texts,texts[1:]):
