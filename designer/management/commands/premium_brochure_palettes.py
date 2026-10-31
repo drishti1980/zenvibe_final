@@ -178,27 +178,44 @@ def _base(index,family):
     return hue*360,sat,lum,paper,accent
 
 
+@lru_cache(maxsize=2)
+def _family_hue_order(family):
+    """Rank the 100 curated colourways by hue for harmonious page transitions."""
+    if family not in COLOUR_MANIFESTS:
+        raise ValueError("Unsupported brochure palette family")
+    entries=COLOUR_MANIFESTS[family]
+    keys=[]
+    for i,(paper,accent) in enumerate(entries):
+        r,g,b=_rgb(paper)
+        h,l,s=colorsys.rgb_to_hls(r,g,b)
+        keys.append((h,l,i))
+    ordered=tuple(i for h,l,i in sorted(keys))
+    positions={index:position for position,index in enumerate(ordered)}
+    return ordered,positions
+
+
 @lru_cache(maxsize=1600)
 def palette_for(index,family,role="cover"):
-    """Return a matching, legible, role-specific premium colourway.
+    """One perceptually unique, coordinated luxury palette for EVERY panel.
 
-    The exact COVER paper and foil colours are never reused between design
-    indices. Other brochure panels are coordinated variations of that one
-    design's palette, not copies of a global fixed beige or green.
+    Exact HEX uniqueness was insufficient: near-identical sage/beige shades
+    appeared on multiple different templates. A simple HSL shift on secondary
+    panels reintroduced those duplicates. Instead, each brochure role picks a
+    DIFFERENT paper/foil pair from its category's curated 100-colour library,
+    rotating among nearest hues for visual harmony. For a given page role the
+    mapping is a bijection across indices 0..99: all backgrounds AND foils
+    are individually perceptually separated by ΔE76 >= 12.
     """
     index=int(index)
-    hue,sat,lum,base_paper,accent=_base(index,family)
+    _base(index,family)  # validate index and family
     role_key=str(role).lower()
     depth=ROLES.get(role_key,0)
     if depth==0:
-        paper=base_paper
+        slot=index
     else:
-        # Distinct but harmonious panel colours, still driven by this unique
-        # index. No hardcoded ivory/green inside-page fallback.
-        shift=(-1 if depth%2 else 1)*(.045+.009*(depth%3))
-        panel_lum=_clamp(lum+shift,.12,.93)
-        panel_sat=_clamp(sat+(.07 if depth%3==0 else -.055),.14,.65)
-        paper=_hex_hsl(hue+(depth-3)*5.5,panel_sat,panel_lum)
+        ordered,positions=_family_hue_order(family)
+        slot=ordered[(positions[index]+depth)%100]
+    _,_,_,paper,accent=_base(slot,family)
     ink=text_for(paper)
     muted=text_for(paper,subdued=True)
     on_accent=text_for(accent)
