@@ -139,7 +139,10 @@ class ArtworkCompositionTests(SimpleTestCase):
                     self.assertTrue(any(o["type"]=="image" and
                                         o["manualReplacement"] for o in objects))
                 else:
-                    self.assertTrue(any(o["type"]=="circle" for o in objects))
+                    self.assertTrue(any(
+                        o["type"] in ("circle","ellipse","rect")
+                        and o["customerEditable"] for o in objects
+                    ))
                     self.assertFalse(any(o["type"]=="image" for o in objects))
                 key=tuple((o["type"],o["left"],o["top"],o.get("text",""))
                           for o in objects)
