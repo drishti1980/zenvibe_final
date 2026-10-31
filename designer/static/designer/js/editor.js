@@ -1122,7 +1122,10 @@ function zvApplyMarketingDieGuides(){
   // Fold positions are metadata on our new 2-sided brochure masters. They
   // are visual guides ONLY, not editable printable lines; the page itself
   // contains individually editable type/photos/panel artwork.
-  const foldPositions=Array.isArray(page.foldGuides)?page.foldGuides:[];
+  const marketingName=String(P.name||'').toLowerCase().replace(/[_-]/g,' ');
+  const foldPositions=Array.isArray(page.foldGuides)?page.foldGuides:
+    (/tri\s*fold.*brochure/.test(marketingName)?[1/3,2/3]:
+     (/bi\s*fold.*brochure/.test(marketingName)?[1/2]:[]));
   foldPositions.forEach((fraction,index)=>{
     const pct=Number(fraction);
     if(!Number.isFinite(pct)||pct<=0||pct>=1)return;
