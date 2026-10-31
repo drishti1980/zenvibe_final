@@ -132,6 +132,15 @@ class Command(BaseCommand):
                 reason="Non-100-template category, cut-shape without verified dieline, or hardware-only product"
             elif n and opts["only_missing"]:
                 reason="Existing gallery explicitly preserved by --only-missing"
+            elif (
+                n==TARGET and family!="doorhanger"
+                and DesignTemplate.objects.filter(
+                    product=p,is_active=True,json_data__generator=GENERATOR
+                ).count()==TARGET
+            ):
+                # Idempotence: do not rebuild the 39 already completed
+                # galleries or replace preview media on an ordinary rerun.
+                reason="Already has 100 active premium templates; no refresh needed"
             else:
                 try:
                     if family!="doorhanger":
