@@ -169,6 +169,63 @@ def palette_for(index,family,role="cover"):
     )
 
 
+def cover_photo_tiles(index, frame):
+    """20 distinct, fold-safe photographic structures per layout family.
+
+    Five geometric arrangements x four materially different image-area
+    proportions = 20. Together with the five independent editorial cover
+    compositions in each brochure type, this yields 100 distinct cover
+    photo structures, instead of five repeated layouts recoloured 20 times.
+
+    Returns one to three adjacent, non-overlapping editable image rectangles
+    wholly inside frame; never covers headlines or crosses folds.
+    """
+    if not 0<=index<100:
+        raise ValueError("Template index must be between 0 and 99")
+    x,y,w,h=(float(v) for v in frame)
+    if w<=0 or h<=0:
+        raise ValueError("Invalid cover image frame")
+    variation=index//5
+    shape=variation%5
+    edition=variation//5  # zero to three, shifts tile proportions 4 ways
+    gutter=.014+.003*edition
+    split=.51+.08*edition
+    if shape==0:
+        # Deliberate framed hero: modest white-stock reveal changes with
+        # edition, without false decorative cropping outside the safe area.
+        inset=.025+.017*edition
+        tiles=((inset,inset,1-2*inset,1-2*inset),)
+    elif shape==1:
+        # Distinct two-photo portrait diptych
+        tiles=((0,0,split-gutter/2,1),
+               (split+gutter/2,0,1-split-gutter/2,1))
+    elif shape==2:
+        # Landscape editorial split
+        tiles=((0,0,1,split-gutter/2),
+               (0,split+gutter/2,1,1-split-gutter/2))
+    elif shape==3:
+        # Large hero plus two precisely aligned detail crops at its right
+        base=.58+.04*edition
+        tiles=((0,0,base-gutter/2,1),
+               (base+gutter/2,0,1-base-gutter/2,.5-gutter/2),
+               (base+gutter/2,.5+gutter/2,1-base-gutter/2,.5-gutter/2))
+    else:
+        # Large cinema strip over a pair of two balanced story images
+        base=.57+.055*edition
+        tiles=((0,0,1,base-gutter/2),
+               (0,base+gutter/2,.5-gutter/2,1-base-gutter/2),
+               (.5+gutter/2,base+gutter/2,.5-gutter/2,1-base-gutter/2))
+    result=[]
+    for rel_x,rel_y,rel_w,rel_h in tiles:
+        if min(rel_x,rel_y,rel_w,rel_h)<0 or rel_x+rel_w>1.000001 or rel_y+rel_h>1.000001:
+            raise ValueError("Photo collage would cross an editable image frame")
+        result.append((
+            round(x+w*rel_x,3),round(y+h*rel_y,3),
+            round(w*rel_w,3),round(h*rel_h,3),
+        ))
+    return tuple(result)
+
+
 def palette_signatures(family):
     return [
         (palette_for(i,family).paper,palette_for(i,family).accent)
