@@ -198,11 +198,15 @@ def build(index, side=0):
         # Reverse side uses related, complementary graphic treatment.
         gold,ink=ink,gold
     objects=[rect(0,0,W,H,bg,name="Printable fabric artwork")]
+    objects[0].update({"customerEditable": False, "selectable": False,
+                       "evented": False, "locked": True})
     add_decor(objects,concept,variant,bg,ink,gold)
     # Full-bleed background of the SAME colour clears the letterpress field.
     # It is deliberately not an inset white card. Decoration is confined to
     # the art-led header and cannot cross any editable headline.
-    objects.append(rect(0,320,W,H-320,bg,name="Open typography field"))
+    panel=rect(0,320,W,H-320,bg,name="Open typography field")
+    panel.update({"customerEditable":False,"selectable":False,"evented":False,"locked":True})
+    objects.append(panel)
     objects.append(line(100,320,520,320,gold,sw=3,opacity=.75,name="Foil divider"))
     for j in range(variant+1):
         x=96+j*20
