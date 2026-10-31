@@ -148,9 +148,9 @@ def choose(product, count, refresh=False):
                 return plan(reason="Door hanger requires portrait canvas dimensions")
 
             if count and refresh:
-                return Task(product,group,100,count,"refresh_marketing_previews",
+                return Task(product,group,100,count,"refresh_doorhanger_previews",
                             {"product_id":product.pk,"apply":True},
-                            "Refresh complete gallery previews without overwriting edited templates",True)
+                            "Refresh published door hanger pages and complete gallery previews",True)
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "doorhanger", "count": 100},
                         insert_only=True)
@@ -339,7 +339,8 @@ class Command(BaseCommand):
                     final_count=DesignTemplate.objects.filter(
                         product_id=job.product.pk,is_active=True
                     ).count()
-                    status="INSTALLED" if final_count>=job.target else "INCOMPLETE"
+                    status=("OVER_TARGET" if final_count>job.target else
+                            "INSTALLED" if final_count==job.target else "INCOMPLETE")
                     if final_count>job.target:
                         message="Gallery has %d active templates, exceeds target %d; review duplicates"%(final_count,job.target)
                     elif final_count<job.target:
