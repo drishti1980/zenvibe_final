@@ -747,7 +747,17 @@ def build_page(product,family,index,side,surface,bank):
         _draw_compact_imprint(art,region,index,edition,brief,colors)
     elif logo_family or ratio>5.5 or ratio<.20:
         composition_mode="brand-mark"
-        _draw_mark_page(art,region,index,edition,brief,colors,family)
+        try:
+            _draw_mark_page(art,region,index,edition,brief,colors,family)
+        except CommandError as exc:
+            if "cannot accommodate readable typography" not in str(exc):
+                raise
+            # A wide but physically thin engraving strip can be hundreds of
+            # pixels across yet too short for the long marketing subtitle.
+            art=Artwork(W,H)
+            _base_art(art,region,colors[0],family)
+            composition_mode="compact-imprint"
+            _draw_compact_imprint(art,region,index,edition,brief,colors)
     else:
         try:
             _draw_photo_page(art,region,bank,theme,edition,brief,colors,side,family)
@@ -766,6 +776,7 @@ def build_page(product,family,index,side,surface,bank):
         "editorCoordinates":True,"editorWidth":W,"editorHeight":H,
         "background":"rgba(0,0,0,0)",
         "compositionMode":composition_mode,
+        "fullBrandName":BRIEFS[theme][0],
         "physical":{"widthIn":surface.width_in,"heightIn":surface.height_in,"unit":"in"},
         "objects":art.items,
     }
