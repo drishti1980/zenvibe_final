@@ -150,16 +150,17 @@ def choose(product, count, refresh=False):
                         params={"product_id": product.pk, "kind": "bifold", "count": 100},
                         insert_only=True)
         if match(name, "door hanger", "doorhanger"):
+            # The old generic marketing seeder exported background-only
+            # thumbnails. Install (or upgrade) the fully illustrated V6
+            # masters and complete previews IN PLACE, preserving all PKs.
             if int(product.height or 0) <= int(product.width or 0):
                 return plan(reason="Door hanger requires portrait canvas dimensions")
-
-            if count and refresh:
-                return Task(product,group,100,count,"refresh_doorhanger_previews",
-                            {"product_id":product.pk,"apply":True},
-                            "Refresh published door hanger pages and complete gallery previews",True)
-            return plan(cmd="seed_100_marketing_material_templates",
-                        params={"product_id": product.pk, "kind": "doorhanger", "count": 100},
-                        insert_only=True)
+            if count >= 100 and not refresh:
+                return plan(reason="Existing 100 designs retained; pass --refresh-existing to rebuild their artwork")
+            return Task(product,group,100,count,
+                        "rebuild_doorhanger_luxury_100",
+                        {"product_id":product.pk,"apply":True},
+                        "100 themed editable front/back illustrations, matching previews; IDs preserved",True)
         if match(name, "ticket"):
             if int(product.width or 0) <= int(product.height or 0):
                 return plan(reason="Ticket requires landscape canvas dimensions")
