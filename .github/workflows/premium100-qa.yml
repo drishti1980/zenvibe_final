@@ -1,0 +1,43 @@
+name: Premium 100 Template Quality Checks
+
+on:
+  push:
+    branches:
+      - feature/calendar-editable-templates
+    paths:
+      - 'designer/management/commands/rebuild_remaining_premium_100.py'
+      - 'designer/management/commands/install_remaining_premium_100.py'
+      - 'designer/management/commands/rebuild_doorhanger_photo_v7.py'
+      - 'designer/management/commands/install_all_product_templates.py'
+      - 'designer/tests/test_remaining_premium_100.py'
+      - 'designer/tests/test_doorhanger_photo_v7.py'
+      - '.github/workflows/premium100-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  syntax-and-design-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install only test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'Django>=5.2,<7' 'Pillow>=10.3,<13' 'stripe>=12,<13' 'beautifulsoup4>=4.12,<5' 'cryptography>=42,<47'
+      - name: Compile new and changed code
+        run: |
+          python -m py_compile designer/management/commands/rebuild_remaining_premium_100.py
+          python -m py_compile designer/management/commands/install_remaining_premium_100.py
+          python -m py_compile designer/management/commands/rebuild_doorhanger_photo_v7.py
+          python -m py_compile designer/management/commands/install_all_product_templates.py
+          python -m py_compile designer/tests/test_remaining_premium_100.py
+          python -m py_compile designer/tests/test_doorhanger_photo_v7.py
+      - name: Run offline 100-template composition checks
+        env:
+          DJANGO_SETTINGS_MODULE: zenvibe_site.settings
+        run: |
+          python manage.py test designer.tests.test_remaining_premium_100 designer.tests.test_doorhanger_photo_v7 --verbosity 2
