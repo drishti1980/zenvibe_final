@@ -25,6 +25,7 @@ from django.conf import settings
 from django.core.management import call_command, get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Count
 
 from designer.design_profiles import _ancestry
 from designer.models import DesignTemplate, Product
@@ -32,6 +33,7 @@ from designer.management.commands.seed_promotional_product_templates import (
     CANONICAL_PRODUCT_NAMES,
     LEGACY_PRODUCT_IDS,
     GENERATOR as PROMOTIONAL_GENERATOR,
+    physical as promotional_physical,
 )
 from designer.management.commands.seed_notebook_templates import (
     GENERATOR as NOTEBOOK_GENERATOR,
@@ -106,19 +108,25 @@ def choose(product, count, refresh=False):
     if root_marketing or match(name, "flyer", "brochure", "door hanger", "ticket", "business card"):
         if match(name, "flyer"):
             return plan(cmd="seed_flyer_templates_v2", params={"product_id": product.pk, "count": 100},
-                        refreshable=True)
+                        refreshable=False)
         if match(name, "tri fold", "trifold"):
             return plan(cmd="seed_100_trifold_brochure_templates",
-                        params={"product_id": product.pk, "count": 100}, refreshable=True)
+                        params={"product_id": product.pk, "count": 100}, refreshable=False)
         if match(name, "bi fold", "bifold"):
+            if int(product.width or 0) <= int(product.height or 0):
+                return plan(reason="Bi-fold requires landscape canvas dimensions")
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "bifold", "count": 100},
                         insert_only=True)
         if match(name, "door hanger", "doorhanger"):
+            if int(product.height or 0) <= int(product.width or 0):
+                return plan(reason="Door hanger requires portrait canvas dimensions")
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "doorhanger", "count": 100},
                         insert_only=True)
         if match(name, "ticket"):
+            if int(product.width or 0) <= int(product.height or 0):
+                return plan(reason="Ticket requires landscape canvas dimensions")
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "ticket", "count": 100},
                         insert_only=True)
@@ -129,6 +137,9 @@ def choose(product, count, refresh=False):
 
     if root_banners or match(name, "canopy", "back wall", "banner", "flag", "umbrella"):
         if match(name, "full back wall", "back wall") and "canopy" in name:
+            surfaces=list(product.print_surfaces.filter(is_active=True))
+            if len(surfaces)!=2 or any(not x.print_width_in or not x.print_height_in for x in surfaces):
+                return plan(reason="Full back wall requires two valid Admin print surfaces")
             return plan(cmd="rebuild_full_back_wall_100",
                         params={"product_id": product.pk, "count": 100},
                         refreshable=True)
@@ -162,6 +173,11 @@ def choose(product, count, refresh=False):
             return plan(reason="Product not in supported canonical promotional library")
         # The promo generator counts only its own rows. Subtract legacy rows
         # so the entire gallery does not silently grow past 100.
+        if not promotional_physical(product) and not (
+                product.pk==231 or "paper wristband" in name or
+                "mouse pad" in name or "lanyard" in name or
+                "aluminum bottle opener" in name):
+            return plan(reason="Missing physical print dimensions; no guessed rectangular artwork")
         tagged=DesignTemplate.objects.filter(
             product_id=product.pk, is_active=True,
             json_data__generator=PROMOTIONAL_GENERATOR
@@ -243,7 +259,7 @@ class Command(BaseCommand):
         counts=dict(
             DesignTemplate.objects.filter(product__in=products,is_active=True)
             .values("product_id").order_by()
-            .annotate(total=__import__("django.db.models",fromlist=["Count"]).Count("id"))
+            .annotate(total=Count("id"))
             .values_list("product_id","total")
         )
         jobs=[choose(p,counts.get(p.pk,0),opts["refresh_existing"]) for p in products]
