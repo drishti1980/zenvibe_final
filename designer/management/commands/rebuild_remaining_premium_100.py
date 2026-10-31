@@ -495,7 +495,7 @@ def _base_art(art,region,bg,family):
         art.rect("Editable background",x,y,w,h,bg)
 
 
-def _draw_photo_page(art,region,photo,layout,brief,colors,side,family):
+def _draw_photo_page(art,region,bank,theme,layout,brief,colors,side,family):
     x,y,w,h=region
     bg,ink,muted=colors
     brand,headline,sub,cta,foil=brief
@@ -536,17 +536,18 @@ def _draw_photo_page(art,region,photo,layout,brief,colors,side,family):
     def B(b):
         return (x+w*b[0],y+h*b[1],w*b[2],h*b[3])
     imgx,imgy,imgw,imgh=B(pic)
+    photo=bank.crop(theme,imgw/max(1,imgh),layout)
     art.picture(photo,imgx,imgy,imgw,imgh)
     # A foil or paper reveal is part of the actual editable composition.
     art.rect("Editorial foil detail",x+w*.08,y+h*.056,
              w*(.11+.025*(layout%3)),max(2,h*.004),foil)
     if layout==4:
         # Second small collage crop from the same licensed photo source.
-        second=photo
         if landscape:
             second_box=(x+w*.38,y+h*.46,w*.22,h*.33)
         else:
             second_box=(x+w*.68,y+h*.26,w*.24,h*.30)
+        second=bank.crop(theme,second_box[2]/second_box[3],(layout+2)%5)
         art.picture(second,*second_box,name="Replace collage detail photo")
     if layout==3:
         art.rect("Gallery alignment rule",x+w*.10,y+h*.532 if not landscape else y+h*.08,
@@ -655,8 +656,7 @@ def build_page(product,family,index,side,surface,bank):
     if logo_family or ratio>5.5 or ratio<.20:
         _draw_mark_page(art,region,index,edition,brief,colors,family)
     else:
-        image=bank.crop(theme,max(.20,min(5.0,ratio)),edition)
-        _draw_photo_page(art,region,image,edition,brief,colors,side,family)
+        _draw_photo_page(art,region,bank,theme,edition,brief,colors,side,family)
     art.validate(region)
     page={
         "name":surface.label,"width":W,"height":H,
