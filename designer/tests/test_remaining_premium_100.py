@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import io
 import re
+import tempfile
+from pathlib import Path
 from types import SimpleNamespace
 
 from django.test import SimpleTestCase
@@ -17,7 +19,9 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
     layout_index, BRIEFS, canvas_size, physical_region, build_page,
     render_preview, _jpeg,
 )
-from designer.management.commands.install_remaining_premium_100 import Command as BatchCommand
+from designer.management.commands.install_remaining_premium_100 import (
+    Command as BatchCommand, failed_ids_from_report,
+)
 
 
 class ParentCategory:
@@ -102,6 +106,25 @@ class ProtectedCategoryTests(SimpleTestCase):
         self.assertEqual(len(set(layout_index(i) for i in range(100))),5)
         self.assertEqual(len(BRIEFS),20)
         self.assertEqual(TARGET,100)
+
+    def test_retry_csv_only_returns_failed_ids_not_successful_libraries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source=Path(directory)/"premium100_apply.csv"
+            source.write_text(
+                "product_id,product,status,reason\n"
+                "313,Custom Table Runners,INSTALLED,complete\n"
+                "387,Smart Thermos,FAILED,typography\n"
+                "414,Travel Mug,INSTALLED,complete\n"
+                "462,510ml Smart Thermo Bottle,FAILED,typography\n"
+                "464,Premium Stainless Bottle,FAILED,typography\n"
+                "407,Canopy Tent,PROTECTED,approved\n"
+                "666,Other Product,INCOMPLETE,needs repair\n"
+                "777,Other Product,SKIPPED,unsupported\n",
+                encoding="utf-8-sig"
+            )
+            self.assertEqual(
+                failed_ids_from_report(source),{387,462,464,666}
+            )
 
     def test_bulk_runner_has_dry_run_and_apply_modes(self):
         self.assertTrue(hasattr(BatchCommand,"add_arguments"))
