@@ -654,6 +654,70 @@ def _draw_mark_page(art,region,index,layout,brief,colors,family):
     # it is never given a fake full-bleed stock photograph.
 
 
+def _draw_compact_imprint(art,region,index,layout,brief,colors):
+    """Legible micro-brand artwork for narrow bottle, pen and badge print faces.
+
+    These are ACTUAL SMALL IMPRINTS: do not try to squeeze a full advertising
+    flyer, 20-word subtitle or a photo into a 35px-high safe rectangle.
+    Every object is an editable vector/text object inside the Admin safe area.
+    """
+    x,y,w,h=region
+    bg,ink,muted=colors
+    brand,headline,subtitle,cta,foil=brief
+    words=[word for word in re.findall(r"[A-Za-z]+",brand) if word.upper() not in ("AND","THE","OF")]
+    initials="".join(word[:1] for word in words[:2]).upper() or "ZV"
+    # The small-wordmark is intentionally brief and human-readable at
+    # production scale. Full brand is preserved in template metadata.
+    short_name=(words[0][:7].upper() if words else "BRAND")
+    stamp=("EST." if layout%2 else "CO.")
+    wide=(w/h>=1.6)
+    if wide:
+        cx,cy=x+w*.18,y+h*.50
+        rr=min(w*.10,h*.30)
+        brand_box=(x+w*.34,y+h*.12,w*.61,h*.37)
+        detail_box=(x+w*.34,y+h*.56,w*.61,h*.32)
+        label=short_name if w>=175 else initials
+    else:
+        cx,cy=x+w*.5,y+h*.19
+        rr=min(w*.19,h*.12)
+        brand_box=(x+w*.08,y+h*.43,w*.84,h*.24)
+        detail_box=(x+w*.11,y+h*.71,w*.78,h*.22)
+        label=short_name if w>=130 else initials
+    # Eight distinct, measurable vector accents; do not draw a blank box.
+    if layout==0:
+        art.circle("Fine brand seal",cx,cy,rr,foil)
+        art.circle("Contrast disc",cx,cy,rr*.70,ink)
+    elif layout==1:
+        art.rect("Architectural monogram rail",cx-rr*.85,cy-rr*.60,rr*.42,rr*1.2,foil)
+        art.rect("Offset monogram rail",cx-rr*.18,cy-rr*.80,rr*.42,rr*1.6,ink)
+        art.rect("Third rail",cx+rr*.48,cy-rr*.45,rr*.27,rr*.9,foil)
+    elif layout==2:
+        for j in range(5):
+            a=j*math.pi*2/5
+            art.circle("Botanical jewel %s"%j,
+                       cx+rr*.63*math.cos(a),cy+rr*.63*math.sin(a),
+                       rr*.22,foil if j%2 else ink)
+    elif layout==3:
+        for j in range(3):
+            art.rect("Gallery monogram tile %s"%j,
+                     cx-rr*.9+rr*j*.6,cy-rr*.5,
+                     rr*.42,rr*(.8 if j%2 else 1.0),
+                     foil if j%2 else ink)
+    else:
+        for j in range(6):
+            a=j*math.pi/3
+            art.circle("Contemporary dot %s"%j,
+                       cx+rr*.63*math.cos(a),cy+rr*.63*math.sin(a),
+                       rr*.10+(j%2)*rr*.07,foil if j%2 else ink)
+    # Keep at least TWO separately editable text objects, never lower font
+    # sizes below the 7.5 px safety floor. On very small imprints the logo
+    # initials are used instead of forcing a long company name.
+    art.text("Editable compact brand",label,*brand_box,ink,
+             min(brand_box[2]*.22,brand_box[3]*.83),True)
+    art.text("Editable compact label",stamp,*detail_box,muted,
+             min(detail_box[2]*.20,detail_box[3]*.83),False)
+
+
 def build_page(product,family,index,side,surface,bank):
     W,H=canvas_size(surface)
     region=physical_region(product,surface,W,H)
@@ -674,15 +738,34 @@ def build_page(product,family,index,side,surface,bank):
     _base_art(art,region,colors[0],family)
     logo_family=family in ("pen","logo-product")
     ratio=region[2]/region[3]
-    if logo_family or ratio>5.5 or ratio<.20:
+    # A full advertising layout is inappropriate on a tiny bottle or badge.
+    # Decide based on the ACTUAL configured safe region in editor pixels.
+    compact=(region[2]<350 or region[3]<260)
+    composition_mode="photo-editorial"
+    if compact:
+        composition_mode="compact-imprint"
+        _draw_compact_imprint(art,region,index,edition,brief,colors)
+    elif logo_family or ratio>5.5 or ratio<.20:
+        composition_mode="brand-mark"
         _draw_mark_page(art,region,index,edition,brief,colors,family)
     else:
-        _draw_photo_page(art,region,bank,theme,edition,brief,colors,side,family)
+        try:
+            _draw_photo_page(art,region,bank,theme,edition,brief,colors,side,family)
+        except CommandError as exc:
+            if "cannot accommodate readable typography" not in str(exc):
+                raise
+            # Only recover from typography-fit failure. A malformed print
+            # region, missing picture or unsafe geometry is never disguised.
+            art=Artwork(W,H)
+            _base_art(art,region,colors[0],family)
+            composition_mode="compact-imprint"
+            _draw_compact_imprint(art,region,index,edition,brief,colors)
     art.validate(region)
     page={
         "name":surface.label,"width":W,"height":H,
         "editorCoordinates":True,"editorWidth":W,"editorHeight":H,
         "background":"rgba(0,0,0,0)",
+        "compositionMode":composition_mode,
         "physical":{"widthIn":surface.width_in,"heightIn":surface.height_in,"unit":"in"},
         "objects":art.items,
     }
