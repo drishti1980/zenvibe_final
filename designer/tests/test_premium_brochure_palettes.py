@@ -8,6 +8,7 @@ from django.test import SimpleTestCase
 
 from designer.management.commands.premium_brochure_palettes import (
     palette_for, palette_signatures, validate_100_palettes, contrast,
+    cover_photo_tiles,
 )
 from designer.management.commands.rebuild_premium_marketing_print_v2 import (
     make_marketing_page,
@@ -61,6 +62,27 @@ class BrochureColorEngineTests(SimpleTestCase):
                             contrast(colors.on_accent,colors.accent),4.5
                         )
 
+    def test_20_photo_collage_arrangements_inside_safe_cover_frame(self):
+        bounds=(30.0,90.0,460.0,340.0)
+        variations=set()
+        for index in range(0,100,5):
+            tiles=cover_photo_tiles(index,bounds)
+            variations.add(tiles)
+            self.assertGreaterEqual(len(tiles),1)
+            self.assertLessEqual(len(tiles),3)
+            x0,y0,w,h=bounds
+            for k,(x,y,tw,th) in enumerate(tiles):
+                self.assertGreaterEqual(x,x0)
+                self.assertGreaterEqual(y,y0)
+                self.assertLessEqual(x+tw,x0+w+.1)
+                self.assertLessEqual(y+th,y0+h+.1)
+                self.assertGreater(min(tw,th),24)
+                for x2,y2,w2,h2 in tiles[k+1:]:
+                    overlap_width=min(x+tw,x2+w2)-max(x,x2)
+                    overlap_height=min(y+th,y2+h2)-max(y,y2)
+                    self.assertFalse(overlap_width>1 and overlap_height>1)
+        self.assertEqual(len(variations),20)
+
     def test_families_have_independent_palettes(self):
         bi=palette_signatures("bifold")
         tri=palette_signatures("trifold")
@@ -95,6 +117,26 @@ class BrochureColorArtworkTests(SimpleTestCase):
             found.add(paper)
         self.assertEqual(len(found),100)
 
+    def test_bifold_actual_cover_photo_collages_differ_between_templates(self):
+        signatures=set()
+        for index in range(100):
+            page=make_marketing_page(
+                self.bi,"bifold",index,0,self.stock,self.photos
+            )
+            cover_images=[
+                o for o in page["objects"]
+                if o["type"]=="image" and
+                o["name"].startswith("Replace cover photograph")
+            ]
+            self.assertGreaterEqual(len(cover_images),1)
+            positions=tuple(
+                (o["left"],o["top"],o["width"],o["height"])
+                for o in cover_images
+            )
+            self.assertNotIn(positions,signatures)
+            signatures.add(positions)
+        self.assertEqual(len(signatures),100)
+
     def test_trifold_actual_front_cover_colours_are_unique_in_fabric_artwork(self):
         found=set()
         for index in range(100):
@@ -112,3 +154,21 @@ class BrochureColorArtworkTests(SimpleTestCase):
             )
             found.add(paper)
         self.assertEqual(len(found),100)
+
+    def test_trifold_actual_cover_photo_collages_differ_between_templates(self):
+        signatures=set()
+        for index in range(100):
+            page=build_page(self.tri,index,0,self.stock,self.photos)
+            cover_images=[
+                o for o in page["objects"]
+                if o["type"]=="image" and
+                o["name"].startswith("Replace cover photograph")
+            ]
+            self.assertGreaterEqual(len(cover_images),1)
+            positions=tuple(
+                (o["left"],o["top"],o["width"],o["height"])
+                for o in cover_images
+            )
+            self.assertNotIn(positions,signatures)
+            signatures.add(positions)
+        self.assertEqual(len(signatures),100)
