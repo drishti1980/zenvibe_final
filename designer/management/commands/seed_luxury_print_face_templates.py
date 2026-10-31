@@ -97,6 +97,8 @@ def family_for(product):
         return "flat-display"
     if any(x in name for x in ("table runner", "table cover", "table skirt", "table throw")):
         return "fabric-panel"
+    if "gift card" in name or "postcard" in name:
+        return "flat-card"
     if any(x in name for x in ("notepad", "journal", "stationery gift", "gift box")):
         return "stationery"
     return ""
