@@ -89,8 +89,28 @@ def choose(product, count, refresh=False):
     def plan(target=100, cmd="", params=None, reason="", refreshable=False, insert_only=False):
         # The existing gallery takes precedence. Never create a second 100-row
         # set merely because the earlier generator's tag differs.
-        if count >= target and not (refresh and refreshable):
-            return Task(product, group, target, count, reason="Already has %d active templates" % count)
+        if count >= target:
+            if not (refresh and refreshable):
+                return Task(product, group, target, count, reason="Already has %d active templates" % count)
+            # Refreshing a differently named generated library would add a
+            # second 100-template set. Only the backed-up teardrop updater may
+            # safely migrate legacy templates in place.
+            if cmd != "install_luxury_teardrop_flags":
+                return Task(product, group, target, count,
+                            reason="Existing %d templates retained; batch refresh does not replace older libraries" % count)
+        if count and cmd in ("seed_flyer_templates_v2",
+                              "seed_100_trifold_brochure_templates"):
+            # Partial legacy libraries cannot be assumed to use the same
+            # composition keys. Do not create duplicates over them.
+            from designer.management.commands.seed_flyer_templates_v2 import GENERATOR_ID as FLYER_GENERATOR
+            from designer.management.commands.seed_100_trifold_brochure_templates import GENERATOR_ID as TRIFOLD_GENERATOR
+            expected=(FLYER_GENERATOR if cmd=="seed_flyer_templates_v2" else TRIFOLD_GENERATOR)
+            recognizable=DesignTemplate.objects.filter(
+                product_id=product.pk,is_active=True,json_data__generator=expected
+            ).count()
+            if recognizable != count:
+                return Task(product, group, target, count,
+                            reason="Existing templates use a different generator; protect against duplicated gallery rows")
         if count and insert_only:
             return Task(product, group, target, count,
                         reason="Legacy generator inserts duplicates; %d existing templates retained" % count)
