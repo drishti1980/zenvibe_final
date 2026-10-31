@@ -40,7 +40,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 from designer.models import Product, DesignTemplate, SavedDesign
 from designer.management.commands.premium_brochure_palettes import (
-    palette_for, validate_100_palettes,
+    palette_for, validate_100_palettes, cover_photo_tiles,
 )
 from designer.management.commands.rebuild_remaining_premium_100 import (
     Artwork, Photobank, BRIEFS, BASES, DIRECTIONS, TARGET,
@@ -205,8 +205,17 @@ def _panel_art(art,region,index,edition,role,bank,side,kind):
         sub_pos=(.09,.787,.82,.048)
         cta_pos=(.12,.883,.76,.065)
 
-    # The photo panel is visually dominant; nothing prints over the photograph.
-    _photo(art,bank,theme,edition,_box(x,y,w,h,photo))
+    # True 100-design geometry: five editorial layouts × twenty genuinely
+    # different safe photo collages. Never call this for flyers.
+    hero_box=_box(x,y,w,h,photo)
+    if role=="cover":
+        for photo_no,tile in enumerate(cover_photo_tiles(index,hero_box)):
+            _photo(
+                art,bank,theme,(edition+photo_no)%5,tile,
+                "Replace cover photograph %d"%(photo_no+1),
+            )
+    else:
+        _photo(art,bank,theme,edition,hero_box)
     if edition==4:
         _photo(art,bank,theme,(edition+2)%5,
                _box(x,y,w,h,second),"Replace second collage photograph")
