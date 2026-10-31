@@ -1034,7 +1034,7 @@ function fromData(o){
     // the polygon's bounding box. Normalize only those known master IDs;
     // do not rebase an already edited/saved customer polygon.
     const nativePts=o.points.map(p=>({x:Number(p.x)||0,y:Number(p.y)||0}));
-    const seeded=/^poly-\\d+$/.test(String(o.id||'')) && Number(o.left||0)===0 && Number(o.top||0)===0;
+    const seeded=/^poly-\d+$/.test(String(o.id||'')) && Number(o.left||0)===0 && Number(o.top||0)===0;
     if(seeded && nativePts.length){
       const minX=Math.min(...nativePts.map(p=>p.x)),minY=Math.min(...nativePts.map(p=>p.y));
       x=new fabric.Polygon(nativePts.map(p=>({x:p.x-minX,y:p.y-minY})),{
