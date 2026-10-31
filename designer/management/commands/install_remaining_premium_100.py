@@ -95,17 +95,22 @@ class Command(BaseCommand):
                         # front/back Admin checks before touching database.
                         from designer.management.commands.rebuild_doorhanger_photo_v7 import (
                             GENERATOR as DOORHANGER_GENERATOR,
+                            LEGACY_GENERATORS as DOORHANGER_LEGACY,
                         )
                         existing=list(DesignTemplate.objects.filter(product=p).only(
                             "pk","name","json_data","is_active"))
                         import re,json
+                        if len(existing)>100:
+                            raise CommandError("More than 100 door hanger masters; duplicate review required")
                         for t in existing:
                             if not re.match(r"^ZV Door Hanger\s+\d{1,3}\b",t.name):
                                 raise CommandError("Non-generated door hanger templates retained")
                             data=t.json_data
                             if isinstance(data,str):
                                 data=json.loads(data)
-                            if not isinstance(data,dict) or not str(data.get("generator","")).startswith("zenvibe-doorhanger-"):
+                            if not isinstance(data,dict) or str(data.get("generator","")) not in (
+                                DOORHANGER_LEGACY | {DOORHANGER_GENERATOR}
+                            ):
                                 raise CommandError("Unknown generated door hanger library retained")
                     label="PLANNED"
                     reason="100 unique professionally composed layouts"
