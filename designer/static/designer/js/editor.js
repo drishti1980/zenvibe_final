@@ -1028,8 +1028,33 @@ function fromData(o){
   else if(o.type==='circle') x=new fabric.Circle({...c,radius:o.radius||o.r||60,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
   else if(o.type==='ellipse') x=new fabric.Ellipse({...c,rx:o.rx||90,ry:o.ry||55,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
   else if(o.type==='triangle') x=new fabric.Triangle({...c,width:o.width||150,height:o.height||130,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
-  else if(o.type==='polygon'&&o.points) x=new fabric.Polygon(o.points,{...c,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
-  else if(o.type==='line') x=new fabric.Line(o.points||[0,0,220,0],{...c,stroke:o.stroke||o.fill||'#111827',strokeWidth:o.strokeWidth||5,fill:null,strokeDashArray:o.strokeDashArray||null});
+  else if(o.type==='polygon'&&o.points){
+    // Original vector-library masters store points in absolute artboard
+    // coordinates with left/top=0. Fabric instead expects points local to
+    // the polygon's bounding box. Normalize only those known master IDs;
+    // do not rebase an already edited/saved customer polygon.
+    const nativePts=o.points.map(p=>({x:Number(p.x)||0,y:Number(p.y)||0}));
+    const seeded=/^poly-\\d+$/.test(String(o.id||'')) && Number(o.left||0)===0 && Number(o.top||0)===0;
+    if(seeded && nativePts.length){
+      const minX=Math.min(...nativePts.map(p=>p.x)),minY=Math.min(...nativePts.map(p=>p.y));
+      x=new fabric.Polygon(nativePts.map(p=>({x:p.x-minX,y:p.y-minY})),{
+        ...c,left:minX,top:minY,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0
+      });
+    }else{
+      x=new fabric.Polygon(nativePts,{...c,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
+    }
+  }
+  else if(o.type==='line'){
+    // Legacy editable-master JSON used x1/y1/x2/y2 rather than points.
+    // Defaulting every line to [0,0,220,0] stacked artwork at the origin.
+    const coords=Array.isArray(o.points)&&o.points.length===4?o.points:
+      [o.x1??0,o.y1??0,o.x2??220,o.y2??0];
+    x=new fabric.Line(coords.map(n=>Number(n)||0),{
+      ...c,stroke:o.stroke||o.fill||'#111827',
+      strokeWidth:o.strokeWidth||5,fill:null,
+      strokeDashArray:o.strokeDashArray||null
+    });
+  }
   else if(o.type==='path'&&o.path) x=new fabric.Path(o.path,{...c,stroke:o.stroke||null,strokeWidth:o.strokeWidth||0});
   return x;
 }
