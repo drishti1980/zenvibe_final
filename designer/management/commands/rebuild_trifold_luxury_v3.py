@@ -419,56 +419,63 @@ def _page_image(page,scale):
 
 
 def _preview(pages):
-    """Gallery portrait thumbnail with big cover + two actual flat spreads.
+    """WYSIWYG gallery proof: the *complete* Outside and Inside editor pages.
 
-    The first image should look like a designed brochure, not a tiny contact
-    sheet of six placeholder panels on a grey square. This 1000x1200 mockup
-    gives the rightmost outside (front cover) the dominant visual position.
+    IMPORTANT: Earlier versions CROPPED the front-cover panel and enlarged it,
+    then placed two miniature flat spreads beside it. Clicking that thumbnail
+    correctly opened the full Outside sheet, which appeared to be a different
+    design. Never crop, rearrange, or substitute any part of the editor pages
+    in the preview. Only uniform resizing, paper framing and external labels
+    are permitted. The full image is the same two page objects selected by ID.
     """
     if len(pages)!=2:
-        raise CommandError("Tri-fold preview requires Outside + Inside")
-    stage=Image.new("RGB",(1000,1200),(241,239,235))
-    dr=ImageDraw.Draw(stage)
-    dr.rounded_rectangle((17,17,983,1183),radius=26,
-                         fill=(249,247,242),outline=(214,209,200),width=2)
-    dr.text((51,40),"THE BROCHURE COLLECTION",
-            font=_font(25,True),fill=(37,48,54))
+        raise CommandError("Tri-fold gallery requires exactly two editor pages")
 
-    # Outside sheet: rightmost panel = the physical front cover.
-    source=pages[0]
-    full=_page_image(source,1)
-    cover=full.crop((round(full.width*2/3),0,full.width,full.height))
-    cover.thumbnail((530,960),Image.Resampling.LANCZOS)
-    xx=52+(525-cover.width)//2;yy=126+(960-cover.height)//2
-    shadow=Image.new("RGBA",(cover.width+34,cover.height+34),(0,0,0,0))
-    shadow_mask=Image.new("L",(cover.width,cover.height),205)
-    blur=shadow_mask.filter(ImageFilter.GaussianBlur(12))
-    shadow.paste((0,0,0,140),(17,17,17+cover.width,17+cover.height),blur)
-    stage.paste(shadow,(xx-17,yy-17),shadow)
-    stage.paste(cover,(xx,yy),cover)
-    dr=ImageDraw.Draw(stage)
-    dr.text((58,1110),"FRONT COVER",font=_font(22,True),fill=(77,81,78))
+    canvas=Image.new("RGB",(1000,1200),(242,241,238))
+    dr=ImageDraw.Draw(canvas)
+    dr.rounded_rectangle((16,16,984,1184),radius=22,
+                         fill=(251,250,247),outline=(214,214,211),width=2)
+    dr.text((45,36),"TRI-FOLD  |  EDITABLE FRONT & BACK",
+            font=_font(22,True),fill=(44,55,58))
+    placements=(
+        # page index, label, left, top, maximum width, maximum height
+        (0,"PAGE 1  /  OUTSIDE",55,118,890,565),
+        (1,"PAGE 2  /  INSIDE",105,751,790,375),
+    )
+    for page_index,label,left,top,box_w,box_h in placements:
+        page=pages[page_index]
+        if page.get("name") not in ("Outside","Inside"):
+            raise CommandError("Invalid page order for tri-fold preview")
+        source_w=float(page.get("width") or 0)
+        source_h=float(page.get("height") or 0)
+        if source_w<=0 or source_h<=0:
+            raise CommandError("Tri-fold page has no editor dimensions")
+        # Pure, uniform rescaling of the whole Fabric document, no crops.
+        scale=min(box_w/source_w,box_h/source_h)
+        artwork=_page_image(page,scale)
+        x=left+(box_w-artwork.width)//2
+        y=top+(box_h-artwork.height)//2
+        shadow=Image.new("RGBA",(artwork.width+28,artwork.height+28),
+                         (0,0,0,0))
+        mask=Image.new("L",(artwork.width,artwork.height),168)
+        shadow.paste(
+            (0,0,0,88),(14,14,14+artwork.width,14+artwork.height),
+            mask.filter(ImageFilter.GaussianBlur(9)),
+        )
+        canvas.paste(shadow,(x-14,y-14),shadow)
+        canvas.paste(artwork,(x,y),artwork)
+        dr=ImageDraw.Draw(canvas)
+        # Labels are OUTSIDE the actual printable document.
+        dr.text((left+9,top-32),label,font=_font(21,True),
+                fill=(57,67,71))
+        # Do not add fake photos, cropped front covers, fold lines or
+        # manufacturing marks to the preview. The visible pixels inside this
+        # frame are strictly the same page layers used by the editor.
 
-    # Keep both actual spreads visible, but secondary to the primary cover.
-    for j,top in ((0,265),(1,678)):
-        sheet=pages[j]
-        small=_page_image(sheet,min(360/sheet["width"],310/sheet["height"]))
-        x=610+(345-small.width)//2
-        y=top+(315-small.height)//2
-        stage.paste(small,(x,y),small)
-        dr=ImageDraw.Draw(stage)
-        dr.text((618,top-18),"OUTSIDE" if j==0 else "INSIDE",
-                font=_font(18,True),fill=(68,75,76))
-        # Nominal fold guides are shown only in the gallery/editor proof.
-        # Production print objects never include these vertical lines.
-        for fraction in sheet.get("foldGuides",[]):
-            fx=x+int(small.width*fraction)
-            for ly in range(y,y+small.height,20):
-                dr.line((fx,ly,fx,min(ly+8,y+small.height)),
-                        fill=(197,156,85),width=2)
-    output=io.BytesIO()
-    stage.save(output,format="PNG",optimize=True)
-    return output.getvalue()
+    out=io.BytesIO()
+    canvas.save(out,format="PNG",optimize=True)
+    return out.getvalue()
+
 
 
 def _load_master(row):
@@ -749,6 +756,8 @@ class Command(BaseCommand):
                 "editorNative":True,"previewComplete":True,
                 "width":pages[0]["width"],"height":pages[0]["height"],
                 "pageCount":2,"pages":pages,
+                "galleryPreviewMode":"exact-editor-pages",
+                "galleryPreviewOrder":["Outside","Inside"],
                 "compositionSignature":signature,
                 "designFamily":family,"direction":direction,
                 "brochure":{"type":"tri-fold","panelsPerSide":3,
