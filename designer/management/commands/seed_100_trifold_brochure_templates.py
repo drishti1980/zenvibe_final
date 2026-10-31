@@ -356,6 +356,19 @@ class Command(BaseCommand):
         except Product.DoesNotExist:
             raise CommandError(f"Product {opts['product_id']} not found")
 
+        # This historical V1 command renders visible REPLACE PHOTO boxes.
+        # Never allow it to silently re-create those placeholders over a
+        # product already upgraded to the premium luxury V3 collection.
+        if DesignTemplate.objects.filter(
+            product=product,
+            is_active=True,
+            json_data__generator="zenvibe-trifold-luxury-v3"
+        ).exists():
+            raise CommandError(
+                "Premium tri-fold V3 library already installed. "
+                "Use rebuild_trifold_luxury_v3 to refresh it safely."
+            )
+
         built=[]; keys=set()
         for idx in range(count):
             name,data,pages,svgs=build_template(idx,product)
