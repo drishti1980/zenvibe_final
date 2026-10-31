@@ -91,6 +91,10 @@ function preflight(c,width,height,wi,hi){
  return warnings;
 }
 async function run(pages,ids,format,mode,scale,name,status){
+ // JPEG has no alpha channel. A shaped flag exported as JPEG would turn the
+ // transparent die-cut surroundings into a misleading rectangular white area.
+ if(format==='jpg' && ids.some(i=>pages[i]?.printShape==='teardrop'))
+  throw Error('Teardrop flags need a transparent print file. Choose PNG, SVG, or PDF instead of JPG.');
  if(format==='pdf'&&!w.jspdf?.jsPDF)throw Error('PDF engine did not load. Check your internet connection or browser blockers, then refresh.');
  const zipNeeded=mode==='separate'||(format!=='pdf'&&ids.length>1);
  if(zipNeeded&&!w.JSZip)throw Error('ZIP library unavailable');
