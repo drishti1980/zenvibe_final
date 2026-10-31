@@ -10,12 +10,12 @@ python manage.py refresh_marketing_previews --product-id 170 --apply
 """
 import base64
 import json
+from html import escape
 
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand, CommandError
 from designer.models import DesignTemplate
 from designer.management.commands.seed_100_marketing_material_templates import GENERATOR_ID
-from designer.management.commands.refresh_doorhanger_previews import svg_preview
 
 
 def original_background(objects, width, height):
@@ -35,6 +35,77 @@ def original_background(objects, width, height):
         'viewBox="0 0 %d %d"><rect width="100%%" height="100%%" '
         'fill="#FFFFFF"/></svg>'
     ) % (width, height, width, height)
+
+
+def svg_preview(background, objects, width, height):
+    """Render a complete SVG thumbnail without optional Django commands or Cairo.
+
+    The original marketing seeder stores the background as an SVG data image
+    and puts editable copy/photos in independent Fabric objects. Rebuilding the
+    gallery from those same layers avoids the old background-only thumbnails.
+    """
+    prefix, sep, _ = background.rpartition("</svg>")
+    if not sep:
+        raise ValueError("Background image is not a complete SVG")
+    rendered = [prefix]
+    for obj in objects:
+        if not isinstance(obj, dict) or obj.get("backgroundAsset") or obj.get("visible") is False:
+            continue
+        kind = obj.get("type")
+        x = float(obj.get("left", 0))
+        y = float(obj.get("top", 0))
+        w = float(obj.get("width", 0))
+        h = float(obj.get("height", 0))
+        opacity = float(obj.get("opacity", 1))
+        if kind == "image":
+            src = str(obj.get("src") or obj.get("baseSrc") or "")
+            if src.startswith(("data:image/jpeg;base64,", "data:image/png;base64,",
+                               "data:image/svg+xml;base64,", "data:image/webp;base64,")):
+                rendered.append(
+                    '<image x="%g" y="%g" width="%g" height="%g" '
+                    'href="%s" preserveAspectRatio="xMidYMid slice" opacity="%g"/>' %
+                    (x, y, w, h, escape(src, quote=True), opacity)
+                )
+        elif kind == "rect":
+            rendered.append(
+                '<rect x="%g" y="%g" width="%g" height="%g" '
+                'fill="%s" opacity="%g" />' %
+                (x, y, w, h, escape(str(obj.get("fill") or "none"), quote=True), opacity)
+            )
+        elif kind in ("textbox", "text", "i-text"):
+            size = max(1, float(obj.get("fontSize", 20)))
+            align = obj.get("textAlign", "left")
+            anchor = {"center": "middle", "right": "end"}.get(align, "start")
+            tx = x + (w / 2 if align == "center" else w if align == "right" else 0)
+            font = escape(str(obj.get("fontFamily") or obj.get("font") or "Arial"), quote=True)
+            color = escape(str(obj.get("fill") or "#202020"), quote=True)
+            weight = escape(str(obj.get("fontWeight") or "normal"), quote=True)
+            line_height = max(0.7, float(obj.get("lineHeight") or 1.16))
+            max_chars = max(7, int(max(w, size) / (size * .60)))
+            lines = []
+            for paragraph in str(obj.get("text") or "").split("\n"):
+                line = ""
+                for word in paragraph.split():
+                    if line and len(line) + len(word) + 1 > max_chars:
+                        lines.append(line)
+                        line = word
+                    else:
+                        line = (line + " " + word).strip()
+                lines.append(line)
+            rendered.append(
+                '<text x="%g" y="%g" font-size="%g" font-family="%s" '
+                'font-weight="%s" text-anchor="%s" fill="%s" opacity="%g">' %
+                (tx, y + size, size, font, weight, anchor, color, opacity)
+            )
+            for i, value in enumerate(lines):
+                rendered.append(
+                    '<tspan x="%g" dy="%g">%s</tspan>' %
+                    (tx, 0 if i == 0 else size * line_height, escape(value))
+                )
+            rendered.append("</text>")
+    rendered.append("</svg>")
+    return "".join(rendered)
+
 
 
 class Command(BaseCommand):
