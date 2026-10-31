@@ -735,12 +735,15 @@ def build_page(product,family,index,side,surface,bank):
                brief[2],("GET IN TOUCH" if edition%2 else brief[3]),brief[4])
         edition=(edition+2)%5
     art=Artwork(W,H)
-    _base_art(art,region,colors[0],family)
     logo_family=family in ("pen","logo-product")
     ratio=region[2]/region[3]
     # A full advertising layout is inappropriate on a tiny bottle or badge.
     # Decide based on the ACTUAL configured safe region in editor pixels.
     compact=(region[2]<350 or region[3]<260)
+    # Compact engraving and bottle branding must be transparent; an opaque
+    # rectangular poster background looks wrong on a cylindrical product.
+    if not compact:
+        _base_art(art,region,colors[0],family)
     composition_mode="photo-editorial"
     if compact:
         composition_mode="compact-imprint"
@@ -755,7 +758,6 @@ def build_page(product,family,index,side,surface,bank):
             # A wide but physically thin engraving strip can be hundreds of
             # pixels across yet too short for the long marketing subtitle.
             art=Artwork(W,H)
-            _base_art(art,region,colors[0],family)
             composition_mode="compact-imprint"
             _draw_compact_imprint(art,region,index,edition,brief,colors)
     else:
@@ -767,7 +769,6 @@ def build_page(product,family,index,side,surface,bank):
             # Only recover from typography-fit failure. A malformed print
             # region, missing picture or unsafe geometry is never disguised.
             art=Artwork(W,H)
-            _base_art(art,region,colors[0],family)
             composition_mode="compact-imprint"
             _draw_compact_imprint(art,region,index,edition,brief,colors)
     art.validate(region)
