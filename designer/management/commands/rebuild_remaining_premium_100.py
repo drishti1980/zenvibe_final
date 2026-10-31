@@ -710,37 +710,57 @@ def _render_page(page,scale):
 
 
 def render_preview(pages,family):
-    """Actual editable layers, shown at useful scale in existing gallery UI."""
-    stage_w,stage_h=1200,850
-    stage=Image.new("RGB",(stage_w,stage_h),(242,241,239))
+    """Portrait-format gallery preview: same artwork as Fabric editor.
+
+    The existing gallery uses a portrait thumbnail card. A wide front/back
+    contact sheet previously shrank the entire design into a tiny central
+    thumbnail. This renderer intentionally fills that same card without any
+    storefront/CSS changes. Previews never invent a different design.
+    """
+    stage_w,stage_h=900,1160
+    stage=Image.new("RGB",(stage_w,stage_h),(241,241,240))
     d=ImageDraw.Draw(stage)
-    d.rounded_rectangle((30,24,1170,825),radius=26,
-                        fill=(250,249,246),outline=(219,216,210),width=2)
-    d.text((70,56),"FRONT  /  BACK" if len(pages)>1 else "PRINT ARTWORK",
-           font=_font(25,True),fill=(45,52,58))
-    d.text((870,56),family.upper().replace("-"," "),
-           font=_font(20,True),fill=(93,100,107))
-    slots=[(95,108,580,640)] if len(pages)==1 else [
-        (65,110,650,650),(720,173,405,530)
-    ]
-    for k,(left,top,box_w,box_h) in enumerate(slots):
-        page=pages[min(k,len(pages)-1)]
-        s=min(box_w/page["width"],box_h/page["height"])
-        art=_render_page(page,s)
-        x=left+(box_w-art.width)//2
-        y=top+(box_h-art.height)//2
-        shadow=Image.new("RGBA",(art.width+32,art.height+32),(0,0,0,0))
-        am=art.getchannel("A")
-        blurred=am.filter(ImageFilter.GaussianBlur(11))
-        shadow.paste((0,0,0,82),(14,15,14+art.width,15+art.height),blurred)
-        stage.paste(shadow,(x-14,y-15),shadow)
-        stage.paste(art,(x,y),art)
-    if len(pages)==1:
-        # A second detail crop of the SAME artwork: not a fabricated backside.
-        p=pages[0]
-        image=_render_page(p,min(400/p["width"],520/p["height"]))
-        stage.paste(image,(720,210),image)
-        d.text((754,165),"DESIGN DETAIL",font=_font(20,True),fill=(95,98,97))
+    d.rounded_rectangle((18,18,882,1142),radius=20,
+                        fill=(251,250,248),outline=(215,212,207),width=2)
+    d.text((55,43),"EDITABLE PREMIUM ARTWORK",
+           font=_font(18,True),fill=(66,76,81))
+    d.text((stage_w-45,43),family.upper().replace("-"," "),
+           font=_font(16,True),fill=(94,103,108),anchor="ra")
+
+    # Use the *actual* document ratio, not assumptions about the category.
+    page=pages[0]
+    portrait=page["width"]/max(1,page["height"])<.91
+    if len(pages)==1 and portrait:
+        slots=[(0,54,92,790,990)]
+    elif len(pages)==1:
+        # Two readable looks at one single-sided design. The second slot
+        # repeats the real artwork, not a fictitious back side.
+        slots=[(0,45,125,810,445),(0,45,615,810,445)]
+        d.text((65,575),"ARTWORK DETAIL  •  SAME PRINT FACE",
+               font=_font(18,True),fill=(95,97,96))
+    elif portrait:
+        # Dominant front plus clearly labelled back for tall product artwork.
+        slots=[(0,32,118,568,960),(1,614,303,255,650)]
+        d.text((640,262),"BACK",font=_font(17,True),fill=(95,97,96))
+    else:
+        # Landscape brochures and tickets keep both pages at full card width.
+        slots=[(0,45,125,810,437),(1,45,650,810,437)]
+        d.text((62,95),"OUTSIDE / FRONT",font=_font(16,True),fill=(92,98,99))
+        d.text((62,621),"INSIDE / BACK",font=_font(16,True),fill=(92,98,99))
+
+    for index,left,top,bw,bh in slots:
+        p=pages[index]
+        scale=min(bw/max(1,p["width"]),bh/max(1,p["height"]))
+        artwork=_render_page(p,scale)
+        x=left+(bw-artwork.width)//2
+        y=top+(bh-artwork.height)//2
+        shadow=Image.new("RGBA",(artwork.width+24,artwork.height+24),
+                         (0,0,0,0))
+        alpha=artwork.getchannel("A").filter(ImageFilter.GaussianBlur(9))
+        shadow.paste((0,0,0,110),
+                     (11,12,11+artwork.width,12+artwork.height),alpha)
+        stage.paste(shadow,(x-11,y-11),shadow)
+        stage.paste(artwork,(x,y),artwork)
     out=io.BytesIO()
     stage.save(out,format="PNG",optimize=True)
     return out.getvalue()
