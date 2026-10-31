@@ -358,20 +358,22 @@ def _mockup(front,back,edition):
         d.line((0,y,cw,y),fill=(shade,shade-1,shade-2))
     d.rounded_rectangle((34,32,cw-34,ch-30),radius=28,
                         fill=(247,246,243),outline=(215,213,208),width=2)
-    d.text((70,62),"FRONT  /  BACK",font=_font(27,True),fill=(64,67,69))
+    d.text((70,62),"FRONT  /  BACK" if back else "FRONT DESIGN",
+           font=_font(27,True),fill=(64,67,69))
     d.text((700,62),"EDIT TEXT + PHOTOS",font=_font(21),
            fill=(95,94,93))
     # Auto-fit tall/wide Admin canvas dimensions without clipping the mockup.
     fit1=min(.65, (ch-155)/max(1,front["height"]), 390/max(1,front["width"]))
-    fit2=min(.49, (ch-220)/max(1,back["height"]), 300/max(1,back["width"]))
     p1=_draw_objects(front,fit1)
-    p2=_draw_objects(back,fit2)
-    x1=190
-    y1=max(110,(ch-p1.height)//2)
-    x2=680
-    y2=max(160,(ch-p2.height)//2)
+    if back:
+        fit2=min(.49, (ch-220)/max(1,back["height"]), 300/max(1,back["width"]))
+        p2=_draw_objects(back,fit2)
+        pieces=((p1,190,max(110,(ch-p1.height)//2)),
+                (p2,680,max(160,(ch-p2.height)//2)))
+    else:
+        pieces=((p1,(cw-p1.width)//2,max(110,(ch-p1.height)//2)),)
     # Heavy shadow draws attention to the die cut, not the page boundaries.
-    for p,x,y in ((p1,x1,y1),(p2,x2,y2)):
+    for p,x,y in pieces:
         shadow=Image.new("RGBA",(p.width+26,p.height+30),(0,0,0,0))
         silhouette=p.getchannel("A").point(lambda n:round(n*.55))
         shadow.paste((0,0,0,130),(12,14,12+p.width,14+p.height),silhouette)
@@ -478,7 +480,7 @@ class Command(BaseCommand):
                 raise CommandError("Duplicate template artwork: %03d"%(idx+1))
             unique.add(master["compositionSignature"])
             # Render from the same editorial objects used by the live editor.
-            png=_mockup(pages[0],pages[-1],edition_for(idx))
+            png=_mockup(pages[0],pages[1] if len(pages)>1 else None,edition_for(idx))
             name="ZV Door Hanger %03d · %s · %s"%(idx+1,THEMES[idx%20][0],EDITIONS[edition_for(idx)])
             built.append((idx,name,master,png))
         self.stdout.write(self.style.SUCCESS(
