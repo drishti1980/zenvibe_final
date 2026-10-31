@@ -39,6 +39,9 @@ from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFilter
 
 from designer.models import Product, DesignTemplate, SavedDesign
+from designer.management.commands.premium_brochure_palettes import (
+    palette_for, validate_100_palettes,
+)
 from designer.management.commands.rebuild_remaining_premium_100 import (
     Artwork, Photobank, BRIEFS, BASES, DIRECTIONS, TARGET,
     canvas_size, physical_region, _render_page, _font, protected,
@@ -148,7 +151,7 @@ def _panel_copy(theme,role):
     return brand,headline,subtitle,foot,accent
 
 
-def _panel_art(art,region,index,edition,role,bank,side):
+def _panel_art(art,region,index,edition,role,bank,side,kind):
     """Five genuinely different balanced photo/story hierarchies per panel.
 
     Every text box lies inside a single panel, away from the physical fold.
@@ -157,13 +160,12 @@ def _panel_art(art,region,index,edition,role,bank,side):
     theme=index%20
     brand,title,subtitle,cta,accent=_panel_copy(theme,role)
     x,y,w,h=region
-    bg,ink,muted=BASES[edition]
-    # Alternate cover/panel tones for a connected luxury spread.
-    if role in ("back","story") and edition%2==0:
-        bg="#EAE4DB";ink="#293D45";muted="#637076"
-    # Every panel's artwork is independent, replaceable, bounded and visible.
+    # Each index owns its own colour story. Never select from the old five
+    # BASES or force repeated beige on back/inside brochure panels.
+    palette=palette_for(index,"trifold" if kind=="trifold" else "bifold",role)
+    bg,ink,muted=palette.paper,palette.ink,palette.muted
     art.rect("Editable panel paper",x,y,w,h,bg)
-    foil=accent
+    foil=palette.accent
     art.rect("Editorial section rule",x+w*.08,y+h*.065,
              w*(.13+.025*(edition%4)),max(1,h*.004),foil)
     art.circle("Edition seal",x+w*.89,y+h*.079,
@@ -227,7 +229,7 @@ def _panel_art(art,region,index,edition,role,bank,side):
     art.rect("Editable action band",cx,cy,cw,ch,foil,rx=ch*.08)
     _label(art,"Editable panel CTA",cta,
            (cx+cw*.05,cy+ch*.085,cw*.90,ch*.76),
-           "#18282C",True,min(35,w*.076))
+           palette.on_accent,True,min(35,w*.076))
     art.rect("Signature footer detail",x+w*.10,y+h*.968,
              w*.18,h*.003,foil)
 
@@ -313,7 +315,7 @@ def make_marketing_page(product,kind,index,side,surface,bank):
         # the vertical blank strips and disconnected-card look of old masters.
         rx,ry,rw,rh=region
         art.rect("Editable cohesive brochure base",rx,ry,rw,rh,
-                 BASES[edition][0])
+                 palette_for(index,"trifold" if kind=="trifold" else "bifold").paper)
         # Cover outside placement: bi [back,cover]; tri [flap,back,cover].
         # The inside is a real 2/3-panel spread, not a duplicated cover.
         for panel in range(n):
@@ -322,7 +324,7 @@ def make_marketing_page(product,kind,index,side,surface,bank):
             # Changing panel role changes copy and photo architecture. Keep
             # the panel colours harmonised, but not monochrome duplicates.
             panel_edition=(edition+panel+(side%2))%5
-            _panel_art(art,panel_box,index,panel_edition,role,bank,side)
+            _panel_art(art,panel_box,index,panel_edition,role,bank,side,kind)
     art.validate(region)
     return {
         "name":surface.label if kind=="flyer" else ("Outside" if side==0 else "Inside"),
@@ -331,6 +333,10 @@ def make_marketing_page(product,kind,index,side,surface,bank):
         "physical":{"widthIn":surface.width_in,"heightIn":surface.height_in,"unit":"in"},
         "background":"rgba(0,0,0,0)",
         "foldGuides":folds, "foldPanelCount":len(folds)+1,
+        "paletteIdentity":(
+            palette_for(index,"trifold" if kind=="trifold" else "bifold").identity
+            if kind!="flyer" else "flyer-existing-palette"
+        ),
         "objects":art.items,
     }
 
@@ -469,6 +475,10 @@ class Command(BaseCommand):
                     "%s requires landscape folding stock; check Admin print inches"%kind
                 )
             jobs.append((product,kind,rows,indexed,surfaces))
+        if any(kind=="bifold" for _,kind,_,_,_ in jobs):
+            validate_100_palettes("bifold")
+        if any(kind=="trifold" for _,kind,_,_,_ in jobs):
+            validate_100_palettes("trifold")
         bank=Photobank(opts.get("photo_dir"),dry_run=opts["dry_run"])
         failures=[]
         for product,kind,rows,indexed,surfaces in jobs:
