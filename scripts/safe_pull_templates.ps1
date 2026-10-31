@@ -86,8 +86,35 @@ try {
 
     Write-Host "Safe pull completed: $((& git rev-parse --short HEAD).Trim())"
     if ($backup) {
+        # Calendars are APPROVED artwork. If GitHub contains a different
+        # calendar preview under the same filename, retain the original local
+        # image referenced by this installation's database. Do not modify
+        # calendars' generator, template JSON or product settings.
+        $restoredCalendar = 0
+        foreach ($gitPath in $collisions) {
+            if ($gitPath -notmatch '^media/template_previews/calendar_') {
+                continue
+            }
+            $relative = $gitPath.Trim().Replace("/", [IO.Path]::DirectorySeparatorChar)
+            $source = Join-Path $backup $relative
+            $local = Join-Path $root $relative
+            if ((Test-Path -LiteralPath $source) -and (Test-Path -LiteralPath $local)) {
+                $oldHash = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
+                $newHash = (Get-FileHash -LiteralPath $local -Algorithm SHA256).Hash
+                if ($oldHash -ne $newHash) {
+                    Copy-Item -LiteralPath $source -Destination $local -Force
+                    $restoredCalendar += 1
+                }
+            }
+        }
         Write-Host "Backed-up local originals: $backup"
-        Write-Host "Compare calendar previews in the backup before restoring any older images."
+        if ($restoredCalendar) {
+            Write-Warning (
+                "$restoredCalendar local calendar images differed from GitHub and were " +
+                "restored to keep your approved calendar unchanged. Git may list these " +
+                "calendar images as modified: review before a later pull."
+            )
+        }
     }
     Write-Host "Django database, reports, backups and unrelated local files were not deleted."
 }
