@@ -163,7 +163,12 @@ def family_for(product):
     if any(token in name for token in (
         "teardrop", "tear drop", "feather flag", "circle pop out",
         "round pop out", "x banner stand only", "light sign box",
+        "round table", "cross over table", "round fitted",
+        "golf ball", "lapel pin", "shape bottle opener",
+        "custom shape", "car freshener", "mouse pad",
     )):
+        # These need a specific die-cut/surface generator, not a rectangle
+        # pasted on top of a circular, triangular or multi-panel product.
         return ""
     if "door hanger" in name or "doorhanger" in name:
         return "doorhanger"
@@ -560,8 +565,10 @@ def _draw_photo_page(art,region,bank,theme,layout,brief,colors,side,family):
         second=bank.crop(theme,second_box[2]/second_box[3],(layout+2)%5)
         art.picture(second,*second_box,name="Replace collage detail photo")
     if layout==3:
-        art.rect("Gallery alignment rule",x+w*.10,y+h*.532 if not landscape else y+h*.08,
-                 w*(.80 if not landscape else .008),h*(.003 if not landscape else .79),foil)
+        art.rect("Gallery alignment rule",
+                 x+w*.10,y+h*(.512 if not landscape else .08),
+                 w*(.80 if not landscape else .008),
+                 h*(.003 if not landscape else .79),foil)
 
     tx,ty,tw,th=B(title_box)
     bx,by,bw,bh=B(brand_box)
