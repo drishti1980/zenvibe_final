@@ -2039,6 +2039,15 @@ def editor(request, product_id):
         try:
             template = _get_template_for_product(template_id, product)
         except Http404:
+            # A tri-fold gallery click MUST open the exact chosen template.
+            # Silent fallback to the first available template made thumbnails
+            # appear to select the wrong design when an older ID was archived
+            # during V3 rebuild. Keep legacy fallback for unrelated products.
+            if product.id == 345:
+                raise Http404(
+                    "The selected tri-fold template is no longer active. "
+                    "Please return to Choose Design and select a current template."
+                )
             current_templates = live_templates_for(product)
             if not current_templates:
                 raise
