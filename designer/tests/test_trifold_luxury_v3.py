@@ -6,8 +6,11 @@ photography is unavailable. Tests never access Zenvibe.ca or modify the DB.
 """
 import io
 import re
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.test import SimpleTestCase
+from django.core.management.base import CommandError
 from PIL import Image, ImageDraw
 
 from designer.management.commands.rebuild_remaining_premium_100 import (
@@ -16,6 +19,8 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
 from designer.management.commands.rebuild_trifold_luxury_v3 import (
     GENERATOR, COUNT, DIRECTIONS, FEATURES, _page_panel, _panel_role,
     _existing, _preview, build_page, is_trifold, art_direction,
+    _sheet_pair, _previous_sheet_dimensions, _missing_admin_sheet,
+    resolve_trifold_pages,
 )
 from designer.tests.test_remaining_premium_100 import FakeProduct
 
@@ -34,6 +39,112 @@ class PhotoFixture:
                 d.ellipse((x,y,x+63,y+99),outline=(224,194,151),width=5)
             self.images[key]=_jpeg(picture)
         return self.images[key]
+
+
+class MissingAdminSheetTests(SimpleTestCase):
+    """Product #345 can have valid generated masters but missing Admin inches."""
+
+    @staticmethod
+    def product(variants=(), has_surfaces=False):
+        return SimpleNamespace(
+            pk=345,
+            print_surfaces=SimpleNamespace(filter=lambda **kw:
+                SimpleNamespace(exists=lambda:has_surfaces)),
+            size_variants=SimpleNamespace(filter=lambda **kw:variants),
+            print_areas=SimpleNamespace(order_by=lambda *args:[]),
+            workspace_width_in=None,
+            workspace_height_in=None,
+        )
+
+    @staticmethod
+    def previous(width=11,height=8.5,count=3):
+        return [
+            SimpleNamespace(
+                is_active=True, pk=i,
+                json_data={
+                    "generator":"zenvibe-trifold-brochure-v1-json-svg",
+                    "document":{"physical":{"widthIn":width,"heightIn":height}},
+                },
+            ) for i in range(1,count+1)
+        ]
+
+    def test_recovers_exact_existing_master_inches_not_pixel_canvas(self):
+        originals=self.previous()
+        self.assertEqual(_previous_sheet_dimensions(originals),(11.0,8.5))
+        warnings=[]
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            side_effect=CommandError("Admin print width/height missing for page 1"),
+        ):
+            pages=resolve_trifold_pages(self.product(),originals,log=warnings.append)
+        self.assertEqual(len(pages),2)
+        self.assertEqual([p.label for p in pages],["Outside","Inside"])
+        self.assertEqual([(p.width_in,p.height_in) for p in pages],
+                         [(11.0,8.5),(11.0,8.5)])
+        self.assertTrue(any("CONFIRM WITH PRINTER" in w for w in warnings))
+
+    def test_explicit_size_variant_used_if_historical_metadata_absent(self):
+        variant=SimpleNamespace(name="Standard",
+                                print_width_in=11,print_height_in=8.5)
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            side_effect=CommandError("Admin print width/height missing for page 1"),
+        ):
+            pages=resolve_trifold_pages(self.product([variant]),[])
+        self.assertEqual(pages[0].width_in,11)
+        self.assertEqual(pages[1].height_in,8.5)
+
+    def test_missing_all_sources_fails_with_actionable_message(self):
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            side_effect=CommandError("Admin print width/height missing for page 1"),
+        ):
+            with self.assertRaisesRegex(CommandError,"--sheet-width-in"):
+                resolve_trifold_pages(self.product(),[])
+
+    def test_legacy_inconsistency_or_variant_conflict_is_not_guessed(self):
+        originals=self.previous(11,8.5)+self.previous(12,9)
+        with self.assertRaisesRegex(CommandError,"disagree"):
+            _previous_sheet_dimensions(originals)
+        different=SimpleNamespace(name="Different size",
+                                  print_width_in=12,print_height_in=9)
+        with self.assertRaisesRegex(CommandError,"conflicts"):
+            _missing_admin_sheet(self.product([different]),
+                                 self.previous(11,8.5))
+
+    def test_user_supplied_inches_work_when_no_legacy_metadata(self):
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            side_effect=CommandError("Admin print width/height missing for page 1"),
+        ):
+            pages=resolve_trifold_pages(self.product(),[],override=(11,8.5))
+        self.assertEqual((pages[0].width_in,pages[0].height_in),(11.0,8.5))
+        with self.assertRaisesRegex(CommandError,"BOTH"):
+            resolve_trifold_pages(self.product(),[],override=(11,None))
+        self.assertIsNone(_sheet_pair(0,8.5))
+        self.assertIsNone(_sheet_pair(8.5,11))
+
+    def test_partially_configured_admin_surface_is_not_overwritten(self):
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            side_effect=CommandError("Admin print width/height missing for page 1"),
+        ):
+            with self.assertRaisesRegex(CommandError,"specific surface"):
+                resolve_trifold_pages(
+                    self.product(has_surfaces=True),self.previous(),
+                )
+
+    def test_admin_dimensions_take_priority(self):
+        faces=[
+            PrintPage("Outside",12,9,12,9,(0,0,1,1)),
+            PrintPage("Inside",12,9,12,9,(0,0,1,1)),
+        ]
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.configured_pages",
+            return_value=faces,
+        ):
+            pages=resolve_trifold_pages(self.product(),self.previous())
+        self.assertEqual(pages,faces)
 
 
 class BrochureV3Tests(SimpleTestCase):
