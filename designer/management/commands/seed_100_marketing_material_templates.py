@@ -92,10 +92,40 @@ def textbox(i,x,y,w,text,size,color,font='Arial',weight=400,align='left'):
  return {'id':i,'name':i.replace('_',' ').title(),'type':'textbox','left':round(x,2),'top':round(y,2),'width':round(w,2),'text':text,'fontSize':size,'font':font,'fontFamily':font,'fontWeight':weight,'fill':color,'textAlign':align,'lineHeight':1.12,'customerEditable':True,'locked':False,'fieldType':'marketing-text','manualReplacement':True}
 def image(i,x,y,w,h,src,editable=True,bg=False):
  return {'id':i,'name':i.replace('_',' ').title(),'type':'image','left':round(x,2),'top':round(y,2),'width':round(w,2),'height':round(h,2),'src':src,'baseSrc':src,'scaleX':1,'scaleY':1,'customerEditable':editable,'backgroundAsset':bg,'locked':bg,'fieldType':'marketing-background' if bg else 'marketing-photo','manualReplacement':not bg}
-def photo_svg(w,h,label,color,seed):
+def photo_svg(w,h,label,color,seed,category='Corporate'):
+ # Distinct vector subject illustrations rather than 100 identical grey placeholders.
+ # All artwork remains replaceable in the editor; use licensed photos for production.
+ import math
+ rng=(seed*73+19)%997
+ bg=['#F5E8D9','#E0E9ED','#F4DDE3','#E7E6D7','#ECE2DA'][seed%5]
+ parts=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">',f'<rect width="{w}" height="{h}" fill="{bg}"/>']
+ key=category.lower()
+ if key in ('restaurant','events'):
+  # Food plating, gift boxes and botanical details.
+  if category=='Restaurant':
+   parts += [f'<ellipse cx="{w*.52}" cy="{h*.52}" rx="{w*.36}" ry="{h*.40}" fill="#FEFCF5" stroke="#D7C9B5" stroke-width="{max(2,w*.012)}"/>',f'<ellipse cx="{w*.52}" cy="{h*.52}" rx="{w*.25}" ry="{h*.27}" fill="{color}" opacity=".19"/>']
+   for k in range(5):
+    x=w*(.38+(.12*math.cos(k*2.4+rng)));y=h*(.50+.15*math.sin(k*2.4+rng))
+    parts.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{min(w,h)*(.045+.012*(k%3)):.1f}" fill="{["#A54A33","#6C8B46","#D4A65E"][k%3]}"/>')
+  else:
+   parts += [f'<rect x="{w*.22}" y="{h*.28}" width="{w*.56}" height="{h*.55}" rx="8" fill="{color}" opacity=".75"/>',f'<rect x="{w*.18}" y="{h*.20}" width="{w*.64}" height="{h*.16}" rx="5" fill="{color}"/>',f'<path d="M{w*.49} {h*.20} V{h*.83} M{w*.22} {h*.52} H{w*.78}" stroke="#FFF1D5" stroke-width="{max(5,w*.04)}"/>']
+ elif key in ('beauty','wellness','fashion','interior','photography'):
+  for k in range(6):
+   x=w*(.1+.16*k);y=h*(.52+.17*math.sin(k*2.1+seed))
+   parts += [f'<path d="M{x:.1f} {h:.1f} Q{x-w*.12:.1f} {y:.1f} {x+w*.10:.1f} {h*.12:.1f}" fill="none" stroke="{color}" stroke-width="{max(2,w*.009)}" opacity=".65"/>',f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{w*.07}" ry="{h*.12}" transform="rotate({k*23} {x:.1f} {y:.1f})" fill="{color}" opacity=".24"/>']
+ elif key in ('travel','real estate','construction','automotive'):
+  parts += [f'<circle cx="{w*.78}" cy="{h*.23}" r="{min(w,h)*.13}" fill="#E6B66C"/>',f'<path d="M0 {h*.72} L{w*.27} {h*.26} L{w*.50} {h*.64} L{w*.70} {h*.38} L{w} {h*.76} V{h} H0Z" fill="{color}" opacity=".66"/>',f'<path d="M0 {h*.88} Q{w*.48} {h*.60} {w} {h*.91} V{h} H0Z" fill="#445C56" opacity=".75"/>']
+ else:
+  for k in range(7):
+   x=w*(.12+(k%4)*.25);y=h*(.17+(k//4)*.5)
+   parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w*(.13+(seed+k)%3*.02):.1f}" height="{h*.26:.1f}" rx="{min(w,h)*.02:.1f}" fill="{color}" opacity="{.22+(k%3)*.17:.2f}"/>')
+ parts.append('</svg>')
+ return ''.join(parts)
+
+def original_placeholder_svg(w,h,label,color,seed):
  return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#e8eceb"/><stop offset="1" stop-color="#cfd8d5"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><circle cx="{w*(.22+(seed%5)*.08):.1f}" cy="{h*.30:.1f}" r="{min(w,h)*.14:.1f}" fill="{color}" opacity=".22"/><path d="M0 {h*.88:.1f} L{w*.28:.1f} {h*.52:.1f} L{w*.48:.1f} {h*.70:.1f} L{w*.72:.1f} {h*.42:.1f} L{w} {h*.72:.1f} V{h} H0Z" fill="{color}" opacity=".25"/><text x="{w/2}" y="{h*.92}" text-anchor="middle" font-family="Arial" font-size="{max(11,min(w,h)*.055):.1f}" fill="{color}">{escape(label)}</text></svg>'''
 def bg_svg(W,H,pal,fam,side,kind):
- primary,paper,accent,white,dark=pal; m=fam%20; s=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',f'<rect width="{W}" height="{H}" fill="{paper}"/>']
+ primary,paper,accent,white,dark=pal; m=fam%20; treatment=(fam//20)%5; s=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',f'<rect width="{W}" height="{H}" fill="{paper}"/>']
  if m==0:s += [f'<rect width="{W}" height="{H*.18}" fill="{primary}"/>',f'<rect y="{H*.88}" width="{W}" height="{H*.12}" fill="{accent}"/>']
  elif m==1:s += [f'<path d="M0 0 H{W*.62} L{W*.38} {H} H0Z" fill="{primary}"/>',f'<path d="M{W*.55} 0 H{W*.70} L{W*.46} {H} H{W*.31}Z" fill="{accent}" opacity=".8"/>']
  elif m==2:s += [f'<rect width="{W}" height="{H}" fill="{dark}"/>',f'<rect x="{W*.055}" y="{H*.06}" width="{W*.89}" height="{H*.88}" rx="{max(8,min(W,H)*.03)}" fill="{paper}"/>']
@@ -116,32 +146,46 @@ def bg_svg(W,H,pal,fam,side,kind):
  elif m==17:s += [f'<rect width="{W}" height="{H}" fill="{dark}"/>',f'<circle cx="{W*.18}" cy="{H*.20}" r="{H*.22}" fill="{accent}" opacity=".65"/>']
  elif m==18:s += [f'<path d="M0 0 H{W} V{H*.16} L0 {H*.34}Z" fill="{primary}"/>',f'<rect x="{W*.07}" y="{H*.72}" width="{W*.86}" height="{H*.16}" rx="12" fill="{accent}" opacity=".18"/>']
  else:s += [f'<rect width="{W}" height="{H}" fill="{primary}"/>',f'<path d="M{W*.04} {H*.08} H{W*.96} V{H*.92} H{W*.04}Z" fill="{paper}"/>',f'<path d="M{W*.04} {H*.78} Q{W*.35} {H*.58} {W*.60} {H*.78} T{W*.96} {H*.72} V{H*.92} H{W*.04}Z" fill="{accent}" opacity=".35"/>']
+ # Five different editorial art treatments, not just palette rotations.
+ if treatment==1:
+  s += [f'<path d="M{W*.66} 0 H{W} V{H} H{W*.92}Z" fill="{accent}" opacity=".19"/>',f'<circle cx="{W*.82}" cy="{H*.72}" r="{H*.16}" fill="none" stroke="{primary}" stroke-width="4" opacity=".4"/>']
+ elif treatment==2:
+  s += [f'<rect x="{W*.035}" y="{H*.035}" width="{W*.93}" height="{H*.93}" fill="none" stroke="{accent}" stroke-width="3"/>',f'<path d="M0 {H*.52} H{W}" stroke="{primary}" opacity=".10" stroke-width="2"/>']
+ elif treatment==3:
+  for k in range(10): s.append(f'<path d="M{W*(k/10):.1f} 0 L{W*((k+3)/10):.1f} {H}" stroke="{accent}" opacity=".055" stroke-width="{max(4,W*.02)}"/>')
+ elif treatment==4:
+  s += [f'<ellipse cx="{W*.55}" cy="{H*.12}" rx="{W*.36}" ry="{H*.24}" fill="{accent}" opacity=".15"/>',f'<ellipse cx="{W*.18}" cy="{H*.89}" rx="{W*.25}" ry="{H*.22}" fill="{primary}" opacity=".13"/>']
  if kind in ('bifold','trifold'):
   folds=2 if kind=='bifold' else 3
   for k in range(1,folds): s.append(f'<line x1="{W*k/folds}" y1="0" x2="{W*k/folds}" y2="{H}" stroke="{dark}" stroke-opacity=".08"/>')
  s.append('</svg>'); return ''.join(s)
-def add_photo(objs,i,x,y,w,h,pal,label,seed): objs.append(image(i,x,y,w,h,uri(photo_svg(max(100,int(w)),max(100,int(h)),label,pal[0],seed))))
+def add_photo(objs,i,x,y,w,h,pal,label,seed,category='Corporate'):
+ objs.append(image(i,x,y,w,h,uri(photo_svg(max(100,int(w)),max(100,int(h)),label,pal[0],seed,category))))
 def common_content(idx):
  cat,title,sub,desc,name=subject_copy(idx)
  return cat,title,sub,desc,f'CALL 1300 {100+idx:03d} {200+idx:03d}',f'zenvibe.example/{cat.lower().replace(" ","")}',name
 def brochure_page(kind,idx,side,W,H):
- pal=artwork_palette(idx); head,body=FONTS[(idx//20+idx)%len(FONTS)]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx+20*((idx//20)%5),side,kind); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; panels=2 if kind=='bifold' else 3; pw=W/panels; margin=pw*.07
+ pal=artwork_palette(idx); head,body=FONTS[(idx//20+idx)%len(FONTS)]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,kind); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; panels=2 if kind=='bifold' else 3; pw=W/panels; margin=pw*.07
  # deterministic 20 macro arrangements x 5 variants; every panel has reserved, non-overlapping zones.
  for p in range(panels):
   x=p*pw+margin; usable=pw-2*margin; variant=(idx//20)%5; local=(p+side+idx+variant)%4
-  if local==0:
-   add_photo(objs,f'photo_{side}_{p}',x,H*.10,usable,H*.28,pal,'Replace photo',idx+p+side)
+  if cat=='Restaurant' and side==1 and p==0:
+   objs += [textbox(f'menu_heading_{side}_{p}',x,H*.12,usable,'THE MENU',23 if panels==2 else 18,pal[4],head,700),textbox(f'menu_items_{side}_{p}',x,H*.27,usable,'STARTERS\\nGarden greens ........ 14\\nRoasted beetroot ..... 17\\n\\nMAINS\\nMarket pasta ......... 29\\nChef special ......... 34\\n\\nSWEETS\\nChocolate tart ....... 15',12 if panels==2 else 10,pal[4],body)]
+  elif cat=='Events' and side==1 and p==0:
+   objs += [textbox(f'hamper_heading_{side}_{p}',x,H*.12,usable,'GIFT COLLECTION',23 if panels==2 else 18,pal[4],head,700),textbox(f'hamper_list_{side}_{p}',x,H*.28,usable,'THE ARTISAN BOX\\nFrom $79\\n\\nTHE CELEBRATION BOX\\nFrom $129\\n\\nTHE SIGNATURE BOX\\nFrom $189\\n\\nPersonalised gift notes available',12 if panels==2 else 10,pal[4],body)]
+  elif local==0:
+   add_photo(objs,f'photo_{side}_{p}',x,H*.10,usable,H*.28,pal,'Subject artwork',idx*7+p+side,cat)
    objs += [textbox(f'title_{side}_{p}',x,H*.43,usable,title if p==panels-1 else sub,26 if panels==2 else 20,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.56,usable,desc,13,pal[4],body),textbox(f'contact_{side}_{p}',x,H*.79,usable,contact,11,pal[0],body,700)]
   elif local==1:
    objs += [textbox(f'eyebrow_{side}_{p}',x,H*.10,usable,cat.upper(),11,pal[2],body,700),textbox(f'title_{side}_{p}',x,H*.17,usable,title,24 if panels==2 else 19,pal[4],head,700)]
-   add_photo(objs,f'photo_{side}_{p}',x,H*.37,usable,H*.28,pal,'Replace photo',idx+p+side)
+   add_photo(objs,f'photo_{side}_{p}',x,H*.37,usable,H*.28,pal,'Subject artwork',idx*7+p+side,cat)
    objs += [textbox(f'body_{side}_{p}',x,H*.70,usable,desc,12,pal[4],body),textbox(f'web_{side}_{p}',x,H*.88,usable,web,10,pal[0],body,700)]
   elif local==2:
-   add_photo(objs,f'photo_{side}_{p}',x,H*.08,usable,H*.42,pal,'Replace photo',idx+p+side)
+   add_photo(objs,f'photo_{side}_{p}',x,H*.08,usable,H*.42,pal,'Subject artwork',idx*7+p+side,cat)
    objs += [textbox(f'title_{side}_{p}',x,H*.55,usable,sub,22 if panels==2 else 18,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.67,usable,desc,12,pal[4],body),textbox(f'cta_{side}_{p}',x,H*.86,usable,offer.upper(),10,pal[0],body,700)]
   else:
    objs += [textbox(f'title_{side}_{p}',x,H*.10,usable,title if p==0 else sub,24 if panels==2 else 19,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.27,usable,desc,12,pal[4],body)]
-   add_photo(objs,f'photo_{side}_{p}',x,H*.48,usable,H*.30,pal,'Replace photo',idx+p+side)
+   add_photo(objs,f'photo_{side}_{p}',x,H*.48,usable,H*.30,pal,'Subject artwork',idx*7+p+side,cat)
    objs += [textbox(f'contact_{side}_{p}',x,H*.84,usable,contact,10,pal[0],body,700)]
  return bg,objs
 def door_page(idx,side,W,H):
@@ -194,6 +238,17 @@ def render_preview(page):
    rendered.append(f'<text y="{y+fontsize:.1f}" font-size="{fontsize}" font-family="{font}" font-weight="{weight}" fill="{color}">{spans}</text>')
  return bg.replace('</svg>',''.join(rendered)+'</svg>')
 
+def artwork_signature(pages):
+ # Detect repeated artwork treatments, beyond changing text or object ids.
+ signatures=[]
+ for p in pages:
+  obj=[]
+  for o in p['objects']:
+   if o.get('backgroundAsset'): continue
+   obj.append((o['type'],round(o.get('left',0),0),round(o.get('top',0),0),round(o.get('width',0),0),round(o.get('height',0),0)))
+  signatures.append(tuple(obj))
+ return tuple(signatures)
+
 def fingerprint(pages):
  slim=[]
  for p in pages:
@@ -223,14 +278,17 @@ class Command(BaseCommand):
   kind=opt['kind']; product=find_product(kind,opt.get('product_id')); W=int(product.width or KINDS[kind]['default'][0]); H=int(product.height or KINDS[kind]['default'][1])
   # protect against obviously wrong square admin canvas for folded/vertical materials by warning, not mutating product.
   if kind in ('bifold','trifold') and W==H: self.stdout.write(self.style.WARNING(f'WARNING: Product canvas is square ({W}x{H}). Set Product width/height to a landscape ratio before final import for best results.'))
-  seen=set(); built=[]
+  seen=set(); built=[]; artwork_seen=set()
   for idx in range(opt['count']):
    pages=build(kind,idx,W,H); validate(kind,pages,W,H); fp=fingerprint(pages)
    if fp in seen: raise CommandError(f'duplicate composition at {idx+1}')
-   seen.add(fp); built.append((idx,pages,fp))
+   seen.add(fp)
+   # Warn about reused structural families; uniqueness includes illustration + theme.
+   artwork_seen.add(artwork_signature(pages))
+   built.append((idx,pages,fp))
   self.stdout.write(f'Validated {len(built)} unique {KINDS[kind]["label"]} templates for Product {product.id}: {product.name}')
   self.stdout.write(f'Canvas: {W} x {H}; JSON + SVG; editable text/photos; locked SVG background.')
-  self.stdout.write('Distinct artwork palettes: per-template; preview renders content, not background only.')
+  self.stdout.write(f'Structurally distinct arrangements: {len(artwork_seen)}; individual illustration palettes and theme-specific subjects.')
   self.stdout.write('Pages: '+('mixed 1/2 sides' if kind=='ticket' else '2 sides each'))
   if opt['dry_run']:
    self.stdout.write(self.style.SUCCESS('Dry run complete; database unchanged.')); return
