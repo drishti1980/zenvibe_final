@@ -43,6 +43,9 @@ class Command(BaseCommand):
                        help="Optional 20 properly licensed industry photos 01.jpg..20.jpg")
         p.add_argument("--only-missing",action="store_true",
                        help="Leave all existing populated galleries alone, regardless of generator")
+        p.add_argument("--retry-failed-report",default="",
+                       help="CSV from a previous apply run. Retry ONLY its FAILED/INCOMPLETE product IDs; "
+                            "never rebuild successful or protected products.")
         p.add_argument("--strict",action="store_true",
                        help="Stop processing after the first failed eligible product")
 
@@ -55,6 +58,36 @@ class Command(BaseCommand):
                 if not ids or min(ids)<=0:raise ValueError
             except ValueError:
                 raise CommandError("--product-ids must be positive integers separated by commas")
+
+        retry_report=opts["retry_failed_report"].strip()
+        if retry_report:
+            if ids is not None:
+                raise CommandError("Choose --retry-failed-report OR --product-ids, not both")
+            if opts["only_missing"]:
+                raise CommandError("--retry-failed-report and --only-missing are different modes")
+            source=Path(retry_report)
+            if not source.is_absolute():
+                source=Path(settings.BASE_DIR)/source
+            if not source.is_file():
+                raise CommandError("Failed-product CSV not found: %s"%source)
+            try:
+                with source.open(newline="",encoding="utf-8-sig") as f:
+                    reader=csv.DictReader(f)
+                    required={"product_id","status"}
+                    if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
+                        raise CommandError("Retry CSV must include product_id and status columns")
+                    ids=set()
+                    for record in reader:
+                        if str(record["status"]).strip().upper() in ("FAILED","INCOMPLETE"):
+                            ids.add(int(record["product_id"]))
+            except (OSError,ValueError,TypeError,UnicodeError,csv.Error) as exc:
+                raise CommandError("Invalid failed-product report: %s"%exc)
+            if not ids:
+                raise CommandError("No FAILED or INCOMPLETE products in %s"%source)
+            self.stdout.write(
+                "Retry mode: %d failed/incomplete products from %s; "
+                "previously installed products are excluded."%(len(ids),source)
+            )
 
         products=Product.objects.filter(is_active=True).select_related(
             "category","category__parent").order_by("pk")
