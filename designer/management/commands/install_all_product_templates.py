@@ -241,9 +241,22 @@ def choose(product, count, refresh=False):
         return plan(target=20,cmd="seed_notebook_templates",
                     params={"product_id":product.pk,"count":target_generator})
 
-    # Other standalone product libraries (awards, drinkware, apparel etc.)
-    # require their dedicated print-face generator. Never force 100 flyers
-    # onto a non-flat object just to hit a number.
+    # Awards have a dedicated 4-layout, print-face-aware generator. Unlike
+    # banners, awards do NOT need 100 variations per product.
+    if "award" in str(getattr(product.category,"name","") or "").lower():
+        if not product.print_width_in or not product.print_height_in:
+            return Task(product,"Awards",4,count,
+                        reason="Award physical print dimensions must be configured in Admin")
+        if count:
+            return Task(product,"Awards",4,count,
+                        reason="Existing award library retained; award seeder inserts duplicates")
+        return Task(product,"Awards",4,count,
+                    "seed_awards_editable_templates",
+                    {"product_id":product.pk,"templates_per_product":4},
+                    "Install 4 shape-specific editable award layouts",False,True)
+
+    # Drinkware, bags, apparel and other shaped products require their own
+    # verified print-face generator. Never fill them with rectangular flyers.
     return Task(product, group, 0, count,
                 reason="No verified dedicated template generator for this product")
 
