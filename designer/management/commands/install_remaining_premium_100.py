@@ -30,6 +30,35 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
     _existing_status, PROTECTED_GENERATOR_PARTS,
 )
 
+def failed_ids_from_report(source):
+    """Return ONLY failed/incomplete IDs from an earlier bulk report.
+
+    Never reinterpret a successful, protected, skipped or planned row as a
+    candidate for repair. The CSV parser handles Windows Excel UTF-8 BOMs.
+    """
+    source=Path(source)
+    if not source.is_file():
+        raise CommandError("Failed-product CSV not found: %s"%source)
+    try:
+        with source.open(newline="",encoding="utf-8-sig") as f:
+            reader=csv.DictReader(f)
+            required={"product_id","status"}
+            if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
+                raise CommandError("Retry CSV must include product_id and status columns")
+            ids=set()
+            for record in reader:
+                if str(record["status"]).strip().upper() in ("FAILED","INCOMPLETE"):
+                    product_id=int(record["product_id"])
+                    if product_id<=0:
+                        raise ValueError("Product IDs must be positive")
+                    ids.add(product_id)
+    except (OSError,ValueError,TypeError,UnicodeError,csv.Error) as exc:
+        raise CommandError("Invalid failed-product report: %s"%exc)
+    if not ids:
+        raise CommandError("No FAILED or INCOMPLETE products in %s"%source)
+    return ids
+
+
 class Command(BaseCommand):
     help="Complete missing/non-approved 100-template product libraries; never change approved categories."
 
@@ -68,22 +97,7 @@ class Command(BaseCommand):
             source=Path(retry_report)
             if not source.is_absolute():
                 source=Path(settings.BASE_DIR)/source
-            if not source.is_file():
-                raise CommandError("Failed-product CSV not found: %s"%source)
-            try:
-                with source.open(newline="",encoding="utf-8-sig") as f:
-                    reader=csv.DictReader(f)
-                    required={"product_id","status"}
-                    if not reader.fieldnames or not required.issubset(set(reader.fieldnames)):
-                        raise CommandError("Retry CSV must include product_id and status columns")
-                    ids=set()
-                    for record in reader:
-                        if str(record["status"]).strip().upper() in ("FAILED","INCOMPLETE"):
-                            ids.add(int(record["product_id"]))
-            except (OSError,ValueError,TypeError,UnicodeError,csv.Error) as exc:
-                raise CommandError("Invalid failed-product report: %s"%exc)
-            if not ids:
-                raise CommandError("No FAILED or INCOMPLETE products in %s"%source)
+            ids=failed_ids_from_report(source)
             self.stdout.write(
                 "Retry mode: %d failed/incomplete products from %s; "
                 "previously installed products are excluded."%(len(ids),source)
