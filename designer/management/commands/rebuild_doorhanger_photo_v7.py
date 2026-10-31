@@ -139,7 +139,8 @@ def _photo_source(theme_index, root, user_dir=None):
             return _source_image(path.read_bytes()), str(path)
     image_id = PHOTO_IDS[theme_index]
     # Only one request per theme; reuse the image for all five independent layouts.
-    url = "https://images.unsplash.com/%s?auto=format&fit=crop&w=1050&h=1400&q=85" % image_id
+    # Force ordinary JPEG so both Windows Pillow and Fabric receive a stable type.
+    url = "https://images.unsplash.com/%s?fit=crop&w=1050&h=1400&q=86&fm=jpg" % image_id
     try:
         req = Request(url, headers={"User-Agent":"ZenvibeDesignSeeder/1.0"})
         with urlopen(req, timeout=14) as response:
@@ -396,7 +397,9 @@ def _master(index,pages,source):
         "designFamily":tag,"composition":direction,"compositionSignature":signature,
         "width":pages[0]["width"],"height":pages[0]["height"],
         "pageCount":len(pages),"pages":pages,
-        "previewComplete":True,"photoSource":source,"photoEditable":True,
+        "previewComplete":True,
+        "photoSource":("curated-photography" if source.startswith("https://") else Path(source).name),
+        "photoEditable":True,
         "printNote":"Use manufacturer-supplied door-hole dimensions for production cutting.",
     }
 
