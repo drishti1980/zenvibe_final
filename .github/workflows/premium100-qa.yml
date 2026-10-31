@@ -8,7 +8,9 @@ on:
       - 'designer/management/commands/rebuild_remaining_premium_100.py'
       - 'designer/management/commands/install_remaining_premium_100.py'
       - 'designer/management/commands/rebuild_premium_marketing_print_v2.py'
+      - 'designer/management/commands/rebuild_trifold_luxury_v3.py'
       - 'designer/tests/test_marketing_print_v2.py'
+      - 'designer/tests/test_trifold_luxury_v3.py'
       - 'designer/static/designer/js/editor.js'
       - 'designer/management/commands/rebuild_doorhanger_photo_v7.py'
       - 'designer/management/commands/install_all_product_templates.py'
@@ -36,6 +38,8 @@ jobs:
           python -m py_compile designer/management/commands/rebuild_remaining_premium_100.py
           python -m py_compile designer/management/commands/install_remaining_premium_100.py
           python -m py_compile designer/management/commands/rebuild_premium_marketing_print_v2.py
+          python -m py_compile designer/management/commands/rebuild_trifold_luxury_v3.py
+          python -m py_compile designer/tests/test_trifold_luxury_v3.py
           python -m py_compile designer/tests/test_marketing_print_v2.py
           python -m py_compile designer/management/commands/rebuild_doorhanger_photo_v7.py
           python -m py_compile designer/management/commands/install_all_product_templates.py
@@ -45,6 +49,6 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: zenvibe_site.settings
         run: |
-          python manage.py test designer.tests.test_remaining_premium_100 designer.tests.test_doorhanger_photo_v7 designer.tests.test_marketing_print_v2 --verbosity 2
+          python manage.py test designer.tests.test_remaining_premium_100 designer.tests.test_doorhanger_photo_v7 designer.tests.test_marketing_print_v2 designer.tests.test_trifold_luxury_v3 --verbosity 2
       - name: Syntax-check browser editor script
         run: node --check designer/static/designer/js/editor.js
