@@ -91,6 +91,21 @@ def text_for(background, subdued=False):
     return best
 
 
+def _accessible_accent(hue, saturation, lightness, towards_light):
+    """Keep accent vivid but ensure a readable contrasting foreground.
+
+    Some mid-value golds/teals have insufficient contrast with BOTH white and
+    charcoal. Shift only the accent lightness until one reaches WCAG AA.
+    """
+    value=float(lightness)
+    for _ in range(28):
+        swatch=_hex_hsl(hue,saturation,value)
+        if max(contrast(swatch,"#13252E"),contrast(swatch,"#FFFAF2"))>=4.5:
+            return swatch
+        value=_clamp(value+(.023 if towards_light else -.023),.08,.94)
+    raise ValueError("Cannot create readable luxury accent")
+
+
 def _base(index,family):
     if not 0<=index<100:
         raise ValueError("Template index must be between 0 and 99")
@@ -105,7 +120,9 @@ def _base(index,family):
     accent_hue=(hue+134+(index//10)*17)%360
     accent_sat=0.55+(index%4)*0.035
     accent_lum=(0.68 if lum<0.45 else 0.39)+(index%3)*0.025
-    accent=_hex_hsl(accent_hue,accent_sat,accent_lum)
+    accent=_accessible_accent(
+        accent_hue,accent_sat,accent_lum,towards_light=lum<.45
+    )
     return hue,sat,lum,paper,accent
 
 
