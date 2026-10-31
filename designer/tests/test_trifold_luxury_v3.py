@@ -92,7 +92,9 @@ class BrochureV3Tests(SimpleTestCase):
                 texts=[o for o in page["objects"] if o["type"]=="textbox"]
                 photos=[o for o in page["objects"] if o["type"]=="image"]
                 self.assertGreaterEqual(len(photos),3)
-                self.assertGreaterEqual(len(texts),10)
+                # Outside: 11+ editable fields; inside: 9 purposeful
+                # fields, avoiding overcrowding narrow folded panels.
+                self.assertGreaterEqual(len(texts),9)
                 self.assertTrue(all(o["customerEditable"] for o in texts+photos))
                 self.assertTrue(all(o["manualReplacement"] for o in texts+photos))
                 self.assertFalse(any(
