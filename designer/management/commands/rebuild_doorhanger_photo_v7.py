@@ -233,7 +233,7 @@ def _back(index,w,h,source):
     return {"name":"Back","width":w,"height":h,"canvas":{"width":w,"height":h},
             "dieCut":{"kind":"door-hanger","centerXPct":50,"centerYPct":16,
                       "radiusWidthPct":20,"guideOnly":True},
-            "background":bg,"objects":a.objects}}
+            "background":bg,"objects":a.objects}
 
 
 def _front(index,w,h,source):
@@ -296,7 +296,7 @@ def _front(index,w,h,source):
     return {"name":"Front","width":w,"height":h,"canvas":{"width":w,"height":h},
             "dieCut":{"kind":"door-hanger","centerXPct":50,"centerYPct":16,
                       "radiusWidthPct":20,"guideOnly":True},
-            "background":bg,"objects":a.objects}}
+            "background":bg,"objects":a.objects}
 
 
 def _draw_objects(page, scale):
