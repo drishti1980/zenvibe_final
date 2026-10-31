@@ -494,7 +494,7 @@ def layout_index(index):
 
 def _base_art(art,region,bg,family):
     # Print-area-only substrate. A transparent imprint remains transparent.
-    if family not in ("pen","logo-product","apparel"):
+    if family not in ("pen","logo-product"):
         x,y,w,h=region
         art.rect("Editable background",x,y,w,h,bg)
 
@@ -545,6 +545,12 @@ def _draw_photo_page(art,region,bank,theme,layout,brief,colors,side,family):
     # A foil or paper reveal is part of the actual editable composition.
     art.rect("Editorial foil detail",x+w*.08,y+h*.056,
              w*(.11+.025*(layout%3)),max(2,h*.004),foil)
+    # Twenty different industry insignias; this is a real variation in
+    # shape count/position, not another colourway of the same layout.
+    for j in range(1+theme%4):
+        rr=min(w,h)*(.0045+(j%2)*.001)
+        art.circle("Theme insignia %s"%j,
+                   x+w*(.77+j*.046),y+h*.055,rr,foil)
     if layout==4:
         # Second small collage crop from the same licensed photo source.
         if landscape:
@@ -648,6 +654,10 @@ def build_page(product,family,index,side,surface,bank):
     theme=(index%20)
     brief=BRIEFS[theme]
     colors=BASES[edition]
+    # Small imprint/engraving surfaces must remain TRANSPARENT, not print a
+    # white card. Use a consistently dark readable ink on that substrate.
+    if family in ("pen","logo-product"):
+        colors=("#FFFFFF","#243A40","#4C6268")
     if side%2:
         # Differentiated front/back content, retaining consistent brand identity.
         brief=(brief[0],("WHY CHOOSE US" if edition%2 else "MADE FOR YOU"),
