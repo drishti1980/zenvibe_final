@@ -231,7 +231,9 @@ def _back(index,w,h,source):
            ink,.029,False)
     a.validate()
     return {"name":"Back","width":w,"height":h,"canvas":{"width":w,"height":h},
-            "background":bg,"objects":a.objects}
+            "dieCut":{"kind":"door-hanger","centerXPct":50,"centerYPct":16,
+                      "radiusWidthPct":20,"guideOnly":True},
+            "background":bg,"objects":a.objects}}
 
 
 def _front(index,w,h,source):
@@ -292,7 +294,9 @@ def _front(index,w,h,source):
            ink,.028,False)
     a.validate()
     return {"name":"Front","width":w,"height":h,"canvas":{"width":w,"height":h},
-            "background":bg,"objects":a.objects}
+            "dieCut":{"kind":"door-hanger","centerXPct":50,"centerYPct":16,
+                      "radiusWidthPct":20,"guideOnly":True},
+            "background":bg,"objects":a.objects}}
 
 
 def _draw_objects(page, scale):
@@ -332,14 +336,19 @@ def _draw_objects(page, scale):
             line_h=float(o.get("fontSize") or 18)*scale*1.1
             for j,line in enumerate(lines):
                 drawer.text((tx,y+j*line_h),line,font=font,fill=ink,anchor=anchor)
-    # Gallery mask is NOT a manufacturing dieline. A realistic door-hanger
-    # hole/slit is deliberately visible only in thumbnail mockups.
-    mask=Image.new("L",(w,h),255)
-    m=ImageDraw.Draw(mask)
-    cx=w//2;cy=round(h*.13);radius=round(w*.089)
-    m.ellipse((cx-radius,cy-radius,cx+radius,cy+radius),fill=0)
-    m.rectangle((cx+radius*.80,cy-radius*.08,w,cy+radius*.08),fill=0)
-    img.putalpha(mask)
+    # Match the live editor's NON-PRINTING die guide. A black opening and
+    # short side slit make the physical door-hanger shape unmistakable in the
+    # gallery (a transparent circle on pale paper was effectively invisible).
+    # This is a MOCKUP only; these dark pixels are not added to Fabric pages.
+    die=page.get("dieCut") or {}
+    cx=round(w*float(die.get("centerXPct",50))/100)
+    cy=round(h*float(die.get("centerYPct",16))/100)
+    radius=round(w*float(die.get("radiusWidthPct",20))/100)
+    draw=ImageDraw.Draw(img,"RGBA")
+    dark=(16,20,24,255)
+    draw.ellipse((cx-radius,cy-radius,cx+radius,cy+radius),fill=dark)
+    draw.rectangle((cx+round(radius*.86),cy-round(h*.004),
+                    w,cy+round(h*.004)),fill=dark)
     return img
 
 
