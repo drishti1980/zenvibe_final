@@ -71,6 +71,12 @@ assert len(PHOTO_IDS) == len(THEMES) == 20
 RESAMPLE = Image.Resampling.LANCZOS
 
 
+def edition_for(index):
+    # Mix different art directions within the *first visible gallery row*.
+    # Every industry still receives all 5 different compositions across 100.
+    return (index // 20 + index % 5) % 5
+
+
 def _font(px, bold=False):
     """Available system fonts are not required on the production server."""
     names = (("DejaVuSans-Bold.ttf", "LiberationSans-Bold.ttf", "arialbd.ttf")
@@ -199,7 +205,7 @@ def _accent(art,w,h,edition,theme,foil,ink,panel):
 
 
 def _back(index,w,h,source):
-    theme=index%20;edition=index//20
+    theme=index%20;edition=edition_for(index)
     brand,headline,subtitle,cta,benefits,motif,accent=THEMES[theme]
     style=STYLES[edition]
     bg=style["bg"];ink=style["ink"];muted=style["muted"]
@@ -228,7 +234,7 @@ def _back(index,w,h,source):
 
 
 def _front(index,w,h,source):
-    theme=index%20;edition=index//20
+    theme=index%20;edition=edition_for(index)
     brand,headline,subtitle,cta,benefits,motif,accent=THEMES[theme]
     style=STYLES[edition]
     bg=style["bg"];ink=style["ink"];muted=style["muted"]
@@ -375,7 +381,7 @@ def _mockup(front,back,edition):
 
 def _master(index,pages,source):
     tag=THEMES[index%20][0]
-    direction=EDITIONS[index//20]
+    direction=EDITIONS[edition_for(index)]
     signature=hashlib.sha256(json.dumps([
         [(o["type"],o["name"],o["left"],o["top"],o["width"],
           o["height"],o.get("text")) for o in page["objects"]]
@@ -466,8 +472,8 @@ class Command(BaseCommand):
                 raise CommandError("Duplicate template artwork: %03d"%(idx+1))
             unique.add(master["compositionSignature"])
             # Render from the same editorial objects used by the live editor.
-            png=_mockup(pages[0],pages[-1],idx//20)
-            name="ZV Door Hanger %03d · %s · %s"%(idx+1,THEMES[idx%20][0],EDITIONS[idx//20])
+            png=_mockup(pages[0],pages[-1],edition_for(idx))
+            name="ZV Door Hanger %03d · %s · %s"%(idx+1,THEMES[idx%20][0],EDITIONS[edition_for(idx)])
             built.append((idx,name,master,png))
         self.stdout.write(self.style.SUCCESS(
             "Validated 100 complete photo-led door-hanger templates; "
