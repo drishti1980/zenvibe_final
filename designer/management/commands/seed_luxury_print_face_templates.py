@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from dataclasses import dataclass
 from html import escape
 
@@ -76,9 +77,11 @@ def family_for(product):
     if any(x in name for x in (
         "feather flag", "teardrop flag", "tear drop flag", "pop out banner",
         "canopy", "back wall", "award", "trophy", "medal", "coaster",
+        "pen set", "gift set", "notebook pen", "stationery set",
     )):
         return ""
-    if any(x in name for x in ("pen", "stylus", "marker", "highlighter")):
+    if (any(x in name for x in ("stylus", "marker", "highlighter")) or
+        re.search(r"\bpens?\b",name)):
         return "pens"
     if any(x in name for x in ("tumbler", "mug", "drinkware", "water bottle", "travel bottle", "flask")):
         return "drinkware"
@@ -168,9 +171,11 @@ def surfaces_for(product):
 
 def size_of(surface):
     ratio = surface.workspace_width_in / surface.workspace_height_in
+    if not 1/8 <= ratio <= 8:
+        raise CommandError("Extreme print-workspace ratio; configure a wider Admin workspace and an inset print area")
     if ratio >= 1:
-        return 1200, max(200, round(1200 / ratio))
-    return max(200, round(1200 * ratio)), 1200
+        return 1200, round(1200 / ratio)
+    return round(1200 * ratio), 1200
 
 
 def box_for(surface, width, height):
