@@ -10,7 +10,7 @@ from django.test import SimpleTestCase
 from PIL import Image
 
 from designer.management.commands.rebuild_doorhanger_photo_v7 import (
-    THEMES, EDITIONS, GENERATOR, _front, _back, _mockup, edition_for,
+    THEMES, EDITIONS, GENERATOR, _front, _back, _draw_objects, _mockup, edition_for,
 )
 
 
@@ -62,6 +62,23 @@ class DoorHangerPhotoQualityTests(SimpleTestCase):
                 self.assertEqual(preview.format,"PNG")
                 self.assertEqual(preview.size,(900,1160))
                 self.assertGreater(len(preview.getcolors(900*1160) or []),5)
+
+    def test_cutout_is_visible_in_preview_but_not_printable_artwork(self):
+        for idx in (0,1,19,20,39,99):
+            page=_front(idx,450,1100,self.image)
+            spec=page["dieCut"]
+            self.assertEqual(spec["kind"],"door-hanger")
+            self.assertTrue(spec["guideOnly"])
+            self.assertFalse(any(
+                "knob opening" in o["name"].lower() or
+                "side slit" in o["name"].lower()
+                for o in page["objects"]
+            ))
+            view=_draw_objects(page,1)
+            circle_centre=view.getpixel((225,round(1100*.16)))
+            self.assertEqual(circle_centre,(16,20,24,255))
+            # The real editable region does not contain a black cutout.
+            # The cutout exists only in page metadata and the gallery mockup.
 
     def test_narrow_print_faces_are_not_overlapped(self):
         for w,h in ((350,1100),(450,1100),(500,1200),(600,1400)):
