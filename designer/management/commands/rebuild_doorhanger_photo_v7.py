@@ -37,7 +37,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from PIL import Image, ImageColor, ImageDraw, ImageFilter, ImageFont, ImageOps, UnidentifiedImageError
 
-from designer.models import Product, DesignTemplate
+from designer.models import Product, DesignTemplate, SavedDesign
 from designer.management.commands.rebuild_doorhanger_luxury_100 import (
     Art, THEMES, STYLES, EDITIONS, safe_text_size, source_dimensions,
     GENERATOR as V6_GENERATOR, LEGACY_GENERATORS,
@@ -505,9 +505,20 @@ class Command(BaseCommand):
                     "preview":t.preview.name if t.preview else "",
                     "is_active":t.is_active,
                 },ensure_ascii=False,default=str)+"\n")
+        references=set(SavedDesign.objects.filter(
+            source_template_id__in=[t.pk for t in known.values()]
+        ).values_list("source_template_id",flat=True))
         with transaction.atomic():
             for idx,name,data,png in built:
-                t=known.get(idx) or DesignTemplate(product=product)
+                previous=known.get(idx)
+                if previous is not None and previous.pk in references:
+                    # Keep the original source unchanged for an existing saved
+                    # design, but retire it from the public template gallery.
+                    previous.is_active=False
+                    previous.save(update_fields=["is_active"])
+                    t=DesignTemplate(product=product)
+                else:
+                    t=previous or DesignTemplate(product=product)
                 t.name=name
                 t.json_data=data
                 t.is_active=True
@@ -525,5 +536,5 @@ class Command(BaseCommand):
                 t.save()
         self.stdout.write(self.style.SUCCESS(
             "Installed 100 photo-rich front/back templates and full gallery "
-            "mockups with old template IDs preserved; backup: %s"%destination
+            "mockups; unreferenced template IDs reused, saved-design sources archived; backup: %s"%destination
         ))
