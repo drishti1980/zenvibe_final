@@ -42,7 +42,7 @@ from designer.models import Product, DesignTemplate, SavedDesign
 from designer.management.commands.rebuild_remaining_premium_100 import (
     Artwork, Photobank, BRIEFS, BASES, DIRECTIONS, TARGET,
     canvas_size, physical_region, _render_page, _font, protected,
-    configured_pages, layout_index,
+    configured_pages, layout_index, _category_path,
 )
 
 GENERATOR = "zenvibe-marketing-print-premium-panels-v2"
@@ -56,6 +56,11 @@ SAFE_LEGACY_PREFIXES = (
 def product_kind(product):
     name=re.sub(r"[\s_-]+"," ",(product.name or "").lower())
     if protected(product):
+        return ""
+    # Scope is strict: a product whose name merely mentions 'flyer' outside
+    # Marketing Materials must NEVER be modified by this repair.
+    category_path=_category_path(product)
+    if "marketing-materials" not in category_path:
         return ""
     # Explicit only: never match other promotional products with the word
     # 'fold', 'flyer' or 'card' inside their descriptions.
@@ -454,6 +459,10 @@ class Command(BaseCommand):
                 raise CommandError("Flyer requires exactly 1 Admin print page")
             if kind!="flyer" and len(surfaces)!=2:
                 raise CommandError("%s needs Outside and Inside pages"%kind)
+            if kind!="flyer" and any(s.width_in<=s.height_in for s in surfaces):
+                raise CommandError(
+                    "%s requires landscape folding stock; check Admin print inches"%kind
+                )
             jobs.append((product,kind,rows,indexed,surfaces))
         bank=Photobank(opts.get("photo_dir"),dry_run=opts["dry_run"])
         failures=[]
