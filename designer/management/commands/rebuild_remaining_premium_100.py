@@ -40,7 +40,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from PIL import Image, ImageColor, ImageDraw, ImageFilter, ImageFont, ImageOps, UnidentifiedImageError
 
-from designer.models import DesignTemplate, Product
+from designer.models import DesignTemplate, Product, SavedDesign
 
 GENERATOR = "zenvibe-remaining-premium100-v1"
 TARGET = 100
@@ -784,11 +784,14 @@ def render_preview(pages,family):
 
 
 def _existing_status(product):
-    templates=list(DesignTemplate.objects.filter(product=product).order_by("pk"))
+    # Archived masters may still be referenced by saved customer designs.
+    # Count only the ACTIVE gallery, and preserve every inactive record.
+    all_templates=list(DesignTemplate.objects.filter(product=product).order_by("pk"))
+    templates=[t for t in all_templates if t.is_active]
     if len(templates)>TARGET:
-        raise CommandError("More than 100 templates exist; review duplicates before replacing")
+        raise CommandError("More than 100 active templates; review duplicates before replacing")
     if not templates:
-        return templates,{}
+        return all_templates,{}
     mapping={}
     for item in templates:
         raw=item.json_data
@@ -819,7 +822,7 @@ def _existing_status(product):
         if index<0 or index>=TARGET or index in mapping:
             raise CommandError("Duplicate/invalid 001–100 template number")
         mapping[index]=item
-    return templates,mapping
+    return all_templates,mapping
 
 
 def _backup(product,templates):
@@ -898,11 +901,22 @@ class Command(BaseCommand):
             self.stdout.write("No database, preview or existing templates changed.")
             return
         backup=_backup(product,templates)
-        # Preserve existing IDs; do not delete a customer's referenced template
-        # or any SavedDesign. No changes to approved product categories.
+        # Preserve saved-customer originals byte-for-byte. If a generated
+        # template was used as a SavedDesign source, retire that template from
+        # the gallery and create a NEW active replacement instead of changing
+        # the referenced original. Unreferenced generated IDs stay unchanged.
+        references=set(SavedDesign.objects.filter(
+            source_template_id__in=[t.pk for t in indexed.values()]
+        ).values_list("source_template_id",flat=True))
         with transaction.atomic():
             for idx,name,payload,png in prepared:
-                t=indexed.get(idx) or DesignTemplate(product=product)
+                old=indexed.get(idx)
+                if old is not None and old.pk in references:
+                    old.is_active=False
+                    old.save(update_fields=["is_active"])
+                    t=DesignTemplate(product=product)
+                else:
+                    t=old or DesignTemplate(product=product)
                 t.name=name
                 t.json_data=payload
                 t.is_active=True
