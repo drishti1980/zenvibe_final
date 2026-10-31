@@ -42,6 +42,7 @@ from designer.management.commands.seed_luxury_print_face_templates import (
     GENERATOR as PRINT_FACE_GENERATOR,
     family_for as print_face_family,
     surfaces_for as configured_print_surfaces,
+    make_page as validate_print_face_page,
 )
 
 
@@ -212,15 +213,24 @@ def choose(product, count, refresh=False):
     family = print_face_family(product)
     canonical_promo = (root_promo and product.name in CANONICAL_PRODUCT_NAMES)
     if family and not canonical_promo:
-        if count and not DesignTemplate.objects.filter(
-            product_id=product.pk,
-            json_data__generator=PRINT_FACE_GENERATOR
-        ).exists():
-            return plan(reason="Existing templates use a different library; avoid replacing customer artwork")
+        if count:
+            tagged=DesignTemplate.objects.filter(
+                product_id=product.pk,
+                json_data__generator=PRINT_FACE_GENERATOR
+            ).count()
+            total=DesignTemplate.objects.filter(product_id=product.pk).count()
+            if tagged != total:
+                return plan(reason="Existing templates use a different library; avoid replacing customer artwork")
         try:
-            configured_print_surfaces(product)
-        except CommandError as exc:
-            return plan(reason="Print-face setup incomplete: "+str(exc))
+            surfaces=configured_print_surfaces(product)
+            # Validate every composition and page before allowing a single
+            # database change. Bad print margins or tiny typography must be
+            # reported as a safe skip rather than a half-imported product.
+            for idx in range(100):
+                for pageidx,surface in enumerate(surfaces):
+                    validate_print_face_page(idx,surface,pageidx,family)
+        except (CommandError,ValueError,OverflowError) as exc:
+            return plan(reason="Print-face preflight failed: "+str(exc))
         if count >= 100 and not refresh:
             return plan(reason="Already has 100 active editable templates")
         return Task(
