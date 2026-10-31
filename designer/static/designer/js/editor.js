@@ -3,6 +3,8 @@
 /* ZenVibe customer editor V52 - reliable printed-content replace/delete + direct editable overlay model */
 (function(){
 const P=window.PRODUCT||{},EP=P.editorProfile||{},OPT=window.PRODUCT_OPTIONS||{};
+const zvExactPublishedTriFold=(Number(P.id)===345 &&
+  String(window.INITIAL_TEMPLATE?.generator||'')==='zenvibe-trifold-luxury-v3');
 function zvSelectedSize(){const key=String(OPT.selected_size||OPT.selected_size_key||new URLSearchParams(location.search).get('size')||new URLSearchParams(location.search).get('size_key')||'');return (Array.isArray(OPT.sizes)?OPT.sizes:[]).find(x=>String(x.key||x.size_key||'')===key)||null;}
 function zvAdminSurfaces(){const direct=Array.isArray(window.ZV_ADMIN_PRINT_SURFACES)?window.ZV_ADMIN_PRINT_SURFACES:[];const a=Array.isArray(OPT.print_surfaces)?OPT.print_surfaces:[];const b=Array.isArray(OPT.printSurfaces)?OPT.printSurfaces:[];const c=Array.isArray(P.printSurfaces)?P.printSurfaces:[];return direct.length?direct:(a.length?a:(b.length?b:c));}
 function zvPhysicalForPage(pageIndex){
@@ -750,6 +752,9 @@ if(Number(P.id)===419){
 function zvRemoveProductMockup(){
   canvas.getObjects().filter(o=>o.zvProductMockup).forEach(o=>canvas.remove(o))}
 function zvTemplateWantsProductMockup(){
+  // A full-canvas V3 brochure is its OWN artwork. An unrelated locked
+  // product photo overlay makes the chosen gallery design look different.
+  if(zvExactPublishedTriFold)return false;
   const cfg=window.PRODUCT_OPTIONS?.editor_config||window.PRODUCT_OPTIONS?.editorConfig||{};
   // Awards always need the physical product image under editable artwork.
   // Older server DB rows may still have show_product_reference=False.
@@ -1310,7 +1315,7 @@ function loadPage(i){
     if(isOcr&&o.sourceNormalizedBox&&!coverIds.has(id)){return {...o,opacity:o.sourceNormalizedBox.repair?0:0.001,ocrOverlayPending:true,customerEditable:true,selectable:true,evented:true};}
     return o;
   });
-  let pending=0;sourceObjects.forEach(o=>{
+  let pending=0;sourceObjects.forEach((o,sourceIndex)=>{
     if((o.type==='svg'||o.type==='svg-group')&&o.src){
       pending++;
       fabric.loadSVGFromURL(o.src,(objects,options)=>{
@@ -1357,7 +1362,9 @@ function loadPage(i){
         selectable:false,evented:false
       });
     }
-    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;const addImage=()=>{canvas.add(img);if(img.backgroundAsset || o.id==='illustrated-artwork' || o.objectId==='illustrated-artwork' || o.id==='catalog-artwork' || o.objectId==='catalog-artwork')canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});canvas.add(obj)}}});
+    img.baseSrc=o.baseSrc||o.src;img.exactVisualMaster=!!o.exactVisualMaster;
+    if(zvExactPublishedTriFold)img.zvTemplateLoadOrder=sourceIndex;
+    const addImage=()=>{canvas.add(img);if(img.backgroundAsset || o.id==='illustrated-artwork' || o.objectId==='illustrated-artwork' || o.id==='catalog-artwork' || o.objectId==='catalog-artwork')canvas.sendToBack(img);pending--;finish()};if(o.filters&&o.filters.length&&fabric.util.enlivenObjects){fabric.util.enlivenObjects(o.filters,filters=>{img.filters=filters;img.applyFilters();addImage()})}else addImage()},{crossOrigin:'anonymous'})}else{const obj=fromData(o);if(obj){obj.set({scaleX:o.scaleX||1,scaleY:o.scaleY||1});if(zvExactPublishedTriFold)obj.zvTemplateLoadOrder=sourceIndex;canvas.add(obj)}}});
   function zvApplyCoasterShape(){
     if(Number(P.id)!==415)return;
     const shape=String(OPT.selected_shape||new URLSearchParams(location.search).get('shape')||'square').toLowerCase();
@@ -1386,6 +1393,14 @@ function loadPage(i){
     canvas.requestRenderAll();
   }
   function zvFinishLoadedPage(){
+    // Fabric images load asynchronously. Without restoring the original
+    // source-object order, image callbacks append photos ABOVE later text
+    // and panel decorations, while gallery previews render source order.
+    if(zvExactPublishedTriFold){
+      canvas.getObjects().filter(obj=>Number.isInteger(obj.zvTemplateLoadOrder))
+        .sort((a,b)=>a.zvTemplateLoadOrder-b.zvTemplateLoadOrder)
+        .forEach((obj,index)=>canvas.moveTo(obj,index));
+    }
     loading=false;
     zvApplyCoasterShape();
     zvApplyTeardropDie(true);
