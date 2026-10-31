@@ -226,7 +226,7 @@ def _back(index,w,h,source):
                w*.215,yy,w*.69,h*.047,ink,.051,j==0,align="left")
     a.rect(w*.10,h*.899,w*.80,h*.050,foil,"Contact highlight")
     _label(a,"Editable call to action",cta,w*.125,h*.901,w*.75,h*.043,
-           "#19272D" if style["light"] else "#FFFFFF",.047,True)
+           "#172C32",.047,True)
     _label(a,"Editable website","YOURBRAND.COM",w*.12,h*.960,w*.76,h*.028,
            ink,.029,False)
     a.validate()
@@ -287,7 +287,7 @@ def _front(index,w,h,source):
     cta_y=.913 if edition==2 else .896
     a.rect(w*.10,h*cta_y,w*.80,h*.055,foil,"Editable action strip")
     _label(a,"Editable call to action",cta,w*.12,h*(cta_y+.004),w*.76,h*.045,
-           "#172C32" if style["light"] else "#FFFFFF",.050,True)
+           "#172C32",.050,True)
     _label(a,"Editable website","YOURBRAND.COM",w*.12,h*.971,w*.76,h*.025,
            ink,.028,False)
     a.validate()
