@@ -534,6 +534,8 @@ class Command(BaseCommand):
         p.add_argument("--photo-dir",default="",help="Licensed 01.jpg..20.jpg original photography")
         mode=p.add_mutually_exclusive_group(required=True)
         mode.add_argument("--dry-run",action="store_true")
+        mode.add_argument("--contact-sheet",action="store_true",
+                          help="Render all 100 real-photo gallery mockups into one JPEG proof; no database changes")
         mode.add_argument("--apply",action="store_true")
 
     def handle(self,*args,**opts):
@@ -579,7 +581,7 @@ class Command(BaseCommand):
                     "foldGuideOnly":True},
                 "productionNote":"Nominal one-third folds. Verify fold-in flap, bleed and trim with printer.",
             }
-            preview=_preview(pages) if opts["apply"] else None
+            preview=_preview(pages) if (opts["apply"] or opts["contact_sheet"]) else None
             if preview is not None and len(preview)<9000:
                 raise CommandError("Incomplete gallery preview at %03d"%(idx+1))
             built.append((idx,name,document,preview))
@@ -594,6 +596,30 @@ class Command(BaseCommand):
                 "Dry run complete; database/preview unchanged. Existing active masters: %d"%
                 sum(r.is_active for r in originals)
             )
+            return
+        if opts["contact_sheet"]:
+            # Real photographs and actual editorial template objects, not the
+            # synthetic dry-run photo fixture. One visual proof for ALL 100.
+            cols=10; rows=10; tile_w=250; tile_h=365
+            sheet=Image.new("RGB",(cols*tile_w,rows*tile_h),"#F4F1EC")
+            drawing=ImageDraw.Draw(sheet)
+            for idx,name,document,preview in built:
+                with Image.open(io.BytesIO(preview)) as opened:
+                    tile=opened.convert("RGB")
+                    tile.thumbnail((232,325),Image.Resampling.LANCZOS)
+                xx=(idx%cols)*tile_w+9+(232-tile.width)//2
+                yy=(idx//cols)*tile_h+5+(325-tile.height)//2
+                sheet.paste(tile,(xx,yy))
+                drawing.text(((idx%cols)*tile_w+10,(idx//cols)*tile_h+337),
+                             "%03d  %s"%(idx+1,BRIEFS[idx%20][0][:20]),
+                             fill="#243641",font=_font(14,True))
+            folder=Path(settings.BASE_DIR)/"template_reports"
+            folder.mkdir(parents=True,exist_ok=True)
+            path=folder/("trifold_v3_100_contact_sheet_%d.jpg"%product.pk)
+            sheet.save(path,format="JPEG",quality=88,optimize=True)
+            self.stdout.write(self.style.SUCCESS(
+                "100-design visual contact sheet (real photographs; database unchanged): %s"%path
+            ))
             return
         backup=_backup(product,originals)
         references=set(SavedDesign.objects.filter(
