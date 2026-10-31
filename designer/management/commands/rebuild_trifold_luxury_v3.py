@@ -702,6 +702,63 @@ def resolve_trifold_pages(product, originals, override=None, log=None):
     return pages
 
 
+def refresh_published_previews(product, originals, mapping, log=None):
+    """Re-render ONLY the 100 published V3 PNG thumbnails from their OWN JSON.
+
+    Unlike --apply this does NOT rebuild layouts, move objects, download images,
+    change template identity, reactivate historical masters or alter customer
+    SavedDesign records. It also needs no Admin print inches because the
+    existing page coordinates are authoritative.
+    """
+    if len(mapping)!=COUNT or set(mapping)!=set(range(COUNT)):
+        raise CommandError(
+            "Preview-only refresh needs 100 indexed active tri-fold V3 masters; "
+            "found %d. Run the full dry-run first if the library is incomplete."%
+            len(mapping)
+        )
+    published=[]
+    for idx in range(COUNT):
+        row=mapping[idx]
+        data=_load_master(row)
+        if data.get("generator")!=GENERATOR:
+            raise CommandError(
+                "Refusing preview-only refresh: template #%d still uses %s"%
+                (row.pk,data.get("generator"))
+            )
+        pages=data.get("pages")
+        if not isinstance(pages,list) or len(pages)!=2:
+            raise CommandError("Template #%d must contain Outside + Inside"%row.pk)
+        for side,p in enumerate(pages):
+            if not isinstance(p,dict) or p.get("name")!=("Outside","Inside")[side]:
+                raise CommandError("Unexpected page order on template #%d"%row.pk)
+            if not isinstance(p.get("objects"),list) or not p["objects"]:
+                raise CommandError("Missing editable page objects on template #%d"%row.pk)
+        png=_preview(pages)
+        if len(png)<9000:
+            raise CommandError("Incomplete current-page preview for template #%d"%row.pk)
+        filename="trifold-exact-v3-%d-%03d-%s.png"%(
+            product.pk,idx+1,hashlib.sha256(png).hexdigest()[:16]
+        )
+        published.append((row,filename,png))
+
+    backup=_backup(product,originals)
+    with transaction.atomic():
+        for row,filename,png in published:
+            stored="template_previews/"+filename
+            if row.preview.storage.exists(stored):
+                row.preview.name=stored
+            else:
+                row.preview.save(filename,ContentFile(png),save=False)
+            # DB JSON, name, primary key and is_active stay byte-for-byte
+            # unchanged. updated_at provides a fresh thumbnail cache-buster.
+            row.save(update_fields=["preview","updated_at"])
+    if log:
+        log("Refreshed %d tri-fold previews directly from the exact published "
+            "Outside/Inside page JSON; template IDs and artwork unchanged. "
+            "Backup: %s"%(len(published),backup))
+    return len(published)
+
+
 class Command(BaseCommand):
     help="Install 100 finished, luxury tri-fold designs without touching other categories."
 
@@ -716,6 +773,8 @@ class Command(BaseCommand):
         mode.add_argument("--dry-run",action="store_true")
         mode.add_argument("--contact-sheet",action="store_true",
                           help="Render all 100 real-photo gallery mockups into one JPEG proof; no database changes")
+        mode.add_argument("--refresh-previews-only",action="store_true",
+                          help="Re-render thumbnails from installed V3 page JSON; do not edit artwork or IDs")
         mode.add_argument("--apply",action="store_true")
 
     def handle(self,*args,**opts):
@@ -725,6 +784,14 @@ class Command(BaseCommand):
         if not product or not is_trifold(product):
             raise CommandError("Only active Marketing Materials TRI-FOLD BROCHURE products can be changed")
         originals,mapping=_existing(product)
+        if opts["refresh_previews_only"]:
+            if opts.get("sheet_width_in") is not None or opts.get("sheet_height_in") is not None:
+                raise CommandError("Preview-only mode uses existing page coordinates; omit sheet inch overrides")
+            refresh_published_previews(
+                product,originals,mapping,
+                log=lambda message:self.stdout.write(self.style.SUCCESS(message)),
+            )
+            return
         width=opts.get("sheet_width_in")
         height=opts.get("sheet_height_in")
         if (width is None)!=(height is None):
