@@ -8,7 +8,7 @@ from django.test import SimpleTestCase
 
 from designer.management.commands.premium_brochure_palettes import (
     palette_for, palette_signatures, validate_100_palettes, contrast,
-    cover_photo_tiles,
+    cover_photo_tiles, perceptual_distance,
 )
 from designer.management.commands.rebuild_premium_marketing_print_v2 import (
     make_marketing_page,
@@ -32,16 +32,22 @@ class BrochureColorEngineTests(SimpleTestCase):
                 self.assertNotEqual(combos[0],combos[20])
                 self.assertNotEqual(combos[0],combos[80])
 
-    def test_adjacent_palette_brightness_and_hue_are_not_near_duplicates(self):
-        # A colour technically differs by one channel but still looks
-        # identical. Golden-angle hue + alternating tone prevents that.
+    def test_all_100_colours_are_perceptually_distinct_not_just_different_hex(self):
+        # WCAG contrast measures readability, NOT whether two stocks look the
+        # same. CIELAB ΔE76 catches repeated pastel/beige or near-black tones.
         for family in ("bifold","trifold"):
             combos=palette_signatures(family)
-            for i in range(1,100):
-                with self.subTest(family=family,number=i+1):
-                    self.assertGreater(
-                        contrast(combos[i][0],combos[i-1][0]),1.23
-                    )
+            for i in range(100):
+                for j in range(i+1,100):
+                    with self.subTest(family=family,left=i+1,right=j+1):
+                        self.assertGreaterEqual(
+                            perceptual_distance(combos[i][0],combos[j][0]),12
+                        )
+                        self.assertGreaterEqual(
+                            perceptual_distance(combos[i][1],combos[j][1]),12
+                        )
+            for paper,accent in combos:
+                self.assertGreaterEqual(contrast(paper,accent),1.75)
 
     def test_text_and_ctas_are_readable_on_all_100_and_all_six_panel_roles(self):
         for family in ("bifold","trifold"):
@@ -89,6 +95,8 @@ class BrochureColorEngineTests(SimpleTestCase):
         self.assertNotEqual(bi,tri)
         self.assertEqual(len(bi),100)
         self.assertEqual(len(tri),100)
+        self.assertFalse({p for p,a in bi} & {p for p,a in tri})
+        self.assertFalse({a for p,a in bi} & {a for p,a in tri})
 
 
 class BrochureColorArtworkTests(SimpleTestCase):
