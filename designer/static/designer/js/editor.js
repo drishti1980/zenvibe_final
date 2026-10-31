@@ -1082,6 +1082,64 @@ function sync(){
 // Teardrop fabric occupies a die-cut outline within the portrait workspace.
 // The surrounding rectangle is an editor workspace, never printable artwork.
 // Normalized geometry is shared with universal-export.js.
+// ZENVIBE DOOR HANGER + FOLDED BROCHURE PHYSICAL GUIDES
+// Non-printing construction guides. Never store a black circle or fold marks
+// in customer Fabric design JSON or production print files.
+function zvApplyMarketingDieGuides(){
+  const page=pages[activePage]||{};
+  const isDoorHanger=Number(P.id)===170 ||
+    /door[\s-]*hangers?/i.test(String(P.name||''));
+  if(isDoorHanger){
+    const spec=page.dieCut||{};
+    // The preview and live editor share these NORMALIZED geometry defaults.
+    // Manufacturer die-lines remain authoritative for final print/cutting.
+    const cx=W*(Number(spec.centerXPct??50)/100);
+    const cy=H*(Number(spec.centerYPct??16)/100);
+    const r=W*(Number(spec.radiusWidthPct??20)/100);
+    const activeColor='#101418';
+    const guide={
+      selectable:false,evented:false,customerEditable:false,
+      excludeFromExport:true,zvPrintAreaGuide:true,
+      zvDoorHangerCutGuide:true,hasControls:false,hasBorders:false
+    };
+    const hole=new fabric.Circle({
+      ...guide,left:cx-r,top:cy-r,radius:r,
+      fill:activeColor,stroke:'#374151',
+      strokeWidth:Math.max(1,W*.0025),
+      name:'Door hanger knob opening (non-printing guide)'
+    });
+    const slitY=cy-H*.004;
+    const slit=new fabric.Rect({
+      ...guide,left:cx+r*.86,top:slitY,
+      width:Math.max(0,W-(cx+r*.86)),height:Math.max(2,H*.008),
+      fill:activeColor,name:'Door hanger side slit (non-printing guide)'
+    });
+    canvas.add(hole);
+    canvas.add(slit);
+    canvas.bringToFront(hole);
+    canvas.bringToFront(slit);
+  }
+  // Fold positions are metadata on our new 2-sided brochure masters. They
+  // are visual guides ONLY, not editable printable lines; the page itself
+  // contains individually editable type/photos/panel artwork.
+  const foldPositions=Array.isArray(page.foldGuides)?page.foldGuides:[];
+  foldPositions.forEach((fraction,index)=>{
+    const pct=Number(fraction);
+    if(!Number.isFinite(pct)||pct<=0||pct>=1)return;
+    const x=W*pct;
+    const line=new fabric.Line([x,0,x,H],{
+      selectable:false,evented:false,customerEditable:false,
+      excludeFromExport:true,zvPrintAreaGuide:true,
+      zvMarketingFoldGuide:true,stroke:'#F97316',
+      strokeWidth:Math.max(1,W*.002),
+      strokeDashArray:[Math.max(5,W*.009),Math.max(5,W*.008)],
+      name:'Fold position '+(index+1)+' (non-printing guide)'
+    });
+    canvas.add(line);
+    canvas.bringToFront(line);
+  });
+}
+
 function zvIsTeardropFlag(){
   return Number(P.id)===89 || String(EP.print_shape||EP.printShape||'')==='teardrop' || /tear[\s-]*drop.*flag/i.test(String(P.name||''));
 }
@@ -1329,7 +1387,7 @@ function addQuickEditableText(){
   canvas.add(t);canvas.setActiveObject(t);canvas.requestRenderAll();snapshot();checkEditableObjects();
 }
 window.addQuickEditableText=addQuickEditableText;
-function renderAll(){drawHelpers();canvas.requestRenderAll();renderPages();renderLayers();syncPanel()}
+function renderAll(){drawHelpers();zvApplyMarketingDieGuides();canvas.requestRenderAll();renderPages();renderLayers();syncPanel()}
 function snapshot(){zvApplyTeardropDie(false);sync();const state=clone(pages);history=history.slice(0,historyIndex+1);history.push(state);if(history.length>60)history.shift();historyIndex=history.length-1;scheduleLocalSave()}
 function restore(n){if(n<0||n>=history.length)return;historyIndex=n;pages=clone(history[n]);loadPage(Math.min(activePage,pages.length-1))}
 function renderPages(){
