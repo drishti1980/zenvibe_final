@@ -41,9 +41,11 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Git fetch failed; no local files were moved." }
 
     $target = "origin/$Branch"
-    $remoteFiles = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
+    # Built-in PowerShell hashtable keys are case-insensitive by default,
+    # matching Windows file paths and avoiding a generic-type dependency.
+    $remoteFiles = @{}
     @(& git ls-tree -r --name-only $target) | ForEach-Object {
-        if ($_ -and $_.Trim()) { [void]$remoteFiles.Add($_.Trim()) }
+        if ($_ -and $_.Trim()) { $remoteFiles[$_.Trim()] = $true }
     }
     if ($LASTEXITCODE -ne 0 -or $remoteFiles.Count -eq 0) {
         throw "Could not read the target branch file tree."
@@ -52,7 +54,7 @@ try {
     $untracked = @(& git ls-files --others --exclude-standard --full-name)
     if ($LASTEXITCODE -ne 0) { throw "Could not list untracked local files." }
     $collisions = @(
-        $untracked | Where-Object { $_ -and $remoteFiles.Contains($_.Trim()) }
+        $untracked | Where-Object { $_ -and $remoteFiles.ContainsKey($_.Trim()) }
     )
 
     $backup = $null
