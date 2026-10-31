@@ -1140,6 +1140,28 @@ function zvApplyMarketingDieGuides(){
   });
 }
 
+// Fabric's excludeFromExport flag only affects JSON; PDF/PNG renderers still
+// see editor-only construction guides. Detach them for raster export, then
+// restore original object ordering so the editor cutout/folds stay visible.
+function zvRasterWithoutConstructionGuides(options){
+  const removed=canvas.getObjects().map((o,index)=>({o,index})).filter(
+    ({o})=>o&&(o.excludeFromExport||o.zvPrintAreaGuide)
+  );
+  const selected=canvas.getActiveObject();
+  canvas.discardActiveObject();
+  removed.forEach(({o})=>canvas.remove(o));
+  canvas.renderAll();
+  try{
+    return canvas.toDataURL(options||{format:'png',multiplier:2});
+  }finally{
+    removed.sort((a,b)=>a.index-b.index).forEach(({o,index})=>{
+      canvas.insertAt(o,Math.min(index,canvas.getObjects().length),false);
+    });
+    if(selected&&canvas.getObjects().includes(selected))canvas.setActiveObject(selected);
+    canvas.requestRenderAll();
+  }
+}
+
 function zvIsTeardropFlag(){
   return Number(P.id)===89 || String(EP.print_shape||EP.printShape||'')==='teardrop' || /tear[\s-]*drop.*flag/i.test(String(P.name||''));
 }
@@ -1910,7 +1932,7 @@ if(window.ZenvibeExport){
   });
 }else{
   // Preserve the original download behaviour if the optional module fails to load.
-  bind('downloadBtn',()=>{sync();const a=document.createElement('a');a.download=($('designName').value||'zenvibe-design')+'.png';a.href=canvas.toDataURL({format:'png',multiplier:2});a.click()});
+  bind('downloadBtn',()=>{sync();const a=document.createElement('a');a.download=($('designName').value||'zenvibe-design')+'.png';a.href=zvRasterWithoutConstructionGuides({format:'png',multiplier:2});a.click()});
 }bind('downloadJsonBtn',()=>{sync();const a=document.createElement('a');a.download='zenvibe-design.json';a.href=URL.createObjectURL(new Blob([JSON.stringify(editorDocument(),null,2)],{type:'application/json'}));a.click()});
 const pdfBtn=document.getElementById("downloadPdfBtn");
 
@@ -1939,7 +1961,7 @@ async function downloadPDF(){
 
     });
 
-    const img=canvas.toDataURL({
+    const img=zvRasterWithoutConstructionGuides({
 
         format:"png",
 
