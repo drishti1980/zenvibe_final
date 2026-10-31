@@ -60,8 +60,8 @@ class DoorHangerPhotoQualityTests(SimpleTestCase):
             self.assertGreater(len(png),5000)
             with Image.open(io.BytesIO(png)) as preview:
                 self.assertEqual(preview.format,"PNG")
-                self.assertEqual(preview.size,(1080,860))
-                self.assertGreater(len(preview.getcolors(1080*860) or []),5)
+                self.assertEqual(preview.size,(900,1160))
+                self.assertGreater(len(preview.getcolors(900*1160) or []),5)
 
     def test_narrow_print_faces_are_not_overlapped(self):
         for w,h in ((350,1100),(450,1100),(500,1200),(600,1400)):
