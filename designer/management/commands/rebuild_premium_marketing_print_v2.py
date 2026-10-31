@@ -304,6 +304,11 @@ def make_marketing_page(product,kind,index,side,surface,bank):
     else:
         n=2 if kind=="bifold" else 3
         folds=[i/n for i in range(1,n)]
+        # One continuous paper colour beneath all fold-safe panels prevents
+        # the vertical blank strips and disconnected-card look of old masters.
+        rx,ry,rw,rh=region
+        art.rect("Editable cohesive brochure base",rx,ry,rw,rh,
+                 BASES[edition][0])
         # Cover outside placement: bi [back,cover]; tri [flap,back,cover].
         # The inside is a real 2/3-panel spread, not a duplicated cover.
         for panel in range(n):
