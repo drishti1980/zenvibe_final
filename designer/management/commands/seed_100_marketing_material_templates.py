@@ -1,5 +1,5 @@
 from __future__ import annotations
-import base64, hashlib, json, re
+import base64, hashlib, json, re, colorsys, textwrap
 from html import escape
 from pathlib import Path
 from django.core.files.base import ContentFile
@@ -11,7 +11,7 @@ try:
 except Exception:
     cairosvg=None
 
-GENERATOR_ID='zenvibe-marketing-materials-v1-json-svg'
+GENERATOR_ID='zenvibe-marketing-materials-v2-diverse-artwork'
 MEDIA_DIR='generated_marketing_materials_v1'
 KINDS={
  'bifold': {'label':'Bi-Fold Brochure','pages':['Outside','Inside'],'default':(1100,850),'physical':(11,8.5),'keywords':['bi-fold','bifold','bi fold']},
@@ -54,6 +54,39 @@ PALETTES=[
 ('#B62D2D','#FFF7EC','#E2B96F','#FFFFFF','#3A2924'),('#1F5D42','#F5EFE1','#C57D56','#FFFFFF','#27372E')]
 FONTS=[('Montserrat','Arial'),('Georgia','Arial'),('Arial','Arial'),('Trebuchet MS','Arial'),('Verdana','Arial')]
 
+# Palette and subject treatment are stable for a given template index, without a
+# 20-item colour cycle. The 100 designs have individual main/accent colour pairs.
+def artwork_palette(idx):
+ hue=((idx*137.50776405)%360)/360
+ accent_hue=(hue+.29+(idx%7)*.013)%1
+ sat=.39+(idx%5)*.055
+ val=.43+(idx%4)*.065
+ def rgb(h,s,v): return '#'+''.join(f'{round(c*255):02X}' for c in colorsys.hsv_to_rgb(h,s,v))
+ primary=rgb(hue,sat,val)
+ paper=rgb((hue+.11)%1,.055+(idx%4)*.012,.96)
+ accent=rgb(accent_hue,.48+(idx%3)*.10,.72+(idx%4)*.045)
+ dark=rgb(hue,.30,.20)
+ return (primary,paper,accent,'#FFFFFF',dark)
+
+# Every theme gets five different campaign/subject briefs; a restaurant menu
+# must not be labelled as a generic business brochure.
+SUBJECT_BRIEFS={
+ 'Restaurant':[('Signature tasting menu','STARTERS  •  MAINS  •  DESSERTS','Seasonal dining with curated pairings and a chef\'s selection.'),('Cafe brunch menu','COFFEE  •  BRUNCH  •  BAKERY','All-day brunch, specialty espresso and fresh pastries.'),('Fine dining wine menu','WINE  •  CELLAR  •  PAIRINGS','Explore a hand-picked selection of reds, whites and sparkling wines.'),('Takeaway food menu','ORDER  •  COLLECT  •  ENJOY','Fresh lunch combinations, family packs and easy takeaway.'),('Wedding catering menu','CANAPÉS  •  BANQUETS  •  SWEETS','Thoughtful event menus made for celebrations.')],
+ 'Events':[('Luxury gift hampers','CURATED  •  GIFTED  •  DELIVERED','Premium gifting with artisan food, flowers and keepsakes.'),('Wedding event programme','CEREMONY  •  RECEPTION  •  DETAILS','A refined guide to the celebration and order of events.'),('Corporate event brochure','SPEAKERS  •  AGENDA  •  VENUE','An elegant event programme for delegates and partners.'),('Festive gift catalogue','GIFTS  •  COLLECTIONS  •  DELIVERY','Seasonal hampers and thoughtfully wrapped presents.'),('Celebration packages','PACKAGES  •  ADD-ONS  •  BOOKINGS','Memorable experiences styled for every occasion.')],
+ 'Beauty':[('Spa treatment menu','FACIALS  •  MASSAGE  •  RITUALS','Unwind with signature treatments and restorative rituals.'),('Luxury salon services','HAIR  •  COLOUR  •  STYLE','Beautifully crafted salon services and personal care.'),('Skincare product catalogue','CLEANSE  •  NOURISH  •  GLOW','Discover elevated everyday skincare essentials.'),('Bridal beauty packages','BRIDAL  •  MAKEUP  •  HAIR','A personal approach to beauty on your special day.'),('Fragrance lookbook','NOTES  •  COLLECTIONS  •  SCENT','Discover new fragrance stories and timeless favourites.')],
+ 'Travel':[('Boutique hotel guide','STAY  •  DINE  •  EXPLORE','A considered guide to boutique stays and local experiences.'),('Luxury retreat programme','ESCAPE  •  RELAX  •  RESTORE','An inspiring itinerary for a restorative retreat.'),('Coastal destination guide','BEACHES  •  STAYS  •  EXPERIENCES','Explore hidden coves and curated coastal escapes.'),('Adventure tour brochure','TOURS  •  ADVENTURE  •  DISCOVERY','Expert-led journeys and authentic local adventures.'),('City weekend itinerary','WEEKEND  •  DINING  •  CULTURE','The best of a city in a thoughtfully planned escape.')],
+}
+VARIATION_NAMES=['Editorial','Catalogue','Minimal','Magazine','Illustrated']
+def subject_copy(idx):
+ cat,title,sub,desc=THEMES[idx%len(THEMES)]
+ variant=idx//len(THEMES)
+ if cat in SUBJECT_BRIEFS:
+  name,sub,desc=SUBJECT_BRIEFS[cat][variant%5]
+  return cat,name.upper(),sub,desc,name
+ labels=['Premium collection','Signature services','Seasonal edition','Curated portfolio','The essential guide']
+ name=f'{cat} — {labels[variant%5]}'
+ return cat,(name.upper()),sub,desc,name
+
 def uri(svg): return 'data:image/svg+xml;base64,'+base64.b64encode(svg.encode()).decode()
 def textbox(i,x,y,w,text,size,color,font='Arial',weight=400,align='left'):
  return {'id':i,'name':i.replace('_',' ').title(),'type':'textbox','left':round(x,2),'top':round(y,2),'width':round(w,2),'text':text,'fontSize':size,'font':font,'fontFamily':font,'fontWeight':weight,'fill':color,'textAlign':align,'lineHeight':1.12,'customerEditable':True,'locked':False,'fieldType':'marketing-text','manualReplacement':True}
@@ -89,12 +122,13 @@ def bg_svg(W,H,pal,fam,side,kind):
  s.append('</svg>'); return ''.join(s)
 def add_photo(objs,i,x,y,w,h,pal,label,seed): objs.append(image(i,x,y,w,h,uri(photo_svg(max(100,int(w)),max(100,int(h)),label,pal[0],seed))))
 def common_content(idx):
- theme=THEMES[idx%20]; return theme+(f'CALL 1300 {100+idx:03d} {200+idx:03d}',f'zenvibe.example/{theme[0].lower().replace(" ","")}',f'Offer {idx+1:03d}')
+ cat,title,sub,desc,name=subject_copy(idx)
+ return cat,title,sub,desc,f'CALL 1300 {100+idx:03d} {200+idx:03d}',f'zenvibe.example/{cat.lower().replace(" ","")}',name
 def brochure_page(kind,idx,side,W,H):
- pal=PALETTES[(idx*3+side)%20]; head,body=FONTS[idx%len(FONTS)]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,kind); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; panels=2 if kind=='bifold' else 3; pw=W/panels; margin=pw*.07
+ pal=artwork_palette(idx); head,body=FONTS[(idx//20+idx)%len(FONTS)]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx+20*((idx//20)%5),side,kind); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; panels=2 if kind=='bifold' else 3; pw=W/panels; margin=pw*.07
  # deterministic 20 macro arrangements x 5 variants; every panel has reserved, non-overlapping zones.
  for p in range(panels):
-  x=p*pw+margin; usable=pw-2*margin; variant=(idx//20)%5; local=(p+side+idx)%4
+  x=p*pw+margin; usable=pw-2*margin; variant=(idx//20)%5; local=(p+side+idx+variant)%4
   if local==0:
    add_photo(objs,f'photo_{side}_{p}',x,H*.10,usable,H*.28,pal,'Replace photo',idx+p+side)
    objs += [textbox(f'title_{side}_{p}',x,H*.43,usable,title if p==panels-1 else sub,26 if panels==2 else 20,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.56,usable,desc,13,pal[4],body),textbox(f'contact_{side}_{p}',x,H*.79,usable,contact,11,pal[0],body,700)]
@@ -111,7 +145,7 @@ def brochure_page(kind,idx,side,W,H):
    objs += [textbox(f'contact_{side}_{p}',x,H*.84,usable,contact,10,pal[0],body,700)]
  return bg,objs
 def door_page(idx,side,W,H):
- pal=PALETTES[(idx*5+side)%20]; head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'doorhanger'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.08
+ pal=artwork_palette(idx); head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'doorhanger'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.08
  # reserve top 30% as knob/die-cut safety zone: no important text there; photo/decor may sit below.
  if side==0:
   add_photo(objs,'photo_front',m,H*.31,W-2*m,H*.24,pal,'Replace photo',idx)
@@ -121,7 +155,7 @@ def door_page(idx,side,W,H):
   add_photo(objs,'photo_back',m,H*.76,W*.34,H*.14,pal,'QR / Logo',idx+100); objs += [textbox('back_web',m+W*.40,H*.79,W*.43,web+'\n'+contact,11,pal[4],body,700)]
  return bg,objs
 def ticket_page(idx,side,W,H):
- pal=PALETTES[(idx*7+side)%20]; head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'ticket'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.045; stub=W*.22
+ pal=artwork_palette(idx); head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'ticket'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.045; stub=W*.22
  if side==0:
   add_photo(objs,'ticket_photo',m,H*.12,W*.22,H*.76,pal,'Artwork',idx)
   objs += [textbox('event',W*.30,H*.14,W*.43,title,29,pal[4],head,700),textbox('subtitle',W*.30,H*.36,W*.43,sub,14,pal[0],body,700),textbox('details',W*.30,H*.52,W*.43,'SAT 24 OCT • 7:30 PM\n123 ANYWHERE ST • GATE A',12,pal[4],body),textbox('stub',W*.79,H*.18,W*.16,'ADMIT ONE\n#'+f'{1000+idx}',14,pal[0],body,700,'center')]
@@ -137,6 +171,29 @@ def build(kind,idx,W,H):
   else: bg,objs=ticket_page(idx,side,W,H)
   pages.append({'name':names[side],'width':W,'height':H,'objects':objs,'backgroundSvg':bg})
  return pages
+def render_preview(page):
+ """Render a truthful flattened thumbnail: background + editable photos + text.
+ The saved JSON is still the editable source, this SVG is preview-only.
+ """
+ bg=page['backgroundSvg']; rendered=[]
+ for o in page['objects']:
+  if o.get('backgroundAsset'): continue
+  x,y,w,h=[o.get(k,0) for k in ('left','top','width','height')]
+  if o['type']=='image':
+   rendered.append(f'<image x="{x}" y="{y}" width="{w}" height="{h}" preserveAspectRatio="xMidYMid slice" href="{escape(o["src"],quote=True)}"/>')
+  elif o['type']=='textbox':
+   fontsize=float(o.get('fontSize',12)); font=escape(str(o.get('fontFamily','Arial')),quote=True)
+   color=escape(str(o.get('fill','#222')),quote=True); weight=escape(str(o.get('fontWeight',400)))
+   chars=max(7,int(w/max(1,fontsize*.55)))
+   lines=[]
+   for paragraph in str(o.get('text','')).split('\\n'):
+    lines.extend(textwrap.wrap(paragraph,width=chars,break_long_words=False) or [''])
+   # Hide overflow in previews rather than overlap adjacent panels.
+   max_lines=max(1,int((page['height']-y-8)/(fontsize*1.22)))
+   spans=''.join(f'<tspan x="{x}" dy="{0 if i==0 else fontsize*1.18:.1f}">{escape(line)}</tspan>' for i,line in enumerate(lines[:max_lines]))
+   rendered.append(f'<text y="{y+fontsize:.1f}" font-size="{fontsize}" font-family="{font}" font-weight="{weight}" fill="{color}">{spans}</text>')
+ return bg.replace('</svg>',''.join(rendered)+'</svg>')
+
 def fingerprint(pages):
  slim=[]
  for p in pages:
@@ -173,6 +230,7 @@ class Command(BaseCommand):
    seen.add(fp); built.append((idx,pages,fp))
   self.stdout.write(f'Validated {len(built)} unique {KINDS[kind]["label"]} templates for Product {product.id}: {product.name}')
   self.stdout.write(f'Canvas: {W} x {H}; JSON + SVG; editable text/photos; locked SVG background.')
+  self.stdout.write('Distinct artwork palettes: per-template; preview renders content, not background only.')
   self.stdout.write('Pages: '+('mixed 1/2 sides' if kind=='ticket' else '2 sides each'))
   if opt['dry_run']:
    self.stdout.write(self.style.SUCCESS('Dry run complete; database unchanged.')); return
@@ -181,10 +239,10 @@ class Command(BaseCommand):
   with transaction.atomic():
    if opt['replace_generated']: DesignTemplate.objects.filter(product=product,name__startswith=prefix).delete()
    for idx,pages,fp in built:
-    theme=THEMES[idx%20][0]; variation=idx//20+1; name=f'{prefix}{idx+1:03d} · {theme} · Layout {variation}'
-    doc={'generator':GENERATOR_ID,'kind':kind,'version':1,'width':W,'height':H,'pages':[{k:v for k,v in p.items() if k!='backgroundSvg'} for p in pages],'meta':{'compositionFingerprint':fp,'theme':theme,'layoutFamily':idx%20+1,'variation':variation}}
+    theme=THEMES[idx%20][0]; variation=idx//20+1; brief=subject_copy(idx)[4]; name=f'{prefix}{idx+1:03d} · {brief} · {VARIATION_NAMES[(variation-1)%5]}'
+    doc={'generator':GENERATOR_ID,'kind':kind,'version':2,'width':W,'height':H,'pages':[{k:v for k,v in p.items() if k!='backgroundSvg'} for p in pages],'meta':{'compositionFingerprint':fp,'theme':theme,'layoutFamily':idx%20+1,'variation':variation}}
     for side,p in enumerate(pages): (out/f'{idx+1:03d}_{side+1}_{p["name"].lower().replace(" ","_")}.svg').write_text(p['backgroundSvg'],encoding='utf-8')
-    preview_svg=pages[0]['backgroundSvg']; preview_name=f'{kind}_{idx+1:03d}.svg'; preview_bytes=preview_svg.encode();
+    preview_svg=render_preview(pages[0]); preview_name=f'{kind}_{idx+1:03d}.svg'; preview_bytes=preview_svg.encode();
     if cairosvg:
      try: preview_bytes=cairosvg.svg2png(bytestring=preview_bytes,output_width=min(W,1000)); preview_name=f'{kind}_{idx+1:03d}.png'
      except Exception: pass
