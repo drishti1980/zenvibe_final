@@ -89,6 +89,20 @@ class BrochureColorEngineTests(SimpleTestCase):
                     self.assertFalse(overlap_width>1 and overlap_height>1)
         self.assertEqual(len(variations),20)
 
+    def test_every_inside_and_outside_panel_has_100_distinct_palettes(self):
+        roles=("cover","back","flap","intro","offer","contact","story","services")
+        for family in ("bifold","trifold"):
+            master=palette_signatures(family)
+            expected_papers={paper for paper,accent in master}
+            expected_accents={accent for paper,accent in master}
+            for role in roles:
+                shades=[palette_for(i,family,role) for i in range(100)]
+                with self.subTest(family=family,role=role):
+                    self.assertEqual({p.paper for p in shades},expected_papers)
+                    self.assertEqual({p.accent for p in shades},expected_accents)
+                    self.assertEqual(len({p.paper for p in shades}),100)
+                    self.assertEqual(len({p.accent for p in shades}),100)
+
     def test_families_have_independent_palettes(self):
         bi=palette_signatures("bifold")
         tri=palette_signatures("trifold")
