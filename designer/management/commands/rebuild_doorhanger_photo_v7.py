@@ -272,6 +272,9 @@ def _front(index,w,h,source):
     sx,sy,sw,sh=sub
     _label(a,"Editable supporting copy",subtitle,w*sx,h*sy,w*sw,h*sh,
            muted,.044,False)
+    # Small editable foil details complete the frame without repeating colour-only layouts.
+    a.rect(w*.11,h*.956,w*.11,h*.003,foil,"Footer foil detail")
+    a.rect(w*.78,h*.956,w*.11,h*.003,foil,"Footer foil balance")
     # CTA is a distinct large typographic band with strong colour contrast.
     # Special edition 2 uses a narrower callout because its photograph is taller.
     cta_y=.913 if edition==2 else .896
@@ -306,8 +309,9 @@ def _draw_objects(page, scale):
             src=str(o.get("src") or "")
             if not src.startswith("data:image/jpeg;base64,"):
                 raise CommandError("Image must be an embedded valid JPEG")
-            photo=_source_image(base64.b64decode(src.split(",",1)[1]))
-            photo=ImageOps.fit(photo,(ww,hh),method=RESAMPLE)
+            with Image.open(io.BytesIO(base64.b64decode(src.split(",",1)[1]))) as decoded:
+                photo=ImageOps.exif_transpose(decoded).convert("RGB")
+                photo=ImageOps.fit(photo,(ww,hh),method=RESAMPLE)
             img.paste(photo,(x,y))
         elif kind=="textbox":
             font=_font(float(o.get("fontSize") or 18)*scale,
@@ -348,7 +352,7 @@ def _mockup(front,back,edition):
     d.rounded_rectangle((34,32,cw-34,ch-30),radius=28,
                         fill=(247,246,243),outline=(215,213,208),width=2)
     d.text((70,62),"FRONT  /  BACK",font=_font(27,True),fill=(64,67,69))
-    d.text((70,ch-72),"CUSTOMISE EVERY TEXT AND PHOTO",font=_font(23),
+    d.text((700,62),"EDIT TEXT + PHOTOS",font=_font(21),
            fill=(95,94,93))
     p1=_draw_objects(front, .65)
     p2=_draw_objects(back, .49)
