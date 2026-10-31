@@ -4,8 +4,10 @@ These tests use generated local photo-like pixels only for geometry testing.
 The real installer uses curated licensed photo assets and fails safely if its
 photography is unavailable. Tests never access Zenvibe.ca or modify the DB.
 """
+import copy
 import io
 import re
+from contextlib import nullcontext
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -20,7 +22,7 @@ from designer.management.commands.rebuild_trifold_luxury_v3 import (
     GENERATOR, COUNT, DIRECTIONS, FEATURES, _page_panel, _panel_role,
     _existing, _preview, build_page, is_trifold, art_direction,
     _sheet_pair, _previous_sheet_dimensions, _missing_admin_sheet,
-    resolve_trifold_pages,
+    resolve_trifold_pages, refresh_published_previews,
 )
 from designer.tests.test_remaining_premium_100 import FakeProduct
 
@@ -39,6 +41,83 @@ class PhotoFixture:
                 d.ellipse((x,y,x+63,y+99),outline=(224,194,151),width=5)
             self.images[key]=_jpeg(picture)
         return self.images[key]
+
+
+class GalleryEditorParityTests(SimpleTestCase):
+    def test_thumbnail_shows_whole_outside_and_inside_pages_not_cropped_cover(self):
+        pages=[
+            {"name":"Outside","width":1200,"height":900},
+            {"name":"Inside","width":1200,"height":900},
+        ]
+        render_calls=[]
+        def fake_render(page,scale):
+            render_calls.append((page["name"],scale))
+            shade=(190,38,54,255) if page["name"]=="Outside" else (30,107,178,255)
+            return Image.new("RGBA",(
+                max(1,round(page["width"]*scale)),
+                max(1,round(page["height"]*scale)),
+            ),shade)
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3._page_image",
+            side_effect=fake_render,
+        ):
+            preview=_preview(pages)
+        with Image.open(io.BytesIO(preview)) as result:
+            self.assertEqual(result.size,(1000,1200))
+            self.assertEqual(result.convert("RGB").getpixel((500,400)),(190,38,54))
+            self.assertEqual(result.convert("RGB").getpixel((500,900)),(30,107,178))
+        self.assertEqual([x[0] for x in render_calls],["Outside","Inside"])
+
+    def test_preview_refresh_preserves_all_published_master_json_and_ids(self):
+        class FakeRow:
+            def __init__(self,index):
+                self.pk=50000+index
+                self.name="ZV Tri-Fold %03d"%(index+1)
+                self.is_active=True
+                self.json_data={
+                    "generator":GENERATOR,
+                    "pages":[
+                        {"name":"Outside","width":1200,"height":900,
+                         "objects":[{"type":"textbox","text":"Front"}]},
+                        {"name":"Inside","width":1200,"height":900,
+                         "objects":[{"type":"textbox","text":"Back"}]},
+                    ],
+                }
+                self.preview=SimpleNamespace(
+                    name="before.png",
+                    storage=SimpleNamespace(exists=lambda path:True),
+                )
+                self.saved=[]
+            def save(self,**kwargs):
+                self.saved.append(kwargs)
+        originals=[FakeRow(i) for i in range(COUNT)]
+        mapping={idx:row for idx,row in enumerate(originals)}
+        original_data=[copy.deepcopy(row.json_data) for row in originals]
+        original_ids=[row.pk for row in originals]
+        product=SimpleNamespace(pk=345)
+        with patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3._preview",
+            return_value=b"P"*10001,
+        ),patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3._backup",
+            return_value="trifold-before-backup.gz",
+        ),patch(
+            "designer.management.commands.rebuild_trifold_luxury_v3.transaction.atomic",
+            side_effect=lambda:nullcontext(),
+        ):
+            updated=refresh_published_previews(product,originals,mapping)
+        self.assertEqual(updated,100)
+        self.assertEqual([row.pk for row in originals],original_ids)
+        self.assertEqual([row.json_data for row in originals],original_data)
+        self.assertTrue(all(row.is_active for row in originals))
+        self.assertTrue(all(
+            row.saved==[{"update_fields":["preview","updated_at"]}]
+            for row in originals
+        ))
+        self.assertTrue(all(
+            row.preview.name.startswith("template_previews/trifold-exact-v3-345-")
+            for row in originals
+        ))
 
 
 class MissingAdminSheetTests(SimpleTestCase):
@@ -237,7 +316,7 @@ class BrochureV3Tests(SimpleTestCase):
             signatures.add(signature)
         self.assertEqual(len(signatures),100)
 
-    def test_cover_first_gallery_is_real_artwork_not_photo_placeholders(self):
+    def test_exact_sheet_gallery_is_real_artwork_not_photo_placeholders(self):
         for idx in (0,1,2,3,4,20,42,99):
             pages=[build_page(self.product,idx,side,self.surface,self.photos)
                    for side in (0,1)]
