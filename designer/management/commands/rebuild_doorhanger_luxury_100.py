@@ -540,10 +540,24 @@ class Command(BaseCommand):
                 "the gallery before a full library rebuild."
             )
         w,h=source_dimensions(product,list(known.values()))
+        surfaces=list(product.print_surfaces.filter(is_active=True).order_by("sort_order","id"))
+        if len(surfaces)>2:
+            raise CommandError("Door hanger has more than two active Admin surfaces; confirm page setup first")
+        side_count=len(surfaces) if surfaces else 2
+        for surface in surfaces:
+            if float(surface.print_width_in or 0)<=0 or float(surface.print_height_in or 0)<=0:
+                raise CommandError("Admin door-hanger print surface has invalid inch dimensions")
         built=[]
         footprints=set()
         for idx in range(100):
-            pages=[page_for(idx,side,w,h) for side in range(2)]
+            pages=[page_for(idx,side,w,h) for side in range(side_count)]
+            for side,surface in enumerate(surfaces):
+                pages[side]["name"]=surface.label
+                pages[side]["physical"]={
+                    "widthIn":float(surface.print_width_in),
+                    "heightIn":float(surface.print_height_in),
+                    "unit":"in",
+                }
             signature=hashlib.sha256(json.dumps(
                 [
                     (p["name"],[(o["type"],o["left"],o["top"],o["width"],o["height"],
@@ -562,15 +576,16 @@ class Command(BaseCommand):
                 "templateType":"editable-master",
                 "editorNative":True,"editable":True,
                 "designFamily":theme,"composition":edition,
-                "compositionSignature":signature,"pageCount":2,
+                "compositionSignature":signature,"pageCount":len(pages),
                 "width":w,"height":h,
                 "pages":pages,
                 "previewComplete":True,
+                "adminSurfacePageCount":side_count,
                 "cutAreaNote":"Knob-hole and slit on preview are illustrative only; use actual manufacturer dieline for production.",
             }
             built.append((idx,name,master,preview))
         self.stdout.write(self.style.SUCCESS(
-            f"Validated 100 distinct, fully illustrated front/back door hangers "
+            f"Validated 100 distinct, fully illustrated door hangers ({side_count} page(s)) "
             f"for #{product.pk} {product.name}. Existing generated rows: {len(known)}"
         ))
         if not apply:
@@ -601,5 +616,5 @@ class Command(BaseCommand):
                 )
                 template.save()
         self.stdout.write(self.style.SUCCESS(
-            f"Installed 100 complete front/back designs; source IDs preserved. Backup: {backup_path}"
+            f"Installed 100 complete designs ({side_count} page(s)); source IDs preserved. Backup: {backup_path}"
         ))
