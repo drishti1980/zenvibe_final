@@ -144,8 +144,13 @@ def choose(product, count, refresh=False):
             return plan(cmd="seed_flyer_templates_v2", params={"product_id": product.pk, "count": 100},
                         refreshable=False)
         if match(name, "tri fold", "trifold"):
-            return plan(cmd="seed_100_trifold_brochure_templates",
-                        params={"product_id": product.pk, "count": 100}, refreshable=False)
+            # Do not resurrect the older placeholder-heavy V1 library.
+            # The V3 installer checks the actual Marketing Materials category,
+            # safely migrates generated 001..100 rows and archives masters
+            # referenced by existing customer designs.
+            return plan(cmd="rebuild_trifold_luxury_v3",
+                        params={"product_id":product.pk,"apply":True},
+                        refreshable=False)
         if match(name, "bi fold", "bifold"):
             if int(product.width or 0) <= int(product.height or 0):
                 return plan(reason="Bi-fold requires landscape canvas dimensions")
