@@ -38,6 +38,11 @@ from designer.management.commands.seed_promotional_product_templates import (
 from designer.management.commands.seed_notebook_templates import (
     GENERATOR as NOTEBOOK_GENERATOR,
 )
+from designer.management.commands.seed_luxury_print_face_templates import (
+    GENERATOR as PRINT_FACE_GENERATOR,
+    family_for as print_face_family,
+    surfaces_for as configured_print_surfaces,
+)
 
 
 @dataclass
@@ -189,7 +194,7 @@ def choose(product, count, refresh=False):
                         params={"product_id": product.pk}, refreshable=True)
         # Roll-ups, rectangular flags and tablecovers are NOT teardrops and
         # must not receive the teardrop mask.
-        if root_banners:
+        if root_banners and print_face_family(product) not in ("flat-display","fabric-panel"):
             return plan(reason="No verified shape-specific banner/display generator")
 
     if "umbrella" in name and (root_promo or group == "Other"):
@@ -200,6 +205,29 @@ def choose(product, count, refresh=False):
             return plan(reason="Umbrella requires real Admin print width and height")
         return plan(cmd="seed_umbrella_luxury_templates",
                     params={"product_id": product.pk, "count": 100}, refreshable=True)
+
+    # Complete missing print-face libraries using original, category-specific
+    # vectors. This does not use the old flyer generator on shirts or bottles.
+    # Existing promotional canonical designs keep their dedicated templates.
+    family = print_face_family(product)
+    canonical_promo = (root_promo and product.name in CANONICAL_PRODUCT_NAMES)
+    if family and not canonical_promo:
+        if count and not DesignTemplate.objects.filter(
+            product_id=product.pk,
+            json_data__generator=PRINT_FACE_GENERATOR
+        ).exists():
+            return plan(reason="Existing templates use a different library; avoid replacing customer artwork")
+        try:
+            configured_print_surfaces(product)
+        except CommandError as exc:
+            return plan(reason="Print-face setup incomplete: "+str(exc))
+        if count >= 100 and not refresh:
+            return plan(reason="Already has 100 active editable templates")
+        return Task(
+            product,group,100,count,"seed_luxury_print_face_templates",
+            {"product_id":product.pk,"count":100,"apply":True},
+            "Original artwork fitted to configured Admin print face",True
+        )
 
     if root_promo:
         if product.pk in LEGACY_PRODUCT_IDS:
