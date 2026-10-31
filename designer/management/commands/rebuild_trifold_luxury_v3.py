@@ -40,7 +40,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from designer.models import DesignTemplate, Product, SavedDesign
 from designer.management.commands.premium_brochure_palettes import (
-    palette_for, validate_100_palettes,
+    palette_for, validate_100_palettes, cover_photo_tiles,
 )
 from designer.management.commands.rebuild_remaining_premium_100 import (
     Artwork, Photobank, BRIEFS, BASES, PrintPage, configured_pages,
@@ -256,7 +256,13 @@ def _cover(art,panel,index,edition,bank,colors):
         subbox=(.09,.794,.82,.052)
         ctabox=(.11,.895,.78,.064)
 
-    _photo(art,bank,theme,edition,_in(panel,photo),"Replace front-cover photograph")
+    # Twenty visually different safe photo compositions within each of
+    # five distinct editorial cover hierarchies. This is NOT recolouring.
+    for photo_no,tile in enumerate(cover_photo_tiles(index,_in(panel,photo))):
+        _photo(
+            art,bank,theme,(edition+photo_no)%5,tile,
+            "Replace cover photograph %d"%(photo_no+1),
+        )
     if edition==4:
         _photo(art,bank,theme,(edition+2)%5,_in(panel,detail),
                "Replace cover-detail photograph")
