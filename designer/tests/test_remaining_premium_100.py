@@ -175,6 +175,49 @@ class ArtworkCompositionTests(SimpleTestCase):
                 self.assertLessEqual(obj["left"]+obj["width"],x+bw+.2)
                 self.assertLessEqual(obj["top"]+obj["height"],y+bh+.2)
 
+    def test_100_compact_branding_layouts_fit_tiny_approved_print_faces(self):
+        """Regression for thermos/bottle faces that previously failed typography.
+
+        Small physical imprints should use attractive, legible short wordmarks,
+        not try to squeeze a full photo advertisement into a label strip.
+        """
+        examples=(
+            ("Smart Thermos Bottle with LED Temperature Display", "drinkware",
+             PrintPage("Bottle front",3.2,1.0,3.2,1.0,(.36,.35,.18,.18))),
+            ("510ml Smart Thermo Bottle", "drinkware",
+             PrintPage("Narrow bottle imprint",2.8,.6,2.8,.6,(.25,.27,.50,.34))),
+            ("Premium Custom Stainless Steel Water Bottle", "drinkware",
+             PrintPage("Engraving",1.0,.4,1.0,.4,(0,0,1,1))),
+            ("Custom Name Badge", "promotional-products",
+             PrintPage("Badge front",2.0,.35,2.0,.35,(0,0,1,1))),
+        )
+        for name,category,surface in examples:
+            item=FakeProduct(name,category)
+            family=family_for(item)
+            self.assertTrue(family)
+            signatures=set()
+            for i in range(100):
+                page=build_page(item,family,i,0,surface,self.photos)
+                self.assertEqual(page["compositionMode"],"compact-imprint")
+                self.assertEqual(page["physical"]["unit"],"in")
+                objects=page["objects"]
+                texts=[o for o in objects if o["type"]=="textbox"]
+                self.assertEqual(len(texts),2)
+                self.assertTrue(all(o["customerEditable"] for o in texts))
+                self.assertTrue(all(o["fontSize"] >= 7.5 for o in texts))
+                self.assertFalse(any(o["type"]=="image" for o in objects))
+                self.assertTrue(any(o["type"] in ("circle","rect") for o in objects))
+                for obj in objects:
+                    self.assertGreaterEqual(obj["left"],0)
+                    self.assertGreaterEqual(obj["top"],0)
+                    self.assertLessEqual(obj["left"]+obj["width"],page["width"]+.2)
+                    self.assertLessEqual(obj["top"]+obj["height"],page["height"]+.2)
+                sig=tuple((o["type"],o["left"],o["top"],o.get("text",""))
+                          for o in objects)
+                self.assertNotIn(sig,signatures)
+                signatures.add(sig)
+            self.assertEqual(len(signatures),100)
+
     def test_two_sided_designs_have_distinct_editable_pages(self):
         product=FakeProduct("Premium Bi-Fold Brochures","marketing-materials")
         surface=PrintPage("Outside",11,8.5,11,8.5,(0,0,1,1))
