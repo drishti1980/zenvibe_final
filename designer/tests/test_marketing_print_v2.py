@@ -36,6 +36,9 @@ class MarketingKindTests(SimpleTestCase):
                 self.assertEqual(
                     product_kind(FakeProduct(name,"marketing-materials")),expected
                 )
+        self.assertEqual(
+            product_kind(FakeProduct("Custom Flyers","promotional-products")),""
+        )
         self.assertEqual(TARGET,100)
         self.assertIn("premium",GENERATOR)
 
