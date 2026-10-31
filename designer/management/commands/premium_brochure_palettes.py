@@ -342,12 +342,19 @@ def validate_100_palettes(family):
                 raise ValueError(
                     "Accent colours %03d / %03d are visually repeated"%(i+1,j+1)
                 )
-    for i in range(100):
-        color=palette_for(i,family)
-        if contrast(color.paper,color.ink)<4.5:
-            raise ValueError("Template %03d has unreadable headline"%(i+1))
-        if contrast(color.accent,color.on_accent)<4.5:
-            raise ValueError("Template %03d has unreadable CTA"%(i+1))
-        if contrast(color.paper,color.accent)<1.75:
-            raise ValueError("Template %03d accent disappears against paper"%(i+1))
+    # Each role must also be a permutation of the same 100 CIELAB-separated
+    # swatches, not a slight HSL variation that causes inside pages to repeat.
+    for role in ROLES:
+        assigned=[palette_for(i,family,role) for i in range(100)]
+        if {p.paper for p in assigned}!=set(papers):
+            raise ValueError("Repeated/unknown %s panel background"%role)
+        if {p.accent for p in assigned}!=set(accents):
+            raise ValueError("Repeated/unknown %s panel accent"%role)
+        for i,color in enumerate(assigned):
+            if contrast(color.paper,color.ink)<4.5:
+                raise ValueError("Template %03d %s headline is unreadable"%(i+1,role))
+            if contrast(color.accent,color.on_accent)<4.5:
+                raise ValueError("Template %03d %s CTA is unreadable"%(i+1,role))
+            if contrast(color.paper,color.accent)<1.75:
+                raise ValueError("Template %03d %s foil disappears"%(i+1,role))
     return True
