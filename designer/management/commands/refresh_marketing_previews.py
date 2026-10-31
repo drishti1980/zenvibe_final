@@ -52,7 +52,11 @@ class Command(BaseCommand):
             qs=qs.filter(product_id=opts["product_id"])
         count=0
         malformed=0
-        for template in qs.iterator(chunk_size=40):
+        # Materialize just PKs before updating rows; SQLite must not hold a
+        # streaming SELECT cursor open while previews are saved.
+        template_ids=list(qs.values_list("pk",flat=True))
+        for pk in template_ids:
+            template=DesignTemplate.objects.get(pk=pk)
             data=template.json_data
             if isinstance(data,str):
                 try: data=json.loads(data)
