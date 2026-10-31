@@ -247,16 +247,15 @@ def motif(style, edition, region, colours, make):
         tile(.48,.08,.025,.80,opacity=.72)
         for j in range(n+1):
             px=.31 if j%2 else .60
-            oval(px,.16+j*.65/n,.15,.072,angle=(-22 if j%2 else 22))
+            oval(px,.16+j*.65/n,.15,.072)
     elif style==3:  # Deco diamond tiles
         for j in range(n):
-            tile(.16+j*.58/n,.30,.09,.27,opacity=.7 if j%2 else .95,angle=45)
+            tile(.16+j*.58/n,.30,.09,.27,opacity=.7 if j%2 else .95)
     elif style==4:  # Sunrise
         orb(.48,.53,.24,ink,opacity=.34)
         for j in range(n+2):
             a=math.pi*j/(n+1)
-            tile(.48+.34*math.cos(a),.48+.34*math.sin(a),.018,.15,ink,.8,
-                 angle=j*13)
+            tile(.48+.34*math.cos(a),.48+.34*math.sin(a),.018,.15,ink,.8)
     elif style==5:  # Wave pattern
         for j in range(n):
             for q in range(5):
@@ -279,7 +278,7 @@ def motif(style, edition, region, colours, make):
         for j in range(5+edition):
             a=j*2*math.pi/(5+edition)
             oval(.5+.19*math.cos(a),.5+.19*math.sin(a),
-                 .125,.10,ink,.48,angle=j*25)
+                 .125,.10,ink,.48)
         orb(.5,.5,.11,paper,.9)
     elif style==10:  # Minimal gallery border
         tile(.15,.14,.72,.018)
@@ -299,7 +298,7 @@ def motif(style, edition, region, colours, make):
             tile(.20+j*.14,.44,.09,.012,ink,.35)
     elif style==13:  # Art nouveau vines
         for j in range(n):
-            oval(.26+j*.11,.40+j*.045,.09,.18,ink,.46,angle=j*15)
+            oval(.26+j*.11,.40+j*.045,.09,.18,ink,.46)
     elif style==14:  # Mountain silhouettes
         for j in range(n+1):
             tile(.13+j*.13,.25+((j*3)%5)*.11,.06,.55-((j*3)%5)*.09,
@@ -311,7 +310,7 @@ def motif(style, edition, region, colours, make):
     elif style==16:  # Abstract stacked postcards
         for j in range(n):
             tile(.18+j*.035,.20+j*.035,.45,.46,
-                 ink,.18+(j%3)*.13,angle=(j%3-1)*10)
+                 ink,.18+(j%3)*.13)
     elif style==17:  # Monochrome crescent
         orb(.48,.48,.28,ink,.7)
         orb(.60,.40,.22,dark,.96)
@@ -319,7 +318,7 @@ def motif(style, edition, region, colours, make):
     elif style==18:  # Floral garden blocks
         for j in range(n):
             oval(.17+j*.66/n,.35+(j%2)*.24,.075,.20,
-                 ink,.52,angle=25 if j%2 else -25)
+                 ink,.52)
         tile(.1,.84,.8,.025,paper,.5)
     else:  # Textile/foil crosshatch
         for j in range(n):
@@ -351,7 +350,7 @@ def typography(concept, edition, region, colours, make, compact=False):
         output.append(make(
             "textbox",
             ("Brand wordmark","Editable headline","Editable supporting copy")[idx],
-            xx,yy,ww,hh,paper if idx==0 else metal if idx==1 else paper,
+            xx,yy,ww,hh,dark if idx in (0,1) else metal,
             fontSize=round(size,2),fontFamily="Arial" if idx==0 else "Georgia",
             fontWeight="700" if bold else "400",text=label,
             lineHeight=1.1,textAlign="left",
@@ -425,7 +424,7 @@ def make_page(index, surface, page_index, family):
     concept=(index*7+page_index*3)%len(CONCEPTS)
     style=index%20
     edition=index//20
-    colors=PALETTES[(index*3+page_index)%len(PALETTES)]
+    colors=PALETTES[(index*3+edition*5+page_index)%len(PALETTES)]
     mk=object_factory()
     motif_objects=motif(style,edition,art_region,colors,mk)
     copy_objects=typography(concept,edition,copy_region,colors,mk,compact=compact)
