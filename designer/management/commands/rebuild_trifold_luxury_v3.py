@@ -39,6 +39,9 @@ from django.db import transaction
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from designer.models import DesignTemplate, Product, SavedDesign
+from designer.management.commands.premium_brochure_palettes import (
+    palette_for, validate_100_palettes,
+)
 from designer.management.commands.rebuild_remaining_premium_100 import (
     Artwork, Photobank, BRIEFS, BASES, PrintPage, configured_pages,
     canvas_size, physical_region, _render_page, _font, _category_path, protected,
@@ -213,13 +216,11 @@ def _cover(art,panel,index,edition,bank,colors):
     theme=index%20
     brand,headline,sub,cta=_copy(theme,"cover")
     paper,ink,muted=colors
-    foil=BRIEFS[theme][4]
+    palette=palette_for(index,"trifold","cover")
+    foil=palette.accent
     x,y,w,h=panel
-    # Full front cover colour and photography: the hero is a real JPEG,
-    # editable independently, never a screenshot or REPLACE PHOTO frame.
-    dark=edition in (1,3)
-    if dark:
-        paper="#172E39";ink="#FFF6E8";muted="#E5DDC9"
+    # Cover colours are generated per indexed design. Never force the same
+    # dark navy on every second design, irrespective of its palette.
     _body(art,panel,paper)
     _accent(art,panel,edition,foil,ink,theme)
 
@@ -270,14 +271,14 @@ def _cover(art,panel,index,edition,bank,colors):
     art.rect("Premium cover booking band",cx,cy,cw,ch,foil,rx=min(cw,ch)*.08)
     _text(art,"Editable cover action",cta,
           (cx+cw*.06,cy+ch*.08,cw*.88,ch*.81),
-          "#172B33",24,True,align="center",lines=1)
+          palette.on_accent,24,True,align="center",lines=1)
 
 
 def _flap(art,panel,index,edition,bank,colors):
     theme=index%20
     brand,headline,sub,cta=_copy(theme,"flap")
     paper,ink,muted=colors
-    foil=BRIEFS[theme][4]
+    foil=palette_for(index,"trifold","flap").accent
     x,y,w,h=panel
     _body(art,panel,paper)
     _accent(art,panel,(edition+2)%5,foil,ink,theme)
@@ -302,14 +303,14 @@ def _flap(art,panel,index,edition,bank,colors):
            "Replace fold-in feature photograph")
     _text(art,"Editable flap title",headline,_in(panel,heading),ink,37,True,lines=3)
     _text(art,"Editable flap description",sub,_in(panel,desc),muted,23,lines=2)
-    _text(art,"Editable flap action",cta,_in(panel,(.10,.914,.80,.045)),foil,23,True,lines=1)
+    _text(art,"Editable flap action",cta,_in(panel,(.10,.914,.80,.045)),ink,23,True,lines=1)
 
 
 def _back(art,panel,index,edition,bank,colors):
     theme=index%20
     brand,headline,sub,cta=_copy(theme,"back")
     paper,ink,muted=colors
-    foil=BRIEFS[theme][4]
+    foil=palette_for(index,"trifold","back").accent
     x,y,w,h=panel
     _body(art,panel,paper)
     _accent(art,panel,(edition+1)%5,foil,ink,theme)
@@ -323,14 +324,15 @@ def _back(art,panel,index,edition,bank,colors):
     _text(art,"Editable back subheading",sub,
           _in(panel,(.09,.784,.82,.050)),muted,23,lines=2)
     _text(art,"Editable contact website",cta,
-          _in(panel,(.09,.895,.82,.052)),foil,25,True,lines=1)
+          _in(panel,(.09,.895,.82,.052)),ink,25,True,lines=1)
 
 
 def _inside(art,panel,index,edition,bank,colors,role):
     theme=index%20
     brand,headline,sub,cta=_copy(theme,role)
     paper,ink,muted=colors
-    foil=BRIEFS[theme][4]
+    palette=palette_for(index,"trifold",role)
+    foil=palette.accent
     x,y,w,h=panel
     # The inside spread harmonises across 3 panels, but each panel has a
     # distinct visual job rather than three repeated photo/text cards.
@@ -346,16 +348,17 @@ def _inside(art,panel,index,edition,bank,colors,role):
         _text(art,"Editable introduction story",sub,
               _in(panel,(.09,.802,.82,.085)),muted,23,lines=3)
     elif role=="offer":
-        _body(art,panel,"#F2EBDD" if edition in (1,3) else "#E9EEE8")
-        _accent(art,panel,(edition+1)%5,foil,"#2B3F43",theme)
+        # No fixed sage/ivory middle panel reused throughout the gallery.
+        _body(art,panel,paper)
+        _accent(art,panel,(edition+1)%5,foil,ink,theme)
         _photo(art,bank,theme,(edition+2)%5,
                _in(panel,(.10,.150,.80,.400)),"Replace service photograph")
         _text(art,"Editable service headline",headline,
-              _in(panel,(.085,.592,.83,.125)),"#2B3F43",41,True,lines=3)
+              _in(panel,(.085,.592,.83,.125)),ink,41,True,lines=3)
         _text(art,"Editable service description",sub,
-              _in(panel,(.09,.757,.82,.060)),"#536467",23,lines=2)
+              _in(panel,(.09,.757,.82,.060)),muted,23,lines=2)
         _text(art,"Editable service action",cta,
-              _in(panel,(.09,.887,.82,.055)),"#936F43",24,True,lines=1)
+              _in(panel,(.09,.887,.82,.055)),ink,24,True,lines=1)
     else:
         _body(art,panel,paper)
         _accent(art,panel,(edition+3)%5,foil,ink,theme)
@@ -369,7 +372,7 @@ def _inside(art,panel,index,edition,bank,colors,role):
         art.rect("Inside connection button",cx,cy,cw,ch,foil,rx=min(cw,ch)*.08)
         _text(art,"Editable contact CTA",cta,
               (cx+cw*.06,cy+ch*.08,cw*.88,ch*.82),
-              "#192C32",24,True,align="center",lines=1)
+              palette.on_accent,24,True,align="center",lines=1)
 
 
 def build_page(product,index,side,surface,bank):
@@ -382,21 +385,24 @@ def build_page(product,index,side,surface,bank):
     art=Artwork(W,H)
     edition=art_direction(index)
     theme=index%20
-    paper,ink,muted=BASES[edition]
+    cover_palette=palette_for(index,"trifold","cover")
+    paper,ink,muted=cover_palette.paper,cover_palette.ink,cover_palette.muted
     # Full-bleed paper is visually continuous across the three panels;
     # fold-safe content is a separate inset from the actual Admin print area.
     art.rect("Editable continuous brochure substrate",*region,paper)
     for panel_index in range(3):
         role=_panel_role(side,panel_index)
         cell=_page_panel(surface,panel_index,region)
+        role_palette=palette_for(index,"trifold",role)
+        role_colors=(role_palette.paper,role_palette.ink,role_palette.muted)
         if role=="cover":
-            _cover(art,cell,index,edition,bank,(paper,ink,muted))
+            _cover(art,cell,index,edition,bank,role_colors)
         elif role=="back":
-            _back(art,cell,index,edition,bank,(paper,ink,muted))
+            _back(art,cell,index,edition,bank,role_colors)
         elif role=="flap":
-            _flap(art,cell,index,edition,bank,(paper,ink,muted))
+            _flap(art,cell,index,edition,bank,role_colors)
         else:
-            _inside(art,cell,index,edition,bank,(paper,ink,muted),role)
+            _inside(art,cell,index,edition,bank,role_colors,role)
     art.validate(region)
     page={
         "name":"Outside" if side==0 else "Inside",
@@ -407,6 +413,11 @@ def build_page(product,index,side,surface,bank):
         "foldGuides":[1/3,2/3],
         "foldPanelCount":3,"foldStyle":"nominal-roll-fold",
         "panelRoles":[_panel_role(side,i) for i in range(3)],
+        "paletteIdentity":cover_palette.identity,
+        "paletteColors":{
+            "paper":cover_palette.paper,"accent":cover_palette.accent,
+            "ink":cover_palette.ink,
+        },
         "background":"rgba(0,0,0,0)",
         "objects":art.items,
     }
@@ -801,6 +812,7 @@ class Command(BaseCommand):
             product,originals,override=override,
             log=lambda msg: self.stdout.write(self.style.WARNING(msg)),
         )
+        validate_100_palettes("trifold")
         photos=Photobank(opts.get("photo_dir"),dry_run=opts["dry_run"])
         built=[]; signatures=set()
         for idx in range(COUNT):
@@ -823,6 +835,7 @@ class Command(BaseCommand):
                 "editorNative":True,"previewComplete":True,
                 "width":pages[0]["width"],"height":pages[0]["height"],
                 "pageCount":2,"pages":pages,
+                "colourEngine":"unique-100-v1",
                 "galleryPreviewMode":"exact-editor-pages",
                 "galleryPreviewOrder":["Outside","Inside"],
                 "compositionSignature":signature,
