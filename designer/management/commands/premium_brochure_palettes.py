@@ -86,9 +86,16 @@ def text_for(background, subdued=False):
     dark=("#26333D" if subdued else "#13252E")
     light=("#E9E5DC" if subdued else "#FFFAF2")
     best=max((dark,light),key=lambda candidate:contrast(candidate,background))
-    if contrast(best,background)<4.5:
+    if contrast(best,background)>=4.5:
+        return best
+    # Saturated mid-value shades (notably olive and ochre) can defeat BOTH
+    # warm-ivory and charcoal. Pure white/black always provides >= 4.58:1
+    # against any opaque sRGB colour, so do not emit unreadable type.
+    fallback=max(("#090909","#FFFFFF"),
+                 key=lambda candidate:contrast(candidate,background))
+    if contrast(fallback,background)<4.5:
         raise ValueError("Unprintable foreground/background contrast")
-    return best
+    return fallback
 
 
 def _accessible_accent(hue, saturation, lightness, towards_light):
