@@ -360,12 +360,15 @@ def _mockup(front,back,edition):
     d.text((70,62),"FRONT  /  BACK",font=_font(27,True),fill=(64,67,69))
     d.text((700,62),"EDIT TEXT + PHOTOS",font=_font(21),
            fill=(95,94,93))
-    p1=_draw_objects(front, .65)
-    p2=_draw_objects(back, .49)
+    # Auto-fit tall/wide Admin canvas dimensions without clipping the mockup.
+    fit1=min(.65, (ch-155)/max(1,front["height"]), 390/max(1,front["width"]))
+    fit2=min(.49, (ch-220)/max(1,back["height"]), 300/max(1,back["width"]))
+    p1=_draw_objects(front,fit1)
+    p2=_draw_objects(back,fit2)
     x1=190
-    y1=110
+    y1=max(110,(ch-p1.height)//2)
     x2=680
-    y2=198
+    y2=max(160,(ch-p2.height)//2)
     # Heavy shadow draws attention to the die cut, not the page boundaries.
     for p,x,y in ((p1,x1,y1),(p2,x2,y2)):
         shadow=Image.new("RGBA",(p.width+26,p.height+30),(0,0,0,0))
@@ -500,10 +503,17 @@ class Command(BaseCommand):
                 t.name=name
                 t.json_data=data
                 t.is_active=True
-                t.preview.save(
-                    "doorhanger-photo-v7-%d-%03d.png"%(product.pk,idx+1),
-                    ContentFile(png),save=False
+                # Content-addressed filenames prevent repeated preview
+                # suffixes after a safe rerun. Never delete old media before
+                # the transaction commits: customer references may depend on it.
+                filename="doorhanger-photo-v7-%d-%03d-%s.png"%(
+                    product.pk,idx+1,hashlib.sha256(png).hexdigest()[:16]
                 )
+                storage_name="template_previews/"+filename
+                if t.preview.storage.exists(storage_name):
+                    t.preview.name=storage_name
+                else:
+                    t.preview.save(filename,ContentFile(png),save=False)
                 t.save()
         self.stdout.write(self.style.SUCCESS(
             "Installed 100 photo-rich front/back templates and full gallery "
