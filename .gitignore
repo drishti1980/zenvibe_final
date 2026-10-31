@@ -35,3 +35,12 @@ db.sqlite3
 
 *.sqlite3
 venv/
+
+# Runtime-generated data: keep locally, not in source-control commits.
+# Note: these rules do NOT untrack historical files already committed.
+template_backups/
+template_reports/
+media/zenvibe/
+media/template_previews/
+media/template_photo_library/
+media/calendar_assets/fitted/
