@@ -187,7 +187,7 @@ class ArtworkCompositionTests(SimpleTestCase):
             ("510ml Smart Thermo Bottle", "drinkware",
              PrintPage("Narrow bottle imprint",2.8,.6,2.8,.6,(.25,.27,.50,.34))),
             ("Premium Custom Stainless Steel Water Bottle", "drinkware",
-             PrintPage("Engraving",1.0,.4,1.0,.4,(0,0,1,1))),
+             PrintPage("Engraving",1.0,.4,1.0,.4,(.20,.35,.60,.20))),
             ("Custom Name Badge", "promotional-products",
              PrintPage("Badge front",2.0,.35,2.0,.35,(0,0,1,1))),
         )
