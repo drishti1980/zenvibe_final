@@ -447,6 +447,10 @@ class Photobank:
                     self.directory/("%03d.%s"%(theme+1,suffix)),
                 ])
         candidates.append(self.cache/("%02d.jpg"%(theme+1)))
+        # Reuse earlier locally cached door-hanger photographs when present,
+        # without re-fetching or modifying those files.
+        candidates.append(Path(settings.MEDIA_ROOT)/"template_photo_library"/
+                          "doorhanger"/("%02d.jpg"%(theme+1)))
         for name in candidates:
             if name.is_file():
                 image=_safe_image(name.read_bytes())
@@ -844,8 +848,8 @@ class Command(BaseCommand):
             }
             # Preview uses exactly the editor-layer geometry; no gallery
             # background-only thumbnails or substitute mockups.
-            png=render_preview(pages,family)
-            if len(png)<3000:
+            png=render_preview(pages,family) if opts["apply"] else None
+            if png is not None and len(png)<3000:
                 raise CommandError("Preview lacks complete image/text artwork")
             prepared.append((idx,name,payload,png))
         self.stdout.write(self.style.SUCCESS(
