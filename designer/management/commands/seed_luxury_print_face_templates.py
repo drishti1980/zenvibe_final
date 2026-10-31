@@ -324,6 +324,11 @@ def motif(style, edition, region, colours, make):
         for j in range(n):
             tile(.14+j*.66/n,.20,.025,.59,ink,.5)
             tile(.16,.20+j*.58/n,.67,.025,paper,.5)
+    # Every one of the five editions has a structurally distinct foil
+    # signature. This also prevents accidental duplicate compositions on
+    # very narrow horizontal printing faces where the column layout is fixed.
+    for j in range(edition+1):
+        tile(.16+j*.14,.90,.075,.018,paper,.65,tag="Edition foil accent")
     return out
 
 
