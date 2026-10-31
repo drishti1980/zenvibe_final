@@ -214,6 +214,31 @@ def palette_for(index,family,role="cover"):
     )
 
 
+@lru_cache(maxsize=512)
+def _lab(color):
+    """Convert opaque sRGB HEX to CIE L*a*b* (D65 reference white)."""
+    channels=tuple(
+        v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4
+        for v in _rgb(color)
+    )
+    red,green,blue=channels
+    xx=(.4124564*red+.3575761*green+.1804375*blue)/.95047
+    yy=(.2126729*red+.7151522*green+.0721750*blue)
+    zz=(.0193339*red+.1191920*green+.9503041*blue)/1.08883
+    cut=(6/29)**3
+    slope=3*(6/29)**2
+    def f(t):
+        return t**(1/3) if t>cut else t/slope+4/29
+    fx,fy,fz=f(xx),f(yy),f(zz)
+    return (116*fy-16,500*(fx-fy),200*(fy-fz))
+
+
+def perceptual_distance(a,b):
+    """CIE76 ΔE: detects near-identical swatches with different HEX values."""
+    a_lab,b_lab=_lab(a),_lab(b)
+    return sum((x-y)**2 for x,y in zip(a_lab,b_lab))**.5
+
+
 def cover_photo_tiles(index, frame):
     """20 distinct, fold-safe photographic structures per layout family.
 
@@ -288,10 +313,24 @@ def validate_100_palettes(family):
     accents=[a for _,a in signatures]
     if len(set(accents))!=100:
         raise ValueError("Repeated brochure accent colour")
+    # Exact HEX uniqueness alone was insufficient: pairs differing by 1-2
+    # channels still LOOKED the same. Reject perceptual near-duplicates too.
+    for i in range(100):
+        for j in range(i+1,100):
+            if perceptual_distance(papers[i],papers[j])<12.0:
+                raise ValueError(
+                    "Backgrounds %03d / %03d are visually repeated"%(i+1,j+1)
+                )
+            if perceptual_distance(accents[i],accents[j])<12.0:
+                raise ValueError(
+                    "Accent colours %03d / %03d are visually repeated"%(i+1,j+1)
+                )
     for i in range(100):
         color=palette_for(i,family)
         if contrast(color.paper,color.ink)<4.5:
             raise ValueError("Template %03d has unreadable headline"%(i+1))
         if contrast(color.accent,color.on_accent)<4.5:
             raise ValueError("Template %03d has unreadable CTA"%(i+1))
+        if contrast(color.paper,color.accent)<1.75:
+            raise ValueError("Template %03d accent disappears against paper"%(i+1))
     return True
