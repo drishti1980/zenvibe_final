@@ -344,45 +344,48 @@ def _draw_objects(page, scale):
 
 
 def _mockup(front,back,edition):
-    """A pair of large door-hanger previews on a product-neutral stage.
+    """Portrait front-led photo mockup sized to the EXISTING gallery card.
 
-    This fills the existing square preview card, unlike a skinny isolated
-    door hanger shown in the middle of an empty light-grey rectangle.
+    The previous 1080x860 horizontal image shrank a physical door hanger into
+    a tiny box in a 8.5:11 portrait card. This artwork uses the same editorial
+    density as the photo-calendar gallery without changing storefront CSS.
     """
-    cw,ch=1080,860
-    canvas=Image.new("RGB",(cw,ch),(239,238,234))
+    cw,ch=900,1160
+    canvas=Image.new("RGB",(cw,ch),(242,240,237))
     d=ImageDraw.Draw(canvas)
-    # Deliberately understated studio/background shades, no new UI.
     for y in range(ch):
-        shade=int(248-19*y/ch)
+        shade=int(249-16*y/ch)
         d.line((0,y,cw,y),fill=(shade,shade-1,shade-2))
-    d.rounded_rectangle((34,32,cw-34,ch-30),radius=28,
-                        fill=(247,246,243),outline=(215,213,208),width=2)
-    d.text((70,62),"FRONT  /  BACK" if back else "FRONT DESIGN",
-           font=_font(27,True),fill=(64,67,69))
-    d.text((700,62),"EDIT TEXT + PHOTOS",font=_font(21),
-           fill=(95,94,93))
-    # Auto-fit tall/wide Admin canvas dimensions without clipping the mockup.
-    fit1=min(.65, (ch-155)/max(1,front["height"]), 390/max(1,front["width"]))
-    p1=_draw_objects(front,fit1)
+    d.rounded_rectangle((18,18,cw-18,ch-18),radius=22,
+                        fill=(249,248,245),outline=(218,215,209),width=2)
+    d.text((50,52),"PHOTO-LED  •  CUSTOMISABLE",
+           font=_font(24,True),fill=(54,63,66))
+    d.text((45,ch-62),"FRONT ARTWORK" if not back else "FRONT  /  BACK",
+           font=_font(20,True),fill=(97,98,96))
+    # The front dominates the card. The actual back design is shown as a
+    # smaller second product, never as an invented placeholder.
     if back:
-        fit2=min(.49, (ch-220)/max(1,back["height"]), 300/max(1,back["width"]))
-        p2=_draw_objects(back,fit2)
-        pieces=((p1,190,max(110,(ch-p1.height)//2)),
-                (p2,680,max(160,(ch-p2.height)//2)))
+        f1=min(.90,(ch-235)/max(1,front["height"]),500/max(1,front["width"]))
+        f2=min(.62,(ch-420)/max(1,back["height"]),270/max(1,back["width"]))
+        p1=_draw_objects(front,f1)
+        p2=_draw_objects(back,f2)
+        pieces=((p1,65+(500-p1.width)//2,125+(930-p1.height)//2),
+                (p2,570+(270-p2.width)//2,280+(730-p2.height)//2))
     else:
-        pieces=((p1,(cw-p1.width)//2,max(110,(ch-p1.height)//2)),)
-    # Heavy shadow draws attention to the die cut, not the page boundaries.
-    for p,x,y in pieces:
-        shadow=Image.new("RGBA",(p.width+26,p.height+30),(0,0,0,0))
-        silhouette=p.getchannel("A").point(lambda n:round(n*.55))
-        shadow.paste((0,0,0,130),(12,14,12+p.width,14+p.height),silhouette)
-        shadow=shadow.filter(ImageFilter.GaussianBlur(15))
-        canvas.paste(shadow,(x-13,y-13),shadow)
-        canvas.paste(p,(x,y),p)
-    buf=io.BytesIO()
-    canvas.save(buf,format="PNG",optimize=True)
-    return buf.getvalue()
+        f1=min(.93,(ch-210)/max(1,front["height"]),750/max(1,front["width"]))
+        p1=_draw_objects(front,f1)
+        pieces=((p1,(cw-p1.width)//2,115+(945-p1.height)//2),)
+    for picture,x,y in pieces:
+        shadow=Image.new("RGBA",(picture.width+30,picture.height+30),(0,0,0,0))
+        silhouette=picture.getchannel("A")
+        blur=silhouette.filter(ImageFilter.GaussianBlur(13))
+        shadow.paste((0,0,0,125),
+                     (14,14,14+picture.width,14+picture.height),blur)
+        canvas.paste(shadow,(x-14,y-14),shadow)
+        canvas.paste(picture,(x,y),picture)
+    out=io.BytesIO()
+    canvas.save(out,format="PNG",optimize=True)
+    return out.getvalue()
 
 
 def _master(index,pages,source):
