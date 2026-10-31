@@ -389,6 +389,11 @@ def _guard_existing(product):
         if not isinstance(data,dict):
             raise CommandError("Unrecognised template data on %s"%row.pk)
         generator=str(data.get("generator") or "")
+        if generator=="zenvibe-trifold-luxury-v3":
+            raise CommandError(
+                "This tri-fold product has a premium V3 library. "
+                "Do not overwrite it using the older generic marketing V2 command."
+            )
         if not generator.startswith(SAFE_LEGACY_PREFIXES):
             raise CommandError("Unknown/customer-authored master %s; will NOT overwrite"%row.pk)
         matches=re.search(r"(?:^|\b)(\d{3})(?:\b|$)",row.name or "")
