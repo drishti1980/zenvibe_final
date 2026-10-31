@@ -526,12 +526,185 @@ def _backup(product,rows):
     return fn
 
 
+def _sheet_pair(width, height):
+    """Validate *physical inches*, never substitute pixel canvas dimensions."""
+    try:
+        w=float(width)
+        h=float(height)
+    except (TypeError, ValueError):
+        return None
+    if not all((w>0, h>0, w<=100, h<=100, w>h)):
+        return None
+    return (round(w,3),round(h,3))
+
+
+def _previous_sheet_dimensions(originals):
+    """Read existing generated masters; refuse inconsistent historical sizes.
+
+    Legacy V1 stores document.physical, even where its values were defaulted.
+    The fallback reuses exactly that old print-sheet size, with a warning that
+    it still requires manufacturer verification. No made-up new measurement.
+    """
+    candidates=set()
+    for row in originals:
+        if not row.is_active:
+            continue
+        data=_load_master(row)
+        if str(data.get("generator") or "") not in ALLOWED_GENERATORS:
+            continue
+        doc=data.get("document")
+        doc=doc if isinstance(doc,dict) else {}
+        sources=[
+            doc.get("physical"),
+            data.get("physical"),
+        ]
+        pages=data.get("pages")
+        if isinstance(pages,list) and pages:
+            page=pages[0]
+            if isinstance(page,dict):
+                sources.append(page.get("physical"))
+        for source in sources:
+            if not isinstance(source,dict):
+                continue
+            w=source.get("widthIn",source.get("width_in"))
+            h=source.get("heightIn",source.get("height_in"))
+            pair=_sheet_pair(w,h)
+            if pair is not None:
+                candidates.add(pair)
+    if len(candidates)>1:
+        raise CommandError(
+            "Existing generated tri-folds disagree on physical sheet size "
+            "(inches): %s. Set consistent dimensions in product Admin first."%
+            ", ".join("%g x %g"%p for p in sorted(candidates))
+        )
+    return next(iter(candidates),None)
+
+
+def _explicit_variant_sheet(product):
+    """An already configured product variant may supply real print inches."""
+    sizes=set()
+    for variant in product.size_variants.filter(is_active=True):
+        if variant.print_width_in is None or variant.print_height_in is None:
+            continue
+        pair=_sheet_pair(variant.print_width_in,variant.print_height_in)
+        if pair is None:
+            raise CommandError(
+                "Active size variant %s has invalid tri-fold print inches"%variant.name
+            )
+        sizes.add(pair)
+    if len(sizes)>1:
+        raise CommandError(
+            "Product has different active print sizes %s; select/configure one "
+            "physical sheet size in Admin before rebuilding one 100-template gallery."%
+            ", ".join("%g x %g"%p for p in sorted(sizes))
+        )
+    return next(iter(sizes),None)
+
+
+def _missing_admin_sheet(product,originals,override=None):
+    """Resolve a missing sheet from existing facts, not arbitrary defaults."""
+    variant=_explicit_variant_sheet(product)
+    old=_previous_sheet_dimensions(originals)
+    if override:
+        pair=_sheet_pair(*override)
+        if pair is None:
+            raise CommandError("Supplied physical sheet inches must be positive and landscape")
+        return pair,"explicit command-line sheet dimensions"
+    if variant and old and variant!=old:
+        raise CommandError(
+            "Configured size-variant print size (%g x %g in) conflicts with "
+            "existing generated template metadata (%g x %g in). "
+            "Check Admin before generating."%(variant+old)
+        )
+    if variant:
+        return variant,"existing active ProductSizeVariant print dimensions"
+    if old:
+        return old,"legacy generated template physical metadata (NOT printer-verified)"
+    raise CommandError(
+        "Product #%s has no Admin print inches, configured size-variant inches "
+        "or historical template sheet measurements. Configure the product's "
+        "physical print width/height in Admin, or supply --sheet-width-in and "
+        "--sheet-height-in from the actual supplier specification."%product.pk
+    )
+
+
+def resolve_trifold_pages(product, originals, override=None, log=None):
+    """Use Admin first; fall back to explicit historical/variant data safely.
+
+    This function does NOT save product settings or modify templates.
+    """
+    if override and not all(v is not None for v in override):
+        raise CommandError("Provide BOTH --sheet-width-in and --sheet-height-in")
+    if override and all(v is not None for v in override):
+        if _sheet_pair(*override) is None:
+            raise CommandError("Supplied sheet width and height must be valid landscape inches")
+
+    try:
+        pages=configured_pages(product,"brochure")
+    except CommandError as exc:
+        if "Admin print width/height missing" not in str(exc):
+            raise
+        # A partially configured surface is an Admin error: never override it
+        # with an unrelated legacy template-size guess.
+        if product.print_surfaces.filter(is_active=True).exists():
+            raise CommandError(
+                "An active Admin print surface is missing physical dimensions. "
+                "Fix that specific surface rather than inheriting legacy sizes."
+            ) from exc
+        pair,source=_missing_admin_sheet(product,originals,override)
+        w,h=pair
+        ww=float(product.workspace_width_in or w)
+        wh=float(product.workspace_height_in or h)
+        if ww<=0 or wh<=0 or ww/wh>15 or wh/ww>15:
+            raise CommandError("Invalid product workspace ratio; correct Admin values")
+
+        # Respect any real print-area percentage already configured in Admin.
+        bounds=(0.0,0.0,1.0,1.0)
+        for area in product.print_areas.order_by("sort_order","pk"):
+            if area.surface_id is not None or area.product_image_id is not None:
+                continue
+            try:
+                bx,by,bw,bh=(float(getattr(area,v))/100 for v in
+                            ("left","top","width","height"))
+            except (TypeError,ValueError):
+                raise CommandError("Admin print-area bounds are invalid")
+            if not (0<=bx<1 and 0<=by<1 and bw>0 and bh>0
+                    and bx+bw<=1.001 and by+bh<=1.001):
+                raise CommandError("Admin print-area bounds exceed the workspace")
+            bounds=(bx,by,bw,bh)
+            break
+        pages=[
+            PrintPage("Outside",w,h,ww,wh,bounds),
+            PrintPage("Inside",w,h,ww,wh,bounds),
+        ]
+        if log:
+            log(
+                "Admin print dimensions missing for #%d. Reusing %g x %g inches "
+                "from %s. No product settings changed. CONFIRM WITH PRINTER "
+                "BEFORE PRODUCTION."%(product.pk,w,h,source)
+            )
+    else:
+        if override and _sheet_pair(*override)!=(round(pages[0].width_in,3),
+                                                  round(pages[0].height_in,3)):
+            raise CommandError(
+                "Explicit inches conflict with configured Admin print surfaces; "
+                "change Admin if those are incorrect."
+            )
+    if len(pages)!=2 or any(face.width_in<=face.height_in for face in pages):
+        raise CommandError("Tri-fold requires two landscape Outside/Inside print faces")
+    return pages
+
+
 class Command(BaseCommand):
     help="Install 100 finished, luxury tri-fold designs without touching other categories."
 
     def add_arguments(self,p):
         p.add_argument("--product-id",type=int,required=True)
         p.add_argument("--photo-dir",default="",help="Licensed 01.jpg..20.jpg original photography")
+        p.add_argument("--sheet-width-in",type=float,default=None,
+                       help="Physical print width in inches ONLY when Admin is missing it")
+        p.add_argument("--sheet-height-in",type=float,default=None,
+                       help="Physical print height in inches ONLY when Admin is missing it")
         mode=p.add_mutually_exclusive_group(required=True)
         mode.add_argument("--dry-run",action="store_true")
         mode.add_argument("--contact-sheet",action="store_true",
@@ -545,12 +718,15 @@ class Command(BaseCommand):
         if not product or not is_trifold(product):
             raise CommandError("Only active Marketing Materials TRI-FOLD BROCHURE products can be changed")
         originals,mapping=_existing(product)
-        pages_cfg=configured_pages(product,"brochure")
-        if len(pages_cfg)!=2:
-            raise CommandError("Admin must configure Outside + Inside (2 pages)")
-        for face in pages_cfg:
-            if face.width_in<=face.height_in:
-                raise CommandError("Tri-fold requires landscape physical print dimensions")
+        width=opts.get("sheet_width_in")
+        height=opts.get("sheet_height_in")
+        if (width is None)!=(height is None):
+            raise CommandError("Use --sheet-width-in and --sheet-height-in together")
+        override=(width,height) if width is not None else None
+        pages_cfg=resolve_trifold_pages(
+            product,originals,override=override,
+            log=lambda msg: self.stdout.write(self.style.WARNING(msg)),
+        )
         photos=Photobank(opts.get("photo_dir"),dry_run=opts["dry_run"])
         built=[]; signatures=set()
         for idx in range(COUNT):
