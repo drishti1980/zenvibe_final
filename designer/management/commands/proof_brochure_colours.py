@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand, CommandError
 from PIL import Image, ImageDraw, ImageFont
 
 from designer.management.commands.premium_brochure_palettes import (
-    palette_for, validate_100_palettes,
+    palette_for, validate_100_palettes, ROLES,
 )
 
 
@@ -34,7 +34,7 @@ def _font(size,bold=False):
     return ImageFont.load_default()
 
 
-def make_palette_proof(family):
+def make_palette_proof(family, role="cover"):
     validate_100_palettes(family)
     cols,rows=10,10
     cw,ch=270,160
@@ -43,7 +43,7 @@ def make_palette_proof(family):
     title_font=_font(22,True)
     info_font=_font(15)
     for i in range(100):
-        colors=palette_for(i,family)
+        colors=palette_for(i,family,role)
         x=(i%cols)*cw
         y=(i//cols)*ch
         draw.rectangle((x,y,x+cw-1,y+ch-1),fill=colors.paper)
@@ -68,17 +68,21 @@ class Command(BaseCommand):
         parser.add_argument(
             "--family",required=True,choices=("bifold","trifold","both"),
         )
+        parser.add_argument(
+            "--role",default="cover",choices=tuple(ROLES),
+            help="Choose the brochure panel to inspect; defaults to front cover",
+        )
 
     def handle(self,*args,**options):
         families=("bifold","trifold") if options["family"]=="both" else (options["family"],)
         folder=Path(settings.BASE_DIR)/"template_reports"
         folder.mkdir(parents=True,exist_ok=True)
         for family in families:
-            image=make_palette_proof(family)
+            image=make_palette_proof(family,options["role"])
             stamp=datetime.now().strftime("%Y%m%d-%H%M%S")
-            path=folder/f"{family}_100_distinct_colours_{stamp}.png"
+            path=folder/f"{family}_{options['role']}_100_distinct_colours_{stamp}.png"
             image.save(path,format="PNG",optimize=True)
             self.stdout.write(self.style.SUCCESS(
-                f"{family}: verified 100 distinct paper colours and 100 distinct "
+                f"{family} ({options['role']}): verified 100 distinct paper colours and 100 distinct "
                 f"foil accents; visual proof: {path}"
             ))
