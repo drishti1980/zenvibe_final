@@ -29,6 +29,11 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
     TARGET, GENERATOR, family_for, protected, configured_pages,
     _existing_status, PROTECTED_GENERATOR_PARTS,
 )
+from designer.management.commands.rebuild_trifold_luxury_v3 import (
+    is_trifold as is_premium_trifold,
+    GENERATOR as TRIFOLD_PREMIUM_GENERATOR,
+    _existing as inspect_trifold_masters,
+)
 
 def failed_ids_from_report(source):
     """Return ONLY failed/incomplete IDs from an earlier bulk report.
@@ -128,14 +133,17 @@ class Command(BaseCommand):
             if protected(p):
                 label="PROTECTED"
                 reason=protected(p)
-            elif not (family:=family_for(p)):
+            elif not (family:=("trifold" if is_premium_trifold(p) else family_for(p))):
                 reason="Non-100-template category, cut-shape without verified dieline, or hardware-only product"
             elif n and opts["only_missing"]:
                 reason="Existing gallery explicitly preserved by --only-missing"
             elif (
                 n==TARGET and family!="doorhanger"
                 and DesignTemplate.objects.filter(
-                    product=p,is_active=True,json_data__generator=GENERATOR
+                    product=p,is_active=True,
+                    json_data__generator=(
+                        TRIFOLD_PREMIUM_GENERATOR if family=="trifold" else GENERATOR
+                    )
                 ).count()==TARGET
             ):
                 # Idempotence: do not rebuild the 39 already completed
@@ -143,7 +151,10 @@ class Command(BaseCommand):
                 reason="Already has 100 active premium templates; no refresh needed"
             else:
                 try:
-                    if family!="doorhanger":
+                    if family=="trifold":
+                        configured_pages(p,"brochure")
+                        inspect_trifold_masters(p)
+                    elif family!="doorhanger":
                         configured_pages(p,family)
                         _existing_status(p)
                     else:
@@ -189,6 +200,7 @@ class Command(BaseCommand):
         for row in jobs:
             command=("rebuild_doorhanger_photo_v7"
                      if row["family"]=="doorhanger" else
+                     "rebuild_trifold_luxury_v3" if row["family"]=="trifold" else
                      "rebuild_remaining_premium_100")
             if command not in commands:
                 row["status"]="FAILED"
@@ -201,6 +213,7 @@ class Command(BaseCommand):
                 p=row["product"]
                 command=("rebuild_doorhanger_photo_v7"
                          if row["family"]=="doorhanger" else
+                         "rebuild_trifold_luxury_v3" if row["family"]=="trifold" else
                          "rebuild_remaining_premium_100")
                 params={"product_id":p.pk,"apply":True}
                 if opts["photo_dir"]:
