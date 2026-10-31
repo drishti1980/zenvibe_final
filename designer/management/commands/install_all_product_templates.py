@@ -38,6 +38,7 @@ from designer.management.commands.seed_promotional_product_templates import (
 from designer.management.commands.seed_notebook_templates import (
     GENERATOR as NOTEBOOK_GENERATOR,
 )
+from designer.management.commands.rebuild_remaining_premium_100 import protected as protected_approved_library
 from designer.management.commands.seed_luxury_print_face_templates import (
     GENERATOR as PRINT_FACE_GENERATOR,
     family_for as print_face_family,
@@ -75,6 +76,13 @@ def ancestry(product):
 
 
 def choose(product, count, refresh=False):
+    # This legacy bulk installer must also honour the explicit approved
+    # library freeze, including --refresh-existing. Prevent accidental
+    # mutation of Canopy, Business Cards, Calendars, Invitations, Coasters,
+    # Awards, Umbrellas and Full Back Wall.
+    if protected_approved_library(product):
+        return Task(product, "Approved — protected", count, count,
+                    reason="Approved library frozen; no generators invoked")
     name = (product.name or "").lower()
     slugs, categories = ancestry(product)
     root_marketing = "marketing-materials" in slugs or "marketing materials" in categories
