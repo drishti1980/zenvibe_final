@@ -135,18 +135,33 @@ def choose(product, count, refresh=False):
         if match(name, "bi fold", "bifold"):
             if int(product.width or 0) <= int(product.height or 0):
                 return plan(reason="Bi-fold requires landscape canvas dimensions")
+
+            if count and refresh:
+                return Task(product,group,100,count,"refresh_marketing_previews",
+                            {"product_id":product.pk,"apply":True},
+                            "Refresh complete gallery previews without overwriting edited templates",True)
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "bifold", "count": 100},
                         insert_only=True)
         if match(name, "door hanger", "doorhanger"):
             if int(product.height or 0) <= int(product.width or 0):
                 return plan(reason="Door hanger requires portrait canvas dimensions")
+
+            if count and refresh:
+                return Task(product,group,100,count,"refresh_marketing_previews",
+                            {"product_id":product.pk,"apply":True},
+                            "Refresh complete gallery previews without overwriting edited templates",True)
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "doorhanger", "count": 100},
                         insert_only=True)
         if match(name, "ticket"):
             if int(product.width or 0) <= int(product.height or 0):
                 return plan(reason="Ticket requires landscape canvas dimensions")
+
+            if count and refresh:
+                return Task(product,group,100,count,"refresh_marketing_previews",
+                            {"product_id":product.pk,"apply":True},
+                            "Refresh complete gallery previews without overwriting edited templates",True)
             return plan(cmd="seed_100_marketing_material_templates",
                         params={"product_id": product.pk, "kind": "ticket", "count": 100},
                         insert_only=True)
@@ -317,6 +332,10 @@ class Command(BaseCommand):
                     # does not roll back successful, unrelated product libraries.
                     with transaction.atomic():
                         call_command(job.command,stdout=capture,**job.params)
+                        if job.command=="seed_100_marketing_material_templates":
+                            call_command("refresh_marketing_previews",
+                                         product_id=job.product.pk,apply=True,
+                                         stdout=capture)
                     final_count=DesignTemplate.objects.filter(
                         product_id=job.product.pk,is_active=True
                     ).count()
