@@ -119,14 +119,22 @@ def surfaces_for(product):
     if not surfaces:
         wi = float(product.print_width_in or 0)
         hi = float(product.print_height_in or 0)
-        if not (wi > 0 and hi > 0):
+        configured_area = next((
+            a for a in areas if float(a.print_width_in or 0)>0
+            and float(a.print_height_in or 0)>0
+        ), None)
+        if not (wi > 0 and hi > 0) and configured_area is None:
             raise CommandError("Missing Admin print dimensions")
         surfaces = [None]
 
     output = []
     for surface in surfaces:
-        wi = float(surface.print_width_in if surface else product.print_width_in or 0)
-        hi = float(surface.print_height_in if surface else product.print_height_in or 0)
+        wi = float(surface.print_width_in if surface else (
+            product.print_width_in or (configured_area.print_width_in if configured_area else 0)
+        ) or 0)
+        hi = float(surface.print_height_in if surface else (
+            product.print_height_in or (configured_area.print_height_in if configured_area else 0)
+        ) or 0)
         if wi <= 0 or hi <= 0:
             raise CommandError("Missing physical dimensions on a print surface")
         ww = float(
