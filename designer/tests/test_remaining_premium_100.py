@@ -156,8 +156,8 @@ class ArtworkCompositionTests(SimpleTestCase):
             self.assertGreater(len(png),5000)
             with Image.open(io.BytesIO(png)) as output:
                 self.assertEqual(output.format,"PNG")
-                self.assertEqual(output.size,(1200,850))
-                self.assertGreater(len(output.getcolors(1200*850) or []),25)
+                self.assertEqual(output.size,(900,1160))
+                self.assertGreater(len(output.getcolors(900*1160) or []),25)
 
     def test_physical_safe_area_keeps_objects_inside_print_area(self):
         product=FakeProduct("Budget Cotton Tote Bag","bags")
@@ -179,6 +179,9 @@ class ArtworkCompositionTests(SimpleTestCase):
             outside=build_page(product,"brochure",i,0,surface,self.photos)
             inside=build_page(product,"brochure",i,1,surface,self.photos)
             self.assertNotEqual(outside["objects"],inside["objects"])
-            self.assertEqual(len(outside["objects"]),len(inside["objects"])
-                               if len(outside["objects"])==len(inside["objects"]) else
-                               len(outside["objects"]))
+            self.assertGreaterEqual(len(outside["objects"]),5)
+            self.assertGreaterEqual(len(inside["objects"]),5)
+            self.assertNotEqual(
+                [o.get("text") for o in outside["objects"] if o["type"]=="textbox"],
+                [o.get("text") for o in inside["objects"] if o["type"]=="textbox"],
+            )
