@@ -410,14 +410,32 @@ def _fresh_panel(art,panel,index,side,slot,bank,colors):
     palette=palette_for(index,"trifold","cover" if side==0 else "intro")
     accent=palette.accent
     x,y,w,h=panel
-    mode=(index+side*7+slot*4)%10
+    mode=(index*7+side*11+slot*13)%10
+    # Unique index/side/panel crop and geometry: changing the palette alone
+    # can never produce the same final artwork arrangement.
+    shape_seed=(index*1009+side*109+slot*17)
+    inset=.06+(.012*(index%5))
     _body(art,panel,paper)
     _accent(art,panel,mode%5,accent,ink,theme)
     # Keep all content strictly within physical panels.
     def photo(tag,coords,variant=0):
-        _photo(art,bank,theme,(index+side+slot+variant)%5,_in(panel,coords),tag)
+        # Independently recompose photos within their original reserved region.
+        # Vertical/horizontal offsets are bounded to avoid overlaps with text.
+        xx,yy,ww,hh=coords
+        dx=(rng.random()-.5)*.022
+        dy=(rng.random()-.5)*.022
+        grow=(rng.random()-.5)*.03
+        xx=max(.055,min(.94-ww,xx+dx))
+        yy=max(.055,min(.94-hh,yy+dy))
+        ww=max(.12,min(.94-xx,ww+grow))
+        _photo(art,bank,theme,(index*3+side*2+slot+variant)%5,
+               _in(panel,(xx,yy,ww,hh)),tag)
     def txt(tag,value,coords,size=33,bold=False):
-        _text(art,tag,value,_in(panel,coords),ink,size,bold,lines=3)
+        # Different heading widths per design while preserving an inset.
+        xx,yy,ww,hh=coords
+        dx=(rng.random()-.5)*.018
+        xx=max(.07,min(.93-ww,xx+dx))
+        _text(art,tag,value,_in(panel,(xx,yy,ww,hh)),ink,size,bold,lines=3)
     heading=(headline if side==0 and slot==2 else
              (brand if side==0 else FEATURES[theme][slot]).upper())
     if mode==0:  # oversized masthead and wide photographic strip
@@ -469,7 +487,29 @@ def _fresh_panel(art,panel,index,side,slot,bank,colors):
         for k in range(3):
             photo("Gallery catalogue photo %d"%k,(.09+k*.28,.34,.24,.30),k)
         txt("Collection caption",sub,(.09,.72,.82,.13),25)
-    # Unique template-level variation in the art hierarchy (not only palette).
+    # A separate decorative art layer with a seeded identity for every master.
+    # This is intentionally more than a colour marker: curves and clusters
+    # appear in differing regions with individually editable Fabric shapes.
+    import math
+    motif=(index*13+side*7+slot*3)%4
+    if motif==0:
+        for k in range(5):
+            rr=min(w,h)*(.023+.005*(k%3))
+            px=x+w*(.12+.07*k)
+            py=y+h*(.944+.004*((index+k)%3))
+            art.circle("Seeded floral cluster %d"%k,px,py,rr,accent)
+    elif motif==1:
+        for k in range(4):
+            art.rect("Art deco ornament %d"%k,
+                     x+w*(.73+k*.045),y+h*.945,
+                     w*.025,h*.010,accent)
+    elif motif==2:
+        for k in range(4):
+            art.circle("Illustrated dot leaf %d"%k,
+                       x+w*(.12+.065*k),y+h*.955,
+                       min(w,h)*(.011+.003*k),accent)
+    else:
+        art.rect("Fine editorial accent",x+w*.12,y+h*.95,w*.34,h*.009,accent)
     # Text and art remain independent native editor objects.
     if side==1 and slot==2:
         txt("Editable inside call to action",cta,(.10,.93,.80,.045),19,True)
