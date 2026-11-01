@@ -1,0 +1,24 @@
+/* Product-only admin improvements. Nothing changes on the storefront. */
+body.model-product.change-form #content{max-width:1480px;margin-inline:auto}
+body.model-product.change-form #content h1{font-size:26px;font-weight:750;letter-spacing:-.03em}
+body.model-product.change-form fieldset.module{border:1px solid #d8e0eb;border-radius:12px;box-shadow:0 3px 15px rgba(26,44,71,.045);overflow:hidden;margin-bottom:22px;background:var(--body-bg,#fff)}
+body.model-product.change-form fieldset.module>h2{padding:15px 20px;margin:0;font-size:16px;font-weight:700;background:#f0f5fb;color:#183d63;border-bottom:1px solid #d8e0eb}
+body.model-product.change-form fieldset.module>.description{padding:12px 20px;margin:0;color:#567086;line-height:1.5}
+body.model-product.change-form .form-row{padding:12px 20px;border-color:#e8edf3}
+body.model-product.change-form .form-row>div{min-width:0}
+body.model-product.change-form .form-row label{font-weight:650}
+body.model-product.change-form input[type=text],body.model-product.change-form input[type=number],body.model-product.change-form textarea,body.model-product.change-form select{max-width:100%;box-sizing:border-box;border-radius:7px;min-height:37px}
+body.model-product.change-form .help{line-height:1.4;color:#708096}
+body.model-product.change-form .inline-group{border:1px solid #d8e0eb;border-radius:12px;margin:18px 0;overflow:hidden;background:var(--body-bg,#fff)}
+body.model-product.change-form .inline-group h2{padding:15px 20px;font-size:16px;background:#edf3fa;color:#183d63;font-weight:750}
+body.model-product.change-form .inline-group .inline-related{padding:16px 18px;margin:14px;border:1px solid #dfe5ee;border-radius:10px;background:var(--body-bg,#fff);box-shadow:0 2px 6px rgba(20,40,66,.035)}
+body.model-product.change-form .inline-group .inline-related h3{border-radius:7px;padding:12px 14px;background:#f5f8fc;color:#243e59}
+body.model-product.change-form .inline-group .add-row{padding:15px 20px;background:#f6faff}
+body.model-product.change-form .inline-group .tabular{overflow-x:auto}
+body.model-product.change-form .inline-group .tabular table{min-width:760px}
+body.model-product.change-form .inline-group .tabular th{white-space:normal;min-width:90px;padding:12px 8px;line-height:1.35}
+body.model-product.change-form .inline-group .tabular td{vertical-align:top;padding:10px 7px}
+body.model-product.change-form .submit-row{position:sticky;bottom:0;z-index:30;background:var(--body-bg,#fff);border:1px solid #d8e0eb;border-radius:12px;padding:15px 20px;box-shadow:0 -6px 20px rgba(20,37,59,.10)}
+body.model-product.change-form .submit-row input[type=submit]{border-radius:7px;min-height:40px;padding:0 20px}
+@media(min-width:1000px){body.model-product.change-form fieldset.module:not(.aligned) .form-row{display:flex;gap:14px}body.model-product.change-form .inline-group .inline-related .form-row{display:flex;flex-wrap:wrap;gap:12px}body.model-product.change-form .inline-group .inline-related .form-row>div{flex:1;min-width:180px}}
+@media(max-width:760px){body.model-product.change-form .form-row{padding:12px}body.model-product.change-form .inline-group .inline-related{margin:9px;padding:10px}body.model-product.change-form .submit-row{position:static}}
