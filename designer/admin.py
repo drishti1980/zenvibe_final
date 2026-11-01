@@ -80,10 +80,10 @@ class ProductSubcategoryFilter(admin.SimpleListFilter):
         return queryset.filter(category_id=self.value()) if self.value() else queryset
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(admin.StackedInline):
     model = ProductImage
     extra = 1
-    fields = ("image_preview", "image", "label", "sort_order", "print_area_status")
+    fields = (("image_preview", "image"), ("label", "sort_order"), "print_area_status")
     readonly_fields = ("image_preview", "print_area_status")
 
     def image_preview(self, obj):
@@ -165,13 +165,13 @@ class ProductColorVariantInline(admin.StackedInline):
     model = ProductColorVariant
     form = ProductColorVariantAdminForm
     extra = 1
-    fields = ("name", "color_key", "hex_value", "slug_suffix", "is_active", "sort_order")
+    fields = (("name", "color_key"), ("hex_value", "slug_suffix"), ("is_active", "sort_order"))
 
 
-class ProductPriceTierInline(admin.TabularInline):
+class ProductPriceTierInline(admin.StackedInline):
     model = ProductPriceTier
     extra = 1
-    fields = ("variant", "min_quantity", "unit_price", "is_active")
+    fields = (("variant", "min_quantity", "unit_price"), "is_active")
     ordering = ("variant", "min_quantity")
 
 
@@ -498,7 +498,7 @@ class ProductAdmin(admin.ModelAdmin):
         css = {
             "all": ("designer/admin/zenvibe-richtext.css","designer/admin/product-configuration.css","designer/admin/product-faq-editor.css")
         }
-        js = ("designer/admin/zenvibe-richtext.js", "designer/admin/product-faq-editor.js", "designer/admin/product-workflow.js", "designer/admin/hide-legacy-3d-fields.js")
+        js = ("designer/admin/zenvibe-richtext.js", "designer/admin/product-faq-editor.js", "designer/admin/product-workflow.js", "designer/admin/product-colour-picker.js", "designer/admin/hide-legacy-3d-fields.js")
 
     def save_model(self, request, obj, form, change):
         # Capture the OLD Admin geometry before Product / inline surfaces are saved.
