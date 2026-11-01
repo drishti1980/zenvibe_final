@@ -177,55 +177,79 @@ def brochure_layout(idx, side, panel):
  return architecture, proportions, rng
 
 def brochure_artwork_svg(w,h,category,idx,side,panel,palette):
- """Illustrated subject compositions; editable image objects, no grey placeholders."""
- import math,random
- r=random.Random(idx*991+side*109+panel*67)
+ """Original layered floral / botanical / mandala / gift-wrap vector illustration.
+ Each layout receives different artwork; all artwork is replaceable in the editor.
+ """
+ import math, random
+ rng=random.Random(8911*idx+127*side+31*panel)
  primary,paper,accent,white,dark=palette
- ww=max(80,int(w));hh=max(80,int(h))
- shapes=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{ww}" height="{hh}" viewBox="0 0 {ww} {hh}">',
-         f'<rect width="{ww}" height="{hh}" fill="{paper}"/>']
- theme=category.lower()
- # 12 separate artwork families varying independently from layout.
- art_family=(idx*7+side*5+panel*3)%12
- if theme in ('restaurant','events'):
-  for k in range(3+(idx%4)):
-   cx=ww*(.15+.7*r.random());cy=hh*(.18+.64*r.random())
-   radius=min(ww,hh)*(.10+.065*r.random())
-   if theme=='restaurant':
-    shapes += [f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{radius*1.5:.1f}" ry="{radius:.1f}" fill="#FFF9ED" stroke="{accent}" stroke-width="3"/>',
-     f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{radius:.1f}" ry="{radius*.6:.1f}" fill="{primary}" opacity=".67"/>',
-     f'<path d="M{cx-radius/2:.1f} {cy:.1f} q{radius/2:.1f} {-radius:.1f} {radius:.1f} 0" fill="none" stroke="#9AA45C" stroke-width="5"/>']
-   else:
-    shapes += [f'<rect x="{cx-radius:.1f}" y="{cy-radius:.1f}" width="{radius*2:.1f}" height="{radius*1.8:.1f}" rx="5" fill="{primary}" opacity=".83"/>',
-     f'<path d="M{cx:.1f} {cy-radius:.1f} v{radius*1.8:.1f} M{cx-radius:.1f} {cy:.1f} h{radius*2:.1f}" stroke="{accent}" stroke-width="{max(3,radius*.15):.1f}"/>']
- elif theme in ('beauty','wellness','fashion','interior','photography'):
-  for k in range(7+idx%5):
-   x=ww*r.random();y=hh*r.random();angle=r.randint(0,175)
-   shapes += [f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{ww*(.025+.04*r.random()):.1f}" ry="{hh*(.06+.09*r.random()):.1f}" transform="rotate({angle} {x:.1f} {y:.1f})" fill="{primary if k%2 else accent}" opacity=".43"/>']
- elif theme in ('travel','real estate','construction','automotive'):
-  shapes += [f'<circle cx="{ww*(.65+.2*r.random()):.1f}" cy="{hh*.23:.1f}" r="{min(ww,hh)*.15:.1f}" fill="{accent}"/>']
-  for k in range(4):
-   yy=hh*(.36+k*.15)
-   pts=' '.join(f'{x:.1f},{yy+hh*(r.random()*.26):.1f}' for x in [0,ww*.24,ww*.48,ww*.75,ww])
-   shapes.append(f'<polygon points="{pts} {ww},{hh} 0,{hh}" fill="{primary if k%2 else accent}" opacity="{.25+k*.16:.2f}"/>')
+ W=max(80,int(w));H=max(80,int(h))
+ variant=(idx+3*side+5*panel)%9
+ petal_colors=['#BD617E','#D18A64','#E9BD73','#A87CBA','#C87F9A','#D9AA97',accent,primary]
+ leaf_colors=['#406F58','#75906D','#9CB28B','#5D7D72']
+ parts=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
+        f'<rect width="{W}" height="{H}" fill="{paper}"/>']
+ def flower(cx,cy,r,petals,color,angle=0):
+  # individual hand-illustration style flower with leaves and anthers
+  for k in range(petals):
+   a=360*k/petals+angle
+   parts.append(f'<ellipse cx="{cx:.1f}" cy="{cy-r*.58:.1f}" rx="{r*.30:.1f}" ry="{r*.62:.1f}" transform="rotate({a:.2f} {cx:.1f} {cy:.1f})" fill="{color}" stroke="{dark}" stroke-width=".55" opacity=".9"/>')
+  parts.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r*.22:.1f}" fill="#E7BD5A" stroke="{dark}" stroke-width=".8"/>')
+  for k in range(5):
+   a=2*math.pi*k/5
+   parts.append(f'<circle cx="{cx+math.cos(a)*r*.11:.1f}" cy="{cy+math.sin(a)*r*.11:.1f}" r="{max(1,r*.022):.1f}" fill="{dark}"/>')
+ def branch(x,y,length,angle):
+  ex=x+math.cos(angle)*length
+  ey=y+math.sin(angle)*length
+  parts.append(f'<path d="M{x:.1f} {y:.1f} Q{(x+ex)/2+length*.09:.1f} {(y+ey)/2:.1f} {ex:.1f} {ey:.1f}" fill="none" stroke="{leaf_colors[(idx+panel)%4]}" stroke-width="{max(1.5,length*.025):.1f}"/>')
+  for k in range(2,7):
+   q=k/8
+   xx=x+(ex-x)*q;yy=y+(ey-y)*q
+   rot=math.degrees(angle)+ (48 if k%2 else -48)
+   parts.append(f'<ellipse cx="{xx:.1f}" cy="{yy:.1f}" rx="{length*.10:.1f}" ry="{length*.035:.1f}" transform="rotate({rot:.1f} {xx:.1f} {yy:.1f})" fill="{leaf_colors[(idx+k)%4]}" opacity=".86"/>')
+ # Floral artworks prominently visible on the front and inside: not mere dots.
+ base=min(W,H)
+ if variant in (0,1,2):
+  # asymmetrical garden bouquet, botanical wreath or dense floral corners
+  centers=([(W*.27,H*.30),(W*.57,H*.65),(W*.82,H*.32),(W*.24,H*.78)] if variant==0 else
+           [(W*.20,H*.23),(W*.79,H*.24),(W*.22,H*.78),(W*.80,H*.74)] if variant==1 else
+           [(W*.25,H*.27),(W*.46,H*.20),(W*.74,H*.29),(W*.26,H*.69),(W*.69,H*.70)])
+  for k,(cx,cy) in enumerate(centers):
+   r=base*(.12+.035*((idx+k)%4))
+   flower(cx,cy,r,5+(idx+k)%4,petal_colors[(idx*3+k)%len(petal_colors)],(idx*17+k*11)%90)
+   branch(cx,cy+r*.3,r*1.9,math.pi*.35+(k%3)*.55)
+ elif variant in (3,4):
+  # foliate ornamental wreath and mandala: very different visual geometry
+  for ring in range(3):
+   rr=base*(.13+ring*.10)
+   parts.append(f'<circle cx="{W*.5}" cy="{H*.5}" r="{rr:.1f}" fill="none" stroke="{accent}" stroke-width="{1+ring%2}" opacity=".8"/>')
+   for k in range(9+ring*5):
+    a=2*math.pi*k/(9+ring*5)+idx*.07
+    x=W*.5+rr*math.cos(a);y=H*.5+rr*math.sin(a)
+    parts.append(f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{base*.065:.1f}" ry="{base*.025:.1f}" transform="rotate({math.degrees(a):.1f} {x:.1f} {y:.1f})" fill="{petal_colors[(k+idx+ring)%8]}" opacity=".7"/>')
+  flower(W*.5,H*.5,base*.19,8,petal_colors[idx%8],idx*5)
+ elif variant in (5,6):
+  # climbing tropical leaves + small blossoms
+  for k in range(7):
+   x=W*(.08+k*.13);y=H*(.15+(.62 if k%2 else .14))
+   branch(x,y,base*(.38+.04*(k%3)),(.60 if k%2 else 2.35))
+   if k%2==0: flower(x,y,base*.08,6,petal_colors[(idx+k)%8])
  else:
-  for k in range(5+idx%7):
-   x=ww*r.random();y=hh*r.random();bw=ww*(.08+.15*r.random());bh=hh*(.12+.18*r.random())
-   if art_family%3==0:
-    shapes.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{min(bw,bh):.1f}" fill="{accent if k%2 else primary}" opacity=".5"/>')
-   elif art_family%3==1:
-    shapes.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="5" fill="{accent if k%2 else primary}" opacity=".5"/>')
-   else:
-    shapes.append(f'<path d="M{x:.1f} {y:.1f} l{bw:.1f} {-bh/2:.1f} l{bw/2:.1f} {bh:.1f}Z" fill="{accent if k%2 else primary}" opacity=".5"/>')
- # Graphic overlay makes each subject illustration individually composed.
- if art_family in (0,3,7):
-  shapes.append(f'<rect x="8" y="8" width="{ww-16}" height="{hh-16}" fill="none" stroke="{dark}" stroke-width="2" opacity=".55"/>')
- elif art_family in (1,5,9):
-  shapes.append(f'<path d="M0 {hh*.87:.1f} Q{ww*.5:.1f} {hh*.64:.1f} {ww} {hh*.87:.1f}" fill="none" stroke="{accent}" stroke-width="8"/>')
- elif art_family in (2,6,10):
-  shapes.append(f'<circle cx="{ww*.80:.1f}" cy="{hh*.20:.1f}" r="{min(ww,hh)*.10:.1f}" fill="none" stroke="{dark}" stroke-width="3"/>')
- shapes.append('</svg>')
- return ''.join(shapes)
+  # decorative illustrated gift-wrap pattern / wildflower repeat
+  for row in range(3):
+   for col in range(4):
+    x=W*(col+.5+(.25 if row%2 else 0))/4.5
+    y=H*(row+.5)/3.3
+    rr=base*(.075+.015*((idx+col+row)%3))
+    if (row+col+idx)%3:
+     flower(x,y,rr,5+(idx+col)%3,petal_colors[(idx+row*4+col)%8])
+    else: branch(x,y,rr*2.2,.3+col*.6)
+ # Uniqueness includes independent per-template corner details.
+ for k in range(3):
+  x=W*(.1+.8*rng.random()); y=H*(.1+.8*rng.random())
+  parts.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{max(1,base*.009):.1f}" fill="{accent}" opacity=".8"/>')
+ parts.append('</svg>')
+ return ''.join(parts)
 
 def brochure_page(kind,idx,side,W,H):
  # Multi-panel compositions are deliberately different across outside/inside.
