@@ -259,6 +259,13 @@ class ProductAdminForm(forms.ModelForm):
         help_text="Optional design-shape labels and keys in the format Name | key. Stored in product metadata; does not create separate model records or automatically change editor geometry.",
     )
 
+    material_variant_options = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows":3,"placeholder":"Plastic | plastic\\nMetal | metal"}),
+        label="Material variants",
+        help_text="Add Name | key on each line. Leave blank when this product has no material choices.",
+    )
+
     class Meta:
         model = Product
         fields = "__all__"
@@ -271,6 +278,14 @@ class ProductAdminForm(forms.ModelForm):
         self.fields["shape_variant_options"].initial = "\n".join(
             "%s | %s"%(item.get("name",""),item.get("key",""))
             for item in shape_options if isinstance(item,dict)
+        )
+        attrs_for_material = self.instance.source_attributes if (
+            self.instance and isinstance(getattr(self.instance, "source_attributes", None), dict)
+        ) else {}
+        self.fields["material_variant_options"].initial = "\n".join(
+            "%s | %s" % (item.get("name", ""), item.get("key", ""))
+            for item in (attrs_for_material.get("material_variant_options") or [])
+            if isinstance(item, dict)
         )
         self.fields["minimum_quantity"].help_text = (
             "Minimum units per order. The storefront also enforces the first active "
@@ -315,6 +330,21 @@ class ProductAdminForm(forms.ModelForm):
                 break
             keys.add(key);options.append({"name":name,"key":key})
         cleaned["_shape_options"]=options
+        materials=[]; material_keys=set()
+        for line in (cleaned.get("material_variant_options") or "").splitlines():
+            if not line.strip():
+                continue
+            parts=[part.strip() for part in line.split("|")]
+            if len(parts)!=2 or not all(parts):
+                self.add_error("material_variant_options", "Use Name | key for each material.")
+                break
+            name,key=parts
+            if not __import__("re").fullmatch(r"[a-z0-9_-]+",key) or key in material_keys:
+                self.add_error("material_variant_options", "Each material needs a unique lowercase key.")
+                break
+            material_keys.add(key);materials.append({"name":name,"key":key})
+        cleaned["_material_options"]=materials
+
         for method in ("standard","expedited","overnight"):
             if cleaned.get(method+"_delivery_enabled"):
                 if cleaned.get(method+"_delivery_days") is None:
@@ -343,6 +373,10 @@ class ProductAdminForm(forms.ModelForm):
             attrs["shape_variant_options"]=self.cleaned_data["_shape_options"]
         else:
             attrs.pop("shape_variant_options",None)
+        if self.cleaned_data.get("_material_options"):
+            attrs["material_variant_options"]=self.cleaned_data["_material_options"]
+        else:
+            attrs.pop("material_variant_options",None)
         counts = dict(attrs.get("printing_side_page_counts") or {})
         for key, field in (("single", "single_side_page_count"), ("double", "double_side_page_count")):
             count = self.cleaned_data.get(field)
@@ -438,6 +472,10 @@ class ProductAdmin(admin.ModelAdmin):
         ("Product variants — shapes", {
             "fields": ("shape_variant_options",),
             "description": "Define shape labels and keys once. This is a product metadata configuration; editor and storefront shape switching still need compatible routing.",
+        }),
+        ("Product variants — materials", {
+            "fields": ("material_variant_options",),
+            "description": "Configure available materials for this product. This saves product metadata; customer-facing material selection and per-material pricing need a separate storefront integration.",
         }),
         ("Universal editor configuration (opt-in)", {
             "fields": (
