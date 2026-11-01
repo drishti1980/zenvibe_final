@@ -1,80 +1,52 @@
 (function(){
 "use strict";
-function init(){
- const form=document.querySelector("body.model-product.change-form form");
- if(!form || document.querySelector(".zv-product-nav"))return;
- const sections=Array.from(form.querySelectorAll(":scope > div > fieldset.module, :scope > fieldset.module, .inline-group")).filter(el=>!el.closest(".inline-related"));
- if(!sections.length)return;
- const nav=document.createElement("nav");nav.className="zv-product-nav";nav.setAttribute("aria-label","Product configuration sections");
- const tabs=[
-  ["Essentials",/Storefront product details|Availability/i],
-  ["Content & FAQs",/Product content|FAQ/i],
-  ["Colours & sizes",/variants|Product price tiers/i],
-  ["Print & editor",/print|editor configuration|editable/i],
-  ["Sales & delivery",/Sale|Fastest delivery/i],
-  ["Other",/.*/]
- ];
- const groups=new Map(tabs.map(t=>[t[0],[]]));
- sections.forEach(section=>{
-  const text=(section.querySelector(":scope > h2, :scope > h3")?.textContent || "").trim();
-  const match=tabs.find(t=>t[1].test(text));groups.get(match?.[0]||"Other").push(section);
- });
- const visible=Array.from(groups).filter(([,arr])=>arr.length);
- if(visible.length<2)return;
- function show(name){
-  visible.forEach(([key,els])=>els.forEach(el=>{el.hidden=key!==name;el.classList.toggle("zv-config-inactive",key!==name);}));
-  nav.querySelectorAll("button").forEach(button=>{const selected=button.dataset.tab===name;button.setAttribute("aria-selected",String(selected));button.classList.toggle("active",selected);});
+function ready(){
+ const form=document.querySelector("#content-main form, form#product_form, body.model-product form");
+ if(!form || document.getElementById("zv-admin-tools"))return;
+ const groups=[...form.querySelectorAll("fieldset.module, .inline-group")].filter(el=>!el.closest(".inline-related") && !el.parentElement?.closest("fieldset.module"));
+ const nav=document.createElement("div");nav.id="zv-admin-tools";nav.className="zv-admin-tools";
+ const search=document.createElement("input");search.type="search";search.placeholder="Search settings, colour, shape, material, price…";search.setAttribute("aria-label","Search product settings");
+ const discard=document.createElement("button");discard.type="button";discard.textContent="Discard unsaved changes";discard.className="button";
+ discard.addEventListener("click",()=>{if(confirm("Discard unsaved changes? The saved product will be reloaded."))location.reload();});
+ nav.append(search,discard);
+ const anchor=form.querySelector("fieldset.module, .inline-group");
+ if(anchor)anchor.parentNode.insertBefore(nav,anchor);else form.prepend(nav);
+ let selected="";
+ const tabbar=document.createElement("div");tabbar.className="zv-product-nav";
+ const labels=[["Details",/storefront|availability/i],["Content & FAQs",/content|faq/i],["Variants & pricing",/variants|tiers|images/i],["Print & editor",/print|editor|editable/i],["Sales & delivery",/sale|delivery/i],["Other",/.*/]];
+ const category=el=>{const title=el.querySelector(":scope > h2, :scope > h3")?.textContent||"";return labels.find(([_,re])=>re.test(title))?.[0]||"Other";};
+ const present=[...new Set(groups.map(category))];
+ const buttons=[];
+ function apply(){
+  const term=search.value.trim().toLowerCase();
+  groups.forEach(el=>{
+   let match;
+   if(term){
+    const heading=el.querySelector(":scope > h2, :scope > h3")?.textContent||"";
+    const names=[...el.querySelectorAll("label")].map(x=>x.textContent).join(" ");
+    match=(heading+" "+names).toLowerCase().includes(term);
+   }else match=category(el)===selected;
+   el.classList.toggle("zv-config-inactive",!match);
+  });
+  buttons.forEach(b=>b.classList.toggle("active",b.dataset.tab===selected&&!term));
  }
- visible.forEach(([name])=>{
-  const b=document.createElement("button");b.type="button";b.dataset.tab=name;b.textContent=name;b.setAttribute("role","tab");b.addEventListener("click",()=>show(name));nav.appendChild(b);
- });
- nav.setAttribute("role","tablist");
- const first=sections[0];first.parentNode.insertBefore(nav,first);
- // If errors are present, open their section so they are not hidden.
- const errorSection=sections.find(section=>section.querySelector(".errorlist"));
- const firstTab=errorSection ? visible.find(([,els])=>els.includes(errorSection))?.[0] : visible[0][0];
- show(firstTab||visible[0][0]);
-
- // Compact inline edit cards. All Django inputs remain in the original form.
- document.querySelectorAll(".inline-group .inline-related").forEach(card=>{
-   if(card.classList.contains("empty-form"))return;
-   const heading=card.querySelector(":scope > h3");
-   if(!heading)return;
-   const collapse=document.createElement("button");collapse.type="button";collapse.className="zv-inline-toggle";
-   collapse.textContent="Edit";collapse.setAttribute("aria-expanded","false");
-   heading.appendChild(collapse);
-   card.classList.add("zv-inline-collapsed");
-   collapse.addEventListener("click",()=>{card.classList.toggle("zv-inline-collapsed");const expanded=!card.classList.contains("zv-inline-collapsed");collapse.textContent=expanded?"Collapse":"Edit";collapse.setAttribute("aria-expanded",String(expanded));});
-   if(card.querySelector(".errorlist")){collapse.click();}
- });
- // Colour swatches: pick any HEX colour visually, without memorising codes.
- document.querySelectorAll('input[name$="-hex_value"]').forEach(input=>{
-   const picker=document.createElement("input");picker.type="color";picker.className="zv-hex-picker";
-   const ok=/^#[0-9a-f]{6}$/i.test(input.value||"");
-   picker.value=ok?input.value:"#ffffff";picker.title="Choose a colour";
-   input.parentNode.insertBefore(picker,input);
-   picker.addEventListener("input",()=>{input.value=picker.value.toUpperCase();input.dispatchEvent(new Event("change",{bubbles:true}));});
-   input.addEventListener("input",()=>{if(/^#[0-9a-f]{6}$/i.test(input.value))picker.value=input.value;});
- });
- // Add true navigation/search, without hiding Django validation or Save.
- const tools=document.createElement("div");tools.className="zv-admin-tools";
- const search=document.createElement("input");search.type="search";search.placeholder="Search product settings, variants or prices…";search.setAttribute("aria-label","Search product settings");
- const reset=document.createElement("button");reset.type="button";reset.textContent="Discard unsaved changes";reset.className="button";
- reset.addEventListener("click",()=>{if(window.confirm("Discard all unsaved changes and reload this product?"))window.location.reload();});
- tools.append(search,reset);nav.insertAdjacentElement("afterend",tools);
- search.addEventListener("input",()=>{
-   const q=search.value.trim().toLowerCase();
-   if(!q){show(nav.querySelector("button.active")?.dataset.tab||visible[0][0]);return;}
-   visible.forEach(([,els])=>els.forEach(el=>{el.hidden=false;el.classList.remove("zv-config-inactive");}));
-   sections.forEach(el=>{
-     const txt=(el.querySelector(":scope > h2, :scope > h3")?.textContent||"")+" "+Array.from(el.querySelectorAll("label")).map(x=>x.textContent).join(" ");
-     el.hidden=!txt.toLowerCase().includes(q);
-   });
-   if(q)nav.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
- });
- // Restore visible field groups if user saves while on a tab.
- form.addEventListener("submit",()=>sections.forEach(el=>{el.hidden=false;el.classList.remove("zv-config-inactive");}));
- // Inline add buttons and regular Django form validation are unchanged.
+ present.forEach(name=>{const b=document.createElement("button");b.type="button";b.dataset.tab=name;b.textContent=name;b.addEventListener("click",()=>{selected=name;search.value="";apply();});buttons.push(b);tabbar.appendChild(b);});
+ if(groups.length && present.length>1){nav.insertAdjacentElement("afterend",tabbar);selected=category(groups.find(el=>el.querySelector(".errorlist"))||groups[0]);apply();}
+ search.addEventListener("input",apply);
+ // Inline cards should be collapsed only after their existing fields are initialized.
+ function cardControls(root){
+  root.querySelectorAll(".inline-group .inline-related").forEach(card=>{
+   if(card.classList.contains("empty-form")||card.dataset.zvCompact)return;
+   const heading=card.querySelector(":scope > h3");if(!heading)return;
+   card.dataset.zvCompact="1";const button=document.createElement("button");button.type="button";button.className="zv-inline-toggle";button.textContent="Collapse";
+   heading.appendChild(button);
+   button.addEventListener("click",()=>{const collapsed=card.classList.toggle("zv-inline-collapsed");button.textContent=collapsed?"Expand":"Collapse";});
+   // Do not hide new records or rows with errors, and do not default-collapse images.
+  });
+ }
+ cardControls(form);
+ document.addEventListener("formset:added",e=>cardControls(e.target||form));
+ form.addEventListener("submit",()=>groups.forEach(el=>el.classList.remove("zv-config-inactive")));
 }
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready);else ready();
 })();
