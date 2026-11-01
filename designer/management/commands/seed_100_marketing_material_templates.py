@@ -375,6 +375,35 @@ def render_preview(page):
    rendered.append(f'<text y="{y+fontsize:.1f}" font-size="{fontsize}" font-family="{font}" font-weight="{weight}" fill="{color}">{spans}</text>')
  return bg.replace('</svg>',''.join(rendered)+'</svg>')
 
+def load_template_pages(row):
+ """Read the currently installed editable master without changing its artwork."""
+ value=row.json_data
+ if isinstance(value,str):
+  value=json.loads(value)
+ if not isinstance(value,dict) or not isinstance(value.get('pages'),list):
+  raise CommandError(f'Template {row.pk} has no editable pages')
+ return value['pages']
+
+def preview_for_installed_page(page):
+ """Render a self-contained PNG, even when SVG assets are embedded data URIs."""
+ if cairosvg is None:
+  raise CommandError('CairoSVG is required for preview repair. Install: pip install cairosvg')
+ W=int(page.get('width') or 0); H=int(page.get('height') or 0)
+ if W<=0 or H<=0:
+  raise CommandError('Template page has invalid dimensions')
+ objects=page.get('objects') or []
+ backgrounds=[o for o in objects if o.get('backgroundAsset')]
+ bg=''
+ if backgrounds:
+  source=backgrounds[0].get('src','')
+  if source.startswith('data:image/svg+xml;base64,'):
+   bg=base64.b64decode(source.split(',',1)[1]).decode('utf-8')
+ if not bg:
+  bg=f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}"><rect width="{W}" height="{H}" fill="#ffffff"/></svg>'
+ page_for_preview={'width':W,'height':H,'objects':objects,'backgroundSvg':bg}
+ svg=render_preview(page_for_preview)
+ return cairosvg.svg2png(bytestring=svg.encode('utf-8'),output_width=min(W,1200))
+
 def artwork_signature(pages):
  # Detect repeated artwork treatments, beyond changing text or object ids.
  signatures=[]
@@ -410,11 +439,37 @@ def find_product(kind,pid):
 class Command(BaseCommand):
  help='Seed 100 original JSON+SVG editable templates for bi-fold, tri-fold, door hanger or tickets.'
  def add_arguments(self,p):
-  p.add_argument('--kind',choices=KINDS.keys(),required=True); p.add_argument('--product-id',type=int); p.add_argument('--count',type=int,default=100); p.add_argument('--dry-run',action='store_true'); p.add_argument('--replace-generated',action='store_true')
+  p.add_argument('--kind',choices=KINDS.keys(),required=True); p.add_argument('--product-id',type=int); p.add_argument('--count',type=int,default=100); p.add_argument('--dry-run',action='store_true'); p.add_argument('--replace-generated',action='store_true'); p.add_argument('--repair-previews',action='store_true',help='Restore existing bifold preview files without changing template content')
  def handle(self,*args,**opt):
   kind=opt['kind']; product=find_product(kind,opt.get('product_id')); W=int(product.width or KINDS[kind]['default'][0]); H=int(product.height or KINDS[kind]['default'][1])
   # protect against obviously wrong square admin canvas for folded/vertical materials by warning, not mutating product.
   if kind in ('bifold','trifold') and W==H: self.stdout.write(self.style.WARNING(f'WARNING: Product canvas is square ({W}x{H}). Set Product width/height to a landscape ratio before final import for best results.'))
+  if opt.get('repair_previews'):
+   if kind!='bifold':
+    raise CommandError('--repair-previews currently supports only bifold')
+   if cairosvg is None:
+    raise CommandError('CairoSVG required: pip install cairosvg')
+   masters=list(DesignTemplate.objects.filter(product=product,is_active=True).order_by('pk'))
+   if not masters:
+    raise CommandError('No active templates for this product')
+   failed=[]; refreshed=0
+   for row in masters:
+    try:
+     pages=load_template_pages(row)
+     png=preview_for_installed_page(pages[0])
+     if len(png)<1500: raise ValueError('Empty preview output')
+     digest=hashlib.sha256(png).hexdigest()[:12]
+     filename=f'bifold-repaired-{product.pk}-{row.pk}-{digest}.png'
+     if not opt['dry_run']:
+      row.preview.save(filename,ContentFile(png),save=False)
+      row.save(update_fields=['preview','updated_at'])
+     refreshed+=1
+    except Exception as exc:
+     failed.append(f'{row.pk}: {exc}')
+   self.stdout.write(f'Bifold preview repair: {refreshed} success, {len(failed)} errors.')
+   if failed: raise CommandError('Preview failures: '+'; '.join(failed[:10]))
+   if opt['dry_run']: self.stdout.write('Dry run complete; no database changes.')
+   return
   seen=set(); built=[]; artwork_seen=set()
   for idx in range(opt['count']):
    pages=build(kind,idx,W,H); validate(kind,pages,W,H); fp=fingerprint(pages)
