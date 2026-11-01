@@ -413,29 +413,49 @@ def _fresh_panel(art,panel,index,side,slot,bank,colors):
     mode=(index*7+side*11+slot*13)%10
     # Unique index/side/panel crop and geometry: changing the palette alone
     # can never produce the same final artwork arrangement.
-    shape_seed=(index*1009+side*109+slot*17)
-    inset=.06+(.012*(index%5))
     _body(art,panel,paper)
     _accent(art,panel,mode%5,accent,ink,theme)
     # Keep all content strictly within physical panels.
+    occupied=[]
+    def reserve(kind,coords,label):
+        a,b,c,d=coords
+        if a < .04 or b < .04 or a+c > .96 or b+d > .96:
+            raise CommandError("Out-of-panel object: %s template %03d"%(label,index+1))
+        # Text and photos cannot occupy the same rectangle, even if their
+        # underlying Fabric objects would otherwise render on top of each other.
+        for other_kind,other_coords,other_label in occupied:
+            ox,oy,ow,oh=other_coords
+            gap=.012
+            if a < ox+ow+gap and a+c+gap > ox and b < oy+oh+gap and b+d+gap > oy:
+                raise CommandError("Overlapping %s and %s in template %03d, page %d, panel %d"%
+                                   (label,other_label,index+1,side+1,slot+1))
+        occupied.append((kind,coords,label))
     def photo(tag,coords,variant=0):
-        # Independently recompose photos within their original reserved region.
-        # Vertical/horizontal offsets are bounded to avoid overlaps with text.
-        xx,yy,ww,hh=coords
-        dx=(rng.random()-.5)*.022
-        dy=(rng.random()-.5)*.022
-        grow=(rng.random()-.5)*.03
-        xx=max(.055,min(.94-ww,xx+dx))
-        yy=max(.055,min(.94-hh,yy+dy))
-        ww=max(.12,min(.94-xx,ww+grow))
-        _photo(art,bank,theme,(index*3+side*2+slot+variant)%5,
-               _in(panel,(xx,yy,ww,hh)),tag)
+        reserve("photo",coords,tag)
+        _photo(art,bank,theme,(index*3+side*2+slot+variant)%5,_in(panel,coords),tag)
     def txt(tag,value,coords,size=33,bold=False):
-        # Different heading widths per design while preserving an inset.
         xx,yy,ww,hh=coords
-        dx=(rng.random()-.5)*.018
-        xx=max(.07,min(.93-ww,xx+dx))
-        _text(art,tag,value,_in(panel,(xx,yy,ww,hh)),ink,size,bold,lines=3)
+        # Physically fit editable typography into its reserved panel rectangle.
+        # Prevent long headings from overflowing into photos or adjacent panels.
+        box_w=w*ww
+        box_h=h*hh
+        import textwrap
+        # Conservative font-size selection accounting for wrapped lines.
+        font_size=min(float(size),box_h*.36,box_w*.19)
+        for _ in range(36):
+            max_chars=max(5,int(box_w/max(1,font_size*.64)))
+            lines=sum(max(1,len(textwrap.wrap(p,width=max_chars,break_long_words=True)))
+                      for p in str(value).splitlines())
+            if lines*font_size*1.38 <= box_h*.92:
+                break
+            font_size*=.91
+        if font_size<9:
+            raise CommandError("Text does not fit: %s template %03d"%(tag,index+1))
+        reserve("text",coords,tag)
+        # _text wraps using its own width-based geometry and outputs native
+        # Fabric text rather than a rasterised caption.
+        _text(art,tag,value,_in(panel,coords),ink,font_size,bold,
+              lines=max(1,min(6,lines)))
     heading=(headline if side==0 and slot==2 else
              (brand if side==0 else FEATURES[theme][slot]).upper())
     if mode==0:  # oversized masthead and wide photographic strip
@@ -511,8 +531,8 @@ def _fresh_panel(art,panel,index,side,slot,bank,colors):
     else:
         art.rect("Fine editorial accent",x+w*.12,y+h*.95,w*.34,h*.009,accent)
     # Text and art remain independent native editor objects.
-    if side==1 and slot==2:
-        txt("Editable inside call to action",cta,(.10,.93,.80,.045),19,True)
+    # The narrow lower margin is reserved for ornament/bleed safety.
+    # Do not place a CTA here: it collided with the decoration and page trim.
 
 
 def build_page(product,index,side,surface,bank):
