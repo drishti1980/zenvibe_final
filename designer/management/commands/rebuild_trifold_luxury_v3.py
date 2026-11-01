@@ -50,8 +50,8 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
 GENERATOR = "zenvibe-trifold-luxury-v3"
 COUNT = 100
 DIRECTIONS = (
-    "Editorial Maison", "Cinematic Gallery", "Organic Atelier",
-    "Architectural Studio", "Contemporary Collection",
+    "Floral Editorial", "Cinematic Gallery", "Botanical Atelier",
+    "Illustrated Studio", "Contemporary Collection",
 )
 # Verified generated-master identifiers only; refuse arbitrary custom rows.
 ALLOWED_GENERATORS = {
@@ -176,6 +176,26 @@ def _accent(art,panel,edition,foil,ink,theme):
     else:
         art.circle("Signature mark",x+w*.15,y+h*.086,min(w,h)*.017,foil)
         art.rect("Signature caption line",x+w*.20,y+h*.084,w*.34,h*.004,foil)
+    # Illustrated botanical ornaments: vary flower locations, scale, and clustering
+    # by index and panel rather than repeating the same tiny geometric marks.
+    import math
+    seed=(theme*47+edition*13)
+    if (seed%7) in (0,1,2,4):
+        cx=x+w*(.72+(.05*(seed%3)))
+        cy=y+h*(.075+(.02*(seed%4)))
+        radius=min(w,h)*(.026+.006*(seed%3))
+        for petal in range(5+seed%4):
+            theta=2*math.pi*petal/(5+seed%4)
+            px=cx+math.cos(theta)*radius*.95
+            py=cy+math.sin(theta)*radius*.95
+            art.circle("Botanical petal %d"%petal,px,py,radius*.51,foil)
+        art.circle("Botanical flower centre",cx,cy,radius*.35,ink)
+    elif seed%7 in (3,5,6):
+        for leaf in range(3+seed%5):
+            px=x+w*(.65+leaf*.055)
+            py=y+h*(.07+((leaf*3+seed)%5)*.018)
+            art.circle("Decorative botanical leaf %d"%leaf,px,py,
+                       min(w,h)*(.012+.003*(leaf%3)),foil)
 
 
 def _page_panel(surface,panel,region,n=3):
