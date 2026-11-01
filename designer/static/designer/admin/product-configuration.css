@@ -41,3 +41,21 @@ body.model-product.change-form .zv-inline-faq-form[hidden]{display:none!importan
 body.model-product.change-form .zv-inline-faq-form input,body.model-product.change-form .zv-inline-faq-form textarea{width:100%;max-width:none;box-sizing:border-box;padding:11px;border:1px solid #adc0d7;border-radius:7px;background:white;color:#192c40}
 body.model-product.change-form .zv-inline-faq-form button{justify-self:start}
 body.model-product.change-form .zv-inline-faq-form .zv-faq-error{color:#a32a21;margin:0}
+
+/* Compact product admin cards, accessible colour controls and image previews. */
+body.model-product.change-form .zv-admin-tools{display:flex;gap:12px;align-items:center;margin:0 0 18px;flex-wrap:wrap}
+body.model-product.change-form .zv-admin-tools input[type=search]{flex:1;min-width:240px;max-width:650px;padding:12px 14px;border:1px solid #cbd5e1;border-radius:10px;background:var(--body-bg,#fff)}
+body.model-product.change-form .zv-admin-tools button{margin:0;white-space:nowrap}
+body.model-product.change-form .inline-group .inline-related.zv-inline-collapsed{padding:8px 12px;margin:8px 10px}
+body.model-product.change-form .inline-related.zv-inline-collapsed>h3{margin:0!important}
+body.model-product.change-form .inline-related.zv-inline-collapsed>.form-row,body.model-product.change-form .inline-related.zv-inline-collapsed>fieldset,body.model-product.change-form .inline-related.zv-inline-collapsed>.module,body.model-product.change-form .inline-related.zv-inline-collapsed>.help,body.model-product.change-form .inline-related.zv-inline-collapsed>p:not(.errornote){display:none!important}
+body.model-product.change-form .zv-inline-toggle{float:right;border:1px solid #ccd8e5;border-radius:7px;background:#fff;color:#17395a;cursor:pointer;padding:6px 13px;font-weight:650}
+body.model-product.change-form .zv-hex-picker{width:51px;height:39px;vertical-align:middle;border:1px solid #b7c9de;border-radius:7px;padding:2px;margin-right:12px;cursor:pointer}
+body.model-product.change-form .inline-group .tabular{max-height:none!important;overflow-x:auto!important;overflow-y:visible!important}
+body.model-product.change-form .inline-group .tabular table{min-width:0;width:100%;table-layout:auto}
+body.model-product.change-form .inline-group .tabular td.original p{max-width:220px;white-space:normal}
+body.model-product.change-form .inline-group .tabular input[type=text],body.model-product.change-form .inline-group .tabular select{width:100%;min-width:105px}
+body.model-product.change-form .inline-group img{max-width:150px;max-height:112px;object-fit:contain;background:#f5f7fb;border:1px solid #e0e6ef;border-radius:9px;padding:5px}
+body.model-product.change-form .inline-group .inline-related h3{font-size:14px!important;padding:9px 12px!important;line-height:1.4}
+body.model-product.change-form .inline-group .add-row{padding:10px 16px!important}
+@media(max-width:760px){body.model-product.change-form .zv-admin-tools{display:grid}body.model-product.change-form .zv-admin-tools input[type=search]{min-width:0;width:100%}}
