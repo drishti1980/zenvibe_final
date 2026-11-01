@@ -1,7 +1,20 @@
 // ZENVIBE V57 CLICK-ANY-PRINTED-TEXT EDITING
 // ZENVIBE_V55_STABLE_BUILD 2026-08-10
 /* ZenVibe customer editor V52 - reliable printed-content replace/delete + direct editable overlay model */
-(function(){
+(async function(){
+// Packaged template fonts must be ready before text measurement and layout.
+if (document.fonts && window.FontFace) {
+  const assets = window.INITIAL_TEMPLATE?.fontAssets || [];
+  await Promise.all(assets.map(async asset => {
+    if (!asset || !['DejaVu Sans', 'DejaVu Serif'].includes(asset.family)) return;
+    try {
+      const url = new URL(asset.url, location.href);
+      if (url.origin !== location.origin || !['http:', 'https:'].includes(url.protocol)) return;
+      const face = new FontFace(asset.family, `url("${url.href}")`, {weight:String(asset.weight || '400')});
+      document.fonts.add(await face.load());
+    } catch (error) { console.warn('Template font could not load', asset.family, error); }
+  }));
+}
 const P=window.PRODUCT||{},EP=P.editorProfile||{},OPT=window.PRODUCT_OPTIONS||{};
 const zvExactPublishedTriFold=(Number(P.id)===345 &&
   String(window.INITIAL_TEMPLATE?.generator||'')==='zenvibe-trifold-luxury-v3');
