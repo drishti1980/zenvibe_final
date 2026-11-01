@@ -1712,6 +1712,8 @@ def _editor_product_options(product,request,existing_design=None):
             if admin_enabled and admin_mode == "print_area"
             else ((row or {}).get("image_url") or _variant_image_url(product))
         ),
+        "printing_side_page_counts":(product.source_attributes or {}).get("printing_side_page_counts") or {},
+        "selected_printing_side":(request.GET.get("printing_side") or request.GET.get("sides") or request.GET.get("side") or "").lower(),
         "print_surfaces":print_surfaces,
         "printSurfaces":print_surfaces,
         "editor_config":editor_config,
@@ -2133,6 +2135,13 @@ def editor(request, product_id):
     editor_template_page_count = len((template_json or {}).get("pages") or [])
     if not editor_template_page_count:
         editor_template_page_count = len(product_options.get("print_surfaces") or []) or 1
+    # Use the customer-selected side count for navigation without deleting pages.
+    side_counts = product_options.get("printing_side_page_counts") or {}
+    side_value = product_options.get("selected_printing_side") or ""
+    selected_key = ("double" if side_value in ("double","double-sided","double_side","2","both","two")
+                    else "single" if side_value in ("single","single-sided","single_side","1","front","one") else None)
+    if selected_key and side_counts.get(selected_key):
+        editor_template_page_count = max(1,min(20,int(side_counts[selected_key])))
 
     template_catalog = []
     for t in live_templates_for(product):
