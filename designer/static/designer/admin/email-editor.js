@@ -47,6 +47,22 @@
       finally { button.disabled = false; upload.value = ''; }
     });
     toolbar.append(button, upload, message);
+    const attachments = document.createElement('section');
+    attachments.className = 'zv-email-attachments';
+    const title = document.createElement('strong'); title.textContent = 'Automatic order attachments';
+    const files = document.createElement('div'); files.className = 'zv-email-attachment-files';
+    ['Order artwork · PNG', 'Order artwork · PDF'].forEach(name => {
+      const chip = document.createElement('span'); chip.textContent = name; files.append(chip);
+    });
+    const note = document.createElement('p');
+    note.textContent = 'Added from the saved order artwork when sending. No order is selected in this template editor. Missing previews or files over the combined 2 MB limit are skipped.';
+    attachments.append(title, files, note); shell.after(attachments);
+    const event = document.getElementById('id_event');
+    function showAttachments() {
+      const value = event?.value || '';
+      attachments.hidden = !(value === 'order_customer' || value === 'order_admin' || value === 'order_status' || value.startsWith('order_status_'));
+    }
+    event?.addEventListener('change', showAttachments); showAttachments();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();

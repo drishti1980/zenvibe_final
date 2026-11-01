@@ -6,3 +6,10 @@
 .zv-email-designer input[type=color] { width:36px; height:32px; padding:2px; cursor:pointer; }
 .form-row.field-body > div { display:flex; flex-direction:column; gap:10px; }
 .form-row.field-body .help { margin-left:0!important; }
+
+.form-row.field-body .help { display:none!important; }
+.zv-email-attachments { padding:18px; border:1px solid #d6e0ef; border-radius:10px; background:#f7f9fc; max-width:1000px; box-sizing:border-box; }
+.zv-email-attachments[hidden] { display:none; }
+.zv-email-attachment-files { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0; }
+.zv-email-attachment-files span { padding:8px 12px; background:#fff; border:1px solid #d6e0ef; border-radius:6px; color:#173451; }
+.zv-email-attachments p { margin:0; font-size:13px; color:#52637a; }
