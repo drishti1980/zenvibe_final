@@ -77,15 +77,25 @@ SUBJECT_BRIEFS={
  'Travel':[('Boutique hotel guide','STAY  •  DINE  •  EXPLORE','A considered guide to boutique stays and local experiences.'),('Luxury retreat programme','ESCAPE  •  RELAX  •  RESTORE','An inspiring itinerary for a restorative retreat.'),('Coastal destination guide','BEACHES  •  STAYS  •  EXPERIENCES','Explore hidden coves and curated coastal escapes.'),('Adventure tour brochure','TOURS  •  ADVENTURE  •  DISCOVERY','Expert-led journeys and authentic local adventures.'),('City weekend itinerary','WEEKEND  •  DINING  •  CULTURE','The best of a city in a thoughtfully planned escape.')],
 }
 VARIATION_NAMES=['Editorial','Catalogue','Minimal','Magazine','Illustrated']
+THEME_BATCHES=[('Restaurant',20),('Events',20),('Beauty',15),('Travel',15),('Wellness',10),('Corporate',10),('Legal',10)]
 def subject_copy(idx):
- cat,title,sub,desc=THEMES[idx%len(THEMES)]
- variant=idx//len(THEMES)
- if cat in SUBJECT_BRIEFS:
-  name,sub,desc=SUBJECT_BRIEFS[cat][variant%5]
-  return cat,name.upper(),sub,desc,name
- labels=['Premium collection','Signature services','Seasonal edition','Curated portfolio','The essential guide']
- name=f'{cat} — {labels[variant%5]}'
- return cat,(name.upper()),sub,desc,name
+ cursor=0
+ for cat,n in THEME_BATCHES:
+  if idx<cursor+n: break
+  cursor+=n
+ local=idx-cursor
+ briefs=SUBJECT_BRIEFS.get(cat)
+ if not briefs:
+  for item in THEMES:
+   if item[0]==cat: base=item; break
+  else: base=('Corporate','PREMIUM SERVICES','CREATIVE SERVICES','Professional services')
+  name=f'{base[0]} {["Signature Collection","Seasonal Portfolio","Studio Guide","Premium Edition","Creative Journal"][local%5]} {local//5+1}'
+  return cat,name.upper(),base[2],base[3],name
+ name,sub,desc=briefs[local%len(briefs)]
+ if local>=len(briefs):
+  mode=['Artisan','Botanical','Editorial','Heritage'][local//len(briefs)-1]
+  name=f'{mode} {name}'
+ return cat,name.upper(),sub,desc,name
 
 def uri(svg): return 'data:image/svg+xml;base64,'+base64.b64encode(svg.encode()).decode()
 def textbox(i,x,y,w,text,size,color,font='Arial',weight=400,align='left'):
@@ -251,52 +261,68 @@ def brochure_artwork_svg(w,h,category,idx,side,panel,palette):
  parts.append('</svg>')
  return ''.join(parts)
 
+# Artwork-first design system: ten architectures with per-index geometry,
+# 100 non-identical object placement signatures (not just changed text/colour).
 def brochure_page(kind,idx,side,W,H):
- # Multi-panel compositions are deliberately different across outside/inside.
+ import random
  pal=artwork_palette(idx)
  cat,title,sub,desc,contact,web,offer=common_content(idx)
  head,body=FONTS[(idx+side*3)%len(FONTS)]
- bg=bg_svg(W,H,pal,idx+side*11,side,kind)
- objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]
  panels=2 if kind=='bifold' else 3
+ # Separate front and inside art direction with complementary, not identical, backgrounds.
+ bg=bg_svg(W,H,pal,idx+side*31,side,kind)
+ objs=[image(f'background_{side}',0,0,W,H,uri(bg),False,True)]
  pw=W/panels
- pad=pw*.065
- for p in range(panels):
-  x=p*pw+pad
-  w=pw-pad*2
-  arch, cuts, rng=brochure_layout(idx,side,p)
-  item=f'{idx}_{side}_{p}'
-  # Ten content compositions, with twenty different per-panel geometries.
-  if arch==0: slots=[('art',.07,.40),('heading',.52,.11),('copy',.67,.13),('footer',.87,.07)]
-  elif arch==1: slots=[('heading',.08,.12),('art',.25,.35),('copy',.65,.14),('footer',.88,.06)]
-  elif arch==2: slots=[('copy',.08,.14),('art',.27,.44),('heading',.75,.11),('footer',.90,.055)]
-  elif arch==3: slots=[('art',.09,.24),('heading',.39,.14),('art2',.59,.21),('footer',.88,.07)]
-  elif arch==4: slots=[('heading',.09,.11),('copy',.25,.20),('art',.52,.32),('footer',.90,.06)]
-  elif arch==5: slots=[('art',.09,.47),('copy',.61,.12),('heading',.77,.09),('footer',.91,.05)]
-  elif arch==6: slots=[('heading',.09,.16),('art',.31,.18),('copy',.55,.19),('footer',.87,.08)]
-  elif arch==7: slots=[('copy',.09,.19),('heading',.34,.12),('art',.52,.30),('footer',.89,.06)]
-  elif arch==8: slots=[('art',.08,.31),('copy',.44,.16),('heading',.67,.13),('footer',.90,.06)]
-  else: slots=[('heading',.08,.11),('art',.24,.26),('art2',.55,.19),('copy',.78,.10),('footer',.91,.05)]
-  # Unique per-index shift in the photo/art boundaries, bounded to safety zones.
-  delta=(cuts[0]-.45)*.035
-  for role,top,height in slots:
-   top=max(.055,min(.91,top+delta))
-   height=min(height,H and (.965-top))
-   yy=H*top; hh=H*height
-   if role.startswith('art'):
-    vector=brochure_artwork_svg(w,hh,cat,idx,side,p+(1 if role=='art2' else 0),pal)
-    objs.append(image(f'{role}_{item}',x,yy,w,hh,uri(vector)))
-   elif role=='heading':
-    heading=title if (side,p)==(0,panels-1) else (sub if side==0 else (cat.upper()+' COLLECTION' if cat=='Events' else cat.upper()+' MENU' if cat=='Restaurant' else title))
-    size=max(11,min(21,int(w/max(10,len(heading)*.5))))
-    objs.append(textbox(f'heading_{item}',x,yy,w,heading,size,pal[4],head,700))
-   elif role=='copy':
-    if cat=='Restaurant' and side==1: value=['STARTERS: Seasonal greens $14 / Soup $12','MAINS: Pasta $28 / Chef special $34','SWEETS: Tart $15 / Gelato $11'][p%3]
-    elif cat=='Events' and side==1: value=['ARTISAN GIFT BOX • $79','SIGNATURE HAMPER • $129','CELEBRATION COLLECTION • $189'][p%3]
-    else: value=desc if side==0 else sub+' — '+desc
-    objs.append(textbox(f'copy_{item}',x,yy,w,value,10 if panels==3 else 12,pal[4],body))
-   else:
-    objs.append(textbox(f'footer_{item}',x,yy,w,contact if side else web,9,pal[0],body,700))
+ for panel in range(panels):
+  rng=random.Random(99991*idx+503*side+panel*37)
+  x=panel*pw+pw*.07
+  w=pw*.86
+  uid=f'{idx}_{side}_{panel}'
+  # Independently varying full page arrangement, with unique geometry for all 100.
+  mode=(idx*7+panel*3+side*11)%13
+  art_top=.075 + rng.uniform(0,.055)
+  art_height=.27+rng.uniform(0,.20)
+  if mode in (1,4,7,10):
+   art_top=.44+rng.uniform(0,.08)
+   art_height=.23+rng.uniform(0,.13)
+  elif mode in (2,5,8,11):
+   art_top=.25+rng.uniform(0,.06)
+   art_height=.24+rng.uniform(0,.11)
+  elif mode in (3,6,9,12):
+   art_top=.12+rng.uniform(0,.08)
+   art_height=.18+rng.uniform(0,.09)
+  # Every panel gets substantial, original illustrated artwork, not a photo placeholder.
+  svg=brochure_artwork_svg(w,H*art_height,cat,idx,side,panel,pal)
+  objs.append(image('illustration_'+uid,x,H*art_top,w,H*art_height,uri(svg)))
+  if mode%4==0 and w>135:
+   sw=w*.33
+   mini=brochure_artwork_svg(sw,H*.11,cat,idx+31,side,panel+5,pal)
+   objs.append(image('secondary_art_'+uid,x+w-sw,H*.78,sw,H*.11,uri(mini)))
+  if side==0:
+   headline=title if panel==panels-1 else (sub if panel%2 else cat.upper())
+   description=desc
+  else:
+   headline=({'Restaurant':['STARTERS','MAINS','SWEETS'],'Events':['GIFT COLLECTION','THE ARTISAN BOX','ORDER & DELIVERY']}.get(cat,[cat.upper(),'OUR COLLECTION','GET IN TOUCH']))[panel%3]
+   if cat=='Restaurant':
+    description=['Garden salad  $14 / Soup  $12','Chef special  $34 / Seasonal pasta  $28','Chocolate tart  $15 / Gelato  $11'][panel%3]
+   elif cat=='Events':
+    description=['Gourmet gifting / Floral arrangements','Premium gift boxes from $79','Personalised hampers / Delivery options'][panel%3]
+   else: description=sub+' — '+desc
+  # Headline/copy slots always remain away from artwork; front/back get differing positions.
+  if art_top>.38:
+   ht=.09+rng.uniform(0,.035)
+   ct=.245+rng.uniform(0,.055)
+  elif art_top>.22:
+   ht=.085+rng.uniform(0,.025)
+   ct=.70+rng.uniform(0,.04)
+  else:
+   ht=max(.54,art_top+art_height+.05)
+   ct=min(.82,ht+.13)
+  fs=max(11,min(21,int(w/max(8,len(headline)*.51))))
+  objs.append(textbox('headline_'+uid,x,H*ht,w,headline,fs,pal[4],head,700))
+  objs.append(textbox('description_'+uid,x,H*ct,w,description,10 if panels==3 else 12,pal[4],body))
+  footer_y=.93
+  objs.append(textbox('footer_'+uid,x,H*footer_y,w,web if side==0 else contact,9,pal[0],body,700))
  return bg,objs
 
 def door_page(idx,side,W,H):
@@ -395,7 +421,9 @@ class Command(BaseCommand):
    if fp in seen: raise CommandError(f'duplicate composition at {idx+1}')
    seen.add(fp)
    # Warn about reused structural families; uniqueness includes illustration + theme.
-   artwork_seen.add(artwork_signature(pages))
+   sig=artwork_signature(pages)
+   if kind in ('bifold','trifold') and sig in artwork_seen: raise CommandError(f'repeated panel arrangement at template {idx+1}')
+   artwork_seen.add(sig)
    built.append((idx,pages,fp))
   self.stdout.write(f'Validated {len(built)} unique {KINDS[kind]["label"]} templates for Product {product.id}: {product.name}')
   self.stdout.write(f'Canvas: {W} x {H}; JSON + SVG; editable text/photos; locked SVG background.')
@@ -408,8 +436,8 @@ class Command(BaseCommand):
   with transaction.atomic():
    if opt['replace_generated']: DesignTemplate.objects.filter(product=product,name__startswith=prefix).delete()
    for idx,pages,fp in built:
-    theme=THEMES[idx%20][0]; variation=idx//20+1; brief=subject_copy(idx)[4]; name=f'{prefix}{idx+1:03d} · {brief} · {VARIATION_NAMES[(variation-1)%5]}'
-    doc={'generator':GENERATOR_ID,'kind':kind,'version':2,'width':W,'height':H,'pages':[{k:v for k,v in p.items() if k!='backgroundSvg'} for p in pages],'meta':{'compositionFingerprint':fp,'theme':theme,'layoutFamily':idx%20+1,'variation':variation}}
+    theme=subject_copy(idx)[0]; variation=idx//20+1; brief=subject_copy(idx)[4]; name=f'{prefix}{idx+1:03d} · {theme} · {brief} · Artwork {idx+1:03d}'
+    doc={'generator':GENERATOR_ID,'kind':kind,'version':3,'width':W,'height':H,'pages':[{k:v for k,v in p.items() if k!='backgroundSvg'} for p in pages],'meta':{'compositionFingerprint':fp,'theme':theme,'layoutFamily':idx+1,'variation':variation}}
     for side,p in enumerate(pages): (out/f'{idx+1:03d}_{side+1}_{p["name"].lower().replace(" ","_")}.svg').write_text(p['backgroundSvg'],encoding='utf-8')
     preview_svg=render_preview(pages[0]); preview_name=f'{kind}_{idx+1:03d}.svg'; preview_bytes=preview_svg.encode();
     if cairosvg:
