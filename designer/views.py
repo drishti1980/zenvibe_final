@@ -1873,6 +1873,27 @@ def _product_fastest_delivery(product):
     }
 
 
+def _product_delivery_methods(product):
+    """Only enabled product shipping methods; no invented charge or ETA."""
+    attrs=product.source_attributes if isinstance(product.source_attributes,dict) else {}
+    configured=attrs.get("delivery_methods") or {}
+    methods=[]
+    for key,label in (("standard","Standard"),("expedited","Expedited"),("overnight","Overnight")):
+        entry=configured.get(key) or {}
+        if not entry.get("enabled"):
+            continue
+        try:
+            days=int(entry["business_days"])
+            price=__import__("decimal").Decimal(str(entry["price"]))
+        except (KeyError,ValueError,TypeError,__import__("decimal").InvalidOperation):
+            continue
+        if days<0 or price<0:
+            continue
+        methods.append({"key":key,"label":label,"business_days":days,
+                        "price":price,"is_free":price==0})
+    return methods
+
+
 def choose_design(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     templates = live_templates_for(product)
@@ -1945,6 +1966,7 @@ def choose_design(request, product_id):
         "selected_size_key": selected_size,
         "selected_color_key": selected_color,
         "fastest_delivery": _product_fastest_delivery(product),
+        "delivery_methods": _product_delivery_methods(product),
     })
 
 def editable_template_preview(request, template_id):
