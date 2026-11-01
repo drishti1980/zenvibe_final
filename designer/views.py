@@ -1438,6 +1438,7 @@ def _set_design_storefront_options(design, size_key="", color_key=""):
     data = getattr(design, "design_json", None)
     data = dict(data) if isinstance(data, dict) else {}
     data["_zenvibe_storefront"] = {
+        **_design_storefront_options(design),
         "size_key": str(size_key or "").strip()[:100],
         "color_key": str(color_key or "").strip()[:100],
     }
@@ -1578,7 +1579,11 @@ def _editor_product_options(product,request,existing_design=None):
     # The same template ID/JSON is used for Square and Circle; only the locked
     # non-printing product reference changes.
     selected_shape=(request.GET.get("shape") or request.GET.get("option_shape") or "square").strip().lower()
-    if selected_shape not in {"square","circle"}:
+    configured_shape = _selected_configured_variant(product, request, "shape", existing_design)
+    selected_material = _selected_configured_variant(product, request, "material", existing_design)
+    if configured_shape:
+        selected_shape = configured_shape
+    elif selected_shape not in {"square","circle"}:
         selected_shape="square"
     coaster_shape_url=""
     if (product.name or "").strip().lower()=="custom 3d printed coasters with logo":
@@ -1703,6 +1708,7 @@ def _editor_product_options(product,request,existing_design=None):
     return {
         "is_apparel":_is_apparel_product(product),"sizes":sizes,"colors":colors,
         "selected_size":ss,"selected_color":sc,"selected_shape":selected_shape,
+        "selected_material":selected_material,
         "minimum_quantity":_effective_minimum_quantity(product, ss),
         "base_image_url":(
             # Storefront colour selection is authoritative for product-first editors.
@@ -1744,6 +1750,23 @@ def _ensure_apparel_product_base(template_json,options,product):
     data["size"]={"width":W,"height":H}; data["selectedSizeKey"]=options.get("selected_size",""); data["selectedColorKey"]=options.get("selected_color","")
     return data
 
+def _configured_variant_choices(product, kind):
+    raw = (product.source_attributes or {}).get(kind + "_variant_options", [])
+    if not isinstance(raw, list):
+        return []
+    return [{"key": str(v["key"]), "name": str(v["name"])}
+            for v in raw if isinstance(v, dict) and v.get("key") and v.get("name")]
+
+
+def _selected_configured_variant(product, request, kind, existing_design=None):
+    choices = _configured_variant_choices(product, kind)
+    saved = _design_storefront_options(existing_design)
+    selected = (request.GET.get(kind) or request.GET.get("option_" + kind)
+                or saved.get(kind + "_key") or "").strip()
+    return next((v["key"] for v in choices if v["key"] == selected),
+                choices[0]["key"] if choices else "")
+
+
 def _product_option_groups(product, size_variants, color_variants):
     """Normalize arbitrary source product attributes for the storefront.
 
@@ -1754,6 +1777,11 @@ def _product_option_groups(product, size_variants, color_variants):
     """
     raw = getattr(product, "source_attributes", None) or {}
     groups = []
+    for kind in ("shape", "material"):
+        choices = _configured_variant_choices(product, kind)
+        if choices:
+            groups.append({"label": kind.title(), "key": kind,
+                           "choices": choices})
     if isinstance(raw, dict):
         items = raw.items()
     else:
@@ -1772,6 +1800,8 @@ def _product_option_groups(product, size_variants, color_variants):
         if (
             not label_text
             or label_key in skip
+            or label_key.endswith("_variant_options")
+            or (label_key in {"shape", "material"} and _configured_variant_choices(product, label_key))
             or label_key.startswith("source_")
             or label_key.startswith("catalogue_")
             or label_key in {"live_url", "source_localized"}
@@ -2196,9 +2226,11 @@ def editor(request, product_id):
     # Coaster templates are shape-aware views of the SAME editable artwork.
     # Preserve the selected shape on every template URL so switching designs
     # never silently returns the product to square.
-    if product.id == 415:
-        for item in template_catalog:
-            item["url"] += ("&" if "?" in item["url"] else "?") + f"shape={product_options.get('selected_shape') or 'square'}"
+    for item in template_catalog:
+        for kind in ("shape", "material"):
+            selected = product_options.get("selected_" + kind)
+            if selected and (_configured_variant_choices(product, kind) or (kind == "shape" and product.id == 415)):
+                item["url"] += "&" + urlencode({kind: selected})
 
     response = render(request, "designer/editor.html", {
         "product": product,
@@ -2536,6 +2568,12 @@ def save_design(request):
         if editing_cart_key and cart_key != editing_cart_key and cart_key in _store_cart(request):
             return JsonResponse({"ok": False, "error": "Another cart item already uses these options. Edit that item or choose different options."}, status=400)
         _set_design_storefront_options(design, selected_size_key, selected_color_key)
+        for kind in ("shape", "material"):
+            choices = _configured_variant_choices(product, kind)
+            selected = str(payload.get(kind + "_key") or _design_storefront_options(design).get(kind + "_key") or "")
+            if choices:
+                selected = next((v["key"] for v in choices if v["key"] == selected), choices[0]["key"])
+                design.design_json["_zenvibe_storefront"][kind + "_key"] = selected
         minimum = _effective_minimum_quantity(product, selected_size_key)
         maximum = max(minimum, min(9999, int(product.maximum_quantity or 9999)))
         design.quantity = max(minimum, min(maximum, requested_qty))

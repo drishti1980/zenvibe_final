@@ -1433,7 +1433,7 @@
                                 <label for="zvOption{{ forloop.counter }}"><strong>{{ group.label }}</strong></label>
                                 <select id="zvOption{{ forloop.counter }}" name="option_{{ group.key }}"
                                     class="form-control zv-generic-option" data-option-key="{{ group.key }}">
-                                    {% for value in group.values %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                                    {% if group.choices %}{% for choice in group.choices %}<option value="{{ choice.key }}">{{ choice.name }}</option>{% endfor %}{% else %}{% for value in group.values %}<option value="{{ value }}">{{ value }}</option>{% endfor %}{% endif %}
                                 </select>
                             </div>
                             {% endfor %}
@@ -2734,8 +2734,8 @@
         });
     }
 
-    colorButtons.forEach(function (button) { button.addEventListener('click', function () { selectedColor = this.dataset.colorKey || ''; const hiddenColor = document.getElementById('zvSelectedColor'); if (hiddenColor) hiddenColor.value = selectedColor; colorButtons.forEach(b => b.classList.toggle('active', b === this)); document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set('color', selectedColor); link.href = url.pathname + url.search; }); }); });
-    genericOptions.forEach(function (select) { select.addEventListener('change', function () { document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set(select.dataset.optionKey, select.value); link.href = url.pathname + url.search; }); }); });
+    colorButtons.forEach(function (button) { button.addEventListener('click', function () { selectedColor = this.dataset.colorKey || ''; const hiddenColor = document.getElementById('zvSelectedColor'); if (hiddenColor) hiddenColor.value = selectedColor; colorButtons.forEach(b => b.classList.toggle('active', b === this)); document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set('color', selectedColor); link.href = url.pathname + url.search; }); } select.addEventListener('change', syncOption); syncOption(); });
+    genericOptions.forEach(function (select) { function syncOption() { document.querySelectorAll('a[href*="customizer"],a[href*="editor"]').forEach(function (link) { const url = new URL(link.href, window.location.origin); url.searchParams.set(select.dataset.optionKey, select.value); link.href = url.pathname + url.search; }); }); });
     qty?.addEventListener('input', function () { if (qty.value !== '') currentTier(); });
     qty?.addEventListener('change', syncCommerceUI);
 
