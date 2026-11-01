@@ -1111,7 +1111,13 @@ class StoreEmailTemplate(models.Model):
     EVENT_CHOICES = [
         ("order_customer", "Customer order confirmation"),
         ("order_admin", "New order notification to staff"),
-        ("order_status", "Customer order status update"),
+        ("order_status", "Customer order status update (fallback)"),
+        ("order_status_new", "Order status: New"),
+        ("order_status_confirmed", "Order status: Confirmed"),
+        ("order_status_in_production", "Order status: In production"),
+        ("order_status_shipped", "Order status: Shipped"),
+        ("order_status_completed", "Order status: Completed"),
+        ("order_status_cancelled", "Order status: Cancelled"),
         ("contact_admin", "Contact Us notification to staff"),
     ]
     event = models.CharField(max_length=40, choices=EVENT_CHOICES, unique=True)

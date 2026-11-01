@@ -8,7 +8,7 @@ from django.db import transaction
 from django.utils import timezone
 from PIL import Image
 
-from designer.models import Order, OrderStatusHistory, OrderWorkflowConfig
+from designer.models import Order, OrderStatusHistory, OrderWorkflowConfig, StoreEmailTemplate
 from designer.services.store_email import send_store_email, active_account, render_store_template
 import logging
 
@@ -53,7 +53,8 @@ def send_order_created_emails(order):
         "total": order.total, "status": order.get_status_display(),
         "product_name": order.design.product.name if order.design and order.design.product else "Custom product",
     }
-    customer_message = render_store_template("order_customer", subject_customer, customer_body, values)
+    customer_event = "order_status_new" if order.status == "new" and StoreEmailTemplate.objects.filter(event="order_status_new").exists() else "order_customer"
+    customer_message = render_store_template(customer_event, subject_customer, customer_body, values)
     if cfg.email_customer_on_order and order.customer_email and customer_message:
         _notify(*customer_message, [order.customer_email])
 
@@ -85,10 +86,15 @@ def send_status_email(order, old_status):
         f"New status: {order.get_status_display()}\n\n"
         "ZenVibe Corporate Gifts"
     )
-    status_message = render_store_template("order_status", f"Order update — {order.order_number}", body, {
+    event = "order_status_" + order.status
+    if not StoreEmailTemplate.objects.filter(event=event).exists():
+        event = "order_status"
+    status_message = render_store_template(event, f"Order update — {order.order_number}", body, {
         "customer_name": order.customer_name, "customer_email": order.customer_email,
         "order_number": order.order_number, "status": order.get_status_display(),
         "old_status": dict(Order.STATUS_CHOICES).get(old_status, old_status),
+        "product_name": order.design.product.name if order.design and order.design.product else "Custom product",
+        "quantity": order.quantity, "total": order.total,
     })
     if status_message:
         _notify(*status_message, [order.customer_email])
