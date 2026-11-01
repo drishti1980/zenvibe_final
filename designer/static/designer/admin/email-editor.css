@@ -13,3 +13,23 @@
 .zv-email-attachment-files { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0; }
 .zv-email-attachment-files span { padding:8px 12px; background:#fff; border:1px solid #d6e0ef; border-radius:6px; color:#173451; }
 .zv-email-attachments p { margin:0; font-size:13px; color:#52637a; }
+/* Keep the design and attachment summary in one full-width column. */
+#storeemailtemplate_form .field-body .flex-container,
+#storeemailtemplate_form .field-body > div { display:block!important; width:100%; min-width:0; }
+#storeemailtemplate_form .field-body label[for=id_body] { float:none!important; display:block; width:auto!important; margin:0 0 12px; }
+#storeemailtemplate_form .zv-email-designer { display:block; width:100%!important; max-width:1040px!important; box-sizing:border-box; }
+#storeemailtemplate_form .zv-email-designer .zv-rt-toolbar { padding:12px; gap:8px; border-bottom:1px solid #e1e7f0; }
+#storeemailtemplate_form .zv-email-designer .zv-rich-editor { padding:32px 20px; min-height:600px; max-height:none; overflow:visible; background:#edf1f6; font-family:Arial,sans-serif; font-size:15px; line-height:1.65; letter-spacing:normal; text-transform:none; color:#24364d; }
+#storeemailtemplate_form .zv-rich-editor > div { max-width:640px!important; margin:0 auto!important; border-radius:12px; overflow:hidden; background:#fff; box-shadow:0 6px 24px #18334d10; }
+#storeemailtemplate_form .zv-rich-editor h2,
+#storeemailtemplate_form .zv-rich-editor h3 { background:transparent; border:0; padding:0; margin:0 0 18px; font-family:Arial,sans-serif; font-size:26px; line-height:1.3; font-weight:700; color:inherit; text-transform:none; letter-spacing:normal; }
+#storeemailtemplate_form .zv-rich-editor p { font-family:Arial,sans-serif; font-size:15px; line-height:1.65; letter-spacing:normal; margin:0 0 18px; color:inherit; }
+#storeemailtemplate_form .zv-email-attachments { display:block; width:100%; max-width:1040px; margin-top:16px; padding:16px 20px; background:#fff; }
+#storeemailtemplate_form .zv-email-attachments[hidden] { display:none; }
+#storeemailtemplate_form .zv-email-attachments p { display:none; }
+#storeemailtemplate_form .zv-email-attachment-files { margin:10px 0 0; }
+#storeemailtemplate_form input#id_subject { width:100%; max-width:1040px; box-sizing:border-box; }
+@media(max-width:700px) {
+ #storeemailtemplate_form .zv-email-designer .zv-rich-editor { padding:16px 8px; }
+ #storeemailtemplate_form .zv-rich-editor h2 { font-size:22px; }
+}
