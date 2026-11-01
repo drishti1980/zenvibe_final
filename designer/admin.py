@@ -455,7 +455,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-            "all": ("designer/admin/zenvibe-richtext.css","designer/admin/product-configuration.css")
+            "all": ("designer/admin/zenvibe-richtext.css","designer/admin/product-configuration.css","designer/admin/product-faq-editor.css")
         }
         js = ("designer/admin/zenvibe-richtext.js", "designer/admin/product-faq-editor.js", "designer/admin/hide-legacy-3d-fields.js")
 
