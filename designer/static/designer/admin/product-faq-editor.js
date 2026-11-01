@@ -21,26 +21,30 @@
     root.appendChild(add);
     const original = field.value.trim();
     const doc = new DOMParser().parseFromString(original, "text/html");
+    const legacyCards = Array.from(doc.querySelectorAll(".nbd-faq-wrap"));
     const details = Array.from(doc.querySelectorAll("details"));
-    const remainder = doc.body.cloneNode(true);
-    remainder.querySelectorAll("details").forEach(el => el.remove());
-    const remainingText = (remainder.textContent || "").trim();
-    // Never silently overwrite existing unstructured FAQ HTML.
-    if (original && (!details.length || remainingText)) {
-      const warning = document.createElement("p");
-      warning.textContent = "Existing FAQ content is not in accordion format. It is preserved below. To convert it, first copy its questions and answers into the new FAQ rows, then remove the old content manually.";
-      warning.style.color = "#a35c00";
-      root.insertBefore(warning, list);
+    const rows = legacyCards.length
+      ? legacyCards.map(el => ({
+          q: (el.querySelector(".nbd-faq-head")?.textContent || "").trim(),
+          a: (el.querySelector(".nbd-faq-body-inner")?.innerText ||
+              el.querySelector(".nbd-faq-body-inner")?.textContent || "").trim()
+        })).filter(item => item.q)
+      : details.map(el => ({
+          q: (el.querySelector("summary")?.textContent || "").trim().replace(/^\\d+\\.\\s*/, ""),
+          a: Array.from(el.children).filter(child => child.tagName !== "SUMMARY")
+            .map(child => child.textContent || "").join("\\n").trim()
+        })).filter(item => item.q);
+    // Legacy custom HTML we do not understand must not be discarded.
+    if (original && !rows.length) {
+      const info = document.createElement("p");
+      info.textContent = "This product has custom FAQ markup. Original content is kept unchanged; use the standard field until it is converted.";
+      root.appendChild(info);
       field.style.display = "";
-      field.style.minHeight = "130px";
       add.disabled = true;
       return;
     }
-    const rows = details.map(d => ({
-      q: (d.querySelector("summary")?.textContent || "").trim().replace(/\s*[+−]\s*$/, ""),
-      a: Array.from(d.children).filter(e => e.tagName !== "SUMMARY").map(e => e.textContent).join("\n").trim()
-    }));
     field.style.display = "none";
+    field.setAttribute("aria-hidden","true");
     function serialize() {
       const escape = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
       field.value = rows.filter(x => x.q.trim()).map(x =>
