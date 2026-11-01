@@ -8,8 +8,11 @@ from django.db import transaction
 from designer.models import DesignTemplate, Product
 try:
     import cairosvg
-except Exception:
+except Exception as exc:
     cairosvg=None
+    CAIROSVG_IMPORT_ERROR=f'{type(exc).__name__}: {exc}'
+else:
+    CAIROSVG_IMPORT_ERROR=None
 
 GENERATOR_ID='zenvibe-marketing-materials-v2-diverse-artwork'
 MEDIA_DIR='generated_marketing_materials_v1'
@@ -387,7 +390,7 @@ def load_template_pages(row):
 def preview_for_installed_page(page):
  """Render a self-contained PNG, even when SVG assets are embedded data URIs."""
  if cairosvg is None:
-  raise CommandError('CairoSVG is required for preview repair. Install: pip install cairosvg')
+  raise CommandError(f'CairoSVG cannot load: {CAIROSVG_IMPORT_ERROR}')
  W=int(page.get('width') or 0); H=int(page.get('height') or 0)
  if W<=0 or H<=0:
   raise CommandError('Template page has invalid dimensions')
@@ -448,7 +451,7 @@ class Command(BaseCommand):
    if kind!='bifold':
     raise CommandError('--repair-previews currently supports only bifold')
    if cairosvg is None:
-    raise CommandError('CairoSVG required: pip install cairosvg')
+    raise CommandError(f'CairoSVG cannot load: {CAIROSVG_IMPORT_ERROR}. On Windows verify Cairo native DLLs and Python environment; package installation alone may not resolve this.')
    masters=list(DesignTemplate.objects.filter(product=product,is_active=True).order_by('pk'))
    if not masters:
     raise CommandError('No active templates for this product')
