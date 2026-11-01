@@ -81,28 +81,56 @@
     });
     toolbar.appendChild(link);
     if (textarea.id === "id_description") {
-      const faq = button("＋ FAQ", "Insert expandable FAQ into Description");
+      // A small on-page form avoids blocked prompt dialogs and unreliable
+      // execCommand insertion when the cursor is inside a <details> element.
+      const faq = button("＋ Add FAQ", "Add a question and answer to Description");
+      const faqPanel = document.createElement("div");
+      faqPanel.className = "zv-inline-faq-form";
+      faqPanel.hidden = true;
+      const question = document.createElement("input");
+      question.type = "text"; question.placeholder = "Question (e.g. Can I add engraving?)";
+      question.setAttribute("aria-label", "New FAQ question");
+      const answer = document.createElement("textarea");
+      answer.rows = 3; answer.placeholder = "Write the answer here";
+      answer.setAttribute("aria-label", "New FAQ answer");
+      const saveFaq = document.createElement("button");
+      saveFaq.type = "button"; saveFaq.className = "button default";
+      saveFaq.textContent = "Add question to description";
+      const cancelFaq = document.createElement("button");
+      cancelFaq.type = "button"; cancelFaq.className = "button";
+      cancelFaq.textContent = "Cancel";
+      const error = document.createElement("p");
+      error.className = "zv-faq-error";error.setAttribute("role", "alert");
+      cancelFaq.addEventListener("click", () => { faqPanel.hidden = true;error.textContent = ""; });
       faq.addEventListener("click", function () {
-        const selection = window.getSelection();
-        const savedRange = selection && selection.rangeCount && editor.contains(selection.anchorNode)
-          ? selection.getRangeAt(0).cloneRange() : null;
-        const question = window.prompt("FAQ question:");
-        if (!question || !question.trim()) return;
-        const answer = window.prompt("FAQ answer:");
-        if (answer === null) return;
-        const escape = function (v) { return v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); };
-        editor.focus();
-        if (savedRange && selection) { selection.removeAllRanges(); selection.addRange(savedRange); }
-        else {
-          const range = document.createRange(); range.selectNodeContents(editor); range.collapse(false);
-          selection.removeAllRanges(); selection.addRange(range);
-        }
-        cmd("insertHTML", '<details class="zv-description-faq"><summary>' +
-          escape(question.trim()) + '</summary><p>' + escape(answer.trim()).replace(/\\n/g, "<br>") +
-          '</p></details><p><br></p>');
+        faqPanel.hidden = !faqPanel.hidden;
+        if (!faqPanel.hidden) question.focus();
+      });
+      saveFaq.addEventListener("click", function () {
+        const q = question.value.trim(), a = answer.value.trim();
+        if (!q || !a) { error.textContent = "Enter both a question and an answer.";return; }
+        const details = document.createElement("details");
+        details.className = "zv-description-faq";
+        const summary = document.createElement("summary");
+        const prior = editor.querySelectorAll("details").length;
+        summary.textContent = (prior + 1) + ". " + q;
+        const paragraph = document.createElement("p");
+        paragraph.textContent = a;
+        details.append(summary, paragraph);
+        // Append after existing FAQ accordions; never nest a FAQ inside another.
+        const all = Array.from(editor.querySelectorAll("details"));
+        const last = all[all.length - 1];
+        if (last) last.insertAdjacentElement("afterend", details);
+        else editor.appendChild(details);
+        question.value = "";answer.value = "";
+        faqPanel.hidden = true;error.textContent = "";
         sync();
       });
+      faqPanel.append(question, answer, error, saveFaq, cancelFaq);
       toolbar.appendChild(faq);
+      // The panel is mounted after the toolbar in the editor shell below.
+      toolbar.dataset.hasFaqPanel = "1";
+      toolbar._zvFaqPanel = faqPanel;
     }
     if (textarea.id === "id_body") {
       const photo = button("Image", "Insert hosted image");
@@ -146,6 +174,7 @@
     // but is visually hidden so there is never a second giant box beside the toolbar.
     textarea.classList.add("zv-rich-source");
     shell.appendChild(toolbar);
+    if (toolbar._zvFaqPanel) shell.appendChild(toolbar._zvFaqPanel);
     shell.appendChild(editor);
     shell.appendChild(textarea);
     if (textarea.form) textarea.form.addEventListener("submit", sync);
