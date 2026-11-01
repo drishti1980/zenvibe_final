@@ -61,20 +61,41 @@
       visible.forEach(s => s.details.open = open); e.currentTarget.textContent = open ? "Collapse sections" : "Expand sections";
     });
     search.addEventListener("input", apply);
+    function alignHeader(h) {
+      let title = h.querySelector(":scope > .zv-inline-title");
+      let actions = h.querySelector(":scope > .zv-inline-actions");
+      if (!title) {
+        title = document.createElement("span"); title.className = "zv-inline-title";
+        actions = document.createElement("span"); actions.className = "zv-inline-actions";
+        [...h.childNodes].forEach(node => {
+          if (node.nodeType === 1 && node.matches(".delete, .inline-deletelink, .zv-inline-toggle")) actions.append(node);
+          else title.append(node);
+        });
+        h.append(title, actions);
+      }
+      // Django may append the remove control after the formset-added event.
+      [...h.children].filter(node => node.matches(".delete, .inline-deletelink, .zv-inline-toggle")).forEach(node => actions.append(node));
+    }
     function cards(root) {
       root.querySelectorAll(".inline-related:not(.empty-form)").forEach(card => {
-        if (card.dataset.zvCompact) return;
         const h = card.querySelector("h3"); if (!h) return;
+        if (card.dataset.zvCompact) { alignHeader(h); return; }
         card.dataset.zvCompact = "1";
         const button = document.createElement("button"); button.type = "button"; button.className = "zv-inline-toggle";
         const saved = card.querySelector('input[name$="-id"]')?.value;
         card.classList.toggle("zv-inline-collapsed", !!saved && !card.querySelector(".errorlist"));
         function update() { const collapsed = card.classList.contains("zv-inline-collapsed");button.textContent = collapsed ? "Edit / expand" : "Collapse";button.setAttribute("aria-expanded", String(!collapsed)); }
-        update(); h.append(button); button.addEventListener("click", () => {card.classList.toggle("zv-inline-collapsed");update();});
+        update(); h.append(button); alignHeader(h); button.addEventListener("click", () => {card.classList.toggle("zv-inline-collapsed");update();});
       });
     }
     cards(form);
     document.addEventListener("formset:added", () => cards(form));
+    let headerUpdatePending = false;
+    new MutationObserver(() => {
+      if (headerUpdatePending) return;
+      headerUpdatePending = true;
+      requestAnimationFrame(() => { headerUpdatePending = false; cards(form); });
+    }).observe(form, {childList: true, subtree: true});
     form.addEventListener("invalid", e => {
       const s = sections.find(s => s.el.contains(e.target));
       if (s) { search.value = ""; selected = s.group; apply(); s.details.open = true; e.target.closest(".inline-related")?.classList.remove("zv-inline-collapsed"); }

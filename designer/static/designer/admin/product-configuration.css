@@ -105,3 +105,31 @@ body.model-product.change-form .zv-product-nav{margin:12px 0;gap:6px}
 body.model-product.change-form .zv-product-nav button{padding:9px 12px}
 body.model-product.change-form #price_tiers-group .tabular table{min-width:650px}
 @media(max-width:760px){body.model-product.change-form #zv-admin-tools{display:flex;flex-wrap:wrap}body.model-product.change-form .zv-product-nav button{flex:1 1 120px}body.model-product.change-form #product_form .flex-container>div{flex-basis:100%}}
+
+/* Consistent field columns: labels above controls, helper text below each field. */
+body.model-product.change-form #product_form fieldset.module .form-row>.form-multiline{
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px 24px;align-items:start;width:100%;
+}
+body.model-product.change-form #product_form fieldset.module .form-multiline>div{min-width:0;max-width:none;width:auto}
+body.model-product.change-form #product_form fieldset.module .fieldBox{display:flex!important;flex-direction:column;align-items:stretch;gap:7px;width:100%;padding:0;margin:0}
+body.model-product.change-form #product_form fieldset.module .fieldBox>label{float:none!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;line-height:1.4}
+body.model-product.change-form #product_form fieldset.module .fieldBox input:not([type=checkbox]):not([type=radio]):not([type=color]),
+body.model-product.change-form #product_form fieldset.module .fieldBox select{width:100%!important;max-width:none!important;min-width:0;min-height:43px;margin:0;box-sizing:border-box}
+body.model-product.change-form #product_form fieldset.module .form-multiline .help{margin:6px 0 0!important;padding:0!important;max-width:none;line-height:1.45;font-size:13px}
+/* Inline heading actions have equal height and a shared right-hand baseline. */
+body.model-product.change-form #product_form .inline-related h3{display:flex!important;align-items:center;justify-content:space-between;gap:12px;min-height:44px;box-sizing:border-box}
+body.model-product.change-form #product_form .zv-inline-title{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+body.model-product.change-form #product_form .zv-inline-actions{display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;gap:12px;float:none;margin:0}
+body.model-product.change-form #product_form .zv-inline-actions .zv-inline-toggle{float:none!important;order:0;margin:0!important;min-width:126px;min-height:38px;padding:8px 12px;box-sizing:border-box;text-align:center;line-height:20px}
+body.model-product.change-form #product_form .zv-inline-actions .delete{display:inline-flex;align-items:center;gap:6px;order:1;float:none!important;margin:0!important;white-space:nowrap}
+body.model-product.change-form #product_form .zv-inline-actions .delete input{margin:0!important;vertical-align:middle}
+body.model-product.change-form #product_form .zv-inline-actions .delete label{float:none!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important}
+body.model-product.change-form #product_form .zv-inline-actions .inline-deletelink{order:1;position:static!important;float:none!important;flex:none;margin:0!important;align-self:center}
+body.model-product.change-form #product_form .zv-inline-actions .inline-deletelink:focus-visible{outline:2px solid #17589c;outline-offset:3px}
+body.model-product.change-form #product_form .zv-inline-collapsed>h3{display:flex!important}
+@media(max-width:600px){
+ body.model-product.change-form #product_form fieldset.module .form-row>.form-multiline{grid-template-columns:minmax(0,1fr)}
+ body.model-product.change-form #product_form .inline-related h3{flex-wrap:wrap}
+ body.model-product.change-form #product_form .zv-inline-title{flex-basis:100%}
+ body.model-product.change-form #product_form .zv-inline-actions{width:100%;justify-content:flex-end}
+}
