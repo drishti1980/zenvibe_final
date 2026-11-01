@@ -973,11 +973,13 @@ class Command(BaseCommand):
                    for side,face in enumerate(pages_cfg)]
             signature=hashlib.sha256(json.dumps([
                 [(o["type"],o["left"],o["top"],o["width"],o["height"],
-                  o.get("text"),str(o.get("src",""))[:60]) for o in p["objects"]]
+                  o.get("text"),
+                  hashlib.sha256(str(o.get("src","")).encode()).hexdigest()
+                  if o.get("src") else None) for o in p["objects"]]
                 for p in pages
             ],sort_keys=True).encode()).hexdigest()
             if signature in signatures:
-                raise CommandError("Repeated tri-fold composition at index %03d"%(idx+1))
+                raise CommandError("Identical rendered source geometry and content at template %03d"%(idx+1))
             signatures.add(signature)
             family=BRIEFS[idx%20][0]
             direction=DIRECTIONS[art_direction(idx)] + " • Composition %03d"%(idx+1)
