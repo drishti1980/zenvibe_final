@@ -233,6 +233,17 @@ class ProductAdminForm(forms.ModelForm):
         help_text="Must be equal to or greater than the earliest delivery.",
     )
 
+    # Configurable methods. None are enabled automatically for existing products.
+    standard_delivery_enabled = forms.BooleanField(required=False, label="Offer Standard")
+    standard_delivery_days = forms.IntegerField(required=False,min_value=0,label="Standard delivery (business days)")
+    standard_delivery_price = forms.DecimalField(required=False,min_value=0,max_digits=10,decimal_places=2,label="Standard shipping charge")
+    expedited_delivery_enabled = forms.BooleanField(required=False,label="Offer Expedited")
+    expedited_delivery_days = forms.IntegerField(required=False,min_value=0,label="Expedited delivery (business days)")
+    expedited_delivery_price = forms.DecimalField(required=False,min_value=0,max_digits=10,decimal_places=2,label="Expedited shipping charge")
+    overnight_delivery_enabled = forms.BooleanField(required=False,label="Offer Overnight")
+    overnight_delivery_days = forms.IntegerField(required=False,min_value=0,label="Overnight delivery (business days)")
+    overnight_delivery_price = forms.DecimalField(required=False,min_value=0,max_digits=10,decimal_places=2,label="Overnight shipping charge")
+
     single_side_page_count = forms.IntegerField(
         required=False, min_value=1, max_value=20, label="Single Side — editable pages",
         help_text="Number of editor pages for Single Side. Leave blank to use existing behaviour.",
@@ -273,6 +284,11 @@ class ProductAdminForm(forms.ModelForm):
         self.fields["single_side_page_count"].initial = page_counts.get("single")
         self.fields["double_side_page_count"].initial = page_counts.get("double")
         self.fields["show_customize_button"].initial = attrs.get("show_customize_button", True) is not False
+        for method in ("standard","expedited","overnight"):
+            delivery=(attrs.get("delivery_methods") or {}).get(method) or {}
+            self.fields[method+"_delivery_enabled"].initial=bool(delivery.get("enabled",False))
+            self.fields[method+"_delivery_days"].initial=delivery.get("business_days")
+            self.fields[method+"_delivery_price"].initial=delivery.get("price")
         self.fields["fastest_delivery_enabled"].initial = bool(
             attrs.get("fastest_delivery_enabled", False)
         )
@@ -299,6 +315,12 @@ class ProductAdminForm(forms.ModelForm):
                 break
             keys.add(key);options.append({"name":name,"key":key})
         cleaned["_shape_options"]=options
+        for method in ("standard","expedited","overnight"):
+            if cleaned.get(method+"_delivery_enabled"):
+                if cleaned.get(method+"_delivery_days") is None:
+                    self.add_error(method+"_delivery_days","Enter the estimated business days for enabled delivery.")
+                if cleaned.get(method+"_delivery_price") is None:
+                    self.add_error(method+"_delivery_price","Enter the charge (0 for free shipping).")
         enabled = cleaned.get("fastest_delivery_enabled")
         minimum = cleaned.get("fastest_delivery_min_business_days")
         maximum = cleaned.get("fastest_delivery_max_business_days")
@@ -333,6 +355,17 @@ class ProductAdminForm(forms.ModelForm):
         else:
             attrs.pop("printing_side_page_counts", None)
         attrs["show_customize_button"] = bool(self.cleaned_data.get("show_customize_button", True))
+        delivery_methods={}
+        for method in ("standard","expedited","overnight"):
+            enabled=bool(self.cleaned_data.get(method+"_delivery_enabled"))
+            days=self.cleaned_data.get(method+"_delivery_days")
+            charge=self.cleaned_data.get(method+"_delivery_price")
+            if enabled:
+                delivery_methods[method]={"enabled":True,"business_days":int(days),"price":str(charge)}
+        if delivery_methods:
+            attrs["delivery_methods"]=delivery_methods
+        else:
+            attrs.pop("delivery_methods",None)
         attrs["fastest_delivery_enabled"] = bool(
             self.cleaned_data.get("fastest_delivery_enabled", False)
         )
@@ -437,6 +470,14 @@ class ProductAdmin(admin.ModelAdmin):
         ("Source", {
             "fields": ("source_attributes",),
             "classes": ("collapse",),
+        }),
+        ("Delivery methods (per product)", {
+            "fields": (
+                ("standard_delivery_enabled","standard_delivery_days","standard_delivery_price"),
+                ("expedited_delivery_enabled","expedited_delivery_days","expedited_delivery_price"),
+                ("overnight_delivery_enabled","overnight_delivery_days","overnight_delivery_price"),
+            ),
+            "description": "Enable only methods available for this product. Enter estimated business days and delivery charges. These options are shown to customers; checkout charging requires integration with the order total.",
         }),
         ("Fastest delivery", {
             "fields": (
