@@ -14,9 +14,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def _notify(subject, body, recipients):
+def _notify(subject, body, recipients, attachments=None):
     try:
-        return send_store_email(subject, body, recipients)
+        return send_store_email(subject, body, recipients, attachments=attachments)
     except Exception:
         logger.exception("ZenVibe email delivery failed")
         return 0
@@ -56,7 +56,7 @@ def send_order_created_emails(order):
     customer_event = "order_status_new" if order.status == "new" and StoreEmailTemplate.objects.filter(event="order_status_new").exists() else "order_customer"
     customer_message = render_store_template(customer_event, subject_customer, customer_body, values)
     if cfg.email_customer_on_order and order.customer_email and customer_message:
-        _notify(*customer_message, [order.customer_email])
+        _notify(*customer_message, [order.customer_email], attachments=order_artwork_attachments(order))
 
     admins = _admin_emails(cfg)
     if cfg.email_admin_on_order and admins:
@@ -72,7 +72,7 @@ def send_order_created_emails(order):
         )
         admin_message = render_store_template("order_admin", f"New ZenVibe order — {order.order_number}", admin_body, values)
         if admin_message:
-            _notify(*admin_message, admins)
+            _notify(*admin_message, admins, attachments=order_artwork_attachments(order))
 
 
 def send_status_email(order, old_status):
@@ -97,7 +97,7 @@ def send_status_email(order, old_status):
         "quantity": order.quantity, "total": order.total,
     })
     if status_message:
-        _notify(*status_message, [order.customer_email])
+        _notify(*status_message, [order.customer_email], attachments=order_artwork_attachments(order))
 
 
 @transaction.atomic
@@ -182,3 +182,23 @@ def preview_bytes(design, fmt="png"):
         rgb.save(out, "PDF", resolution=150.0)
         return out.getvalue(), "application/pdf", "pdf"
     raise ValueError("Unsupported format")
+
+
+def order_artwork_attachments(order):
+    """Attach the same saved customer preview offered by admin artwork downloads."""
+    if not order.design or not order.design.preview_png:
+        return []
+    attachments = []
+    total = 0
+    for fmt in ("png", "pdf"):
+        try:
+            content, mimetype, extension = preview_bytes(order.design, fmt)
+            # Keep the encoded message within direct Outlook sendMail limits.
+            if total + len(content) > 2 * 1024 * 1024:
+                logger.warning("Order %s artwork %s exceeds email attachment budget", order.pk, fmt)
+                continue
+            attachments.append((f"order-{order.pk}-artwork.{extension}", content, mimetype))
+            total += len(content)
+        except Exception:
+            logger.exception("Could not create %s email artwork for order %s", fmt, order.pk)
+    return attachments

@@ -54,7 +54,7 @@ def _graph_request(method, path, payload=None, account=None):
         return json.loads(body) if body else {}
 
 
-def send_store_email(subject, body, recipients, reply_to=None):
+def send_store_email(subject, body, recipients, reply_to=None, attachments=None):
     is_html = bool(re.search(r'<(?:p|h[1-6]|div|table|br|img|ul|ol|strong)\b', body, re.I))
     plain_body = strip_tags(body) if is_html else body
     recipients = [r for r in recipients if r]
@@ -67,6 +67,8 @@ def send_store_email(subject, body, recipients, reply_to=None):
                                       reply_to=[reply_to] if reply_to else None)
         if is_html:
             msg.attach_alternative(body, "text/html")
+        for filename, content, mimetype in attachments or []:
+            msg.attach(filename, content, mimetype)
         return msg.send()
     if account.provider == "gmail":
         from designer.services.mail_credentials import decrypt_password
@@ -84,6 +86,8 @@ def send_store_email(subject, body, recipients, reply_to=None):
                                       connection=connection)
         if is_html:
             msg.attach_alternative(body, "text/html")
+        for filename, content, mimetype in attachments or []:
+            msg.attach(filename, content, mimetype)
         return msg.send()
     if account.provider == "outlook":
         mailbox = urllib.parse.quote(account.email_address, safe="")
@@ -92,6 +96,12 @@ def send_store_email(subject, body, recipients, reply_to=None):
             "body": {"contentType": "HTML" if is_html else "Text", "content": body},
             "toRecipients": [{"emailAddress": {"address": recipient}} for recipient in recipients],
         }
+        if attachments:
+            message["attachments"] = [
+                {"@odata.type": "#microsoft.graph.fileAttachment", "name": filename,
+                 "contentType": mimetype, "contentBytes": base64.b64encode(content).decode("ascii")}
+                for filename, content, mimetype in attachments
+            ]
         if reply_to:
             message["replyTo"] = [{"emailAddress": {"address": reply_to}}]
         _graph_request("POST", "users/" + mailbox + "/sendMail",
