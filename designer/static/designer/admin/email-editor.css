@@ -1,0 +1,8 @@
+.zv-email-designer { width:100%; max-width:1000px; }
+.zv-email-designer .zv-rich-editor { min-height:520px; max-height:75vh; overflow:auto; background:#f3f6fa; padding:24px; }
+.zv-email-designer .zv-rich-editor img { max-width:100%; height:auto; }
+.zv-email-designer .zv-rt-toolbar { position:sticky; top:0; z-index:5; background:#fff; flex-wrap:wrap; gap:10px; }
+.zv-email-designer .zv-rt-toolbar label { display:inline-flex; align-items:center; gap:6px; width:auto!important; float:none!important; margin:0; font-size:13px; }
+.zv-email-designer input[type=color] { width:36px; height:32px; padding:2px; cursor:pointer; }
+.form-row.field-body > div { display:flex; flex-direction:column; gap:10px; }
+.form-row.field-body .help { margin-left:0!important; }

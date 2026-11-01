@@ -132,18 +132,6 @@
       toolbar.dataset.hasFaqPanel = "1";
       toolbar._zvFaqPanel = faqPanel;
     }
-    if (textarea.id === "id_body") {
-      const photo = button("Image", "Insert hosted image");
-      photo.addEventListener("click", function () {
-        const url = window.prompt("Enter a public HTTPS image URL (upload images to your media library first):");
-        if (url && /^https:\/\//i.test(url.trim())) {
-          editor.focus();
-          cmd("insertHTML", '<img src="' + url.trim().replace(/["<>]/g, "") + '" alt="Email image" style="max-width:100%;height:auto">');
-          sync();
-        }
-      });
-      toolbar.appendChild(photo);
-    }
     toolbar.appendChild(separator());
     toolbar.appendChild(button("↶", "Undo", "undo"));
     toolbar.appendChild(button("↷", "Redo", "redo"));

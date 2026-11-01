@@ -1651,3 +1651,41 @@ class StoreEmailTemplateAdmin(admin.ModelAdmin):
     list_display = ("event", "subject", "enabled")
     search_fields = ("event", "subject")
     list_filter = ("enabled",)
+
+    class Media:
+        css = {"all": ("designer/admin/zenvibe-richtext.css", "designer/admin/email-editor.css")}
+        js = ("designer/admin/zenvibe-richtext.js", "designer/admin/email-editor.js")
+
+    def get_urls(self):
+        from django.urls import path
+        return [path("upload-image/", self.admin_site.admin_view(self.upload_image), name="designer_email_image_upload")] + super().get_urls()
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = super().formfield_for_dbfield(db_field, request, **kwargs)
+        if db_field.name == "body":
+            field.label = "Email design"
+            field.help_text = "Edit the email visually. Select text to format it, click a coloured section to change its background, or upload an image. Placeholders such as {customer_name} are filled automatically."
+            field.widget.attrs["data-upload-url"] = reverse("admin:designer_email_image_upload")
+        return field
+
+    def upload_image(self, request):
+        from django.http import JsonResponse
+        from django.core.files.storage import default_storage
+        from PIL import Image
+        import uuid
+        if request.method != "POST" or not self.has_change_permission(request):
+            return JsonResponse({"error": "Not allowed"}, status=403)
+        photo = request.FILES.get("image")
+        if not photo or photo.size > 5 * 1024 * 1024:
+            return JsonResponse({"error": "Choose a PNG or JPEG under 5 MB."}, status=400)
+        try:
+            image = Image.open(photo)
+            fmt = image.format
+            image.verify()
+            if fmt not in {"PNG", "JPEG"}:
+                raise ValueError("Unsupported image")
+        except Exception:
+            return JsonResponse({"error": "Choose a valid PNG or JPEG image."}, status=400)
+        photo.seek(0)
+        name = default_storage.save("email_images/" + uuid.uuid4().hex + (".png" if fmt == "PNG" else ".jpg"), photo)
+        return JsonResponse({"url": request.build_absolute_uri(default_storage.url(name))})
