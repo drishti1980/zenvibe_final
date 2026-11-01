@@ -102,13 +102,13 @@ class ProductImageInline(admin.TabularInline):
     print_area_status.short_description = "Print area"
 
 
-class ProductSizeVariantInline(admin.TabularInline):
+class ProductSizeVariantInline(admin.StackedInline):
     model = ProductSizeVariant
     extra = 1
     fields = ("name", "size_key", "editor_profile", "print_width_in", "print_height_in", "canvas_width", "canvas_height", "is_active", "sort_order")
 
 
-class ProductPrintSurfaceInline(admin.TabularInline):
+class ProductPrintSurfaceInline(admin.StackedInline):
     model = ProductPrintSurface
     extra = 0
     fields = ("label", "workspace_width_in", "workspace_height_in", "print_width_in", "print_height_in", "sort_order", "is_active")
@@ -117,7 +117,7 @@ class ProductPrintSurfaceInline(admin.TabularInline):
     verbose_name_plural = "Print pages / surfaces — inches"
 
 
-class ProductPrintAreaInline(admin.TabularInline):
+class ProductPrintAreaInline(admin.StackedInline):
     model = ProductPrintArea
     extra = 0
     fields = ("name", "surface", "product_image", "left", "top", "width", "height", "print_width_in", "print_height_in", "sort_order")
@@ -126,7 +126,7 @@ class ProductPrintAreaInline(admin.TabularInline):
     verbose_name_plural = "Restricted print areas — percentage position + physical size"
 
 
-class ProductColorVariantInline(admin.TabularInline):
+class ProductColorVariantInline(admin.StackedInline):
     model = ProductColorVariant
     extra = 1
     fields = ("name", "color_key", "hex_value", "slug_suffix", "is_active", "sort_order")
@@ -206,12 +206,25 @@ class ProductAdminForm(forms.ModelForm):
         help_text="Number of editor pages for Double Side. Leave blank to use existing behaviour.",
     )
 
+    shape_variant_options = forms.CharField(
+        required=False, widget=forms.Textarea(attrs={"rows":3,"placeholder":"Circle | circle\\nSquare | square"}),
+        label="Shape options (one per line)",
+        help_text="Optional design-shape labels and keys in the format Name | key. Stored in product metadata; does not create separate model records or automatically change editor geometry.",
+    )
+
     class Meta:
         model = Product
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        shape_options = ((self.instance.source_attributes or {}).get("shape_variant_options") or []
+                         if self.instance and isinstance(getattr(self.instance,"source_attributes",None),dict)
+                         else [])
+        self.fields["shape_variant_options"].initial = "\\n".join(
+            "%s | %s"%(item.get("name",""),item.get("key",""))
+            for item in shape_options if isinstance(item,dict)
+        )
         self.fields["minimum_quantity"].help_text = (
             "Minimum units per order. The storefront also enforces the first active "
             "quantity tier for the selected size, or the product-wide tier when no "
@@ -236,6 +249,20 @@ class ProductAdminForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
+        options=[];keys=set()
+        for line in (cleaned.get("shape_variant_options") or "").splitlines():
+            if not line.strip():
+                continue
+            parts=[p.strip() for p in line.split("|")]
+            if len(parts)!=2 or not all(parts):
+                self.add_error("shape_variant_options","Each shape must use Name | key.")
+                break
+            name,key=parts
+            if not __import__("re").fullmatch(r"[a-z0-9_-]+",key) or key in keys:
+                self.add_error("shape_variant_options","Shape keys must be unique lowercase letters, numbers, dashes or underscores.")
+                break
+            keys.add(key);options.append({"name":name,"key":key})
+        cleaned["_shape_options"]=options
         enabled = cleaned.get("fastest_delivery_enabled")
         minimum = cleaned.get("fastest_delivery_min_business_days")
         maximum = cleaned.get("fastest_delivery_max_business_days")
@@ -254,6 +281,10 @@ class ProductAdminForm(forms.ModelForm):
     def save(self, commit=True):
         obj = super().save(commit=False)
         attrs = dict(obj.source_attributes or {})
+        if self.cleaned_data.get("_shape_options"):
+            attrs["shape_variant_options"]=self.cleaned_data["_shape_options"]
+        else:
+            attrs.pop("shape_variant_options",None)
         counts = dict(attrs.get("printing_side_page_counts") or {})
         for key, field in (("single", "single_side_page_count"), ("double", "double_side_page_count")):
             count = self.cleaned_data.get(field)
@@ -297,7 +328,7 @@ class ProductAdminForm(forms.ModelForm):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
-    inlines = [ProductImageInline, ProductSizeVariantInline, ProductPrintSurfaceInline, ProductPrintAreaInline, ProductColorVariantInline, ProductPriceTierInline]
+    inlines = [ProductImageInline, ProductColorVariantInline, ProductSizeVariantInline, ProductPriceTierInline, ProductPrintSurfaceInline, ProductPrintAreaInline]
 
     list_display = (
         "name", "category", "price", "min_price", "max_price",
@@ -334,6 +365,10 @@ class ProductAdmin(admin.ModelAdmin):
                 "printing_guidelines", "faqs",
             ),
             "description": "Leave a section blank and it will be hidden on the product page."
+        }),
+        ("Product variants — shapes", {
+            "fields": ("shape_variant_options",),
+            "description": "Define shape labels and keys once. This is a product metadata configuration; editor and storefront shape switching still need compatible routing.",
         }),
         ("Universal editor configuration (opt-in)", {
             "fields": (
@@ -384,7 +419,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-            "all": ("designer/admin/zenvibe-richtext.css",)
+            "all": ("designer/admin/zenvibe-richtext.css","designer/admin/product-configuration.css")
         }
         js = ("designer/admin/zenvibe-richtext.js", "designer/admin/hide-legacy-3d-fields.js")
 
