@@ -1540,13 +1540,13 @@ function renderPages(){
 window.ZV_GO_TO_PAGE=function(i){
   i=Number(i);
   if(!Number.isFinite(i)) return;
-  i=Math.max(0,Math.min(i,pages.length-1));
+  i=Math.max(0,Math.min(i,zvDisplayedPageCount()-1));
   if(i===activePage) return;
   sync();
   loadPage(i);
 };
 window.ZV_NEXT_PAGE=function(){
-  if(activePage<pages.length-1) window.ZV_GO_TO_PAGE(activePage+1);
+  if(activePage<zvDisplayedPageCount()-1) window.ZV_GO_TO_PAGE(activePage+1);
 };
 window.ZV_PREV_PAGE=function(){
   if(activePage>0) window.ZV_GO_TO_PAGE(activePage-1);
