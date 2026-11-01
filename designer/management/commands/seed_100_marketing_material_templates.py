@@ -164,29 +164,73 @@ def add_photo(objs,i,x,y,w,h,pal,label,seed,category='Corporate'):
 def common_content(idx):
  cat,title,sub,desc,name=subject_copy(idx)
  return cat,title,sub,desc,f'CALL 1300 {100+idx:03d} {200+idx:03d}',f'zenvibe.example/{cat.lower().replace(" ","")}',name
+# Five visual architectures, twenty different proportional layout plans per architecture.
+# All objects remain inside their own folding panel and the two pages agree.
+def brochure_layout(idx, side, panel):
+ family = idx % 20
+ architecture = idx // 20
+ # Unique numeric ratios for each of the 100 designs, not palette-only variations.
+ hero = .23 + ((family * 7 + architecture * 3) % 13) * .015
+ top = .07 + ((family * 3 + panel + architecture) % 7) * .011
+ photo_first = (family + architecture * 2 + panel + side) % 2 == 0
+ double_image = (family + architecture + panel + side) % 4 == 0
+ return architecture, hero, top, photo_first, double_image
+
 def brochure_page(kind,idx,side,W,H):
- pal=artwork_palette(idx); head,body=FONTS[(idx//20+idx)%len(FONTS)]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,kind); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; panels=2 if kind=='bifold' else 3; pw=W/panels; margin=pw*.07
- # deterministic 20 macro arrangements x 5 variants; every panel has reserved, non-overlapping zones.
+ pal=artwork_palette(idx)
+ head,body=FONTS[(idx//20+idx)%len(FONTS)]
+ cat,title,sub,desc,contact,web,offer=common_content(idx)
+ bg=bg_svg(W,H,pal,idx,side,kind)
+ objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]
+ panels=2 if kind=='bifold' else 3
+ pw=W/panels
+ margin=pw*.075
  for p in range(panels):
-  x=p*pw+margin; usable=pw-2*margin; variant=(idx//20)%5; local=(p+side+idx+variant)%4
-  if cat=='Restaurant' and side==1 and p==0:
-   objs += [textbox(f'menu_heading_{side}_{p}',x,H*.12,usable,'THE MENU',23 if panels==2 else 18,pal[4],head,700),textbox(f'menu_items_{side}_{p}',x,H*.27,usable,'STARTERS\\nGarden greens ........ 14\\nRoasted beetroot ..... 17\\n\\nMAINS\\nMarket pasta ......... 29\\nChef special ......... 34\\n\\nSWEETS\\nChocolate tart ....... 15',12 if panels==2 else 10,pal[4],body)]
-  elif cat=='Events' and side==1 and p==0:
-   objs += [textbox(f'hamper_heading_{side}_{p}',x,H*.12,usable,'GIFT COLLECTION',23 if panels==2 else 18,pal[4],head,700),textbox(f'hamper_list_{side}_{p}',x,H*.28,usable,'THE ARTISAN BOX\\nFrom $79\\n\\nTHE CELEBRATION BOX\\nFrom $129\\n\\nTHE SIGNATURE BOX\\nFrom $189\\n\\nPersonalised gift notes available',12 if panels==2 else 10,pal[4],body)]
-  elif local==0:
-   add_photo(objs,f'photo_{side}_{p}',x,H*.10,usable,H*.28,pal,'Subject artwork',idx*7+p+side,cat)
-   objs += [textbox(f'title_{side}_{p}',x,H*.43,usable,title if p==panels-1 else sub,26 if panels==2 else 20,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.56,usable,desc,13,pal[4],body),textbox(f'contact_{side}_{p}',x,H*.79,usable,contact,11,pal[0],body,700)]
-  elif local==1:
-   objs += [textbox(f'eyebrow_{side}_{p}',x,H*.10,usable,cat.upper(),11,pal[2],body,700),textbox(f'title_{side}_{p}',x,H*.17,usable,title,24 if panels==2 else 19,pal[4],head,700)]
-   add_photo(objs,f'photo_{side}_{p}',x,H*.37,usable,H*.28,pal,'Subject artwork',idx*7+p+side,cat)
-   objs += [textbox(f'body_{side}_{p}',x,H*.70,usable,desc,12,pal[4],body),textbox(f'web_{side}_{p}',x,H*.88,usable,web,10,pal[0],body,700)]
-  elif local==2:
-   add_photo(objs,f'photo_{side}_{p}',x,H*.08,usable,H*.42,pal,'Subject artwork',idx*7+p+side,cat)
-   objs += [textbox(f'title_{side}_{p}',x,H*.55,usable,sub,22 if panels==2 else 18,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.67,usable,desc,12,pal[4],body),textbox(f'cta_{side}_{p}',x,H*.86,usable,offer.upper(),10,pal[0],body,700)]
+  x=p*pw+margin
+  w=pw-2*margin
+  arch,hero,top,photo_first,double_image=brochure_layout(idx,side,p)
+  identifier=f'{side}_{p}'
+  # All panels have non-overlapping bands. Architecture controls the content
+  # distribution; twenty geometry choices per architecture produce 100 plans.
+  if arch==0:
+   bands=[('hero',top,hero),('heading',top+hero+.045,.115),('description',top+hero+.195,.16),('footer',.83,.075)]
+  elif arch==1:
+   bands=[('heading',top,.13),('description',top+.17,.145),('hero',top+.36,hero),('footer',.85,.07)]
+  elif arch==2:
+   bands=[('hero',top,.36),('heading',top+.40,.10),('description',top+.54,.15),('footer',.85,.07)]
+  elif arch==3:
+   bands=[('heading',top,.10),('hero',top+.14,hero),('description',top+hero+.19,.19),('footer',.85,.07)]
   else:
-   objs += [textbox(f'title_{side}_{p}',x,H*.10,usable,title if p==0 else sub,24 if panels==2 else 19,pal[4],head,700),textbox(f'body_{side}_{p}',x,H*.27,usable,desc,12,pal[4],body)]
-   add_photo(objs,f'photo_{side}_{p}',x,H*.48,usable,H*.30,pal,'Subject artwork',idx*7+p+side,cat)
-   objs += [textbox(f'contact_{side}_{p}',x,H*.84,usable,contact,10,pal[0],body,700)]
+   bands=[('description',top,.13),('heading',top+.18,.115),('hero',top+.34,hero),('footer',.84,.07)]
+  # Keep every element inside the editable panel even at unusual aspect ratios.
+  for role,yf,hf in bands:
+   y=H*yf
+   h=min(H*hf,H*.94-y)
+   if h<=0: continue
+   if role=='hero':
+    if double_image and w>120:
+     gap=w*.035
+     left=w*.47
+     add_photo(objs,f'art_a_{identifier}',x,y,left,h,pal,'Artwork',idx*23+p+side,cat)
+     add_photo(objs,f'art_b_{identifier}',x+left+gap,y,w-left-gap,h,pal,'Artwork',idx*31+p+side+1,cat)
+    else:
+     add_photo(objs,f'art_{identifier}',x,y,w,h,pal,'Artwork',idx*17+p+side,cat)
+   elif role=='heading':
+    value=title if (p+side)%2==0 else sub
+    # Dynamically constrain headline size for narrow tri-fold panels.
+    size=max(12,min(23,int(w/max(7,len(value)*.53))))
+    objs.append(textbox(f'headline_{identifier}',x,y,w,value,size,pal[4],head,700))
+   elif role=='description':
+    if cat=='Restaurant' and side==1:
+     value=['STARTERS | Garden salad  14 | Soup  12','MAINS | Pasta  28 | Chef special  34','DESSERT | Tart  15 | Gelato  11'][p%3]
+    elif cat=='Events' and side==1:
+     value=['ARTISAN HAMPER | From $79','SIGNATURE GIFTS | From $129','CELEBRATION BOX | From $189'][p%3]
+    else:
+     value=desc if p%2==0 else sub
+    size=11 if panels==2 else 10
+    objs.append(textbox(f'details_{identifier}',x,y,w,value,size,pal[4],body))
+   else:
+    objs.append(textbox(f'footer_{identifier}',x,y,w,contact if side==1 else web,10,pal[0],body,700))
  return bg,objs
 def door_page(idx,side,W,H):
  pal=artwork_palette(idx); head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'doorhanger'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.08
