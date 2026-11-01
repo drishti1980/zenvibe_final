@@ -22,3 +22,15 @@ body.model-product.change-form .submit-row{position:sticky;bottom:0;z-index:30;b
 body.model-product.change-form .submit-row input[type=submit]{border-radius:7px;min-height:40px;padding:0 20px}
 @media(min-width:1000px){body.model-product.change-form fieldset.module:not(.aligned) .form-row{display:flex;gap:14px}body.model-product.change-form .inline-group .inline-related .form-row{display:flex;flex-wrap:wrap;gap:12px}body.model-product.change-form .inline-group .inline-related .form-row>div{flex:1;min-width:180px}}
 @media(max-width:760px){body.model-product.change-form .form-row{padding:12px}body.model-product.change-form .inline-group .inline-related{margin:9px;padding:10px}body.model-product.change-form .submit-row{position:static}}
+
+body.model-product.change-form .zv-product-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px;margin:12px 0 24px;border:1px solid #d8e0eb;border-radius:12px;background:#f6f9fd}
+body.model-product.change-form .zv-product-nav button{font-weight:700;font-size:13px;border:1px solid #cddaea;border-radius:8px;background:white;color:#24445e;padding:12px 16px;cursor:pointer}
+body.model-product.change-form .zv-product-nav button.active,body.model-product.change-form .zv-product-nav button[aria-selected=true]{background:#17589c;color:white;border-color:#17589c}
+body.model-product.change-form .zv-config-inactive{display:none!important}
+body.model-product.change-form .zv-faq-admin{max-width:900px;display:grid;gap:14px;margin-bottom:16px}
+body.model-product.change-form .zv-faq-admin h3{font-size:19px;margin:0;color:#1b3f65}
+body.model-product.change-form .zv-faq-admin-row{display:grid;gap:10px;border:1px solid #d7e1ec;background:#fbfdff;border-radius:10px;padding:16px}
+body.model-product.change-form .zv-faq-admin-row input,body.model-product.change-form .zv-faq-admin-row textarea{display:block;width:100%;max-width:none}
+body.model-product.change-form .zv-faq-admin-actions{display:flex;align-items:center;gap:8px}
+body.model-product.change-form .zv-faq-admin-actions strong{flex:1;font-size:15px}
+body.model-product.change-form .zv-faq-admin-actions button{border:1px solid #cbd8e7;border-radius:6px;background:white;padding:6px 11px}
