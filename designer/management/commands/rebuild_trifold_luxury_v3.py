@@ -50,8 +50,7 @@ from designer.management.commands.rebuild_remaining_premium_100 import (
 GENERATOR = "zenvibe-trifold-luxury-v3"
 COUNT = 100
 DIRECTIONS = (
-    "Floral Editorial", "Cinematic Gallery", "Botanical Atelier",
-    "Illustrated Studio", "Contemporary Collection",
+    "Editorial", "Photo Gallery", "Botanical", "Typography", "Catalogue",
 )
 # Verified generated-master identifiers only; refuse arbitrary custom rows.
 ALLOWED_GENERATORS = {
@@ -401,6 +400,81 @@ def _inside(art,panel,index,edition,bank,colors,role):
               palette.on_accent,24,True,align="center",lines=1)
 
 
+def _fresh_panel(art,panel,index,side,slot,bank,colors):
+    """Ten radically distinct panel formats; outside and inside use different jobs."""
+    import random
+    rng=random.Random(index*1009+side*109+slot*17)
+    theme=index%20
+    brand,headline,sub,cta,foil_hint=BRIEFS[theme]
+    paper,ink,muted=colors
+    palette=palette_for(index,"trifold","cover" if side==0 else "intro")
+    accent=palette.accent
+    x,y,w,h=panel
+    mode=(index+side*7+slot*4)%10
+    _body(art,panel,paper)
+    _accent(art,panel,mode%5,accent,ink,theme)
+    # Keep all content strictly within physical panels.
+    def photo(tag,coords,variant=0):
+        _photo(art,bank,theme,(index+side+slot+variant)%5,_in(panel,coords),tag)
+    def txt(tag,value,coords,size=33,bold=False):
+        _text(art,tag,value,_in(panel,coords),ink,size,bold,lines=3)
+    heading=(headline if side==0 and slot==2 else
+             (brand if side==0 else FEATURES[theme][slot]).upper())
+    if mode==0:  # oversized masthead and wide photographic strip
+        txt("Editorial masthead",heading,(.08,.10,.84,.20),43,True)
+        photo("Wide cinematic photo",(.07,.36,.86,.33))
+        txt("Editorial subtitle",sub,(.09,.76,.82,.12),25)
+    elif mode==1: # full height image / low caption block
+        photo("Tall full bleed artwork",(.06,.09,.88,.62))
+        art.rect("Caption substrate",*_in(panel,(.06,.74,.88,.18)),accent)
+        txt("Caption masthead",heading,(.10,.77,.80,.12),33,True)
+    elif mode==2: # diptych photos with headline between
+        photo("Left upper photo",(.07,.11,.40,.34))
+        photo("Right upper photo",(.53,.11,.40,.34),2)
+        txt("Gallery headline",heading,(.08,.51,.84,.16),34,True)
+        txt("Gallery detail",sub,(.08,.72,.84,.13),24)
+    elif mode==3: # central portrait and asymmetric type above/below
+        txt("Upper editorial heading",heading,(.10,.12,.80,.14),34,True)
+        photo("Central portrait",(.19,.31,.62,.42))
+        txt("Lower magazine detail",sub,(.10,.78,.80,.11),25)
+    elif mode==4: # image-free premium typography and botanical ornaments
+        from math import sin,cos,pi
+        for k in range(16):
+            angle=2*pi*k/16
+            xx=x+w*(.50+.24*cos(angle))
+            yy=y+h*(.47+.13*sin(angle))
+            art.circle("Floral wreath petal %02d"%k,xx,yy,min(w,h)*.028,accent)
+        art.circle("Floral centre",x+w*.50,y+h*.47,min(w,h)*.038,ink)
+        txt("Minimal brand heading",heading,(.09,.12,.82,.18),39,True)
+        txt("Minimal descriptor",sub,(.10,.75,.80,.14),26)
+    elif mode==5: # offset editorial gallery and slim type
+        photo("Vertical editorial photo",(.09,.12,.55,.59))
+        txt("Offset heading",heading,(.67,.18,.27,.28),27,True)
+        txt("Small collection description",sub,(.09,.77,.84,.12),23)
+    elif mode==6: # photographic mosaic
+        photo("Mosaic feature one",(.08,.11,.84,.30))
+        photo("Mosaic left",(.08,.45,.39,.26),1)
+        photo("Mosaic right",(.53,.45,.39,.26),3)
+        txt("Mosaic heading",heading,(.09,.76,.82,.15),31,True)
+    elif mode==7: # gallery strip, centered copy, separated photo
+        txt("Display editorial copy",heading,(.11,.13,.78,.18),36,True)
+        photo("Panorama image",(.08,.37,.84,.20))
+        photo("Secondary image",(.23,.62,.54,.20),2)
+    elif mode==8: # cinematic photo plus strong vertical colour block
+        art.rect("Statement accent stripe",*_in(panel,(.07,.10,.12,.78)),accent)
+        photo("Statement image",(.24,.12,.69,.53))
+        txt("Statement headline",heading,(.25,.70,.67,.16),34,True)
+    else: # premium product-grid treatment
+        txt("Collection heading",heading,(.08,.10,.84,.15),35,True)
+        for k in range(3):
+            photo("Gallery catalogue photo %d"%k,(.09+k*.28,.34,.24,.30),k)
+        txt("Collection caption",sub,(.09,.72,.82,.13),25)
+    # Unique template-level variation in the art hierarchy (not only palette).
+    # Text and art remain independent native editor objects.
+    if side==1 and slot==2:
+        txt("Editable inside call to action",cta,(.10,.93,.80,.045),19,True)
+
+
 def build_page(product,index,side,surface,bank):
     if side not in (0,1):
         raise CommandError("Tri-fold must have exactly 2 physical sides")
@@ -421,14 +495,7 @@ def build_page(product,index,side,surface,bank):
         cell=_page_panel(surface,panel_index,region)
         role_palette=palette_for(index,"trifold",role)
         role_colors=(role_palette.paper,role_palette.ink,role_palette.muted)
-        if role=="cover":
-            _cover(art,cell,index,edition,bank,role_colors)
-        elif role=="back":
-            _back(art,cell,index,edition,bank,role_colors)
-        elif role=="flap":
-            _flap(art,cell,index,edition,bank,role_colors)
-        else:
-            _inside(art,cell,index,edition,bank,role_colors,role)
+        _fresh_panel(art,cell,index,side,panel_index,bank,role_colors)
     art.validate(region)
     page={
         "name":"Outside" if side==0 else "Inside",
@@ -853,7 +920,7 @@ class Command(BaseCommand):
                 raise CommandError("Repeated tri-fold composition at index %03d"%(idx+1))
             signatures.add(signature)
             family=BRIEFS[idx%20][0]
-            direction=DIRECTIONS[art_direction(idx)]
+            direction=DIRECTIONS[art_direction(idx)] + " • Composition %03d"%(idx+1)
             name="ZV Tri-Fold %03d · %s · %s"%(idx+1,family,direction)
             document={
                 "generator":GENERATOR,"version":3,
