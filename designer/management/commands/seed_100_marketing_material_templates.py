@@ -166,72 +166,115 @@ def common_content(idx):
  return cat,title,sub,desc,f'CALL 1300 {100+idx:03d} {200+idx:03d}',f'zenvibe.example/{cat.lower().replace(" ","")}',name
 # Five visual architectures, twenty different proportional layout plans per architecture.
 # All objects remain inside their own folding panel and the two pages agree.
+# Original, Canva-style compositions. No scraping/copying of Canva's third-party
+# designs: importing a user's own Canva exports requires an authorized integration.
+# Each index produces a distinct panel grid, hero artwork treatment and palette.
 def brochure_layout(idx, side, panel):
- family = idx % 20
- architecture = idx // 20
- # Unique numeric ratios for each of the 100 designs, not palette-only variations.
- hero = .23 + ((family * 7 + architecture * 3) % 13) * .015
- top = .07 + ((family * 3 + panel + architecture) % 7) * .011
- photo_first = (family + architecture * 2 + panel + side) % 2 == 0
- double_image = (family + architecture + panel + side) % 4 == 0
- return architecture, hero, top, photo_first, double_image
+ import random
+ rng=random.Random(idx*10007+side*113+panel*19)
+ architecture=(idx//10+panel*3+side*7)%10
+ proportions=sorted([round(.11+rng.random()*.68,3),round(.11+rng.random()*.68,3)])
+ return architecture, proportions, rng
+
+def brochure_artwork_svg(w,h,category,idx,side,panel,palette):
+ """Illustrated subject compositions; editable image objects, no grey placeholders."""
+ import math,random
+ r=random.Random(idx*991+side*109+panel*67)
+ primary,paper,accent,white,dark=palette
+ ww=max(80,int(w));hh=max(80,int(h))
+ shapes=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{ww}" height="{hh}" viewBox="0 0 {ww} {hh}">',
+         f'<rect width="{ww}" height="{hh}" fill="{paper}"/>']
+ theme=category.lower()
+ # 12 separate artwork families varying independently from layout.
+ art_family=(idx*7+side*5+panel*3)%12
+ if theme in ('restaurant','events'):
+  for k in range(3+(idx%4)):
+   cx=ww*(.15+.7*r.random());cy=hh*(.18+.64*r.random())
+   radius=min(ww,hh)*(.10+.065*r.random())
+   if theme=='restaurant':
+    shapes += [f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{radius*1.5:.1f}" ry="{radius:.1f}" fill="#FFF9ED" stroke="{accent}" stroke-width="3"/>',
+     f'<ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{radius:.1f}" ry="{radius*.6:.1f}" fill="{primary}" opacity=".67"/>',
+     f'<path d="M{cx-radius/2:.1f} {cy:.1f} q{radius/2:.1f} {-radius:.1f} {radius:.1f} 0" fill="none" stroke="#9AA45C" stroke-width="5"/>']
+   else:
+    shapes += [f'<rect x="{cx-radius:.1f}" y="{cy-radius:.1f}" width="{radius*2:.1f}" height="{radius*1.8:.1f}" rx="5" fill="{primary}" opacity=".83"/>',
+     f'<path d="M{cx:.1f} {cy-radius:.1f} v{radius*1.8:.1f} M{cx-radius:.1f} {cy:.1f} h{radius*2:.1f}" stroke="{accent}" stroke-width="{max(3,radius*.15):.1f}"/>']
+ elif theme in ('beauty','wellness','fashion','interior','photography'):
+  for k in range(7+idx%5):
+   x=ww*r.random();y=hh*r.random();angle=r.randint(0,175)
+   shapes += [f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{ww*(.025+.04*r.random()):.1f}" ry="{hh*(.06+.09*r.random()):.1f}" transform="rotate({angle} {x:.1f} {y:.1f})" fill="{primary if k%2 else accent}" opacity=".43"/>']
+ elif theme in ('travel','real estate','construction','automotive'):
+  shapes += [f'<circle cx="{ww*(.65+.2*r.random()):.1f}" cy="{hh*.23:.1f}" r="{min(ww,hh)*.15:.1f}" fill="{accent}"/>']
+  for k in range(4):
+   yy=hh*(.36+k*.15)
+   pts=' '.join(f'{x:.1f},{yy+hh*(r.random()*.26):.1f}' for x in [0,ww*.24,ww*.48,ww*.75,ww])
+   shapes.append(f'<polygon points="{pts} {ww},{hh} 0,{hh}" fill="{primary if k%2 else accent}" opacity="{.25+k*.16:.2f}"/>')
+ else:
+  for k in range(5+idx%7):
+   x=ww*r.random();y=hh*r.random();bw=ww*(.08+.15*r.random());bh=hh*(.12+.18*r.random())
+   if art_family%3==0:
+    shapes.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{min(bw,bh):.1f}" fill="{accent if k%2 else primary}" opacity=".5"/>')
+   elif art_family%3==1:
+    shapes.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="5" fill="{accent if k%2 else primary}" opacity=".5"/>')
+   else:
+    shapes.append(f'<path d="M{x:.1f} {y:.1f} l{bw:.1f} {-bh/2:.1f} l{bw/2:.1f} {bh:.1f}Z" fill="{accent if k%2 else primary}" opacity=".5"/>')
+ # Graphic overlay makes each subject illustration individually composed.
+ if art_family in (0,3,7):
+  shapes.append(f'<rect x="8" y="8" width="{ww-16}" height="{hh-16}" fill="none" stroke="{dark}" stroke-width="2" opacity=".55"/>')
+ elif art_family in (1,5,9):
+  shapes.append(f'<path d="M0 {hh*.87:.1f} Q{ww*.5:.1f} {hh*.64:.1f} {ww} {hh*.87:.1f}" fill="none" stroke="{accent}" stroke-width="8"/>')
+ elif art_family in (2,6,10):
+  shapes.append(f'<circle cx="{ww*.80:.1f}" cy="{hh*.20:.1f}" r="{min(ww,hh)*.10:.1f}" fill="none" stroke="{dark}" stroke-width="3"/>')
+ shapes.append('</svg>')
+ return ''.join(shapes)
 
 def brochure_page(kind,idx,side,W,H):
+ # Multi-panel compositions are deliberately different across outside/inside.
  pal=artwork_palette(idx)
- head,body=FONTS[(idx//20+idx)%len(FONTS)]
  cat,title,sub,desc,contact,web,offer=common_content(idx)
- bg=bg_svg(W,H,pal,idx,side,kind)
+ head,body=FONTS[(idx+side*3)%len(FONTS)]
+ bg=bg_svg(W,H,pal,idx+side*11,side,kind)
  objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]
  panels=2 if kind=='bifold' else 3
  pw=W/panels
- margin=pw*.075
+ pad=pw*.065
  for p in range(panels):
-  x=p*pw+margin
-  w=pw-2*margin
-  arch,hero,top,photo_first,double_image=brochure_layout(idx,side,p)
-  identifier=f'{side}_{p}'
-  # All panels have non-overlapping bands. Architecture controls the content
-  # distribution; twenty geometry choices per architecture produce 100 plans.
-  if arch==0:
-   bands=[('hero',top,hero),('heading',top+hero+.045,.115),('description',top+hero+.195,.16),('footer',.83,.075)]
-  elif arch==1:
-   bands=[('heading',top,.13),('description',top+.17,.145),('hero',top+.36,hero),('footer',.85,.07)]
-  elif arch==2:
-   bands=[('hero',top,.36),('heading',top+.40,.10),('description',top+.54,.15),('footer',.85,.07)]
-  elif arch==3:
-   bands=[('heading',top,.10),('hero',top+.14,hero),('description',top+hero+.19,.19),('footer',.85,.07)]
-  else:
-   bands=[('description',top,.13),('heading',top+.18,.115),('hero',top+.34,hero),('footer',.84,.07)]
-  # Keep every element inside the editable panel even at unusual aspect ratios.
-  for role,yf,hf in bands:
-   y=H*yf
-   h=min(H*hf,H*.94-y)
-   if h<=0: continue
-   if role=='hero':
-    if double_image and w>120:
-     gap=w*.035
-     left=w*.47
-     add_photo(objs,f'art_a_{identifier}',x,y,left,h,pal,'Artwork',idx*23+p+side,cat)
-     add_photo(objs,f'art_b_{identifier}',x+left+gap,y,w-left-gap,h,pal,'Artwork',idx*31+p+side+1,cat)
-    else:
-     add_photo(objs,f'art_{identifier}',x,y,w,h,pal,'Artwork',idx*17+p+side,cat)
+  x=p*pw+pad
+  w=pw-pad*2
+  arch, cuts, rng=brochure_layout(idx,side,p)
+  item=f'{idx}_{side}_{p}'
+  # Ten content compositions, with twenty different per-panel geometries.
+  if arch==0: slots=[('art',.07,.40),('heading',.52,.11),('copy',.67,.13),('footer',.87,.07)]
+  elif arch==1: slots=[('heading',.08,.12),('art',.25,.35),('copy',.65,.14),('footer',.88,.06)]
+  elif arch==2: slots=[('copy',.08,.14),('art',.27,.44),('heading',.75,.11),('footer',.90,.055)]
+  elif arch==3: slots=[('art',.09,.24),('heading',.39,.14),('art2',.59,.21),('footer',.88,.07)]
+  elif arch==4: slots=[('heading',.09,.11),('copy',.25,.20),('art',.52,.32),('footer',.90,.06)]
+  elif arch==5: slots=[('art',.09,.47),('copy',.61,.12),('heading',.77,.09),('footer',.91,.05)]
+  elif arch==6: slots=[('heading',.09,.16),('art',.31,.18),('copy',.55,.19),('footer',.87,.08)]
+  elif arch==7: slots=[('copy',.09,.19),('heading',.34,.12),('art',.52,.30),('footer',.89,.06)]
+  elif arch==8: slots=[('art',.08,.31),('copy',.44,.16),('heading',.67,.13),('footer',.90,.06)]
+  else: slots=[('heading',.08,.11),('art',.24,.26),('art2',.55,.19),('copy',.78,.10),('footer',.91,.05)]
+  # Unique per-index shift in the photo/art boundaries, bounded to safety zones.
+  delta=(cuts[0]-.45)*.035
+  for role,top,height in slots:
+   top=max(.055,min(.91,top+delta))
+   height=min(height,H and (.965-top))
+   yy=H*top; hh=H*height
+   if role.startswith('art'):
+    vector=brochure_artwork_svg(w,hh,cat,idx,side,p+(1 if role=='art2' else 0),pal)
+    objs.append(image(f'{role}_{item}',x,yy,w,hh,uri(vector)))
    elif role=='heading':
-    value=title if (p+side)%2==0 else sub
-    # Dynamically constrain headline size for narrow tri-fold panels.
-    size=max(12,min(23,int(w/max(7,len(value)*.53))))
-    objs.append(textbox(f'headline_{identifier}',x,y,w,value,size,pal[4],head,700))
-   elif role=='description':
-    if cat=='Restaurant' and side==1:
-     value=['STARTERS | Garden salad  14 | Soup  12','MAINS | Pasta  28 | Chef special  34','DESSERT | Tart  15 | Gelato  11'][p%3]
-    elif cat=='Events' and side==1:
-     value=['ARTISAN HAMPER | From $79','SIGNATURE GIFTS | From $129','CELEBRATION BOX | From $189'][p%3]
-    else:
-     value=desc if p%2==0 else sub
-    size=11 if panels==2 else 10
-    objs.append(textbox(f'details_{identifier}',x,y,w,value,size,pal[4],body))
+    heading=title if (side,p)==(0,panels-1) else (sub if side==0 else (cat.upper()+' COLLECTION' if cat=='Events' else cat.upper()+' MENU' if cat=='Restaurant' else title))
+    size=max(11,min(21,int(w/max(10,len(heading)*.5))))
+    objs.append(textbox(f'heading_{item}',x,yy,w,heading,size,pal[4],head,700))
+   elif role=='copy':
+    if cat=='Restaurant' and side==1: value=['STARTERS: Seasonal greens $14 / Soup $12','MAINS: Pasta $28 / Chef special $34','SWEETS: Tart $15 / Gelato $11'][p%3]
+    elif cat=='Events' and side==1: value=['ARTISAN GIFT BOX • $79','SIGNATURE HAMPER • $129','CELEBRATION COLLECTION • $189'][p%3]
+    else: value=desc if side==0 else sub+' — '+desc
+    objs.append(textbox(f'copy_{item}',x,yy,w,value,10 if panels==3 else 12,pal[4],body))
    else:
-    objs.append(textbox(f'footer_{identifier}',x,y,w,contact if side==1 else web,10,pal[0],body,700))
+    objs.append(textbox(f'footer_{item}',x,yy,w,contact if side else web,9,pal[0],body,700))
  return bg,objs
+
 def door_page(idx,side,W,H):
  pal=artwork_palette(idx); head,body=FONTS[idx%5]; cat,title,sub,desc,contact,web,offer=common_content(idx); bg=bg_svg(W,H,pal,idx,side,'doorhanger'); objs=[image(f'bg_{side}',0,0,W,H,uri(bg),False,True)]; m=W*.08
  # reserve top 30% as knob/die-cut safety zone: no important text there; photo/decor may sit below.
