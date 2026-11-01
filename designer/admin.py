@@ -257,7 +257,7 @@ class ProductAdminForm(forms.ModelForm):
         shape_options = ((self.instance.source_attributes or {}).get("shape_variant_options") or []
                          if self.instance and isinstance(getattr(self.instance,"source_attributes",None),dict)
                          else [])
-        self.fields["shape_variant_options"].initial = "\\n".join(
+        self.fields["shape_variant_options"].initial = "\n".join(
             "%s | %s"%(item.get("name",""),item.get("key",""))
             for item in shape_options if isinstance(item,dict)
         )
