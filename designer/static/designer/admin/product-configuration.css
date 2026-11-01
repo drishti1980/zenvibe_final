@@ -59,3 +59,21 @@ body.model-product.change-form .inline-group img{max-width:150px;max-height:112p
 body.model-product.change-form .inline-group .inline-related h3{font-size:14px!important;padding:9px 12px!important;line-height:1.4}
 body.model-product.change-form .inline-group .add-row{padding:10px 16px!important}
 @media(max-width:760px){body.model-product.change-form .zv-admin-tools{display:grid}body.model-product.change-form .zv-admin-tools input[type=search]{min-width:0;width:100%}}
+
+/* Screenshot regression: eliminate stretched tabular columns and long file paths. */
+body.model-product.change-form .inline-group .inline-related{max-width:100%;box-sizing:border-box}
+body.model-product.change-form .inline-group .inline-related .form-row{display:flex;align-items:flex-start;flex-wrap:wrap;gap:12px;padding:9px 13px!important;min-height:0}
+body.model-product.change-form .inline-group .inline-related .form-row>div{flex:1 1 200px;min-width:160px;max-width:100%;box-sizing:border-box}
+body.model-product.change-form .inline-group .inline-related .form-row label{min-width:100px;max-width:170px;margin:0}
+body.model-product.change-form .inline-group .inline-related .form-row input,body.model-product.change-form .inline-group .inline-related .form-row select{max-width:360px}
+body.model-product.change-form .inline-group .inline-related .form-row .file-upload,
+body.model-product.change-form .inline-group .inline-related .form-row .file-upload a{max-width:360px;overflow-wrap:anywhere;word-break:break-word;line-height:1.4}
+body.model-product.change-form .inline-group .inline-related .form-row .file-upload{display:block}
+body.model-product.change-form .inline-group .inline-related .form-row input[type=file]{width:100%;max-width:340px}
+body.model-product.change-form .inline-group .inline-related .form-row img{width:100px!important;height:88px!important;object-fit:contain}
+body.model-product.change-form .inline-group .inline-related .form-row .readonly{max-width:130px}
+body.model-product.change-form .zv-colour-input{display:inline-flex;gap:10px;align-items:center;max-width:100%}
+body.model-product.change-form .zv-colour-input input.zv-colour-swatch{display:inline-block!important;flex:none;width:48px!important;height:43px!important;padding:3px;min-width:48px;border:1px solid #b7c9da;border-radius:9px;cursor:pointer;background:#fff}
+body.model-product.change-form .zv-colour-input input[name$="-hex_value"]{width:130px!important;max-width:130px}
+body.model-product.change-form .inline-group .inline-related.zv-inline-collapsed .form-row{display:none!important}
+body.model-product.change-form .inline-group .inline-related.zv-inline-collapsed >h3{display:block!important}
