@@ -102,8 +102,43 @@ class ProductImageInline(admin.TabularInline):
     print_area_status.short_description = "Print area"
 
 
+class ProductSizeVariantAdminForm(forms.ModelForm):
+    class Meta:
+        model = ProductSizeVariant
+        fields = "__all__"
+
+    def clean(self):
+        values = super().clean()
+        for width,height,label in (
+            ("print_width_in","print_height_in","physical print dimensions"),
+            ("canvas_width","canvas_height","editor canvas dimensions"),
+        ):
+            if (values.get(width) is None) != (values.get(height) is None):
+                raise forms.ValidationError(
+                    "Enter both width and height for %s, or leave both blank."%label
+                )
+            if values.get(width) is not None and (
+                values[width] <= 0 or values[height] <= 0
+            ):
+                raise forms.ValidationError("%s must be greater than zero."%label)
+        return values
+
+
+class ProductColorVariantAdminForm(forms.ModelForm):
+    class Meta:
+        model = ProductColorVariant
+        fields = "__all__"
+
+    def clean_hex_value(self):
+        value=(self.cleaned_data.get("hex_value") or "").strip()
+        if value and not __import__("re").fullmatch(r"#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?",value):
+            raise forms.ValidationError("Use a 6- or 8-digit hex colour, for example #336699.")
+        return value.upper()
+
+
 class ProductSizeVariantInline(admin.StackedInline):
     model = ProductSizeVariant
+    form = ProductSizeVariantAdminForm
     extra = 1
     fields = ("name", "size_key", "editor_profile", "print_width_in", "print_height_in", "canvas_width", "canvas_height", "is_active", "sort_order")
 
@@ -128,6 +163,7 @@ class ProductPrintAreaInline(admin.StackedInline):
 
 class ProductColorVariantInline(admin.StackedInline):
     model = ProductColorVariant
+    form = ProductColorVariantAdminForm
     extra = 1
     fields = ("name", "color_key", "hex_value", "slug_suffix", "is_active", "sort_order")
 
