@@ -205,6 +205,29 @@ def _bifold_spread_art(art,region,index,side,bank):
     brand,title,subtitle,cta,_=BRIEFS[theme]
     palette=palette_for(index,"bifold","cover" if side==0 else "intro")
     paper,ink,muted,foil=palette.paper,palette.ink,palette.muted,palette.accent
+    # Contrast is computed from the actual printable background, not from
+    # arbitrary palette names. For ALL layouts foreground must stay readable.
+    from PIL import ImageColor
+    def rgb(value):
+        return ImageColor.getrgb(str(value))[:3]
+    def luminance(value):
+        components=[]
+        for c in rgb(value):
+            v=c/255.0
+            components.append(v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4)
+        return .2126*components[0]+.7152*components[1]+.0722*components[2]
+    def contrast(a,b):
+        high=max(luminance(a),luminance(b))
+        low=min(luminance(a),luminance(b))
+        return (high+.05)/(low+.05)
+    def readable(foreground,background,min_ratio=4.5):
+        if contrast(foreground,background)>=min_ratio:
+            return foreground
+        black="#101820";white="#FFFFFF"
+        return black if contrast(black,background)>contrast(white,background) else white
+    ink=readable(ink,paper)
+    muted=readable(muted,paper)
+    cta_ink=readable(palette.on_accent,foil)
     x,y,w,h=region
     art.rect("Uninterrupted brochure sheet",x,y,w,h,paper)
     style=(index*7+index//12+side*5)%12
@@ -217,11 +240,13 @@ def _bifold_spread_art(art,region,index,side,bank):
                min(size,w*.048))
     def headline(rel):
         label("Editable headline",_wrap(title,3,15),rel,50,True)
+    def supporting(rel,tag="Editable supporting copy"):
+        label(tag,subtitle,rel,26,False)
     def footer(rel):
         a,b,c,d=box(rel)
         art.rect("Editable CTA substrate",a,b,c,d,foil,rx=d*.07)
         _label(art,"Editable CTA",cta,(a+c*.06,b+d*.07,c*.88,d*.82),
-               palette.on_accent,True,28)
+               cta_ink,True,28)
     # The art directions are independent compositions rather than the old
     # identical two-card panel with different palette/photography.
     if style==0: # art gallery
@@ -231,7 +256,8 @@ def _bifold_spread_art(art,region,index,side,bank):
     elif style==1: # cinematic poster
         pic((.05,.09,.90,.51))
         label("Brand",brand,(.08,.67,.32,.06),30,True)
-        headline((.55,.65,.37,.19));footer((.11,.80,.29,.08))
+        headline((.55,.65,.37,.16))
+        supporting((.56,.83,.35,.065));footer((.11,.80,.29,.08))
     elif style==2: # portrait editorial
         label("Brand",brand,(.08,.12,.32,.07),30,True)
         headline((.07,.26,.36,.28));label("Copy",subtitle,(.08,.64,.32,.10))
@@ -241,16 +267,19 @@ def _bifold_spread_art(art,region,index,side,bank):
         art.circle("Editable geometry sun",x+w*.26,y+h*.40,min(w,h)*.14,ink)
         pic((.57,.12,.34,.30))
         label("Brand",brand,(.57,.49,.34,.06),30,True)
-        headline((.55,.59,.37,.14));footer((.59,.84,.29,.08))
+        headline((.55,.59,.37,.14))
+        supporting((.57,.77,.34,.057));footer((.59,.84,.29,.08))
     elif style==4: # panoramic triptych
         for i,r in enumerate(((.05,.12,.28,.61),(.36,.12,.28,.61),(.67,.12,.28,.61))):pic(r,i)
         label("Brand",brand,(.09,.77,.32,.06),30,True)
-        headline((.56,.77,.34,.11));footer((.60,.90,.28,.05))
+        headline((.56,.77,.34,.10))
+        supporting((.08,.844,.34,.045));footer((.60,.90,.28,.05))
     elif style==5: # illustrative menu
         for k in range(4):
             art.rect("Editable menu rule %d"%k,*box((.08,.26+k*.14,.30,.004)),ink)
         label("Brand",brand,(.08,.11,.32,.07),30,True)
-        headline((.08,.36,.31,.21));footer((.10,.83,.28,.07))
+        headline((.08,.36,.31,.21))
+        supporting((.08,.67,.32,.11));footer((.10,.83,.28,.07))
         pic((.56,.12,.35,.43))
         label("Description",subtitle,(.57,.64,.33,.11))
     elif style==6: # botanical artwork
@@ -267,6 +296,7 @@ def _bifold_spread_art(art,region,index,side,bank):
         art.rect("Foil spine",*box((.49,.10,.005,.80)),foil)
         label("Brand",brand,(.09,.22,.33,.075),32,True)
         headline((.08,.41,.34,.24))
+        supporting((.09,.72,.32,.09))
         label("Description",subtitle,(.57,.36,.33,.16))
         footer((.59,.79,.29,.09))
     elif style==8: # offset mosaic
@@ -280,6 +310,7 @@ def _bifold_spread_art(art,region,index,side,bank):
         pic((.57,.12,.35,.30),2)
         label("Brand",brand,(.58,.49,.32,.06),30,True)
         headline((.56,.59,.35,.17))
+        supporting((.57,.78,.34,.065))
         footer((.60,.86,.28,.075))
     elif style==10: # abstract studio
         art.rect("Colour field",*box((.05,.09,.41,.81)),foil)
@@ -287,6 +318,7 @@ def _bifold_spread_art(art,region,index,side,bank):
         art.circle("Abstract orb",x+w*.75,y+h*.32,min(w,h)*.14,muted)
         label("Brand",brand,(.10,.67,.30,.06),30,True)
         headline((.56,.59,.36,.16))
+        supporting((.57,.77,.34,.065))
         footer((.60,.85,.28,.075))
     else: # four-photo catalogue
         for i,r in enumerate(((.07,.13,.17,.27),(.28,.13,.17,.27),
