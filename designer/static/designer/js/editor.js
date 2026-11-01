@@ -1430,6 +1430,44 @@ window.addQuickEditableText=addQuickEditableText;
 function renderAll(){drawHelpers();zvApplyMarketingDieGuides();canvas.requestRenderAll();renderPages();renderLayers();syncPanel()}
 function snapshot(){zvApplyTeardropDie(false);sync();const state=clone(pages);history=history.slice(0,historyIndex+1);history.push(state);if(history.length>60)history.shift();historyIndex=history.length-1;scheduleLocalSave()}
 function restore(n){if(n<0||n>=history.length)return;historyIndex=n;pages=clone(history[n]);loadPage(Math.min(activePage,pages.length-1))}
+// Product Admin controls pages per printing option; artwork remains intact.
+const zvSidePageCounts=OPT.printing_side_page_counts||{};
+function zvSideKey(value){
+  const key=String(value||'').trim().toLowerCase();
+  if(['double','double-sided','double_side','2','both','two'].includes(key))return 'double';
+  if(['single','single-sided','single_side','1','front','one'].includes(key))return 'single';
+  return '';
+}
+let zvPrintingSide=zvSideKey(OPT.selected_printing_side||
+  new URLSearchParams(location.search).get('printing_side')||
+  new URLSearchParams(location.search).get('sides')||
+  new URLSearchParams(location.search).get('side'));
+function zvDisplayedPageCount(){
+  const raw=Number(zvSidePageCounts[zvPrintingSide]||0);
+  // No explicit side selection: keep ALL existing multi-page products unchanged.
+  return zvPrintingSide && raw>0?Math.max(1,Math.min(20,Math.floor(raw))):pages.length;
+}
+function zvSideControl(){
+  if(!(Number(zvSidePageCounts.single)>0&&Number(zvSidePageCounts.double)>0))return;
+  const host=$('pageCountBadge');
+  if(!host||document.getElementById('zvPrintingSidePicker'))return;
+  const select=document.createElement('select');
+  select.id='zvPrintingSidePicker';
+  select.setAttribute('aria-label','Printing sides');
+  [['','Choose sides'],['single','Single Side'],['double','Double Side']].forEach(([value,title])=>{
+    const option=document.createElement('option');option.value=value;option.textContent=title;
+    select.appendChild(option);
+  });
+  select.value=zvPrintingSide;
+  select.addEventListener('change',()=>{
+    sync();
+    zvPrintingSide=select.value;
+    const count=zvDisplayedPageCount();
+    while(pages.length<count)pages.push(newPage());
+    if(activePage>=count){loadPage(0);}else{renderPages();}
+  });
+  host.parentNode.insertBefore(select,host);
+}
 function renderPages(){
   const surfaces=zvAdminSurfaces();
   // Reconcile from the original published master only if a UI operation
@@ -1451,9 +1489,12 @@ function renderPages(){
     });
   }
 
+  zvSideControl();
+  const visibleCount=zvDisplayedPageCount();
+  while(pages.length<visibleCount)pages.push(newPage());
   const go=(i)=>{
     i=Number(i);
-    if(!Number.isFinite(i)||i<0||i>=pages.length||i===activePage)return;
+    if(!Number.isFinite(i)||i<0||i>=visibleCount||i===activePage)return;
     // Preserve the outgoing artwork, then load the requested page.
     // The visible active tab and arrow states update before async assets finish.
     sync();
@@ -1464,7 +1505,7 @@ function renderPages(){
   const h=$('pageButtons');
   if(h){
     h.innerHTML='';
-    pages.forEach((p,i)=>{
+    pages.slice(0,visibleCount).forEach((p,i)=>{
       const b=document.createElement('button');
       b.type='button';
       b.className='page-btn'+(i===activePage?' active':'');
@@ -1484,13 +1525,13 @@ function renderPages(){
 
   // Synchronize the visible footer with the actual loaded template pages.
   const countBadge=$('pageCountBadge');
-  if(countBadge) countBadge.textContent=pages.length+' '+(pages.length===1?'page':'pages');
+  if(countBadge) countBadge.textContent=visibleCount+' '+(visibleCount===1?'page':'pages');
   const prevArrow=$('bottomPrevPage');
   if(prevArrow){prevArrow.disabled=activePage===0;prevArrow.onclick=()=>go(activePage-1);}
   const nextArrow=$('bottomNextPage');
-  if(nextArrow){nextArrow.disabled=activePage>=pages.length-1;nextArrow.onclick=()=>go(activePage+1);}
+  if(nextArrow){nextArrow.disabled=activePage>=visibleCount-1;nextArrow.onclick=()=>go(activePage+1);}
   const label=$('activePageLabel');
-  if(label) label.textContent='Page '+(activePage+1)+' of '+pages.length;
+  if(label) label.textContent='Page '+(activePage+1)+' of '+visibleCount;
 
   // loadPage performs the authoritative ruler render after final canvas fit.
   if(!loading) requestAnimationFrame(zvRenderPhysicalRulers);
