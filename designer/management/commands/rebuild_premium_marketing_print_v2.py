@@ -196,6 +196,106 @@ def _bifold_panel_art(art,region,index,role,bank,side,panel):
     _label(art,"Editable CTA",cta,(cx+cw*.06,cy+ch*.08,cw*.88,ch*.79),
            palette.on_accent,True,min(29,w*.065))
 
+def _bifold_spread_art(art,region,index,side,bank):
+    """Full-spread original editable brochure artwork, without CairoSVG.
+
+    Fold lines remain editor guides; typography stays inside each half.
+    """
+    theme=index%20
+    brand,title,subtitle,cta,_=BRIEFS[theme]
+    palette=palette_for(index,"bifold","cover" if side==0 else "intro")
+    paper,ink,muted,foil=palette.paper,palette.ink,palette.muted,palette.accent
+    x,y,w,h=region
+    art.rect("Uninterrupted brochure sheet",x,y,w,h,paper)
+    style=(index*7+index//12+side*5)%12
+    def box(rel):return _box(x,y,w,h,rel)
+    def pic(rel,n=0):
+        _photo(art,bank,theme,(index+n+side)%5,box(rel),
+               "Editable spread photograph %d"%n)
+    def label(name,value,rel,size=38,bold=False):
+        _label(art,name,value,box(rel),ink if bold else muted,bold,
+               min(size,w*.048))
+    def headline(rel):
+        label("Editable headline",_wrap(title,3,15),rel,50,True)
+    def footer(rel):
+        a,b,c,d=box(rel)
+        art.rect("Editable CTA substrate",a,b,c,d,foil,rx=d*.07)
+        _label(art,"Editable CTA",cta,(a+c*.06,b+d*.07,c*.88,d*.82),
+               palette.on_accent,True,28)
+    # The art directions are independent compositions rather than the old
+    # identical two-card panel with different palette/photography.
+    if style==0: # art gallery
+        for i,r in enumerate(((.055,.10,.18,.34),(.26,.10,.18,.34),(.055,.48,.385,.30))):pic(r,i)
+        headline((.56,.29,.37,.24));label("Brand",brand,(.56,.15,.36,.06),30,True)
+        label("Description",subtitle,(.57,.62,.35,.11));footer((.59,.83,.29,.075))
+    elif style==1: # cinematic poster
+        pic((.05,.09,.90,.51))
+        label("Brand",brand,(.08,.67,.32,.06),30,True)
+        headline((.55,.65,.37,.19));footer((.11,.80,.29,.08))
+    elif style==2: # portrait editorial
+        label("Brand",brand,(.08,.12,.32,.07),30,True)
+        headline((.07,.26,.36,.28));label("Copy",subtitle,(.08,.64,.32,.10))
+        footer((.10,.84,.28,.07));pic((.56,.09,.36,.78))
+    elif style==3: # geometric
+        art.rect("Editable geometry",*box((.05,.09,.41,.80)),foil)
+        art.circle("Editable geometry sun",x+w*.26,y+h*.40,min(w,h)*.14,ink)
+        pic((.57,.12,.34,.30))
+        label("Brand",brand,(.57,.49,.34,.06),30,True)
+        headline((.55,.59,.37,.14));footer((.59,.84,.29,.08))
+    elif style==4: # panoramic triptych
+        for i,r in enumerate(((.05,.12,.28,.61),(.36,.12,.28,.61),(.67,.12,.28,.61))):pic(r,i)
+        label("Brand",brand,(.09,.77,.32,.06),30,True)
+        headline((.56,.77,.34,.11));footer((.60,.90,.28,.05))
+    elif style==5: # illustrative menu
+        for k in range(4):
+            art.rect("Editable menu rule %d"%k,*box((.08,.26+k*.14,.30,.004)),ink)
+        label("Brand",brand,(.08,.11,.32,.07),30,True)
+        headline((.08,.36,.31,.21));footer((.10,.83,.28,.07))
+        pic((.56,.12,.35,.43))
+        label("Description",subtitle,(.57,.64,.33,.11))
+    elif style==6: # botanical artwork
+        for k in range(10):
+            art.circle("Editable botanical petal %d"%k,
+                       x+w*(.10+.08*(k%4)),y+h*(.20+.20*(k//4)),
+                       min(w,h)*.036,foil if k%2 else muted)
+        label("Brand",brand,(.09,.71,.32,.06),30,True)
+        headline((.08,.79,.35,.12))
+        pic((.56,.10,.35,.51))
+        label("Description",subtitle,(.57,.67,.33,.10))
+        footer((.60,.84,.27,.075))
+    elif style==7: # minimalist typography
+        art.rect("Foil spine",*box((.49,.10,.005,.80)),foil)
+        label("Brand",brand,(.09,.22,.33,.075),32,True)
+        headline((.08,.41,.34,.24))
+        label("Description",subtitle,(.57,.36,.33,.16))
+        footer((.59,.79,.29,.09))
+    elif style==8: # offset mosaic
+        for i,r in enumerate(((.055,.10,.36,.36),(.055,.51,.36,.36),(.55,.10,.36,.30))):pic(r,i)
+        label("Brand",brand,(.57,.47,.33,.06),30,True)
+        headline((.56,.57,.36,.16))
+        label("Description",subtitle,(.57,.76,.33,.07))
+        footer((.60,.86,.28,.07))
+    elif style==9: # architecture
+        pic((.06,.12,.33,.73))
+        pic((.57,.12,.35,.30),2)
+        label("Brand",brand,(.58,.49,.32,.06),30,True)
+        headline((.56,.59,.35,.17))
+        footer((.60,.86,.28,.075))
+    elif style==10: # abstract studio
+        art.rect("Colour field",*box((.05,.09,.41,.81)),foil)
+        pic((.10,.17,.31,.42))
+        art.circle("Abstract orb",x+w*.75,y+h*.32,min(w,h)*.14,muted)
+        label("Brand",brand,(.10,.67,.30,.06),30,True)
+        headline((.56,.59,.36,.16))
+        footer((.60,.85,.28,.075))
+    else: # four-photo catalogue
+        for i,r in enumerate(((.07,.13,.17,.27),(.28,.13,.17,.27),
+                              (.07,.46,.17,.27),(.28,.46,.17,.27))):pic(r,i)
+        label("Brand",brand,(.57,.16,.34,.06),30,True)
+        headline((.56,.33,.36,.20))
+        label("Description",subtitle,(.57,.61,.34,.10))
+        footer((.60,.84,.28,.075))
+
 def _panel_art(art,region,index,edition,role,bank,side,kind):
     """Five genuinely different balanced photo/story hierarchies per panel.
 
@@ -362,8 +462,11 @@ def make_marketing_page(product,kind,index,side,surface,bank):
             raise CommandError("Flyers must have one artwork page")
         _flyer_art(art,region,index,bank)
         folds=[]
+    elif kind=="bifold":
+        folds=[.5]
+        _bifold_spread_art(art,region,index,side,bank)
     else:
-        n=2 if kind=="bifold" else 3
+        n=3
         folds=[i/n for i in range(1,n)]
         # One continuous paper colour beneath all fold-safe panels prevents
         # the vertical blank strips and disconnected-card look of old masters.
