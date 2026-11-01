@@ -536,7 +536,7 @@ class ProductAdmin(admin.ModelAdmin):
         css = {
             "all": ("designer/admin/zenvibe-richtext.css","designer/admin/product-configuration.css","designer/admin/product-faq-editor.css")
         }
-        js = ("designer/admin/zenvibe-richtext.js", "designer/admin/product-faq-editor.js", "designer/admin/product-workflow.js", "designer/admin/product-colour-picker.js", "designer/admin/hide-legacy-3d-fields.js")
+        js = ("designer/admin/zenvibe-richtext.js", "designer/admin/product-faq-editor.js", "designer/admin/product-workflow.js", "designer/admin/product-colour-picker.js", "designer/admin/product-variant-editor.js", "designer/admin/hide-legacy-3d-fields.js")
 
     def save_model(self, request, obj, form, change):
         # Capture the OLD Admin geometry before Product / inline surfaces are saved.
