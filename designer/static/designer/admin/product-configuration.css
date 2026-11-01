@@ -77,3 +77,12 @@ body.model-product.change-form .zv-colour-input input.zv-colour-swatch{display:i
 body.model-product.change-form .zv-colour-input input[name$="-hex_value"]{width:130px!important;max-width:130px}
 body.model-product.change-form .inline-group .inline-related.zv-inline-collapsed .form-row{display:none!important}
 body.model-product.change-form .inline-group .inline-related.zv-inline-collapsed >h3{display:block!important}
+
+/* Product variant rows replace raw pipe-delimited metadata fields. */
+body.model-product.change-form .zv-simple-variant-editor{display:grid;gap:12px;max-width:800px;margin:4px 0 14px}
+body.model-product.change-form .zv-variant-entries{display:grid;gap:8px}
+body.model-product.change-form .zv-variant-entry{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#f8fafc;padding:12px;border:1px solid #d9e2ec;border-radius:9px}
+body.model-product.change-form .zv-variant-entry input{flex:1 1 160px;min-width:0;max-width:270px}
+body.model-product.change-form .zv-simple-variant-editor>button{justify-self:start}
+body.model-product.change-form #zv-admin-tools{position:sticky;top:0;z-index:15;background:var(--body-bg,#fff);padding:12px;border:1px solid #dce3ed;border-radius:10px}
+body.model-product.change-form #zv-admin-tools button{cursor:pointer}
