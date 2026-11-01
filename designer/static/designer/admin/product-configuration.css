@@ -34,3 +34,10 @@ body.model-product.change-form .zv-faq-admin-row input,body.model-product.change
 body.model-product.change-form .zv-faq-admin-actions{display:flex;align-items:center;gap:8px}
 body.model-product.change-form .zv-faq-admin-actions strong{flex:1;font-size:15px}
 body.model-product.change-form .zv-faq-admin-actions button{border:1px solid #cbd8e7;border-radius:6px;background:white;padding:6px 11px}
+
+/* Human-friendly inline FAQ creation inside the Description editor. */
+body.model-product.change-form .zv-inline-faq-form:not([hidden]){display:grid;gap:10px;padding:16px;border:1px solid #b8cde7;background:#f7fbff;border-radius:10px;margin:8px 0 12px;max-width:800px}
+body.model-product.change-form .zv-inline-faq-form[hidden]{display:none!important}
+body.model-product.change-form .zv-inline-faq-form input,body.model-product.change-form .zv-inline-faq-form textarea{width:100%;max-width:none;box-sizing:border-box;padding:11px;border:1px solid #adc0d7;border-radius:7px;background:white;color:#192c40}
+body.model-product.change-form .zv-inline-faq-form button{justify-self:start}
+body.model-product.change-form .zv-inline-faq-form .zv-faq-error{color:#a32a21;margin:0}
