@@ -307,6 +307,7 @@ class ProductPriceTier(models.Model):
         help_text="Optional size variant. Leave blank for a product-wide tier.",
     )
     min_quantity = models.PositiveIntegerField(default=1)
+    max_quantity = models.PositiveIntegerField(null=True, blank=True, help_text="Inclusive maximum quantity. Leave blank for no upper limit.")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField(default=True)
 
@@ -323,6 +324,10 @@ class ProductPriceTier(models.Model):
 
     def clean(self):
         from django.core.exceptions import ValidationError
+        if self.min_quantity is not None and self.min_quantity < 1:
+            raise ValidationError({"min_quantity": "Minimum quantity must be at least 1."})
+        if self.max_quantity is not None and self.min_quantity is not None and self.max_quantity < self.min_quantity:
+            raise ValidationError({"max_quantity": "Maximum quantity must be greater than or equal to minimum quantity."})
         if self.variant_id and self.product_id and self.variant.product_id != self.product_id:
             raise ValidationError({
                 "variant": "Selected size variant must belong to this product."
@@ -330,7 +335,8 @@ class ProductPriceTier(models.Model):
 
     def __str__(self):
         variant_name = self.variant.name if self.variant_id else "Default"
-        return f"{self.product.name} — {variant_name} — {self.min_quantity}+ @ {self.unit_price}"
+        quantity_range = f"{self.min_quantity}–{self.max_quantity}" if self.max_quantity is not None else f"{self.min_quantity}+"
+        return f"{self.product.name} — {variant_name} — {quantity_range} @ {self.unit_price}"
 
 
 class ProductImage(models.Model):

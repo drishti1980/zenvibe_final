@@ -1484,7 +1484,9 @@ def _product_unit_price(product, quantity, size_key=""):
     except (TypeError, ValueError):
         qty = 1
 
-    tiers = product.price_tiers.filter(is_active=True)
+    tiers = product.price_tiers.filter(is_active=True).filter(
+        Q(max_quantity__isnull=True) | Q(max_quantity__gte=qty)
+    )
 
     if size_key:
         variant = product.size_variants.filter(
@@ -1939,7 +1941,7 @@ def choose_design(request, product_id):
         for index, tier in enumerate(rows):
             next_min = rows[index + 1].min_quantity if index + 1 < len(rows) else None
             explicit_max = getattr(tier, "max_quantity", None)
-            max_qty = explicit_max if explicit_max is not None else (next_min - 1 if next_min else None)
+            max_qty = explicit_max
             price_tier_rows.append({
                 "tier": tier,
                 "min_quantity": tier.min_quantity,

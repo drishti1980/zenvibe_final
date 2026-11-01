@@ -140,7 +140,7 @@ class ProductSizeVariantInline(admin.StackedInline):
     model = ProductSizeVariant
     form = ProductSizeVariantAdminForm
     extra = 1
-    fields = ("name", "size_key", "editor_profile", "print_width_in", "print_height_in", "canvas_width", "canvas_height", "is_active", "sort_order")
+    fields = (("name", "size_key"), "editor_profile", ("print_width_in", "print_height_in"), ("canvas_width", "canvas_height"), ("is_active", "sort_order"))
 
 
 class ProductPrintSurfaceInline(admin.StackedInline):
@@ -168,10 +168,31 @@ class ProductColorVariantInline(admin.StackedInline):
     fields = (("name", "color_key"), ("hex_value", "slug_suffix"), ("is_active", "sort_order"))
 
 
-class ProductPriceTierInline(admin.StackedInline):
+class ProductPriceTierFormSet(forms.models.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        groups = {}
+        for form in self.forms:
+            data = form.cleaned_data
+            if not data or data.get("DELETE") or not data.get("is_active"):
+                continue
+            variant = data.get("variant")
+            groups.setdefault(getattr(variant, "pk", None), []).append(data)
+        for rows in groups.values():
+            rows.sort(key=lambda row: row["min_quantity"])
+            for previous, current in zip(rows, rows[1:]):
+                upper = previous.get("max_quantity")
+                if upper is None or upper >= current["min_quantity"]:
+                    raise forms.ValidationError("Active quantity ranges for the same variant must not overlap. Set a maximum on every tier except the final open-ended tier.")
+
+
+class ProductPriceTierInline(admin.TabularInline):
     model = ProductPriceTier
+    formset = ProductPriceTierFormSet
     extra = 1
-    fields = (("variant", "min_quantity", "unit_price"), "is_active")
+    fields = ("variant", "min_quantity", "max_quantity", "unit_price", "is_active")
     ordering = ("variant", "min_quantity")
 
 
@@ -430,6 +451,7 @@ class ProductAdminForm(forms.ModelForm):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    change_form_template = "admin/designer/product/change_form.html"
     form = ProductAdminForm
     inlines = [ProductImageInline, ProductColorVariantInline, ProductSizeVariantInline, ProductPriceTierInline, ProductPrintSurfaceInline, ProductPrintAreaInline]
 
@@ -453,22 +475,16 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": (
                 "category", "name", "slug",
                 "short_description",
-                ("price", "min_price", "max_price"),
-                ("minimum_quantity", "maximum_quantity"),
-                "image", "hover_image",
-                "editor_reference_image",
                 "customizer_mode", "show_customize_button",
             ),
             "description": "Price range, minimum/maximum quantity and customer-facing product summary."
         }),
-        ("Product content / tabs", {
-            "fields": (
-                "description", "product_information",
-                "printing_method", "design_guidelines",
-                "printing_guidelines", "faqs",
-            ),
-            "description": "Leave a section blank and it will be hidden on the product page."
-        }),
+        ("Product images", {"fields": (("image", "hover_image"), "editor_reference_image")}),
+        ("Base price and order quantity", {"fields": (("price", "min_price", "max_price"), ("minimum_quantity", "maximum_quantity"))}),
+        ("Product description", {"fields": ("description",)}),
+        ("Product information", {"fields": ("product_information",)}),
+        ("Printing method and guidelines", {"fields": ("printing_method", "design_guidelines", "printing_guidelines")}),
+        ("Product FAQs", {"fields": ("faqs",)}),
         ("Product variants — shapes", {
             "fields": ("shape_variant_options",),
             "description": "Define shape labels and keys once. This is a product metadata configuration; editor and storefront shape switching still need compatible routing.",

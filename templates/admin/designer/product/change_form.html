@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+{% block form_top %}
+{{ block.super }}
+<div id="zv-admin-tools" class="zv-admin-tools">
+  <label class="visually-hidden" for="zv-product-search">Search product settings</label>
+  <input id="zv-product-search" type="search" placeholder="Search product settings, variants, delivery…" aria-label="Search product settings">
+  <button type="button" id="zv-discard" class="button">Discard unsaved changes</button>
+  <button type="button" id="zv-expand-all" class="button">Expand sections</button>
+  <a class="button" href="{% url 'admin:designer_product_changelist' %}">Back to products</a>
+</div>
+<p id="zv-search-status" role="status" aria-live="polite"></p>
+{% endblock %}

@@ -86,3 +86,22 @@ body.model-product.change-form .zv-variant-entry input{flex:1 1 160px;min-width:
 body.model-product.change-form .zv-simple-variant-editor>button{justify-self:start}
 body.model-product.change-form #zv-admin-tools{position:sticky;top:0;z-index:15;background:var(--body-bg,#fff);padding:12px;border:1px solid #dce3ed;border-radius:10px}
 body.model-product.change-form #zv-admin-tools button{cursor:pointer}
+
+/* Compact sections work with both Django 5 and Django 6 fieldset markup. */
+body.model-product.change-form .zv-config-section{margin:12px 0;border:1px solid #d8e0eb;border-radius:10px;background:var(--body-bg,#fff)}
+body.model-product.change-form .zv-config-section[hidden]{display:none!important}
+body.model-product.change-form .zv-config-section>summary{cursor:pointer;padding:14px 18px;font-size:15px;font-weight:700;color:var(--body-fg,#183d63);list-style-position:inside}
+body.model-product.change-form .zv-config-section>.module,body.model-product.change-form .zv-config-section>.inline-group{margin:0;border:0;box-shadow:none}
+body.model-product.change-form .zv-config-section fieldset.module{margin-bottom:0}
+body.model-product.change-form .zv-config-section .form-row{padding:10px 16px}
+body.model-product.change-form #product_form textarea{width:100%;max-width:900px;box-sizing:border-box}
+body.model-product.change-form #product_form .flex-container{flex-wrap:wrap;gap:8px 16px;align-items:flex-start}
+body.model-product.change-form #product_form .flex-container>div{min-width:0;flex:1 1 240px}
+body.model-product.change-form #zv-admin-tools{position:relative;top:auto;display:flex;align-items:center;gap:10px;z-index:2}
+body.model-product.change-form #zv-admin-tools input[type=search]{flex:1 1 280px;max-width:none}
+body.model-product.change-form #zv-admin-tools .button{padding:10px 13px;line-height:1.3;white-space:normal}
+body.model-product.change-form #zv-search-status:empty{display:none}
+body.model-product.change-form .zv-product-nav{margin:12px 0;gap:6px}
+body.model-product.change-form .zv-product-nav button{padding:9px 12px}
+body.model-product.change-form #price_tiers-group .tabular table{min-width:650px}
+@media(max-width:760px){body.model-product.change-form #zv-admin-tools{display:flex;flex-wrap:wrap}body.model-product.change-form .zv-product-nav button{flex:1 1 120px}body.model-product.change-form #product_form .flex-container>div{flex-basis:100%}}
