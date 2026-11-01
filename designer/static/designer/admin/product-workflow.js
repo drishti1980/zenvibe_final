@@ -54,8 +54,16 @@
       b.addEventListener("click", () => { selected = name; search.value = ""; sections.filter(s => s.group === name).forEach(s => s.details.open = true); apply(); });
       nav.append(b); buttons.push(b);
     });
-    document.getElementById("zv-discard").addEventListener("click", () => {
-      if (window.confirm("Discard unsaved changes and reload the saved product?")) window.location.reload();
+    const discardDialog = document.getElementById("zv-discard-dialog");
+    const discardButton = document.getElementById("zv-discard");
+    discardButton.addEventListener("click", () => discardDialog.showModal());
+    document.getElementById("zv-keep-editing").addEventListener("click", () => discardDialog.close());
+    document.getElementById("zv-confirm-discard").addEventListener("click", () => window.location.reload());
+    discardDialog.addEventListener("close", () => discardButton.focus());
+    discardDialog.addEventListener("click", event => {
+      if (event.target !== discardDialog) return;
+      const rect = discardDialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) discardDialog.close();
     });
     document.getElementById("zv-expand-all").addEventListener("click", e => {
       const visible = sections.filter(s => !s.details.hidden); const open = visible.some(s => !s.details.open);

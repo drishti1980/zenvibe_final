@@ -154,3 +154,14 @@ body.model-product.change-form .zv-setup-guide{padding:8px 22px 20px;max-width:1
 body.model-product.change-form .zv-setup-guide ol{padding-left:24px;margin:12px 0;list-style:decimal}
 body.model-product.change-form .zv-setup-guide li{padding:9px 0;list-style:decimal;border-bottom:1px solid #edf0f5}
 body.model-product.change-form .zv-setup-guide .help{margin:14px 0 0!important;line-height:1.5}
+
+/* In-page confirmation with native modal focus management and Escape support. */
+dialog.zv-discard-dialog { width: min(480px, calc(100vw - 40px)); box-sizing: border-box; padding: 28px; border: 1px solid #d6e0ef; border-radius: 16px; background: #fff; color: #173451; box-shadow: 0 20px 70px #10243b40; }
+dialog.zv-discard-dialog::backdrop { background: rgb(15 28 47 / 45%); }
+dialog.zv-discard-dialog h2 { margin: 0 0 12px; padding: 0; background: none; color: inherit; font-size: 22px; }
+dialog.zv-discard-dialog p { margin: 0 0 24px; line-height: 1.6; }
+.zv-discard-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.zv-discard-actions button { min-height: 44px; padding: 10px 18px; border-radius: 8px; cursor: pointer; }
+#zv-keep-editing { background: #fff; color: #173451; border: 1px solid #b8c8df; }
+#zv-confirm-discard { background: #ff6530; color: #fff; border: 1px solid #ff6530; }
+.zv-discard-actions button:focus-visible { outline: 3px solid #215ea4; outline-offset: 3px; }

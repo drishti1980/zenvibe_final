@@ -8,6 +8,14 @@
   <button type="button" id="zv-expand-all" class="button">Expand sections</button>
   <a class="button" href="{% url 'admin:designer_product_changelist' %}">Back to products</a>
 </div>
+<dialog id="zv-discard-dialog" class="zv-discard-dialog" aria-labelledby="zv-discard-title" aria-describedby="zv-discard-description">
+  <h2 id="zv-discard-title">Discard unsaved changes?</h2>
+  <p id="zv-discard-description">Your unsaved edits will be lost. The last saved product details will be reloaded.</p>
+  <div class="zv-discard-actions">
+    <button type="button" id="zv-keep-editing" class="button" autofocus>Keep editing</button>
+    <button type="button" id="zv-confirm-discard" class="button">Discard changes</button>
+  </div>
+</dialog>
 <p id="zv-search-status" role="status" aria-live="polite"></p>
 <fieldset id="zv-product-setup-guide" class="module">
   <h2>Adding products — setup guide</h2>
