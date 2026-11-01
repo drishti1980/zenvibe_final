@@ -475,7 +475,9 @@
                                                             </a>
 
 
-                                                            {% if product.is_on_sale %}
+                                                            {% if product.is_exclusive %}
+                                                            <div class="ribbon"><span>Exclusive</span></div>
+                                                            {% elif product.is_on_sale %}
                                                             <div class="ribbon">
                                                                 <span>Sale</span>
                                                             </div>

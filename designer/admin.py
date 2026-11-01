@@ -520,6 +520,10 @@ class ProductAdmin(admin.ModelAdmin):
             ),
             "description": "Default editable area for the main product image."
         }),
+        ("Exclusive badge", {
+            "fields": ("is_exclusive",),
+            "description": "Enable to display the Exclusive badge on this product.",
+        }),
         ("Sale", {
             "fields": ("is_on_sale", "sale_price", "sale_badge", "sale_priority"),
         }),

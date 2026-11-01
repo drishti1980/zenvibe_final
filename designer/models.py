@@ -160,6 +160,7 @@ class Product(models.Model):
     # min_dpi = models.PositiveIntegerField(default=150)
     is_active = models.BooleanField(default=True)
     is_out_of_stock = models.BooleanField(default=False)
+    is_exclusive = models.BooleanField(default=False, db_index=True, help_text="Show an Exclusive badge on this product on the website.")
     is_on_sale = models.BooleanField(default=False, db_index=True)
     sale_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     sale_badge = models.CharField(max_length=40, default="Sale!", blank=True)

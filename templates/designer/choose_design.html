@@ -1386,6 +1386,7 @@
                             <h5>Popular custom product</h5>
                         </div>
                         <h2 class="main-title">{{ product.name }}</h2>
+                        {% if product.is_exclusive %}<span class="badge bg-primary mb-2">Exclusive</span>{% endif %}
 
                         <div class="price-text zv-main-price">
                             <h3><span class="fw-normal">Price:</span>

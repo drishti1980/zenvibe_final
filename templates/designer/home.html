@@ -185,7 +185,7 @@
 
 
                             <!-- EXCLUSIVE RIBBON -->
-                             {% if forloop.counter <= 2 %}
+                             {% if product.is_exclusive %}
                             <div class="zv-exclusive-ribbon">
                                 <span>Exclusive</span>
                             </div>
@@ -193,7 +193,7 @@
 
 
                             <!-- SALE RIBBON -->
-                            {% if product.is_on_sale and forloop.counter > 2 %}<div class="ribbon"><span>Sale</span></div>{% endif %}
+                            {% if product.is_on_sale and not product.is_exclusive %}<div class="ribbon"><span>Sale</span></div>{% endif %}
 
 
                             <!-- IMAGE -->
@@ -437,7 +437,7 @@
 
 
                                         <!-- EXCLUSIVE -->
-                                        {% if forloop.counter <= 2 %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>
@@ -445,7 +445,7 @@
 
 
                                         <!-- SALE -->
-                                        {% if product.is_on_sale and forloop.counter > 2 %}<div class="ribbon"><span>Sale</span></div>{% endif %}
+                                        {% if product.is_on_sale and not product.is_exclusive %}<div class="ribbon"><span>Sale</span></div>{% endif %}
 
 
                                         <a href="{% url 'designer:choose_design' product.id %}">
@@ -599,14 +599,14 @@
                                     <div class="img-wrapper position-relative">
 
 
-                                        {% if product.is_featured %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>
                                         {% endif %}
 
 
-                                        {% if product.is_on_sale and forloop.counter > 2 %}<div class="ribbon"><span>Sale</span></div>{% endif %}
+                                        {% if product.is_on_sale and not product.is_exclusive %}<div class="ribbon"><span>Sale</span></div>{% endif %}
 
 
                                         <a href="{% url 'designer:choose_design' product.id %}">
@@ -761,7 +761,7 @@
 
 
                                         <!-- EXCLUSIVE -->
-                                        {% if product.is_featured %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>

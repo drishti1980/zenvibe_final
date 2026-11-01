@@ -185,7 +185,7 @@
 
 
                             <!-- EXCLUSIVE RIBBON -->
-                             {% if forloop.counter <= 2 %}
+                             {% if product.is_exclusive %}
                             <div class="zv-exclusive-ribbon">
                                 <span>Exclusive</span>
                             </div>
@@ -441,7 +441,7 @@
 
 
                                         <!-- EXCLUSIVE -->
-                                        {% if forloop.counter <= 2 %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>
@@ -607,7 +607,7 @@
                                     <div class="img-wrapper position-relative">
 
 
-                                        {% if product.is_featured %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>
@@ -773,7 +773,7 @@
 
 
                                         <!-- EXCLUSIVE -->
-                                        {% if product.is_featured %}
+                                        {% if product.is_exclusive %}
                                         <div class="zv-exclusive-ribbon">
                                             <span>Exclusive</span>
                                         </div>

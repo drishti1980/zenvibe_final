@@ -20,7 +20,7 @@
       if (/information|description|content|faq|guideline|printing method/i.test(text)) return "Product information";
       if (/print|editor|editable|surface/i.test(text)) return "Editor & print areas";
       if (/images|photos/i.test(text) || el.id === "angle_images-group") return "Images";
-      if (/sale|availability/i.test(text)) return "Visibility & sale";
+      if (/sale|availability|exclusive/i.test(text)) return "Visibility & sale";
       if (/source|metadata/i.test(text)) return "Editor & print areas";
       return "Product details";
     }
