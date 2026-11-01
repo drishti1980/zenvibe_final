@@ -151,6 +151,51 @@ def _panel_copy(theme,role):
     return brand,headline,subtitle,foot,accent
 
 
+# Independent bifold direction system: 12 deliberately different art structures.
+# Each layout keeps text and photographs in disjoint, fold-safe zones.
+# Coordinates are local to ONE physical folding panel, not the whole sheet.
+_BIFOLD_SCENES = (
+ # photo boxes, name, headline, description, CTA
+ ([(.07,.08,.86,.50)],(.09,.60,.82,.055),(.08,.68,.84,.105),(.09,.805,.82,.045),(.12,.882,.76,.066)), # poster
+ ([(.07,.37,.86,.48)],(.09,.07,.82,.055),(.07,.15,.86,.145),(.08,.305,.84,.045),(.12,.886,.76,.064)), # typography first
+ ([(.06,.07,.48,.77)],(.59,.13,.34,.065),(.58,.25,.35,.21),(.59,.53,.34,.13),(.57,.87,.36,.069)), # tall image left
+ ([(.47,.07,.47,.77)],(.08,.12,.34,.065),(.07,.25,.36,.22),(.08,.54,.35,.12),(.08,.87,.77,.069)), # tall image right
+ ([(.07,.07,.41,.43),(.52,.07,.41,.43)],(.08,.55,.84,.055),(.08,.64,.84,.11),(.09,.78,.82,.045),(.12,.88,.76,.07)), # diptych
+ ([(.06,.08,.88,.27),(.06,.39,.88,.27)],(.09,.70,.82,.048),(.08,.762,.84,.075),(.09,.85,.82,.033),(.12,.903,.76,.058)), # film strip
+ ([(.07,.10,.40,.32),(.52,.10,.40,.32),(.07,.46,.40,.24),(.52,.46,.40,.24)],(.09,.73,.82,.042),(.08,.79,.84,.077),(.09,.877,.82,.025),(.13,.922,.74,.042)), # grid
+ ([(.06,.08,.88,.61)],(.09,.72,.82,.046),(.08,.777,.84,.086),(.09,.875,.82,.027),(.13,.922,.74,.043)), # immersive hero
+ ([(.07,.08,.34,.35),(.47,.08,.46,.60)],(.09,.48,.34,.055),(.07,.55,.36,.115),(.09,.70,.34,.12),(.10,.865,.80,.065)), # editorial asymmetry
+ ([(.06,.27,.88,.43)],(.09,.08,.82,.052),(.08,.145,.84,.09),(.08,.735,.84,.075),(.13,.865,.74,.067)), # panoramic
+ ([(.09,.08,.82,.28),(.09,.41,.36,.33),(.50,.41,.41,.33)],(.09,.773,.82,.042),(.08,.825,.84,.067),(.09,.902,.82,.025),(.13,.943,.74,.025)), # art gallery
+ ([(.07,.09,.55,.64)],(.66,.10,.28,.05),(.65,.19,.29,.21),(.65,.46,.28,.20),(.10,.80,.80,.075)), # fashion vertical
+)
+
+def _bifold_panel_art(art,region,index,role,bank,side,panel):
+    """Bifold-only layouts; no CairoSVG and no reused generic five-edition art."""
+    theme=index%20
+    brand,title,subtitle,cta,_=_panel_copy(theme,role)
+    x,y,w,h=region
+    palette=palette_for(index,"bifold",role)
+    bg,ink,muted=palette.paper,palette.ink,palette.muted
+    foil=palette.accent
+    # Cover, back and inner pages have deliberately different compositions.
+    mode=(index*7+side*5+panel*3+(index//12))%len(_BIFOLD_SCENES)
+    photos,brand_pos,title_pos,sub_pos,cta_pos=_BIFOLD_SCENES[mode]
+    art.rect("Bifold paper %02d"%mode,x,y,w,h,bg)
+    for n,photo in enumerate(photos):
+        _photo(art,bank,theme,(index+side+panel+n)%5,
+               _box(x,y,w,h,photo),"Editable bifold photograph %d"%(n+1))
+    _label(art,"Editable business name",brand,_box(x,y,w,h,brand_pos),
+           muted,True,min(36,w*.09),align="center")
+    _label(art,"Editable editorial headline",_wrap(title,3,11 if title_pos[2]<.4 else 19),
+           _box(x,y,w,h,title_pos),ink,True,min(55,w*.12),align="center")
+    _label(art,"Editable supporting description",subtitle,
+           _box(x,y,w,h,sub_pos),muted,False,min(29,w*.065))
+    cx,cy,cw,ch=_box(x,y,w,h,cta_pos)
+    art.rect("Editable call-to-action panel",cx,cy,cw,ch,foil,rx=ch*.08)
+    _label(art,"Editable CTA",cta,(cx+cw*.06,cy+ch*.08,cw*.88,ch*.79),
+           palette.on_accent,True,min(29,w*.065))
+
 def _panel_art(art,region,index,edition,role,bank,side,kind):
     """Five genuinely different balanced photo/story hierarchies per panel.
 
@@ -333,7 +378,10 @@ def make_marketing_page(product,kind,index,side,surface,bank):
             # Changing panel role changes copy and photo architecture. Keep
             # the panel colours harmonised, but not monochrome duplicates.
             panel_edition=(edition+panel+(side%2))%5
-            _panel_art(art,panel_box,index,panel_edition,role,bank,side,kind)
+            if kind=="bifold":
+                _bifold_panel_art(art,panel_box,index,role,bank,side,panel)
+            else:
+                _panel_art(art,panel_box,index,panel_edition,role,bank,side,kind)
     art.validate(region)
     return {
         "name":surface.label if kind=="flyer" else ("Outside" if side==0 else "Inside"),
