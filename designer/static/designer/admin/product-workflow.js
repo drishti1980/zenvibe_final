@@ -11,6 +11,7 @@
       !el.parentElement.closest("fieldset.module, .inline-group, .inline-related"));
     const heading = el => el.querySelector("h2, h3");
     function category(el) {
+      if (el.id === "zv-product-setup-guide") return "Adding products";
       if (el.matches("#price_tiers-group")) return "Price tiers";
       if (el.matches("#size_variants-group, #color_variants-group") || el.querySelector('[name="shape_variant_options"], [name="material_variant_options"]')) return "Variants";
       const text = heading(el)?.textContent || "";
@@ -20,7 +21,7 @@
       if (/print|editor|editable|surface/i.test(text)) return "Editor & print areas";
       if (/images|photos/i.test(text) || el.id === "angle_images-group") return "Images";
       if (/sale|availability/i.test(text)) return "Visibility & sale";
-      if (/source/i.test(text)) return "Advanced";
+      if (/source|metadata/i.test(text)) return "Editor & print areas";
       return "Product details";
     }
     const sections = groups.map((el, index) => {
@@ -29,12 +30,12 @@
       const summary = document.createElement("summary");
       summary.textContent = heading(el)?.textContent.trim() || "Product settings";
       el.parentNode.insertBefore(details, el); details.append(summary, el);
-      details.open = index === 0 || !!el.querySelector(".errorlist, .errors");
+      details.open = category(el) === "Product details" || !!el.querySelector(".errorlist, .errors");
       return {el, details, group: category(el)};
     });
     const nav = document.createElement("div"); nav.className = "zv-product-nav";
     nav.setAttribute("aria-label", "Product settings sections"); tools.after(nav);
-    const names = ["Product details", "Product information", "Variants", "Price tiers", "Images", "Delivery", "Visibility & sale", "Editor & print areas", "Advanced"];
+    const names = ["Product details", "Product information", "Variants", "Price tiers", "Images", "Delivery", "Visibility & sale", "Editor & print areas", "Adding products"];
     let selected = sections.find(s => s.el.querySelector(".errorlist, .errors"))?.group || "Product details";
     const buttons = [];
     function apply() {

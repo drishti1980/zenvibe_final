@@ -483,7 +483,9 @@ class ProductAdmin(admin.ModelAdmin):
         ("Base price and order quantity", {"fields": (("price", "min_price", "max_price"), ("minimum_quantity", "maximum_quantity"))}),
         ("Product description", {"fields": ("description",)}),
         ("Product information", {"fields": ("product_information",)}),
-        ("Printing method and guidelines", {"fields": ("printing_method", "design_guidelines", "printing_guidelines")}),
+        ("Printing method", {"fields": ("printing_method",), "description": "Explain the printing or decorating process in clear customer-facing language."}),
+        ("Artwork and design guidelines", {"fields": ("design_guidelines",), "description": "List accepted file formats, resolution, bleed, safe margins and artwork requirements."}),
+        ("Printing guidelines", {"fields": ("printing_guidelines",), "description": "Add product-specific print instructions, colour limitations and placement advice."}),
         ("Product FAQs", {"fields": ("faqs",)}),
         ("Product variants — shapes", {
             "fields": ("shape_variant_options",),
@@ -521,7 +523,8 @@ class ProductAdmin(admin.ModelAdmin):
         ("Sale", {
             "fields": ("is_on_sale", "sale_price", "sale_badge", "sale_priority"),
         }),
-        ("Source", {
+        ("Raw product metadata (usually leave unchanged)", {
+            "description": "Used by existing product options and integrations. Preserve this data unless you are intentionally editing those settings.",
             "fields": ("source_attributes",),
             "classes": ("collapse",),
         }),

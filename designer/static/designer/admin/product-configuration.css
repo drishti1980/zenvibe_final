@@ -133,3 +133,24 @@ body.model-product.change-form #product_form .zv-inline-collapsed>h3{display:fle
  body.model-product.change-form #product_form .zv-inline-title{flex-basis:100%}
  body.model-product.change-form #product_form .zv-inline-actions{width:100%;justify-content:flex-end}
 }
+
+/* Full-width information editors, with short instructions above the writing area. */
+body.model-product.change-form #product_form .field-description>div,
+body.model-product.change-form #product_form .field-product_information>div,
+body.model-product.change-form #product_form .field-printing_method>div,
+body.model-product.change-form #product_form .field-design_guidelines>div,
+body.model-product.change-form #product_form .field-printing_guidelines>div{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px}
+body.model-product.change-form #product_form .field-description label,
+body.model-product.change-form #product_form .field-product_information label,
+body.model-product.change-form #product_form .field-printing_method label,
+body.model-product.change-form #product_form .field-design_guidelines label,
+body.model-product.change-form #product_form .field-printing_guidelines label{width:auto!important;float:none!important;padding:0!important;margin:0!important}
+body.model-product.change-form #product_form .zv-rich-shell{width:100%!important;max-width:none!important;flex:1 1 auto!important}
+body.model-product.change-form #product_form .zv-rich-editor{min-height:160px!important;max-height:380px;resize:vertical}
+body.model-product.change-form #product_form .zv-rich-short .zv-rich-editor{min-height:90px!important;max-height:180px}
+body.model-product.change-form #product_form .zv-rt-toolbar{gap:5px!important;padding:8px!important}
+body.model-product.change-form #product_form .zv-rt-toolbar .zv-rt-format{width:auto!important;min-width:125px!important;max-width:180px!important;flex:0 0 auto!important}
+body.model-product.change-form .zv-setup-guide{padding:8px 22px 20px;max-width:1050px;line-height:1.6}
+body.model-product.change-form .zv-setup-guide ol{padding-left:24px;margin:12px 0;list-style:decimal}
+body.model-product.change-form .zv-setup-guide li{padding:9px 0;list-style:decimal;border-bottom:1px solid #edf0f5}
+body.model-product.change-form .zv-setup-guide .help{margin:14px 0 0!important;line-height:1.5}

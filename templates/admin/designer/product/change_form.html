@@ -9,4 +9,21 @@
   <a class="button" href="{% url 'admin:designer_product_changelist' %}">Back to products</a>
 </div>
 <p id="zv-search-status" role="status" aria-live="polite"></p>
+<fieldset id="zv-product-setup-guide" class="module">
+  <h2>Adding products — setup guide</h2>
+  <div class="zv-setup-guide">
+    <p>Follow these steps, then save and check the product page.</p>
+    <ol>
+      <li><strong>Product details:</strong> enter the product name, category and short summary.</li>
+      <li><strong>Product information:</strong> add the description, specifications, printing method, artwork requirements and FAQs. Use headings and bullet lists; no HTML is needed.</li>
+      <li><strong>Variants:</strong> add the sizes, shapes, materials and colours the product supports. Choose colours from the colour panel. Use unique keys such as navy-blue.</li>
+      <li><strong>Price tiers:</strong> set the base price and order limits. For quantity discounts, use non-overlapping Min/Max ranges, for example 20–49 and 50–99. Leave the last maximum blank for 100+.</li>
+      <li><strong>Images:</strong> upload a clear main image and optional gallery images; use labels and sort order to organise them.</li>
+      <li><strong>Delivery:</strong> enable the available delivery methods and enter their business days and charges.</li>
+      <li><strong>Editor &amp; print areas:</strong> choose the editor mode, print dimensions in inches and editable pages. Check the template and printable area before making the product active.</li>
+      <li><strong>Visibility &amp; sale:</strong> check availability and any sale price. Save, then preview the storefront and test its available options.</li>
+    </ol>
+    <p class="help">Shape and material settings store the available choices. Their behaviour depends on the product’s storefront and editor integration. Raw metadata is preserved in Editor &amp; print areas and normally needs no manual changes.</p>
+  </div>
+</fieldset>
 {% endblock %}
